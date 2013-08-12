@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:lang="http://www.springframework.org/schema/lang" xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+    default-autowire="byName" >
+	
+	<!--event service -->
+	<bean name="arbitrateEventService" class="com.alibaba.otter.shared.arbitrate.impl.ArbitrateEventServiceImpl" scope="singleton" />
+	<bean name="arbitrateViewService" class="com.alibaba.otter.shared.arbitrate.impl.ArbitrateViewServiceImpl" scope="singleton" />
+	
+	<bean name="toolEvent" class="com.alibaba.otter.shared.arbitrate.impl.setl.ToolArbitrateEvent" scope="singleton" />
+	<bean name="mainStemEvent" class="com.alibaba.otter.shared.arbitrate.impl.setl.MainStemArbitrateEvent" scope="singleton" />
+	
+	<!-- delegate bean -->
+	<bean name="selectEvent" class="com.alibaba.otter.shared.arbitrate.impl.setl.delegate.SelectDelegateArbitrateEvent" scope="singleton">
+		<property name="delegate">
+			<map>
+				<entry key="MEMORY" value-ref="selectMemoryEvent" />
+				<entry key="RPC" value-ref="selectRpcEvent" />
+				<entry key="ZOOKEEPER" value-ref="selectZooKeeperEvent" />
+			</map>
+		</property>
+	</bean>
+	<bean name="extractEvent" class="com.alibaba.otter.shared.arbitrate.impl.setl.delegate.ExtractDelegateArbitrateEvent" scope="singleton" >
+		<property name="delegate">
+			<map>
+				<entry key="MEMORY" value-ref="extractMemoryEvent" />
+				<entry key="RPC" value-ref="extractRpcEvent" />
+				<entry key="ZOOKEEPER" value-ref="extractZooKeeperEvent" />
+			</map>
+		</property>
+	</bean>
+	<bean name="transformEvent" class="com.alibaba.otter.shared.arbitrate.impl.setl.delegate.TransformDelegateArbitrateEvent" scope="singleton">
+		<property name="delegate">
+			<map>
+				<entry key="MEMORY" value-ref="transformMemoryEvent" />
+				<entry key="RPC" value-ref="transformRpcEvent" />
+				<entry key="ZOOKEEPER" value-ref="transformZooKeeperEvent" />
+			</map>
+		</property>
+	</bean>
+	<bean name="loadEvent" class="com.alibaba.otter.shared.arbitrate.impl.setl.delegate.LoadDelegateArbitrateEvent" scope="singleton">
+		<property name="delegate">
+			<map>
+				<entry key="MEMORY" value-ref="loadMemoryEvent" />
+				<entry key="RPC" value-ref="loadRpcEvent" />
+				<entry key="ZOOKEEPER" value-ref="loadZooKeeperEvent" />
+			</map>
+		</property>
+	</bean>
+	<bean name="terminEvent" class="com.alibaba.otter.shared.arbitrate.impl.setl.delegate.TerminDelegateArbitrateEvent" scope="singleton">
+		<property name="delegate">
+			<map>
+				<entry key="MEMORY" value-ref="terminMemoryEvent" />
+				<entry key="RPC" value-ref="terminRpcEvent" />
+				<entry key="ZOOKEEPER" value-ref="terminZooKeeperEvent" />
+			</map>
+		</property>
+	</bean>
+	
+	<!-- distuributed bean -->
+	<bean name="selectZooKeeperEvent" class="com.alibaba.otter.shared.arbitrate.impl.setl.zookeeper.SelectZooKeeperArbitrateEvent" scope="singleton" />
+	<bean name="extractZooKeeperEvent" class="com.alibaba.otter.shared.arbitrate.impl.setl.zookeeper.ExtractZooKeeperArbitrateEvent" scope="singleton" />
+	<bean name="transformZooKeeperEvent" class="com.alibaba.otter.shared.arbitrate.impl.setl.zookeeper.TransformZooKeeperArbitrateEvent" scope="singleton" />
+	<bean name="loadZooKeeperEvent" class="com.alibaba.otter.shared.arbitrate.impl.setl.zookeeper.LoadZooKeeperArbitrateEvent" scope="singleton">
+		<property name="terminEvent" ref="terminZooKeeperEvent" />
+	</bean>
+	<bean name="terminZooKeeperEvent" class="com.alibaba.otter.shared.arbitrate.impl.setl.zookeeper.TerminZooKeeperArbitrateEvent" scope="singleton" />
+	<!--  termin process bean -->
+	<bean name="normalTerminProcess" class="com.alibaba.otter.shared.arbitrate.impl.setl.zookeeper.termin.NormalTerminProcess" scope="singleton" />
+	<bean name="warningTerminProcess" class="com.alibaba.otter.shared.arbitrate.impl.setl.zookeeper.termin.WarningTerminProcess" scope="singleton" />
+	<bean name="errorTerminProcess" class="com.alibaba.otter.shared.arbitrate.impl.setl.zookeeper.termin.ErrorTerminProcess" scope="singleton" />
+	
+	<!-- rpc bean -->
+	<bean name="selectRpcEvent" class="com.alibaba.otter.shared.arbitrate.impl.setl.rpc.SelectRpcArbitrateEvent" scope="singleton" />
+	<bean name="extractRpcEvent" class="com.alibaba.otter.shared.arbitrate.impl.setl.rpc.ExtractRpcArbitrateEvent" scope="singleton" />
+	<bean name="transformRpcEvent" class="com.alibaba.otter.shared.arbitrate.impl.setl.rpc.TransformRpcArbitrateEvent" scope="singleton" />
+	<bean name="loadRpcEvent" class="com.alibaba.otter.shared.arbitrate.impl.setl.rpc.LoadRpcArbitrateEvent" scope="singleton">
+		<property name="terminEvent" ref="terminRpcEvent" />
+	</bean>
+	<bean name="terminRpcEvent" class="com.alibaba.otter.shared.arbitrate.impl.setl.rpc.TerminRpcArbitrateEvent" scope="singleton" />
+	<bean name="rpcStageEventDispatcher" class="com.alibaba.otter.shared.arbitrate.impl.setl.rpc.RpcStageEventDispatcher" scope="singleton" />
+	<!-- memory bean -->
+	<bean name="selectMemoryEvent" class="com.alibaba.otter.shared.arbitrate.impl.setl.memory.SelectMemoryArbitrateEvent" scope="singleton" />
+	<bean name="extractMemoryEvent" class="com.alibaba.otter.shared.arbitrate.impl.setl.memory.ExtractMemoryArbitrateEvent" scope="singleton" />
+	<bean name="transformMemoryEvent" class="com.alibaba.otter.shared.arbitrate.impl.setl.memory.TransformMemoryArbitrateEvent" scope="singleton" />
+	<bean name="loadMemoryEvent" class="com.alibaba.otter.shared.arbitrate.impl.setl.memory.LoadMemoryArbitrateEvent" scope="singleton">
+		<property name="terminEvent" ref="terminMemoryEvent" />
+	</bean>
+	<bean name="terminMemoryEvent" class="com.alibaba.otter.shared.arbitrate.impl.setl.memory.TerminMemoryArbitrateEvent" scope="singleton" />
+</beans>

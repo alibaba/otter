@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+    <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"  
+       "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="com.alibaba.otter.manager.biz.statistics.table.dal.dataobject.TableStatDO">
+	<typeAlias alias="tableStat"
+		type="com.alibaba.otter.manager.biz.statistics.table.dal.dataobject.TableStatDO" />
+	<typeAlias alias="timelineBehaviorHistoryCondition"
+		type="com.alibaba.otter.manager.biz.statistics.table.param.TimelineBehaviorHistoryCondition" />
+
+	<resultMap id="tableStatResult" class="tableStat">
+		<result property="id" column="ID" />
+		<result property="pipelineId" column="PIPELINE_ID" />
+		<result property="dataMediaPairId" column="DATA_MEDIA_PAIR_ID" />
+		<result property="fileSize" column="FILE_SIZE" />
+		<result property="fileCount" column="FILE_COUNT" />
+		<result property="deleteCount" column="DELETE_COUNT" />
+		<result property="updateCount" column="UPDATE_COUNT" />
+		<result property="insertCount" column="INSERT_COUNT" />
+		<result property="gmtCreate" column="GMT_CREATE" />
+		<result property="gmtModified" column="GMT_MODIFIED" />
+	</resultMap>
+	
+	<!-- all tableStat columns -->
+	<sql id="allTableStatColumns">ID,PIPELINE_ID,DATA_MEDIA_PAIR_ID,FILE_SIZE,FILE_COUNT,DELETE_COUNT,UPDATE_COUNT,INSERT_COUNT,GMT_CREATE,GMT_MODIFIED</sql>
+
+	<!-- findTableStatById -->
+	<select id="findTableStatById" resultMap="tableStatResult" parameterClass="long">
+		select
+		<include refid="allTableStatColumns" />
+		from TABLE_STAT where ID = #value#
+	</select>	
+	
+	<!-- findTableStatByPipelineIdAndDataMediaPairId -->
+	<select id="findTableStatByPipelineIdAndDataMediaPairId" resultMap="tableStatResult" parameterClass="tableStat">
+		select
+		<include refid="allTableStatColumns" />
+		from TABLE_STAT where PIPELINE_ID=#pipelineId# and DATA_MEDIA_PAIR_ID=#dataMediaPairId#
+	</select>		
+
+	<!-- listAllTableStat -->
+	<select id="listAllTableStat" resultMap="tableStatResult">
+		select
+		<include refid="allTableStatColumns" />
+		from TABLE_STAT ORDER BY GMT_CREATE DESC,ID DESC
+	</select>
+	
+	<!-- listTableStatsByPipelineId -->
+	<select id="listTableStatsByPipelineId" resultMap="tableStatResult" parameterClass="long">
+		select
+		<include refid="allTableStatColumns" />
+		from TABLE_STAT 
+		where PIPELINE_ID=#pipelineId#
+		ORDER BY GMT_CREATE DESC,ID DESC
+	</select>
+	
+	<!-- listTableStatsByDataMediaPairId -->
+	<select id="listTableStatsByDataMediaPairId" resultMap="tableStatResult" parameterClass="long">
+		select
+		<include refid="allTableStatColumns" />
+		from TABLE_STAT 
+		where DATA_MEDIA_PAIR_ID=#dataMediaPairId#
+		ORDER BY GMT_CREATE DESC,ID DESC
+	</select>
+
+	<update id="modifyTableStat" parameterClass="tableStat"><![CDATA[
+		update TABLE_STAT
+		set
+		FILE_SIZE=FILE_SIZE+#fileSize#,
+		FILE_COUNT=FILE_COUNT+#fileCount#,
+		DELETE_COUNT=DELETE_COUNT+#deleteCount#,
+		UPDATE_COUNT=UPDATE_COUNT+#updateCount#,
+		INSERT_COUNT=INSERT_COUNT+#insertCount#,
+		GMT_MODIFIED=now()
+		WHERE PIPELINE_ID=#pipelineId# and DATA_MEDIA_PAIR_ID=#dataMediaPairId#
+	]]></update>
+
+	<insert id="insertTableStat" parameterClass="tableStat">
+		insert into TABLE_STAT
+		(PIPELINE_ID,DATA_MEDIA_PAIR_ID,FILE_SIZE,FILE_COUNT,DELETE_COUNT,UPDATE_COUNT,INSERT_COUNT,GMT_CREATE,GMT_MODIFIED)
+		values
+		(#pipelineId#,#dataMediaPairId#,#fileSize#,#fileCount#,#deleteCount#,#updateCount#,#insertCount#,now(),now())
+		<selectKey keyProperty="id" resultClass="long">
+			select last_insert_id()
+		</selectKey>
+	</insert>
+
+	<delete id="deleteTableStatById" parameterClass="long"><![CDATA[
+    	delete from TABLE_STAT where ID = #value#
+    ]]></delete>
+    
+</sqlMap>  

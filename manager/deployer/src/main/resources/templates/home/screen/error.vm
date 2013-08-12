@@ -1,0 +1,7 @@
+$control.setTemplate("home:navigation.vm")
+
+<div class="main">
+<div class="title">
+对不起，你请求的链接出问题了，可能是超时，没事多刷新一次吧！
+</div>
+</div>

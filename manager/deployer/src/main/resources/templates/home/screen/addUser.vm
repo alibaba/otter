@@ -1,0 +1,74 @@
+$control.setTemplate("home:navigation.vm")
+<script language="javascript">
+<!--
+	changeNav("user");
+//-->
+</script>
+#macro (addUserMessage $field)
+    #if (!$field.valid) $field.message #end
+#end	
+<div class="main">
+  <div class="title"> 
+    <h2>添加用户</h2>
+  </div>
+ <div class="crumbs"><a href="userManager.htm">权限管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="addUser.htm">添加用户</a></div>
+ <form name="addUserForm" method="post" enctype="multipart/form-data">
+	$csrfToken.hiddenField
+	<input type="hidden" name="action" value="user_action"/>
+	<input type="hidden" name="event_submit_do_add" value="1" />
+ <div class="setting_box">
+	
+	#set ($userGroup = $form.addUserInfo.defaultInstance)
+    <table cellpadding="0" cellspacing="0" class="setting_otter">
+      <tr> 
+        <th width="300">用户名：</th>
+        <td width="329">
+			<input name="$userGroup.name.key" value="$!userGroup.name.value" type="text" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#addUserMessage ($userGroup.name)</span>
+		</td>
+      </tr>
+      <tr> 
+        <th>密码：</th>
+        <td>
+			<input name="$userGroup.password.key" type="password" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#addUserMessage ($userGroup.password)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>重复输入密码：</th>
+        <td>
+			<input name="$userGroup.rePassword.key" type="password" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#addUserMessage ($userGroup.rePassword)</span>
+		</td>
+      </tr>
+      <tr> 
+        <th>部门：</th>
+        <td>
+			<input name="$userGroup.department.key" value="$!userGroup.department.value"  type="text" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#addUserMessage ($userGroup.department)</span>
+		</td>
+      </tr>
+      <tr> 
+        <th>真实姓名：</th>
+        <td>
+			<input name="$userGroup.realName.key" value="$!userGroup.realName.value"  type="text" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#addUserMessage ($userGroup.realName)</span>
+		</td>
+      </tr>
+      <tr> 
+        <th>权限选择：</th>
+        <td><input name="$userGroup.authorizeType.key" type="radio" value="ADMIN" class="radio"/>
+          超级管理员 &nbsp;&nbsp;&nbsp;&nbsp;
+            <input name="$userGroup.authorizeType.key" type="radio" value="OPERATOR" checked="checked" class="radio"/>
+          普通用户</td>
+      </tr>
+    </table>
+ </div>
+ </form>
+  <div class="btn"><a href="javascript:document.addUserForm.submit();">保存</a></div>
+</div>

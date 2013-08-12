@@ -1,0 +1,87 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+	    <groupId>com.alibaba.otter</groupId>
+	    <artifactId>otter.parent</artifactId>
+	    <version>4.2.0</version>
+	</parent>
+	<groupId>com.alibaba.otter</groupId>
+	<artifactId>shared</artifactId>
+	<version>4.2.0</version>
+	<packaging>pom</packaging>
+	<name>shared module for otter</name>
+	<url>http://github.com/agapple/otter</url>
+	
+	<modules>	
+		<module>arbitrate</module>
+		<module>common</module>
+		<module>communication</module>
+		<module>etl</module>
+		<module>push</module>
+	</modules>
+	
+	<properties>
+		<!--maven properties-->
+        <maven.test.skip>false</maven.test.skip>
+	</properties>
+	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>oro</groupId>
+				<artifactId>oro</artifactId>
+				<version>2.0.8</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.ddlutils</groupId>
+				<artifactId>ddlutils</artifactId>
+				<version>1.0</version>
+				<exclusions>
+				  <exclusion>
+					<groupId>commons-beanutils</groupId>
+					<artifactId>commons-beanutils-core</artifactId>
+				  </exclusion>
+				  <exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging-api</artifactId>
+				  </exclusion>
+				  <exclusion>
+					<groupId>dom4j</groupId>
+					<artifactId>dom4j</artifactId>
+				  </exclusion>
+				  <exclusion>
+					<groupId>stax</groupId>
+					<artifactId>stax-api</artifactId>
+				  </exclusion>
+				  <exclusion>
+					<groupId>commons-collections</groupId>
+					<artifactId>commons-collections</artifactId>
+				  </exclusion>
+				  <exclusion>
+					<groupId>commons-digester</groupId>
+					<artifactId>ommons-digester</artifactId>
+				  </exclusion>
+				</exclusions>
+			</dependency>
+			<!-- test dependency -->
+			<dependency>
+				<groupId>org.jtester</groupId>
+				<artifactId>jtester</artifactId>
+				<version>1.1.8</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>dubbo</artifactId>
+				<version>2.5.3</version>
+				<exclusions>
+				  <exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring</artifactId>
+				  </exclusion>
+				</exclusions>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+</project>

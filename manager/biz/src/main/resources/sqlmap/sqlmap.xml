@@ -1,0 +1,37 @@
+<!DOCTYPE sqlMapConfig SYSTEM "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+	<settings cacheModelsEnabled="true" enhancementEnabled="false"
+		lazyLoadingEnabled="false" maxRequests="3000" maxSessions="3000"
+		maxTransactions="3000" useStatementNamespaces="false" />
+		
+	<typeHandler javaType="com.alibaba.otter.shared.common.model.config.channel.ChannelParameter" callback="com.alibaba.otter.manager.biz.config.channel.dal.ibatis.ChannelParameterTypeHandler"/>
+	<typeHandler javaType="com.alibaba.otter.shared.common.model.config.pipeline.PipelineParameter" callback="com.alibaba.otter.manager.biz.config.pipeline.dal.ibatis.PipelineParameterTypeHandler"/>
+	<typeHandler javaType="com.alibaba.otter.shared.common.model.config.node.NodeParameter" callback="com.alibaba.otter.manager.biz.config.node.dal.ibatis.NodeParameterTypeHandler"/>
+	<typeHandler javaType="com.alibaba.otter.canal.instance.manager.model.CanalParameter" callback="com.alibaba.otter.manager.biz.config.canal.dal.ibatis.CanalParameterTypeHandler"/>
+	<typeHandler javaType="com.alibaba.otter.shared.common.model.config.parameter.SystemParameter" callback="com.alibaba.otter.manager.biz.config.parameter.dal.ibatis.SystemParameterTypeHandler"/>
+	<typeHandler javaType="com.alibaba.otter.manager.biz.config.alarm.dal.dataobject.AlarmRuleParameter" callback="com.alibaba.otter.manager.biz.config.alarm.dal.ibatis.AlarmRuleParameterTypeHandler"/>
+	
+	<typeHandler javaType="java.util.List" callback="com.alibaba.otter.manager.biz.config.utils.ListTypeHandler"/>
+	<typeHandler javaType="java.util.Map" callback="com.alibaba.otter.manager.biz.config.utils.MapTypeHandler"/>
+	
+	<sqlMap resource="sqlmap/sqlmap-mapping-user.xml" />
+	<sqlMap resource="sqlmap/sqlmap-mapping-channel.xml" />
+	<sqlMap resource="sqlmap/sqlmap-mapping-pipeline.xml" />
+	<sqlMap resource="sqlmap/sqlmap-mapping-datamedia.xml" />
+	<sqlMap resource="sqlmap/sqlmap-mapping-datamediasource.xml" />
+	<sqlMap resource="sqlmap/sqlmap-mapping-datamediapair.xml" />
+	<sqlMap resource="sqlmap/sqlmap-mapping-node.xml" />
+	<sqlMap resource="sqlmap/sqlmap-mapping-canal.xml" />
+	<sqlMap resource="sqlmap/sqlmap-mapping-logrecord.xml" />
+	<sqlMap resource="sqlmap/sqlmap-mapping-pipelinenoderelation.xml" />
+	<sqlMap resource="sqlmap/sqlmap-mapping-delayStat.xml" />
+	<sqlMap resource="sqlmap/sqlmap-mapping-tableStat.xml" />
+	<sqlMap resource="sqlmap/sqlmap-mapping-tableHistoryStat.xml" />
+	<sqlMap resource="sqlmap/sqlmap-mapping-throughputStat.xml" />
+	<sqlMap resource="sqlmap/sqlmap-mapping-systemParameter.xml" />
+	<sqlMap resource="sqlmap/sqlmap-mapping-datacolumnpair.xml" />
+	<sqlMap resource="sqlmap/sqlmap-mapping-datacolumnpairgroup.xml" />
+	<sqlMap resource="sqlmap/sqlmap-mapping-alarmRule.xml" />
+	<sqlMap resource="sqlmap/sqlmap-mapping-autokeeper.xml" />
+	<sqlMap resource="sqlmap/sqlmap-mapping-datamatrix.xml" />
+</sqlMapConfig>

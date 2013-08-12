@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="	   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd	   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd	   http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd"
+	default-autowire="byName" default-dependency-check="none">
+	
+	<bean id="loadStatsTracker" class="com.alibaba.otter.node.etl.load.loader.LoadStatsTracker">
+	</bean>
+	
+	<!-- loader module -->
+	<bean id="otterLoaderFactory" class="com.alibaba.otter.node.etl.load.loader.OtterLoaderFactory" >
+		<property name="dataBatchLoader" ref="dataBatchLoader" />
+	</bean>
+	<bean id="dataBatchLoader" class="com.alibaba.otter.node.etl.load.loader.db.DataBatchLoader">
+		<property name="dbInterceptor" ref="dbLoadInterceptor" />
+	</bean>
+	<bean id="dbLoadAction" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="optimize" value="false"/>
+   		<property name="proxyTargetClass" value="true" />
+		<property name="targetSource" ref="dbLoadActionTargetSource" />
+	</bean>
+	<bean id="dbLoadActionTargetSource" class="org.springframework.aop.target.CommonsPoolTargetSource" >
+		<property name="minIdle" value="1" />
+		<property name="maxSize" value="-1" />
+		<property name="timeBetweenEvictionRunsMillis" value="60000" /><!-- 1分钟进行一次回收 -->
+		<property name="minEvictableIdleTimeMillis" value="600000" /><!-- 10分钟回收空闲的 -->
+		<property name="targetBeanName" value="dbLoadActionTarget" />
+	</bean>
+	<bean id="dbLoadActionTarget" class="com.alibaba.otter.node.etl.load.loader.db.DbLoadAction" scope="prototype">
+		<property name="retry" value="3" />
+		<property name="retryWait" value="3000" />
+		<property name="poolSize" value="5" />
+		<property name="interceptor" ref="dbLoadInterceptor" />
+	</bean>
+	
+	<bean id="fileLoadAction" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="optimize" value="false"/>
+   		<property name="proxyTargetClass" value="true" />
+		<property name="targetSource" ref="fileLoadActionTargetSource" />
+	</bean>
+	<bean id="fileLoadActionTargetSource" class="org.springframework.aop.target.CommonsPoolTargetSource">
+		<property name="minIdle" value="1" />
+		<property name="maxSize" value="-1" />
+		<property name="timeBetweenEvictionRunsMillis" value="60000" /><!-- 1分钟进行一次回收 -->
+		<property name="minEvictableIdleTimeMillis" value="600000" /><!-- 10分钟回收空闲的 -->
+		<property name="targetBeanName" value="fileLoadActionTarget" />
+	</bean>
+	<bean id="fileLoadActionTarget" class="com.alibaba.otter.node.etl.load.loader.db.FileLoadAction" scope="prototype">
+		<property name="retry" value="3" />
+		<property name="poolSize" value="5" />
+	</bean>
+	
+	<!-- interceptor -->
+	<bean id="dbLoadInterceptor" class="com.alibaba.otter.node.etl.load.loader.interceptor.ChainLoadInterceptor" >
+		<property name="interceptors">
+			<list>
+				<ref bean="sqlBuilderLoadInterceptor" />
+				<ref bean="operationInterceptorFactory" />
+				<ref bean="dbLogLoadInterceptor" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="dbLogLoadInterceptor" class="com.alibaba.otter.node.etl.load.loader.db.interceptor.log.LogLoadInterceptor">
+		<property name="dump" value="true" />
+	</bean>
+	<bean id="sqlBuilderLoadInterceptor" class="com.alibaba.otter.node.etl.load.loader.db.interceptor.sql.SqlBuilderLoadInterceptor" >
+	</bean>
+	<!-- retl_client处理 -->
+	<bean id="abstractOperationInterceptor" abstract="true">
+		<property name="innerIdCount" value="300"/>
+		<property name="globalIdCount" value="1000"/>
+	</bean>
+	<bean id="canalMysqlInterceptor" class="com.alibaba.otter.node.etl.load.loader.db.interceptor.operation.CanalMysqlInterceptor" parent="abstractOperationInterceptor" />
+	<bean id="canalOracleInterceptor" class="com.alibaba.otter.node.etl.load.loader.db.interceptor.operation.CanalOracleInterceptor" parent="abstractOperationInterceptor" />
+	<bean id="operationInterceptorFactory" class="com.alibaba.otter.node.etl.load.loader.db.interceptor.operation.OperationInterceptorFactory">
+		<property name="mysqlInterceptors">
+			<list>
+				<ref local="canalMysqlInterceptor"/> 
+			</list>
+		</property>
+		<property name="oracleInterceptors">
+			<list>
+				<ref local="canalOracleInterceptor"/> 
+			</list>
+		</property>
+	</bean>  
+</beans>

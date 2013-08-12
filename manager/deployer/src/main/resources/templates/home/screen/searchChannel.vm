@@ -1,0 +1,211 @@
+$control.setTemplate("home:navigation.vm")
+<script type="text/javascript" src="js/trcolor.js"></script>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
+<script type="text/javascript" src="js/jquery.simplemodal-1.4.js"></script> 
+<script language="javascript">
+<!--
+	changeNav("sync");
+    $(function () {
+        $('.bubbleInfo').each(function () {
+            var distance = 10;
+            var time = 250;
+            var hideDelay = 200;
+
+            var hideDelayTimer = null;
+
+            var beingShown = false;
+            var shown = false;
+            var trigger = $('.trigger', this);
+            var info = $('.popup', this).css('opacity', 0);
+
+
+            $([trigger.get(0), info.get(0)]).mouseover(function () {
+                if (hideDelayTimer) clearTimeout(hideDelayTimer);
+                if (beingShown || shown) {
+                    // don't trigger the animation again
+                    return;
+                } else {
+                    // reset position of info box
+                    beingShown = true;
+
+                    info.css({
+                        top: 10,
+                        left: 10,
+                        display: 'block'
+                    }).animate({
+                        top: '+=' + distance + 'px',
+                        opacity: 1
+                    }, time, 'swing', function() {
+                        beingShown = false;
+                        shown = true;
+                    });
+                }
+
+                return false;
+            }).mouseout(function () {
+                if (hideDelayTimer) clearTimeout(hideDelayTimer);
+                hideDelayTimer = setTimeout(function () {
+                    hideDelayTimer = null;
+                    info.animate({
+                        top: '-=' + distance + 'px',
+                        opacity: 0
+                    }, time, 'swing', function () {
+                        shown = false;
+                        info.css('display', 'none');
+                    });
+
+                }, hideDelay);
+
+                return false;
+            });
+        });
+    });
+    
+    //-->
+		$(function() {
+			
+			function showModal(src, height, width) {
+				jQuery.modal('<iframe src="' + src + '" height="' + height + '" width="' + width + '" frameborder="0" allowTransparency=true>', {
+					closeHTML : "<input type='button' style='display:none'/>",
+					closeClass: "modalClose",
+					opacity : 35,
+					overlayCss : {
+						backgroundColor: "#000"
+					}
+				});
+			}
+			
+			$(".del").click(function() {
+				showModal("tip_message_del.html", "350", "750");
+			});
+
+			function megaHoverOver(){
+				$(this).find(".sub").stop().fadeTo('fast', 1).show();
+				//Calculate width of all ul's
+				(function($) { 
+					jQuery.fn.calcSubWidth = function() {
+						rowWidth = 0;
+						//Calculate row
+						$(this).find("ul").each(function() {					
+							rowWidth += $(this).width(); 
+						});	
+					};
+				})(jQuery); 
+				
+				if ( $(this).find(".row").length > 0 ) { //If row exists...
+					var biggestRow = 0;	
+					//Calculate each row
+					$(this).find(".row").each(function() {							   
+						$(this).calcSubWidth();
+						//Find biggest row
+						if(rowWidth > biggestRow) {
+							biggestRow = rowWidth;
+						}
+					});
+					//Set width
+					$(this).find(".sub").css({'width' :biggestRow});
+					$(this).find(".row:last").css({'margin':'0'});
+				} else { //If row does not exist...
+					$(this).calcSubWidth();
+					//Set Width
+					$(this).find(".sub").css({'width' : rowWidth});
+				}
+			}
+			function megaHoverOut(){ 
+			  $(this).find(".sub").stop().fadeTo('fast', 0, function() {
+				  $(this).hide(); 
+			  });
+			}
+			var config = {    
+				 sensitivity: 1, // number = sensitivity threshold (must be 1 or higher)    
+				 interval: 100, // number = milliseconds for onMouseOver polling interval    
+				 over: megaHoverOver, // function = onMouseOver callback (REQUIRED)    
+				 timeout: 200, // number = milliseconds delay before onMouseOut    
+				 out: megaHoverOut // function = onMouseOut callback (REQUIRED)    
+			};
+		});
+</script>
+
+<!--页面主体-->
+<div class="main">
+   <div class="title">
+    <h2>Channel管理</h2>
+  </div>
+   <div class="crumbs"><a href="channelList.htm">Channel管理</a></div> 
+   
+   <!--Channel搜索-->
+   <div class="search_o"> 
+		<form name="search_channel" method="post">
+			##$csrfToken.hiddenField
+			<input type="hidden" name="action" value="channel_action"/>
+			<input type="hidden" name="event_submit_do_search" value="1" />
+			<div class="search_input">
+				<input name="searchKey" type="text" value="请输入关键字(目前支持Channel的ID、名字搜索)"  onfocus="if(this.value == '请输入关键字(目前支持Channel的ID、名字搜索)') {this.value='';}" onblur="if(this.value == '') {this.value = '请输入关键字(目前支持Channel的ID、名字搜索)';}" />
+			</div>
+			<div class="search_btn"><a href="javascript:document.search_channel.submit();"><img src="images/search_btn.png" width="39" height="31" /></a></div>
+        </form>
+   </div>
+   <!--列表-->
+   
+  <table border="0" cellspacing="0" cellpadding="0" class="list changecolor_w">
+    <tr> 
+      <th>序号</th>
+      <th>Channel名字</th>
+      <th width="14%">运行状态</th>
+      <th width="10%">数据延迟</th>
+      <th width="14%">更新时间</th>
+      <th width="24%">操作</th>
+    </tr>
+    
+    #foreach ($channel in $channels)
+		<tr> 
+	      <td width="5%">$channel.id</td>
+	      <td width="16%">
+	      <div class="bubbleInfo">
+	         #set ($pipelineURL = $homeModule.setTarget("pipelineList.vm").addQueryData("channelId", $channel.id))
+			 <a href="$pipelineURL" class="cn">$channel.name</a>
+	         <div class="popup">
+	         <div class="pop_tips_top"></div>
+	         <div class="pop_tips_mid">
+	          <div class="pop_tips_font">$channel.description</div>
+	         </div>
+	         <div class="pop_tips_bottom"></div>
+	         </div>
+	      </div>      
+	      </td>
+	      
+	      	<td>
+				#if($channel.status.isStart()) 运行 
+				#elseif($channel.status.isPause()) 暂停
+				#else 停止
+				#end
+			</td>
+	      
+	      <td>10521</td>
+	      <td>$channel.gmtModified.toLocaleString()</td>
+	      
+	      
+	      #if($channel.status.isStart())
+	      	<td><p>
+					#set ($stopURL = $homeModule.setTarget("channelList.vm").setAction("channelAction").addQueryData("channelId", $channel.id).addQueryData("status", "stop").addQueryData("eventSubmitDoStatus", "true"))
+					<a href="$stopURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">停用</span></a>
+			</p></td>
+	      #else
+	      	<td><p>
+					#set ($startURL = $homeModule.setAction("channelAction").addQueryData("channelId", $channel.id).addQueryData("status", "start").addQueryData("eventSubmitDoStatus", "true"))
+					<a href="$startURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">启用</span><span class="ico_line">|</span></a>
+					#set ($editURL = $homeModule.setTarget("editChannel.vm").addQueryData("channelId", $channel.id))
+					<a href="$editURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">编辑</span></a><span class="ico_line">|</span> 
+                  	#set ($removeURL = $homeModule.setAction("channelAction").addQueryData("channelId", $channel.id).addQueryData("eventSubmitDoDelete", "true"))
+        			<a href="$removeURL" class="link del"><img src="images/ico_del.png" width="9" height="9" /><span class="ico_font">删除</span></a></p>
+        	</td>
+	      #end
+	      
+	    </tr>
+	#end
+  
+    
+    
+  </table>
+    
+</div>

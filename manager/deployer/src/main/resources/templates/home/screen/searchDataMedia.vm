@@ -1,0 +1,126 @@
+$control.setTemplate("home:navigation.vm")
+<script type="text/javascript" src="js/trcolor.js"></script>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
+<script type="text/javascript" src="js/jquery.simplemodal-1.4.js"></script> 
+<script language="javascript">
+	changeNav("datamedia");
+		$(function() {
+			
+			function showModal(src, height, width) {
+				jQuery.modal('<iframe src="' + src + '" height="' + height + '" width="' + width + '" frameborder="0" allowTransparency=true>', {
+					closeHTML : "<input type='button' style='display:none'/>",
+					closeClass: "modalClose",
+					opacity : 35,
+					overlayCss : {
+						backgroundColor: "#000"
+					}
+				});
+			}
+			
+			$(".del").click(function() {
+				showModal("tip_message_del.html", "350", "750");
+			});
+
+			function megaHoverOver(){
+				$(this).find(".sub").stop().fadeTo('fast', 1).show();
+				//Calculate width of all ul's
+				(function($) { 
+					jQuery.fn.calcSubWidth = function() {
+						rowWidth = 0;
+						//Calculate row
+						$(this).find("ul").each(function() {					
+							rowWidth += $(this).width(); 
+						});	
+					};
+				})(jQuery); 
+				
+				if ( $(this).find(".row").length > 0 ) { //If row exists...
+					var biggestRow = 0;	
+					//Calculate each row
+					$(this).find(".row").each(function() {							   
+						$(this).calcSubWidth();
+						//Find biggest row
+						if(rowWidth > biggestRow) {
+							biggestRow = rowWidth;
+						}
+					});
+					//Set width
+					$(this).find(".sub").css({'width' :biggestRow});
+					$(this).find(".row:last").css({'margin':'0'});
+				} else { //If row does not exist...
+					$(this).calcSubWidth();
+					//Set Width
+					$(this).find(".sub").css({'width' : rowWidth});
+				}
+			}
+			function megaHoverOut(){ 
+			  $(this).find(".sub").stop().fadeTo('fast', 0, function() {
+				  $(this).hide(); 
+			  });
+			}
+			var config = {    
+				 sensitivity: 1, // number = sensitivity threshold (must be 1 or higher)    
+				 interval: 100, // number = milliseconds for onMouseOver polling interval    
+				 over: megaHoverOver, // function = onMouseOver callback (REQUIRED)    
+				 timeout: 200, // number = milliseconds delay before onMouseOut    
+				 out: megaHoverOut // function = onMouseOut callback (REQUIRED)    
+			};
+		});
+</script>
+
+<!--页面主体-->
+<div class="main">
+   
+  <div class="title"> 
+    <h2>搜索数据介质</h2>
+  </div>
+   <div class="crumbs"><a href="dataMediaList.htm">数据介质管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;搜索数据介质</div> 
+   <!--分页表单-->
+   <form id="pageform" name="pageform" action="$homeModule.setTarget('dataMediaList.vm')" method="post">
+    	$csrfToken.hiddenField
+    	<input type="hidden" id="pageIndex" name="pageIndex" value=""/>
+   </form>
+   <!--DataMedia搜索-->
+   <div class="search_o"> 
+		<form name="search_data_media" method="post">
+			##$csrfToken.hiddenField
+			<input type="hidden" name="action" value="data_media_action"/>
+			<input type="hidden" name="event_submit_do_search" value="1" />
+			<div class="search_input">
+				<input name="searchKey" type="text" value="请输入关键字(目前支持DataMedia的ID、名字搜索)"  onfocus="if(this.value == '请输入关键字(目前支持DataMedia的ID、名字搜索)') {this.value='';}" onblur="if(this.value == '') {this.value = '请输入关键字(目前支持DataMedia的ID、名字搜索)';}" />
+			</div>
+			<div class="search_btn"><a href="javascript:document.search_data_media.submit();"><img src="images/search_btn.png" width="39" height="31" /></a></div>
+        </form>
+   </div>
+   
+   <!--列表-->
+     
+  <table border="0" cellspacing="0" cellpadding="0" class="list changecolor_w" >
+    <tr> 
+      <th>序号</th>
+      <th>Table名字</th>
+      <th width="16%">DataSource</th>
+      <th width="18%">命名空间</th>
+      <th width="10%">TabeId</th>
+      <th width="31%">操作</th>
+    </tr>
+	#foreach ($dataMedia in $dataMedias)
+	
+    <tr> 
+      <td width="9%">$dataMedia.id</td>
+      <td width="16%">$dataMedia.name</td>
+      <td>$dataMedia.source.name</td>
+      <td>$dataMedia.namespace</td>
+      <td>33</td>
+      <td>
+		#set ($editURL = $homeModule.setTarget("editDataMedia.vm").addQueryData("dataMediaId", $dataMedia.id))
+		<a href="$editURL"><img src="images/ico_edit.png" alt="" width="13" height="13" /><span class="ico_font">编辑</span></a><span class="ico_line">|</span>
+		#set ($removeURL = $homeModule.setAction("dataMediaAction").addQueryData("dataMediaId", $dataMedia.id).addQueryData("eventSubmitDoDelete", "true"))
+        <a href="$removeURL" class="link del"><img src="images/ico_del.png" width="9" height="9" /><span class="ico_font">删除</span></a></td>
+    </tr>
+    #end
+  </table>
+     <!--常规按钮-->
+     
+  <div class="btn"><a href="addDataMedia.htm">添加</a></div>
+</div>

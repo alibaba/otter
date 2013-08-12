@@ -1,0 +1,36 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.alibaba.otter</groupId>
+		<artifactId>manager</artifactId>
+		<version>4.2.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	<groupId>com.alibaba.otter</groupId>
+	<artifactId>manager.web</artifactId>
+	<packaging>jar</packaging>
+	<name>manager web module for otter</name>
+	<url>http://github.com/agapple/otter</url>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.alibaba.otter</groupId>
+			<artifactId>manager.biz</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba.citrus</groupId>
+			<artifactId>citrus-webx-all</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.directwebremoting</groupId>
+			<artifactId>dwr</artifactId>
+		</dependency>
+	</dependencies>
+</project>

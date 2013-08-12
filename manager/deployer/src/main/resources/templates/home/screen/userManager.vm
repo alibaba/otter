@@ -1,0 +1,99 @@
+$control.setTemplate("home:navigation.vm")
+<script language="javascript">
+<!--
+	changeNav("user");
+//-->
+</script>
+<!--页面主体-->
+<div class="main">
+   <div class="title">
+    <h2>权限管理</h2>
+  </div>
+   <div class="crumbs"><a href="userManager.htm">权限管理</a></div> 
+   
+   <!--分页表单-->
+   <form id="pageform" name="pageform" action="$homeModule.setTarget('userManager.vm')" method="post">
+    	<input type="hidden" id="pageIndex" name="pageIndex" value=""/>
+		<input type="hidden" id="searchKey" name="searchKey" value="$!searchKey"/>
+   </form>
+   <!--全局搜索-->
+   <div class="search_o"> 
+    	<form name="search_user" action="userManager.htm" method="post">
+    		##$csrfToken.hiddenField
+			<div class="search_input">
+				<input name="searchKey" type="text" value="支持ID、用户名、真实姓名、部门搜索"  onfocus="if(this.value == '支持ID、用户名、真实姓名、部门搜索') {this.value='';}" onblur="if(this.value == '') {this.value = '支持ID、用户名、真实姓名、部门搜索';}" />
+			</div>
+			<div class="search_btn"><a href="javascript:document.search_user.submit();"><img src="images/search_btn.png" width="39" height="31" /></a></div>
+		</form>
+   </div>
+   
+   <!--列表-->
+     
+  <table border="0" cellspacing="0" cellpadding="0" class="list changecolor_w">
+    <tr> 
+      <th>序号</th>
+      <th>用户名</th>
+      <th>部门</th>
+      <th>真实姓名</th>
+      <th>权限</th>
+	  <th>操作</th>
+    </tr>
+	#foreach($user in $users)
+    <tr> 
+      <td width="5%">$user.id</td>
+      <td width="16%">$user.name</td>
+      <td>$user.department</td>
+      <td>$user.realName</td>
+      <td>#if($user.authorizeType.isAdmin()) 超级管理员 #else 普通用户 #end</td>
+	  <td><p>
+			#set ($editURL = $homeModule.setTarget("editUser.vm").addQueryData("userId", $user.id).addQueryData("pageIndex", $!paginator.page).addQueryData("searchKey", $!searchKey))
+			<a href="$editURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">编辑</span></a><span class="ico_line">|</span> 
+			#set ($removeURL = $homeModule.setAction("userAction").addQueryData("userId", $user.id).addQueryData("pageIndex", $!paginator.page).addQueryData("searchKey", $!searchKey).addQueryData("eventSubmitDoDelete", "true"))
+			<a href="javascript:if(confirm('确实要删除吗?'))location='$removeURL'" class="link del"><img src="images/ico_del.png" width="9" height="9" /><span class="ico_font">删除</span></a></p>
+	  </td>
+    </tr>
+	#end
+  </table>
+  <!--常规按钮-->
+  <div class="btn"><a href="$userAddLink">添加</a></div>
+  <!--分页-->
+     <div class="page">共$paginator.items条数据&nbsp;&nbsp;第$paginator.page页/共$paginator.pages页&nbsp;&nbsp; 
+       
+	   #if($paginator.page == 1)
+            <font color="999999">首页</font>
+	   #else
+			<a href="#" class="prev" onclick="pageNavigation(this,1)">首页</a>
+	   #end
+	   
+	   #if($paginator.page > 1)
+			#set($pre_page = $paginator.page - 1)
+				<a href="#" class="prev" onclick="pageNavigation(this,$pre_page)">上一页</a>
+	   #else
+            <font color="999999">上一页</font>
+	   #end
+	   ##分页下标
+	   #set($counts_keys = $paginator.getSlider(7))
+	   #foreach( $thisPage in $counts_keys)
+			#if( $thisPage == $paginator.page)
+                <b>$thisPage</b>
+			#else
+				#if($thisPage != 0)
+					<a href="#" class="num" onclick="pageNavigation(this,$thisPage)">$thisPage</a> 
+				#end
+			#end
+	   #end
+	   
+	   #if($paginator.page < $paginator.pages)
+			#set($next_page = $paginator.page + 1)
+				<a href="#" class="prev" onclick="pageNavigation(this,$next_page)">下一页</a>
+	   #else
+            <font color="999999">下一页</font>
+	   #end
+	   
+	   #if($paginator.page == $paginator.pages)
+            <font color="999999">末页</font>
+	   #else
+			<a href="#" class="prev" onclick="pageNavigation(this,$paginator.pages)">末页</a>
+	   #end
+     </div> 
+</div>

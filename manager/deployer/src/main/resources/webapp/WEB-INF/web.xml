@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee  http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+	<context-param>
+		<param-name>logSystem</param-name>
+		<param-value>logback</param-value>
+	</context-param>
+	<context-param>
+		<param-name>logConfiguration</param-name>
+		<param-value>/WEB-INF/logback.xml</param-value>
+	</context-param>
+ 
+ 	<!-- 
+	<listener>
+		<listener-class>com.alibaba.citrus.logconfig.LogConfiguratorListener</listener-class>
+	</listener>
+ 	-->
+ 
+	<listener>
+		<listener-class>com.alibaba.citrus.webx.context.WebxContextLoaderListener</listener-class>
+	</listener>
+
+	<filter>
+		<filter-name>mdc</filter-name>
+		<filter-class>com.alibaba.citrus.webx.servlet.SetLoggingContextFilter</filter-class>
+	</filter>
+
+	<filter>
+		<filter-name>webx</filter-name>
+		<filter-class>com.alibaba.citrus.webx.servlet.WebxFrameworkFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>mdc</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>webx</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+
+	<!-- 新增的dwr配置 -->  
+	<!-- 
+    <servlet>  
+        <servlet-name>dwr-invoker</servlet-name>  
+        <servlet-class>uk.ltd.getahead.dwr.DWRServlet</servlet-class>  
+        <init-param>  
+            <description></description>  
+            <param-name>debug</param-name>  
+            <param-value>true</param-value>  
+        </init-param>  
+        <init-param>  
+            <param-name>crossDomainSessionSecurity</param-name>  
+            <param-value>false</param-value>  
+        </init-param>
+        <init-param>  
+            <param-name>logLevel</param-name>  
+            <param-value>warn</param-value>  
+        </init-param>  
+    </servlet> -->
+    
+	<servlet>
+		<servlet-name>dwr-invoker</servlet-name>
+		<servlet-class>org.directwebremoting.spring.DwrSpringServlet</servlet-class>
+		<init-param>
+			<param-name>debug</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<!-- 新加corssDomainSessionSecurity参数 -->  
+		<init-param>     
+			<param-name>crossDomainSessionSecurity</param-name>     
+			<param-value>false</param-value>     
+		</init-param>  
+	</servlet>  
+   
+    <servlet-mapping>  
+        <servlet-name>dwr-invoker</servlet-name>  
+        <url-pattern>/dwr/*</url-pattern>  
+    </servlet-mapping>
+    
+    
+</web-app>

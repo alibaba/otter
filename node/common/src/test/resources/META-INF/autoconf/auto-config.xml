@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="gb2312"?>
+<config>
+    <!-- 通用配置 -->
+    <group name="otter common">
+    	<property name="otter.manager.address" description="otter manager address" defaultValue="otter.alibaba-inc.com:1099"/>
+    	<property name="otter.communication.pool.size" description="communication pool size" defaultValue="10"/>
+    </group>
+	
+    <!-- 脚本 -->
+    <script>
+        <generate template="otter.properties.vm" destfile="otter.properties" charset="UTF-8" />
+    </script>
+</config>

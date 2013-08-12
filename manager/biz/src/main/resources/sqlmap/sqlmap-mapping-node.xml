@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+    <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"  
+       "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap
+	namespace="com.alibaba.otter.manager.biz.config.node.dal.dataobject.NodeDO">
+	<typeAlias alias="node"
+		type="com.alibaba.otter.manager.biz.config.node.dal.dataobject.NodeDO" />
+
+	<resultMap id="nodeResult" class="node">
+		<result property="id" column="ID" />
+		<result property="name" column="NAME" />
+		<result property="ip" column="IP" />
+		<result property="port" column="PORT" />
+		<result property="description" column="DESCRIPTION" />
+		<result property="parameters" column="PARAMETERS" />
+		<result property="gmtCreate" column="GMT_CREATE" />
+		<result property="gmtModified" column="GMT_MODIFIED" />
+	</resultMap>
+
+	<!-- all node columns -->
+	<sql id="allNodeColumns">ID,NAME,IP,PORT,DESCRIPTION,PARAMETERS,GMT_CREATE,GMT_MODIFIED
+	</sql>
+
+	<select id="findNodeById" resultMap="nodeResult" parameterClass="long">
+		select
+		<include refid="allNodeColumns" />
+		from NODE where ID = #value#
+	</select>
+
+	<select id="getNodeCount" resultClass="Integer">
+		select count(*) from NODE 
+		<dynamic prepend="where">
+			<isNotEmpty property="searchKey">
+				NAME like concat('%',replace(#searchKey#,'_','\_'),'%')
+				or ID like concat('%',replace(#searchKey#,'_','\_'),'%')
+				or ip like concat('%',replace(#searchKey#,'_','\_'),'%')
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="listNodes" resultMap="nodeResult">
+		select
+		<include refid="allNodeColumns" />
+		from NODE
+		<dynamic prepend="where">
+			<isNotEmpty property="searchKey">
+				NAME like concat('%',replace(#searchKey#,'_','\_'),'%')
+				or ID like concat('%',replace(#searchKey#,'_','\_'),'%')
+				or ip like concat('%',replace(#searchKey#,'_','\_'),'%')
+			</isNotEmpty>
+		</dynamic>
+
+		ORDER BY ID DESC
+
+		<dynamic>
+			<isNotEmpty property="offset">
+				<isNotEmpty property="length">
+					limit #offset#, #length#
+				</isNotEmpty>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="listNodeByIds" resultMap="nodeResult">
+		select
+		<include refid="allNodeColumns" />
+		from NODE where ID in
+		<iterate open="(" close=")" conjunction=",">
+			#[]#
+		</iterate>
+		ORDER BY ID DESC
+	</select>
+
+	<update id="updateNode" parameterClass="node"><![CDATA[
+		update NODE
+		set
+		NAME=#name#,
+		IP=#ip#,
+		PORT=#port#,
+		DESCRIPTION=#description#,
+		PARAMETERS=#parameters#,
+		GMT_MODIFIED=now()
+		WHERE ID = #id#
+	]]></update>
+
+	<select id="checkNodeUnique" resultClass="Integer"
+		parameterClass="node">
+		select count(*) from NODE
+		where NODE.ID != #id#
+		and
+		NODE.NAME = #name#
+		and NODE.IP = #ip#
+	</select>
+
+	<insert id="insertNode" parameterClass="node">
+		insert into NODE
+		(NAME,IP, PORT, DESCRIPTION, PARAMETERS,GMT_CREATE,
+		GMT_MODIFIED)
+		SELECT
+		#name#,#ip#,#port#,#description#,#parameters#,now(),now()
+		from dual
+		WHERE not exists (select * from NODE
+		where NODE.NAME = #name# or
+		( NODE.IP = #ip# and
+		NODE.PORT = #port# )
+		);
+		<selectKey keyProperty="id" resultClass="long">
+			select
+			last_insert_id()
+		</selectKey>
+	</insert>
+
+	<delete id="deleteNodeById" parameterClass="long"><![CDATA[
+    	delete from NODE where ID = #value#
+    ]]></delete>
+
+</sqlMap>  

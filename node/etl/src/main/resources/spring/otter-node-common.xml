@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd	   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd	   http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd"
+	default-autowire="byName" default-dependency-check="none">
+	
+	<bean id="executorService" class="com.alibaba.otter.shared.common.utils.thread.ExecutorServiceFactoryBean">
+		<property name="poolSize" value="100" />
+		<property name="acceptCount" value="200" />
+		<property name="name" value="Otter-Seda-Executor" />
+	</bean>
+	
+	<!-- 池化配置 -->
+	<bean id="executorTemplateGetter" class="com.alibaba.otter.shared.common.utils.thread.ExecutorTemplateGetter" />
+	<bean id="executorTemplate" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="optimize" value="false"/>
+   		<property name="proxyTargetClass" value="true" />
+		<property name="targetSource" ref="executorTemplateTargetSource" />
+	</bean>
+	<bean id="executorTemplateTargetSource" class="org.springframework.aop.target.CommonsPoolTargetSource" >
+		<property name="minIdle" value="1" />
+		<property name="maxSize" value="-1" />
+		<property name="timeBetweenEvictionRunsMillis" value="60000" /><!-- 1分钟进行一次回收 -->
+		<property name="minEvictableIdleTimeMillis" value="600000" /><!-- 10分钟回收空闲的 -->
+		<property name="targetBeanName" value="executorTemplateTarget" />
+	</bean>
+	<bean id="executorTemplateTarget" class="com.alibaba.otter.shared.common.utils.thread.ExecutorTemplate" scope="prototype" >
+		<property name="poolSize" value="5" />
+	</bean>
+	
+	<bean id="stageAggregationCollector" class="com.alibaba.otter.node.etl.common.jmx.StageAggregationCollector">
+	</bean>
+	
+	<bean id="otterController" class="com.alibaba.otter.node.etl.OtterController" depends-on="configClientService">
+	</bean>
+</beans>

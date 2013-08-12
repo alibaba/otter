@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+    <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"  
+       "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="com.alibaba.otter.manager.biz.config.alarm.dal.dataobject.AlarmRuleDO">
+	<typeAlias alias="ALARM_RULE"
+		type="com.alibaba.otter.manager.biz.config.alarm.dal.dataobject.AlarmRuleDO" />
+
+	<resultMap id="alarmRuleResult" class="ALARM_RULE">
+		<result property="id" column="ID" />
+		<result property="pipelineId" column="PIPELINE_ID" />
+		<result property="monitorName" column="MONITOR_NAME" />
+		<result property="status" column="STATUS" />
+		<result property="receiverKey" column="RECEIVER_KEY" />
+		<result property="matchValue" column="MATCH_VALUE" />
+		<result property="alarmRuleParameter" column="PARAMETERS" />
+		<result property="description" column="DESCRIPTION" />
+		<result property="gmtCreate" column="GMT_CREATE" />
+		<result property="gmtModified" column="GMT_MODIFIED" />
+	</resultMap>
+	
+	<!-- all columns -->
+	<sql id="allAlarmRuleColumns">ID,PIPELINE_ID,MONITOR_NAME,STATUS,RECEIVER_KEY,MATCH_VALUE,PARAMETERS,DESCRIPTION,GMT_CREATE,GMT_MODIFIED</sql>
+
+	<insert id="insertAlarmRule" parameterClass="ALARM_RULE">
+		insert into ALARM_RULE
+		(PIPELINE_ID,MONITOR_NAME,STATUS,RECEIVER_KEY,MATCH_VALUE,PARAMETERS,DESCRIPTION,GMT_CREATE,GMT_MODIFIED)
+		VALUES 
+		(#pipelineId#,#monitorName#,#status#,#receiverKey#,#matchValue#,#alarmRuleParameter#,#description#,now(),now())
+		<selectKey keyProperty="id" resultClass="long">
+			select
+			last_insert_id()
+		</selectKey>
+	</insert>
+	
+	<update id="updateAlarmRule" parameterClass="ALARM_RULE"><![CDATA[
+		update ALARM_RULE
+		set
+		MONITOR_NAME=#monitorName#,
+		RECEIVER_KEY=#receiverKey#,
+		MATCH_VALUE=#matchValue#,
+		PARAMETERS=#alarmRuleParameter#,
+		STATUS=#status#,
+		DESCRIPTION=#description#,
+		GMT_MODIFIED=now()
+		WHERE ID = #id#
+	]]></update>
+	
+	<delete id="deleteAlarmRuleById" parameterClass="long"><![CDATA[
+    	delete from ALARM_RULE where ID = #value#
+    ]]></delete>
+    
+	<select id="findByRuleId" resultMap="alarmRuleResult"
+		parameterClass="long">
+		select  
+		<include refid="allAlarmRuleColumns" />
+		from ALARM_RULE where ID = #alarmRuleId#
+	</select>
+
+	<select id="listAlarmByPipelineId" resultMap="alarmRuleResult"
+		parameterClass="long">
+		select  
+		<include refid="allAlarmRuleColumns" />
+		from ALARM_RULE where PIPELINE_ID = #pipelineId#
+	</select>
+	
+	<select id="listAllAlarmRule" resultMap="alarmRuleResult">
+		select  
+		<include refid="allAlarmRuleColumns" />
+		from ALARM_RULE where PIPELINE_ID = #pipelineId#
+	</select>
+	
+	<select id="listAllAlarmOrderByPipeline" resultMap="alarmRuleResult">
+		select  
+		<include refid="allAlarmRuleColumns" />
+		from ALARM_RULE order by PIPELINE_ID asc 
+		<dynamic>
+			<isNotEmpty property="offset" >
+				<isNotEmpty property="length">
+					limit #offset#, #length#
+				</isNotEmpty>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="getAlarmRuleCount" resultClass="Integer">
+		select count(*) from ALARM_RULE 
+	</select>
+	
+	<select id="listAlarmByStatus" resultMap="alarmRuleResult">
+		select  
+		<include refid="allAlarmRuleColumns" />
+		from ALARM_RULE where STATUS = #status#
+	</select>
+	
+</sqlMap>  

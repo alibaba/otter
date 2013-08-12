@@ -1,0 +1,29 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.alibaba.otter</groupId>
+		<artifactId>node</artifactId>
+		<version>4.2.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	<groupId>com.alibaba.otter</groupId>
+	<artifactId>otter.extend</artifactId>
+	<packaging>jar</packaging>
+	<name>otter extend module for otter</name>
+	<url>http://github.com/agapple/otter</url>
+	<dependencies>
+		<dependency>
+			<groupId>com.alibaba.otter</groupId>
+			<artifactId>shared.etl</artifactId>
+			<version>4.2.0</version>
+		</dependency>
+		<!-- test dependency -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.5</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>

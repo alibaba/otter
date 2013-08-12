@@ -1,0 +1,2 @@
+otter.manager.address = ${otter_manager_address}
+otter.communication.pool.size = ${otter_communication_pool_size}

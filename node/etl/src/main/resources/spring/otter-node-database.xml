@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="	   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd	   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd	   http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd"
+	default-autowire="byName" default-dependency-check="none">
+	
+	<!-- dbDialect -->
+	<bean id="dbDialectFactory" class="com.alibaba.otter.node.etl.common.db.dialect.DbDialectFactory">
+		<property name="dataSourceService" ref="dataSourceService" />
+		<property name="dbDialectGenerator" ref="dbDialectGenerator" />
+	</bean>
+	
+	<bean id="dbDialectGenerator" class="com.alibaba.otter.node.etl.common.db.dialect.DbDialectGenerator">
+		<property name="defaultLobHandler" ref="defaultLobHandler" />
+		<property name="oracleLobHandler" ref="oracleLobHandler" />
+	</bean>
+	
+	<!--  lob bean -->
+	<bean id="defaultLobHandler" class="org.springframework.jdbc.support.lob.DefaultLobHandler">
+		<property name="streamAsLob" value="true" />
+	</bean>
+	<bean id="oracleLobHandler" class="org.springframework.jdbc.support.lob.OracleLobHandler">
+		<property name="nativeJdbcExtractor" ref="automaticJdbcExtractor"/>
+	</bean>
+	<bean id="automaticJdbcExtractor" class="com.alibaba.otter.node.etl.common.db.lob.AutomaticJdbcExtractor">
+		<property name="defaultJdbcExtractor">
+			<bean class="org.springframework.jdbc.support.nativejdbc.SimpleNativeJdbcExtractor"/>
+		</property>
+		<property name="extractors">
+			<map>
+				<entry key="org.apache.commons.dbcp">
+						<bean class="org.springframework.jdbc.support.nativejdbc.CommonsDbcpNativeJdbcExtractor" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="dataSourceService" class="com.alibaba.otter.node.etl.common.datasource.impl.DBDataSourceService" scope="singleton">
+		<property name="dataSourceHandlers">
+			<list>
+				<ref bean="mediaPushDataSourceHandler" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="mediaPushDataSourceHandler" class="com.alibaba.otter.common.push.datasource.media.MediaPushDataSourceHandler" scope="singleton" />
+</beans>

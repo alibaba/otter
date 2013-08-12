@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+    <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"  
+       "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="com.alibaba.otter.manager.biz.config.datamedia.dal.dataobject.DataMediaDO">
+	<typeAlias alias="dataMedia"
+		type="com.alibaba.otter.manager.biz.config.datamedia.dal.dataobject.DataMediaDO" />
+
+	<resultMap id="dataMediaResult" class="dataMedia">
+		<result property="id" column="ID" />
+		<result property="name" column="NAME" />
+		<result property="namespace" column="NAMESPACE" />
+		<result property="properties" column="PROPERTIES" />
+		<result property="dataMediaSourceId" column="DATA_MEDIA_SOURCE_ID" />
+		<result property="gmtCreate" column="GMT_CREATE" />
+		<result property="gmtModified" column="GMT_MODIFIED" />
+	</resultMap>
+
+	<!-- all datamedia columns -->
+	<sql id="allDataMediaColumns">ID,NAME,NAMESPACE,PROPERTIES,DATA_MEDIA_SOURCE_ID,GMT_CREATE,GMT_MODIFIED</sql>
+
+	<select id="findDataMediaById" resultMap="dataMediaResult" parameterClass="long">
+		select
+		<include refid="allDataMediaColumns" />
+		from DATA_MEDIA where ID = #value#
+	</select>
+	
+	<select id="getDataMediaCount" resultClass="Integer">
+		select count(*) from DATA_MEDIA 
+		<dynamic prepend="where">
+			<isNotEmpty property="searchKey">
+			NAME like concat('%',replace(#searchKey#,'_','\_'),'%') 
+			or NAMESPACE like concat('%',replace(#searchKey#,'_','\_'),'%')
+			or ID like concat('%',replace(#searchKey#,'_','\_'),'%')
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="findDataMediaByDataMediaSourceId" resultMap="dataMediaResult" parameterClass="long">
+		select
+		<include refid="allDataMediaColumns" />
+		from DATA_MEDIA where DATA_MEDIA_SOURCE_ID = #value#
+	</select>
+
+	<select id="listDataMedias" resultMap="dataMediaResult">
+		select
+		<include refid="allDataMediaColumns" />
+		from DATA_MEDIA 
+		<dynamic prepend="where">
+			<isNotEmpty property="searchKey">
+			NAME like concat('%',replace(#searchKey#,'_','\_'),'%') 
+			or NAMESPACE like concat('%',replace(#searchKey#,'_','\_'),'%')
+			or ID like concat('%',replace(#searchKey#,'_','\_'),'%')
+			</isNotEmpty>
+		</dynamic>
+	
+		ORDER BY ID DESC
+		
+		<dynamic>
+			<isNotEmpty property="offset" >
+				<isNotEmpty property="length">
+					limit #offset#, #length#
+				</isNotEmpty>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="listDataMediaByIds" resultMap="dataMediaResult" >
+		select
+		<include refid="allDataMediaColumns" />
+		from DATA_MEDIA where ID in
+		<iterate open="(" close=")" conjunction=",">
+			#[]#
+		</iterate>
+		ORDER BY ID DESC
+	</select>
+	
+	<select id="listDataMediasByDataMediaSourceId" resultMap="dataMediaResult" parameterClass="long">
+		select
+		<include refid="allDataMediaColumns" />
+		from DATA_MEDIA where DATA_MEDIA_SOURCE_ID = #value# ORDER BY ID DESC
+	</select>
+
+	<update id="updateDataMedia" parameterClass="dataMedia"><![CDATA[
+		update DATA_MEDIA
+		set
+		NAME=#name#,
+		NAMESPACE=#namespace#,
+		PROPERTIES=#properties#,
+		DATA_MEDIA_SOURCE_ID=#dataMediaSourceId#,
+		GMT_MODIFIED=now()
+		WHERE ID = #id#
+	]]></update>
+
+	<select id="checkDataMediaUnique" resultClass="Integer"
+		parameterClass="dataMedia">
+		select count(*) from DATA_MEDIA
+		where DATA_MEDIA.ID != #id#
+		and DATA_MEDIA.NAME = #name#
+		and DATA_MEDIA.NAMESPACE = #namespace#
+		and DATA_MEDIA.DATA_MEDIA_SOURCE_ID = #dataMediaSourceId#
+	</select>
+	
+	<select id="checkDataMediaUniqueAndReturnTheExist" resultMap="dataMediaResult"
+		parameterClass="dataMedia">
+		select <include refid="allDataMediaColumns" /> from DATA_MEDIA
+		where DATA_MEDIA.ID != #id#
+		and DATA_MEDIA.NAME = #name#
+		and DATA_MEDIA.NAMESPACE = #namespace#
+		and DATA_MEDIA.DATA_MEDIA_SOURCE_ID = #dataMediaSourceId#
+	</select>
+
+	<insert id="insertDataMedia" parameterClass="dataMedia">
+		insert into DATA_MEDIA
+		(NAME,NAMESPACE,PROPERTIES,DATA_MEDIA_SOURCE_ID,GMT_CREATE, GMT_MODIFIED)
+		SELECT #name#,#namespace#,#properties#,#dataMediaSourceId#,now(),now()
+		from dual
+		WHERE not exists (select * from DATA_MEDIA
+		where DATA_MEDIA.NAME = #name# 
+		and DATA_MEDIA.NAMESPACE = #namespace#
+		and DATA_MEDIA.DATA_MEDIA_SOURCE_ID = #dataMediaSourceId#); 
+		<selectKey keyProperty="id" resultClass="long">
+			select
+			last_insert_id()
+		</selectKey>
+	</insert>
+
+	<delete id="deleteDataMediaById" parameterClass="long"><![CDATA[
+    	delete from DATA_MEDIA where ID = #value#
+    ]]></delete>
+
+</sqlMap>  

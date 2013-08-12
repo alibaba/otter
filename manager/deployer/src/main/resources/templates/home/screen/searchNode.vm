@@ -1,0 +1,203 @@
+$control.setTemplate("home:navigation.vm")
+
+<script type="text/javascript" src="js/trcolor.js"></script>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
+<script type="text/javascript" src="js/jquery.simplemodal-1.4.js"></script> 
+<script language="javascript">
+<!--
+	changeNav("node");
+    $(function () {
+        $('.bubbleInfo').each(function () {
+            var distance = 10;
+            var time = 250;
+            var hideDelay = 200;
+
+            var hideDelayTimer = null;
+
+            var beingShown = false;
+            var shown = false;
+            var trigger = $('.trigger', this);
+            var info = $('.popup', this).css('opacity', 0);
+
+
+            $([trigger.get(0), info.get(0)]).mouseover(function () {
+                if (hideDelayTimer) clearTimeout(hideDelayTimer);
+                if (beingShown || shown) {
+                    // don't trigger the animation again
+                    return;
+                } else {
+                    // reset position of info box
+                    beingShown = true;
+
+                    info.css({
+                        top: 10,
+                        left: 10,
+                        display: 'block'
+                    }).animate({
+                        top: '+=' + distance + 'px',
+                        opacity: 1
+                    }, time, 'swing', function() {
+                        beingShown = false;
+                        shown = true;
+                    });
+                }
+
+                return false;
+            }).mouseout(function () {
+                if (hideDelayTimer) clearTimeout(hideDelayTimer);
+                hideDelayTimer = setTimeout(function () {
+                    hideDelayTimer = null;
+                    info.animate({
+                        top: '-=' + distance + 'px',
+                        opacity: 0
+                    }, time, 'swing', function () {
+                        shown = false;
+                        info.css('display', 'none');
+                    });
+
+                }, hideDelay);
+
+                return false;
+            });
+        });
+    });
+    
+    //-->
+		$(function() {
+			
+			function showModal(src, height, width) {
+				jQuery.modal('<iframe src="' + src + '" height="' + height + '" width="' + width + '" frameborder="0" allowTransparency=true>', {
+					closeHTML : "<input type='button' style='display:none'/>",
+					closeClass: "modalClose",
+					opacity : 35,
+					overlayCss : {
+						backgroundColor: "#000"
+					}
+				});
+			}
+			
+			$(".del").click(function() {
+				showModal("tip_message_del.html", "350", "750");
+			});
+
+			function megaHoverOver(){
+				$(this).find(".sub").stop().fadeTo('fast', 1).show();
+				//Calculate width of all ul's
+				(function($) { 
+					jQuery.fn.calcSubWidth = function() {
+						rowWidth = 0;
+						//Calculate row
+						$(this).find("ul").each(function() {					
+							rowWidth += $(this).width(); 
+						});	
+					};
+				})(jQuery); 
+				
+				if ( $(this).find(".row").length > 0 ) { //If row exists...
+					var biggestRow = 0;	
+					//Calculate each row
+					$(this).find(".row").each(function() {							   
+						$(this).calcSubWidth();
+						//Find biggest row
+						if(rowWidth > biggestRow) {
+							biggestRow = rowWidth;
+						}
+					});
+					//Set width
+					$(this).find(".sub").css({'width' :biggestRow});
+					$(this).find(".row:last").css({'margin':'0'});
+				} else { //If row does not exist...
+					$(this).calcSubWidth();
+					//Set Width
+					$(this).find(".sub").css({'width' : rowWidth});
+				}
+			}
+			function megaHoverOut(){ 
+			  $(this).find(".sub").stop().fadeTo('fast', 0, function() {
+				  $(this).hide(); 
+			  });
+			}
+			var config = {    
+				 sensitivity: 1, // number = sensitivity threshold (must be 1 or higher)    
+				 interval: 100, // number = milliseconds for onMouseOver polling interval    
+				 over: megaHoverOver, // function = onMouseOver callback (REQUIRED)    
+				 timeout: 200, // number = milliseconds delay before onMouseOut    
+				 out: megaHoverOut // function = onMouseOut callback (REQUIRED)    
+			};
+		});
+</script>
+
+
+
+<!--页面主体-->
+<div class="main">
+   
+  <div class="title"> 
+    <h2>搜索机器</h2>
+  </div>
+   <div class="crumbs"><a href="nodeList.htm">机器管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;搜索机器</div> 
+   <!--分页表单-->
+   <form id="pageform" name="pageform" action="$homeModule.setTarget('nodeList.vm')" method="post">
+    	$csrfToken.hiddenField
+    	<input type="hidden" id="pageIndex" name="pageIndex" value=""/>
+   </form>
+   
+   <!--Node搜索-->
+   <div class="search_o"> 
+		<form name="search_node" method="post">
+			##$csrfToken.hiddenField
+			<input type="hidden" name="action" value="node_action"/>
+			<input type="hidden" name="event_submit_do_search" value="1" />
+			<div class="search_input">
+				<input name="searchKey" type="text" value="请输入关键字(目前支持Node的ID、名字搜索)"  onfocus="if(this.value == '请输入关键字(目前支持Node的ID、名字搜索)') {this.value='';}" onblur="if(this.value == '') {this.value = '请输入关键字(目前支持Node的ID、名字搜索)';}" />
+			</div>
+			<div class="search_btn"><a href="javascript:document.search_node.submit();"><img src="images/search_btn.png" width="39" height="31" /></a></div>
+        </form>
+   </div>
+   
+   <!--列表-->
+     
+  <table border="0" cellspacing="0" cellpadding="0" class="list changecolor_w">
+    <tr> 
+      <th>序号</th>
+      <th>Machine名字</th>
+      <th width="9%">关联channel</th>
+      <th width="9%">内部Ip地址</th>
+      <th width="10%">外部Ip地址</th>
+      <th width="6%">端口</th>
+      <th width="13%">Store</th>
+      <th width="14%">Zookeeper</th>
+      <th width="10%">状态</th>
+      <th width="17%">更新时间</th>
+    </tr>
+	#foreach($node in $nodes)
+        <tr> 
+          <td width="4%">$node.id</td>
+          <td>
+          <div class="bubbleInfo">
+             <a href="#" id="download" class="trigger">$node.name</a>
+             <div class="popup">
+             <div class="pop_tips_top"></div>
+             <div class="pop_tips_mid">
+              <div class="pop_tips_font">$node.description
+              </div>
+             </div>
+             <div class="pop_tips_bottom"></div>
+             </div>
+          </div>      
+          </td>
+          <td><a href="channelList.htm">5</a></td>
+          <td>172.20.112.11</td>
+          <td>172.20.112.11</td>
+          <td>$node.port</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>#if($node.status.isStart()) 运行 #else 停止 #end</td>
+          <td>$node.gmtModified.toLocaleString()</td>
+        </tr>
+	#end
+    
+  </table>
+  <!--常规按钮-->
+   
+</div>

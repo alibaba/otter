@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:services="http://www.alibaba.com/schema/services"
+	xmlns:pl-conditions="http://www.alibaba.com/schema/services/pipeline/conditions"
+	xmlns:pl-valves="http://www.alibaba.com/schema/services/pipeline/valves"
+	xsi:schemaLocation="
+                 http://www.alibaba.com/schema/services http://localhost:8080/schema/services.xsd
+                 http://www.alibaba.com/schema/services/pipeline/conditions http://localhost:8080/schema/services-pipeline-conditions.xsd
+                 http://www.alibaba.com/schema/services/pipeline/valves http://localhost:8080/schema/services-pipeline-valves.xsd
+                 http://www.springframework.org/schema/beans http://localhost:8080/schema/www.springframework.org/schema/beans/spring-beans.xsd
+             ">
+
+	<services:pipeline id="exceptionPipeline">
+
+		<!-- 初始化turbine rundata，并在pipelineContext中设置可能会用到的对象(如rundata、utils)，以便valve取得。 -->
+        <pl-valves:prepareForTurbine />
+
+		<!-- 根据异常，选择适当的错误页面及statusCode。 -->
+		<pl-valves:handleException defaultPage="error.vm">
+			<on-exception
+				type="com.alibaba.citrus.service.template.TemplateNotFoundException"
+				statusCode="404" />
+			<on-exception
+				type="com.alibaba.citrus.service.moduleloader.ModuleNotFoundException"
+				statusCode="404" />
+			<on-exception type="java.lang.RuntimeException"
+				statusCode="404" />
+		</pl-valves:handleException>
+
+        <pl-valves:performTemplateScreen />
+        <pl-valves:renderTemplate />
+	</services:pipeline>
+
+</beans:beans>

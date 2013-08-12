@@ -1,0 +1,11 @@
+$rundata.setLayoutEnabled(false)
+
+server is ok!
+
+#if($isAllOk == "Y")
+    server is ok!
+#else
+	#foreach($r in $results)
+		$r
+	#end
+#end

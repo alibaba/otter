@@ -1,0 +1,85 @@
+.setting_box table.setting_otter th{
+	font-weight:normal;
+	text-align:right;
+	line-height:32px;
+	width:200px;
+}
+.setting_box table.setting_otter td{
+	padding-left:10px;
+}
+td.textarea{
+	padding:5px 0 12px 0;
+}
+td.textarea_b{
+	padding:0 0 6px 0;
+}
+table.b input{
+	width:280px;
+}
+.box_tab{
+        clear:both;
+        padding:15px 15px 8px 15px;
+        margin-right:-10px;
+        margin-bottom:8px;
+}
+.header{
+    background:url(../images/logo.png);
+        width:723px;
+        height:78px;
+        float:left;
+        }
+.logo{
+    background:url(../images/login_logo.png);
+        width:187px;
+        height:152px;
+        float:left;
+        margin:40px 0 0 120px;
+        }
+
+
+.sel_l{
+   clear:left;
+   float:left;
+   margin-right:50px;
+}
+.sel_r{
+   float:left;
+}
+.sel_l select,.sel_r select{
+   height:182px;
+   width:100%;
+}
+.box1,.box3,.box2{
+    width:400px;
+	margin-bottom:10px;
+}
+.box2{
+   height:20px;
+ }
+.box3{
+    clear:left;
+}
+input.btn_down1{
+    background:url(../images/down1.png);
+	width:33px;
+	height:20px;
+	border:none;
+}
+input.btn_down2{
+    background:url(../images/down2.png);
+	width:33px;
+	height:20px;
+	border:none;
+}
+input.btn_up1{
+    background:url(../images/up1.png);
+	width:33px;
+	height:20px;
+	border:none;
+}
+input.btn_up2{
+    background:url(../images/up2.png);
+	width:33px;
+	height:20px;
+	border:none;
+}

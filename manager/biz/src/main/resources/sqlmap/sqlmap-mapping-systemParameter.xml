@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+    <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"  
+       "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap
+	namespace="com.alibaba.otter.manager.biz.config.parameter.dal.dataobject.SystemParameterDO">
+	<typeAlias alias="systemParameter"
+		type="com.alibaba.otter.manager.biz.config.parameter.dal.dataobject.SystemParameterDO" />
+
+	<resultMap id="systemParameterResult" class="systemParameter">
+	    <result property="id" column="ID" />
+	    <result property="value" column="VALUE" />
+		<result property="gmtCreate" column="GMT_CREATE" />
+		<result property="gmtModified" column="GMT_MODIFIED" />
+	</resultMap>
+
+	<!-- all parameter columns -->
+	<sql id="allParameterColumns">ID,VALUE,GMT_CREATE,GMT_MODIFIED</sql>
+
+	<select id="listParameters" resultMap="systemParameterResult" >
+		select
+		<include refid="allParameterColumns" />
+		from SYSTEM_PARAMETER  
+	</select>
+
+	<insert id="insertParameter" parameterClass="systemParameter">
+	insert into SYSTEM_PARAMETER (ID,VALUE,GMT_CREATE,GMT_MODIFIED) values(#id#,#value#,#gmtCreate#,#gmtModified#) 
+	on duplicate key update VALUE = values(VALUE), GMT_CREATE = values(GMT_CREATE),GMT_MODIFIED = values(GMT_MODIFIED);
+	</insert>
+</sqlMap>  

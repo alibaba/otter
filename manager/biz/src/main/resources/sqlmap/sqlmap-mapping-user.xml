@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+    <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"  
+       "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="com.alibaba.otter.manager.biz.user.dal.dataobject.UserDO">
+	<typeAlias alias="user"
+		type="com.alibaba.otter.manager.biz.user.dal.dataobject.UserDO" />
+
+	<resultMap id="userResult" class="user">
+		<result property="id" column="ID" />
+		<result property="name" column="USERNAME" />
+		<result property="password" column="PASSWORD" />
+		<result property="department" column="DEPARTMENT" />
+		<result property="realName" column="REALNAME" />
+		<result property="authorizeType" column="AUTHORIZETYPE" typeHandler="" />
+		<result property="gmtCreate" column="GMT_CREATE" />
+		<result property="gmtModified" column="GMT_MODIFIED" />
+	</resultMap>
+
+	<!-- all user columns -->
+	<sql id="allUserColumns">ID,USERNAME,PASSWORD,DEPARTMENT,REALNAME,AUTHORIZETYPE,GMT_CREATE,GMT_MODIFIED</sql>
+
+	<!-- getUserById -->
+	<select id="findUserById" resultMap="userResult" parameterClass="long">
+		select
+		<include refid="allUserColumns" />
+		from USER where ID = #value#
+	</select>
+
+	
+	<select id="getUserCount" resultClass="Integer">
+		select count(*) from USER 
+		<dynamic prepend="where">
+			<isNotEmpty property="searchKey">
+			USERNAME like concat('%',replace(#searchKey#,'_','\_'),'%') 
+			or ID like concat('%',replace(#searchKey#,'_','\_'),'%') 
+			or DEPARTMENT like concat('%',replace(#searchKey#,'_','\_'),'%')
+			or REALNAME like concat('%',replace(#searchKey#,'_','\_'),'%')
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<!-- listUsers -->
+	<select id="listUsers" resultMap="userResult">
+		select
+		<include refid="allUserColumns" />
+		from USER 
+		<dynamic prepend="where">
+			<isNotEmpty property="searchKey">
+			USERNAME like concat('%',replace(#searchKey#,'_','\_'),'%') 
+			or ID like concat('%',replace(#searchKey#,'_','\_'),'%') 
+			or DEPARTMENT like concat('%',replace(#searchKey#,'_','\_'),'%')
+			or REALNAME like concat('%',replace(#searchKey#,'_','\_'),'%')
+			</isNotEmpty>
+		</dynamic>
+	
+		ORDER BY ID DESC
+		
+		<dynamic>
+			<isNotEmpty property="offset" >
+				<isNotEmpty property="length">
+					limit #offset#, #length#
+				</isNotEmpty>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<update id="updateUser" parameterClass="user">
+		update USER
+		set
+		<dynamic >
+			<isNotEmpty property="name">
+				USERNAME=#name#,
+			</isNotEmpty>
+			<isNotEmpty property="password">
+				PASSWORD=#password#,
+			</isNotEmpty>
+		</dynamic>
+		DEPARTMENT=#department#,
+		REALNAME=#realName#,
+		AUTHORIZETYPE=#authorizeType#,
+		GMT_MODIFIED=now()
+		WHERE ID = #id#
+	</update>
+	
+	<select id="checkUserUnique" resultClass="Integer"
+		parameterClass="user">
+		select count(*) from USER
+		where USER.ID != #id#
+		and USER.USERNAME = #name#
+	</select>
+	
+	<!--
+      - ===============================================
+      - 验证name、password
+      - ===============================================
+     -->
+    <select id="getUserByNameAndPassword" resultMap="userResult" parameterClass="user">
+        select
+                <include refid="allUserColumns" />
+        from
+                USER
+        where
+                USERNAME = #name#
+            and PASSWORD = #password#
+    </select>
+
+
+	<insert id="insertUser" parameterClass="user">
+		insert into USER
+		(USERNAME, PASSWORD,DEPARTMENT,REALNAME,AUTHORIZETYPE, GMT_CREATE, GMT_MODIFIED)
+		SELECT #name#,#password#,#department#,#realName#,#authorizeType#,now(),now()
+		from dual
+		WHERE not exists (select * from USER
+		where USER.USERNAME = #name#); 
+		<selectKey keyProperty="id" resultClass="long">
+			select last_insert_id()
+		</selectKey>
+	</insert>
+	
+	
+
+	<delete id="deleteUserById" parameterClass="long"><![CDATA[
+    	delete from USER where ID = #value#
+    ]]></delete>
+
+</sqlMap>  

@@ -1,0 +1,55 @@
+$control.setTemplate("home:navigation.vm")
+#set($user = $rundata.request.session.getAttribute("managerUser"))
+
+<div class="main">
+ <div class="title"><h2>主备配置信息</h2></div>
+ <div class="crumbs">主备配置信息</div>
+ <div class="setting_box">
+ <table cellpadding="0" cellspacing="0" class="setting">
+  <tr>
+  <th>序号：</th><td>$!dataMatrix.id</td>
+  </tr>
+  <tr>
+  <th>groupKey：</th><td>$!dataMatrix.groupKey</td>
+  </tr>
+  <tr>
+  <th>master：</th><td>$!dataMatrix.master</td>
+  </tr>
+  <tr>
+  <th>slave：</th><td>$!dataMatrix.slave</td>
+  </tr>
+  <tr>
+  <th>描述信息：</th><td>$!dataMatrix.description</td>
+  </tr>
+ </table>
+ </div>
+
+ <table border="0" cellspacing="0" cellpadding="0" class="list changecolor_w" width="60%">
+    <tr>
+	  <th>序号</th>
+      <th>数据源名字</th>
+      <th>类型</th>
+	  <th>编码</th>
+      <th>URL</th>
+	  <th>操作</th>
+    </tr>
+    
+    #foreach ($dataSource in $dataSources)
+		<tr> 
+		  <td width="5%">$!dataSource.id</td>
+          <td width="12%">$!dataSource.name</td>
+          <td>$!dataSource.type</td>
+          <td>$!dataSource.encode</td>
+          <td>$!dataSource.url</td>
+		  <td>
+			#set ($dataSourceInfoURL = $homeModule.setTarget("dataSourceInfo.vm").addQueryData("dataMediaSourceId", $dataSource.id))
+			<a href="$dataSourceInfoURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">查看</span></a>
+    		#if($user.authorizeType.isAdmin())
+        		#set ($editURL = $homeModule.setTarget("editDataSource.vm").addQueryData("dataMediaSourceId", $dataSource.id))
+    		<span class="ico_line">|</span><a href="$editURL"><img src="images/ico_edit.png" alt=" " width="13" height="13" /><span class="ico_font">编辑</span></a>
+    		#end
+		  </td>
+	    </tr>
+	#end
+  </table>
+</div>

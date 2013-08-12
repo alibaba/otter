@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="	   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd	   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd	   http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd"
+	default-autowire="byName" default-dependency-check="none">
+
+	<!-- transform module -->
+	<bean id="otterTransformerFactory" class="com.alibaba.otter.node.etl.transform.transformer.OtterTransformerFactory">
+		<property name="rowDataTransformer" ref="rowDataTransformer" />
+		<property name="fileDataTransformer" ref="fileDataTransformer" />
+	</bean>
+	<bean id="rowDataTransformer" class="com.alibaba.otter.node.etl.transform.transformer.RowDataTransformer" />
+	<bean id="fileDataTransformer" class="com.alibaba.otter.node.etl.transform.transformer.FileDataTransformer" />
+</beans>

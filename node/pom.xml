@@ -1,0 +1,63 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+	    <groupId>com.alibaba.otter</groupId>
+	    <artifactId>otter.parent</artifactId>
+	    <version>4.2.0</version>
+	</parent>
+	<groupId>com.alibaba.otter</groupId>
+	<artifactId>node</artifactId>
+	<packaging>pom</packaging>
+	<name>node module for otter</name>
+	<version>4.2.0</version>
+	<url>http://github.com/agapple/otter</url>
+	<properties>
+		<!--maven properties-->
+        <maven.test.skip>false</maven.test.skip>
+	</properties>
+	
+	<modules>
+		<module>common</module>
+		<module>etl</module>
+		<module>canal</module>
+		<module>extend</module>
+		<module>deployer</module>
+	</modules>
+	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>de.schlichtherle</groupId>
+				<artifactId>truezip</artifactId>
+				<version>6.8.4</version>
+			</dependency>
+			<dependency>
+			  <groupId>org.apache.commons</groupId>
+			  <artifactId>commons-compress</artifactId>
+			  <version>1.4.1</version>
+			</dependency>
+			<!-- jetty -->
+			<dependency>
+			  <groupId>org.eclipse.jetty</groupId>
+			  <artifactId>jetty-servlet</artifactId>
+			  <version>${jetty_verion}</version>
+			</dependency>
+			<dependency>
+			  <groupId>org.eclipse.jetty</groupId>
+			  <artifactId>jetty-xml</artifactId>
+			  <version>${jetty_verion}</version>
+			</dependency>
+			<dependency>
+			  <groupId>org.eclipse.jetty</groupId>
+			  <artifactId>jetty-server</artifactId>
+			  <version>${jetty_verion}</version>
+			</dependency>
+			<dependency>
+			  <groupId>org.eclipse.jetty</groupId>
+			  <artifactId>jetty-http</artifactId>
+			  <version>${jetty_verion}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+</project>
