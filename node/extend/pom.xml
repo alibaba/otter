@@ -16,13 +16,12 @@
 		<dependency>
 			<groupId>com.alibaba.otter</groupId>
 			<artifactId>shared.etl</artifactId>
-			<version>4.2.0</version>
+			<version>${project.version}</version>
 		</dependency>
 		<!-- test dependency -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.5</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
