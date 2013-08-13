@@ -6,6 +6,7 @@
 	<formats>
 		<format>tar.gz</format>
 	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
 	<componentDescriptors>
     <componentDescriptor>src/main/assembly/component.xml</componentDescriptor>
   </componentDescriptors>
