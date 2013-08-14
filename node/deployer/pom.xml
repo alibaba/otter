@@ -37,6 +37,22 @@
 	</dependencies>
 	
 	<build>
+		<resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <!-- 包含 -->
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <!-- 包含 -->
+                <excludes>
+                    <exclude>otter.properties</<exclude>>
+                </excludes>
+            </resource>
+        </resources>
 		<plugins>
 			<!-- deploy模块的packaging通常是jar，如果项目中没有java 源代码或资源文件，加上这一段配置使项目能通过构建 -->
 			<plugin>
@@ -107,7 +123,6 @@
 					<value>release</value>
 				</property>
 			</activation>
-
 			<build>
 				<plugins>
 					<plugin>

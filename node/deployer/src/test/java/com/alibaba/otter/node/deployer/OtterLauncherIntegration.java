@@ -1,9 +1,9 @@
-package com.alibaba.otter.node.etl.launcher;
+package com.alibaba.otter.node.deployer;
 
 import java.util.concurrent.CountDownLatch;
 
+import com.alibaba.otter.node.deployer.OtterLauncher;
 import com.alibaba.otter.node.etl.OtterContextLocator;
-import com.alibaba.otter.node.etl.OtterLauncher;
 
 /**
  * 集成测试

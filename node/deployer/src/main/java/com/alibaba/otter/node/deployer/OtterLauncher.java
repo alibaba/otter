@@ -1,8 +1,11 @@
-package com.alibaba.otter.node.etl;
+package com.alibaba.otter.node.deployer;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.alibaba.otter.node.etl.OtterContextLocator;
+import com.alibaba.otter.node.etl.OtterController;
 
 /**
  * load otter task to sync data with some pipeline.

@@ -38,7 +38,7 @@
 			<outputDirectory>conf</outputDirectory>
 		</file>
 		<file>
-			<source>./src/main/conf/otter.properties</source>
+			<source>./src/main/resources/otter.properties</source>
 			<outputDirectory>conf</outputDirectory>
 		</file>
 	</files>
