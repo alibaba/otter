@@ -34,7 +34,7 @@
 	</fileSets>
 	<files>
 		<file>
-			<source>./src/main/conf/logback.xml</source>
+			<source>./src/main/resources/logback.xml</source>
 			<outputDirectory>conf</outputDirectory>
 		</file>
 		<file>
