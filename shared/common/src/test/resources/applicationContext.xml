@@ -6,5 +6,5 @@
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
     default-autowire="byName">
 
-    <import resource="classpath:spring/otter-*.xml" />
+    <import resource="classpath:spring/otter-test-*.xml" />
 </beans>

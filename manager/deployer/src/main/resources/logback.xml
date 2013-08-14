@@ -132,7 +132,7 @@
         <appender-ref ref="position" />
     </logger>
     
-	<root level="WARN">
+	<root level="INFO">
 		<appender-ref ref="WEBX-ROOT" />
 	</root>
 </configuration>

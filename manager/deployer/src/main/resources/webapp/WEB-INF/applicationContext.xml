@@ -19,5 +19,8 @@
 			</list>
 		</property>
 	</bean>
-    <import resource="classpath*:spring/otter-*.xml" />
+	
+    <import resource="classpath*:spring/otter-manager-*.xml"/>
+	<import resource="classpath*:spring/otter-arbitrate-*.xml"/>
+	<import resource="classpath*:spring/otter-push-*.xml"/>
 </beans>

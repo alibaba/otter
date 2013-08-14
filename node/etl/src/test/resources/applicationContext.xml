@@ -21,5 +21,8 @@
 		</property>
 	</bean>
 	
-	<import resource="classpath*:spring/otter-*.xml"/>
+	<import resource="classpath*:spring/otter-node-*.xml"/>
+	<import resource="classpath*:spring/otter-canal-*.xml"/>
+	<import resource="classpath*:spring/otter-arbitrate-*.xml"/>
+	<import resource="classpath*:spring/otter-push-*.xml"/>
 </beans>
