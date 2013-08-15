@@ -1,6 +1,5 @@
 package com.alibaba.otter.manager.deployer;
 
-import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.resource.Resource;
@@ -31,13 +30,13 @@ public class JettyEmbedServer {
         XmlConfiguration configuration = new XmlConfiguration(configXml.getInputStream());
         server = (Server) configuration.configure();
 
-        Integer port = getPort();
-        if (port != null && port > 0) {
-            Connector[] connectors = server.getConnectors();
-            for (Connector connector : connectors) {
-                connector.setPort(port);
-            }
-        }
+        //        Integer port = getPort();
+        //        if (port != null && port > 0) {
+        //            Connector[] connectors = server.getConnectors();
+        //            for (Connector connector : connectors) {
+        //                connector.setPort(port);
+        //            }
+        //        }
         Handler handler = server.getHandler();
         if (handler != null && handler instanceof WebAppContext) {
             WebAppContext webAppContext = (WebAppContext) handler;
@@ -47,10 +46,6 @@ public class JettyEmbedServer {
         if (logger.isInfoEnabled()) {
             logger.info("##Jetty Embed Server is startup!");
         }
-    }
-
-    private Integer getPort() {
-        return 8080;
     }
 
     public void join() throws Exception {

@@ -15,19 +15,20 @@ $control.setTemplate("home:navigation.vm")
   <div class="title"> 
     <h2>Zookeeper管理</h2>
   </div>
+   <div class="crumbs"><a href="auto_keeper_clusters_list.htm">Zookeeper管理</a> </div> 
    <!--分页表单-->
-   <form id="pageform" name="pageform" action="$homeModule.setTarget('nodeList.vm')" method="post">
+   <form id="pageform" name="pageform" action="$homeModule.setTarget('autoKeeperClustersList.vm')" method="post">
     	<input type="hidden" id="pageIndex" name="pageIndex" value=""/>
 		<input type="hidden" id="searchKey" name="searchKey" value="$!searchKey"/>
    </form>
    <!--Node搜索-->
    <div class="search_o"> 
-		<form name="search_node" action="nodeList.htm"  method="post">
+		<form name="search_zookeeper" action="auto_keeper_clusters_list.htm"  method="post">
 			##$csrfToken.hiddenField
 			<div class="search_input">
-				<input name="searchKey" type="text" value="请输入关键字(目前支持Node的ID、名字搜索)"  onfocus="if(this.value == '请输入关键字(目前支持Node的ID、名字搜索)') {this.value='';}" onblur="if(this.value == '') {this.value = '请输入关键字(目前支持Node的ID、名字搜索)';}" />
+				<input name="searchKey" type="text" value="请输入关键字(目前支持Zookeeper的地址搜索)"  onfocus="if(this.value == '请输入关键字(目前支持Zookeeper的地址搜索)') {this.value='';}" onblur="if(this.value == '') {this.value = '请输入关键字(目前支持Zookeeper的地址搜索)';}" />
 			</div>
-			<div class="search_btn"><a href="javascript:document.search_node.submit();"><img src="images/search_btn.png" width="39" height="31" /></a></div>
+			<div class="search_btn"><a href="javascript:document.search_zookeeper.submit();"><img src="images/search_btn.png" width="39" height="31" /></a></div>
         </form>
    </div>
    

@@ -35,7 +35,7 @@
     <Call name="addConnector">
       <Arg>
           <New class="org.eclipse.jetty.server.bio.SocketConnector">
-            <Set name="port"><Property name="jetty.port" default="8080" /></Set>
+            <Set name="port"><SystemProperty name="otter.port" default="8080" /></Set>
             <Set name="forwarded">true</Set>
             <Set name="forwardedHostHeader">ignore</Set>
             <Set name="forwardedServerHeader">ignore</Set>
@@ -52,8 +52,7 @@
     <Call name="addConnector">
       <Arg>
           <New class="org.eclipse.jetty.server.nio.SelectChannelConnector">
-            <Set name="host"><Property name="otter.domainName" /></Set>
-            <Set name="port"><Property name="otter.port" default="8080"/></Set>
+            <Set name="port"><SystemProperty name="otter.port" default="8080" /></Set>
             <Set name="forwarded">true</Set>
             <Set name="forwardedHostHeader">ignore</Set>
             <Set name="forwardedServerHeader">ignore</Set>
