@@ -519,6 +519,7 @@ public class PipelineServiceImpl implements PipelineService {
             pipelineDO.setId(pipeline.getId());
             pipelineDO.setName(pipeline.getName());
             pipelineDO.setParameters(pipeline.getParameters());
+            pipeline.getParameters().setMainstemClientId(pipeline.getId().shortValue());//强制设置为pipelineId
             pipelineDO.setDescription(pipeline.getDescription());
             pipelineDO.setChannelId(pipeline.getChannelId());
             pipelineDO.setGmtCreate(pipeline.getGmtCreate());

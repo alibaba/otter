@@ -145,6 +145,7 @@ $control.setTemplate("home:navigation.vm")
 			  <span class="red">#addPipelineMessage ($pipelineParameterGroup.destinationName)</span>
         </td>
       </tr>
+	  #**
 	  <tr> 
         <th width="300">消费端ID：</th>
         <td width="329">
@@ -153,6 +154,7 @@ $control.setTemplate("home:navigation.vm")
 			  <span class="red">#addPipelineMessage ($pipelineParameterGroup.mainstemClientId)</span>
         </td>
       </tr>
+	  *#
 	  <tr> 
         <th width="300">消费批次大小：</th>
         <td width="329">

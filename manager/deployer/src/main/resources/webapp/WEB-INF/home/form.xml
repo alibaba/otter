@@ -220,17 +220,6 @@
 					<message>必须填写${displayName}</message>
 				</fm-validators:required-validator>
 			</field>
-			<field name="mainstemClientId" displayName="Eromange 主道消费端ID">
-				<fm-validators:required-validator>
-					<message>必须填写${displayName}</message>
-				</fm-validators:required-validator>
-				<fm-validators:number-validator>
-					<message>${displayName} 必须是数字且是整数</message>
-				</fm-validators:number-validator>
-				<fm-validators:number-validator greaterThan="0" lessThan="32768">
-					<message>${displayName} 必须是1-32767的整数</message>
-				</fm-validators:number-validator>
-			</field>
 			<field name="mainstemBatchsize" displayName="主道消费批次大小">
 				<fm-validators:required-validator>
 					<message>必须填写${displayName}</message>
@@ -242,72 +231,6 @@
 					<message>${displayName} 必须是大于0的整数</message>
 				</fm-validators:number-validator>
 			</field>
-			<field name="eromangaServerAddresses"
-				displayName="Eromanga服务器IP">
-				<fm-validators:if test="selectorMode.value == 'Eromanga'">
-					<fm-validators:required-validator>
-						<message>必须填写${displayName}</message>
-					</fm-validators:required-validator>
-					<fm-validators:regexp-validator
-						pattern="^((?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\:\d+\;)+$">
-						<message>${displayName} 不符合格式（1.1.1.1:80;）</message>
-					</fm-validators:regexp-validator>
-				</fm-validators:if>
-			</field>
-			<field name="eromangaUsername" displayName="Eromanga用户名">
-				<fm-validators:if test="selectorMode.value == 'Eromanga'">
-					<fm-validators:required-validator>
-						<message>必须填写${displayName}</message>
-					</fm-validators:required-validator>
-				</fm-validators:if>
-			</field>
-			<field name="eromangaPassword" displayName="Eromanga密码">
-				<fm-validators:if test="selectorMode.value == 'Eromanga'">
-					<fm-validators:required-validator>
-						<message>必须填写${displayName}</message>
-					</fm-validators:required-validator>
-				</fm-validators:if>
-			</field>
-			<field name="subClientId" displayName="Eromanga S消费端ID">
-				<fm-validators:if test="selectorMode.value == 'Eromanga'">
-					<fm-validators:required-validator>
-						<message>必须填写${displayName}</message>
-					</fm-validators:required-validator>
-					<fm-validators:number-validator>
-						<message>${displayName} 必须是数字且是整数</message>
-					</fm-validators:number-validator>
-					<fm-validators:number-validator greaterThan="0" lessThan="32768">
-						<message>${displayName} 必须是1-32767的整数</message>
-					</fm-validators:number-validator>
-				</fm-validators:if>
-			</field>
-			<field name="subBatchsize" displayName="S模块消费批次大小">
-				<fm-validators:if test="selectorMode.value == 'Eromanga'">
-					<fm-validators:required-validator>
-						<message>必须填写${displayName}</message>
-					</fm-validators:required-validator>
-					<fm-validators:number-validator>
-						<message>${displayName} 必须是数字且是整数</message>
-					</fm-validators:number-validator>
-					<fm-validators:number-validator greaterThan="0">
-						<message>${displayName} 必须是大于0的整数</message>
-					</fm-validators:number-validator>
-				</fm-validators:if>
-			</field>
-			<field name="processBatchsizeThresold"
-				displayName="划分多process最小阀值">
-				<fm-validators:if test="selectorMode.value == 'Eromanga'">
-					<fm-validators:required-validator>
-						<message>必须填写${displayName}</message>
-					</fm-validators:required-validator>
-					<fm-validators:number-validator>
-						<message>${displayName} 必须是数字且是整数</message>
-					</fm-validators:number-validator>
-					<fm-validators:number-validator greaterThan="0">
-						<message>${displayName} 必须是大于0的整数</message>
-					</fm-validators:number-validator>
-				</fm-validators:if>
-			</field>
 			<field name="channelInfo" displayName="同步标记" />
 			<field name="batchTimeout" displayName="获取批次数据超时时间">
 				<fm-validators:if test="selectorMode.value == 'Canal'">
@@ -315,17 +238,6 @@
 						<message>必须填写${displayName}</message>
 					</fm-validators:required-validator>
 				</fm-validators:if>
-			</field>
-			<field name="storeExpiredTime" displayName="Store过期时间">
-				<fm-validators:required-validator>
-					<message>必须填写${displayName}</message>
-				</fm-validators:required-validator>
-				<fm-validators:number-validator>
-					<message>${displayName} 必须是数字且是整数</message>
-				</fm-validators:number-validator>
-				<fm-validators:number-validator greaterThan="0">
-					<message>${displayName} 必须是大于0的整数</message>
-				</fm-validators:number-validator>
 			</field>
 		</group>
 

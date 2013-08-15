@@ -49,8 +49,7 @@ public class PipelineAction {
         // parameters.setLoadPoolSize(PipelineParameter.DEFAULT_LOAD_POOL_SIZE);
         // }
 
-        List<Long> selectNodeIds = Arrays.asList(ArrayUtils.toObject(pipelineInfo.getField("selectNodeIds")
-            .getLongValues()));
+        List<Long> selectNodeIds = Arrays.asList(ArrayUtils.toObject(pipelineInfo.getField("selectNodeIds").getLongValues()));
         List<Node> selectNodes = new ArrayList<Node>();
         for (Long selectNodeId : selectNodeIds) {
             Node node = new Node();
@@ -59,8 +58,7 @@ public class PipelineAction {
         }
 
         // select/extract节点普遍配置为同一个节点
-        List<Long> extractNodeIds = Arrays.asList(ArrayUtils.toObject(pipelineInfo.getField("selectNodeIds")
-            .getLongValues()));
+        List<Long> extractNodeIds = Arrays.asList(ArrayUtils.toObject(pipelineInfo.getField("selectNodeIds").getLongValues()));
         // List<Long> extractNodeIds =
         // Arrays.asList(ArrayUtils.toObject(pipelineInfo.getField("extractNodeIds").getLongValues()));
         List<Node> extractNodes = new ArrayList<Node>();
@@ -119,8 +117,7 @@ public class PipelineAction {
         // parameters.setLoadPoolSize(PipelineParameter.DEFAULT_LOAD_POOL_SIZE);
         // }
 
-        List<Long> selectNodeIds = Arrays.asList(ArrayUtils.toObject(pipelineInfo.getField("selectNodeIds")
-            .getLongValues()));
+        List<Long> selectNodeIds = Arrays.asList(ArrayUtils.toObject(pipelineInfo.getField("selectNodeIds").getLongValues()));
         List<Node> selectNodes = new ArrayList<Node>();
         for (Long selectNodeId : selectNodeIds) {
             Node node = new Node();
@@ -129,8 +126,7 @@ public class PipelineAction {
         }
 
         // select/extract节点普遍配置为同一个节点
-        List<Long> extractNodeIds = Arrays.asList(ArrayUtils.toObject(pipelineInfo.getField("selectNodeIds")
-            .getLongValues()));
+        List<Long> extractNodeIds = Arrays.asList(ArrayUtils.toObject(pipelineInfo.getField("selectNodeIds").getLongValues()));
         // List<Long> extractNodeIds =
         // Arrays.asList(ArrayUtils.toObject(pipelineInfo.getField("extractNodeIds").getLongValues()));
         List<Node> extractNodes = new ArrayList<Node>();
