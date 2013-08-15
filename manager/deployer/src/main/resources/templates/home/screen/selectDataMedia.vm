@@ -45,17 +45,17 @@ $control.setTemplate("home:navigation.vm")
   <table border="0" cellspacing="0" cellpadding="0" class="list changecolor_w" >
     <tr> 
       <th>序号</th>
-	  <th>命名空间</th>
-	  <th>介质名字</th>
+	  <th>Schema Name</th>
+	  <th>Table Name</th>
 	  <th>数据源</th>
 	  <th>操作</th>
     </tr>
 	#foreach ($dataMedia in $dataMedias)
 	
     <tr> 
-      <td width="9%">$!dataMedia.id</td>
-	  <td>$!dataMedia.namespace</td>
-      <td width="16%">$!dataMedia.name</td>
+      <td width="10%">$!dataMedia.id</td>
+	  <td width="20%">$!dataMedia.namespace</td>
+      <td width="20%">$!dataMedia.name</td>
       <td>
 		#set ($dataSourceInfoURL = $homeModule.setTarget("dataSourceInfo.vm").addQueryData("dataMediaSourceId", $!dataMedia.source.id))
 		<a href="$dataSourceInfoURL">$!dataMedia.source.name</a>
@@ -67,11 +67,6 @@ $control.setTemplate("home:navigation.vm")
     </tr>
     #end
   </table>
-     <!--常规按钮-->
-     #if($user.authorizeType.isAdmin())
-			<div class="btn"><a href="addDataMedia.htm">添加</a></div>
-	 #end
-  
      
      <!--分页-->
      <div class="page">共$paginator.items条数据&nbsp;&nbsp;第$paginator.page页/共$paginator.pages页&nbsp;&nbsp; 

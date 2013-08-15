@@ -14,8 +14,8 @@
 	
 	<!-- zookeeper -->
 	<bean name="zookeeperClient" class="com.alibaba.otter.shared.arbitrate.impl.zookeeper.ZooKeeperClient" depends-on="arbitrateFactory" lazy-init="false" scope="singleton">
-		<property name="cluster" value="${otter.zookeeper.cluster.default}" />
-		<property name="sessionTimeout" value="${otter.zookeeper.sessionTimeout}" />
+		<property name="cluster" value="${otter.zookeeper.cluster.default:127.0.0.1:2181}" />
+		<property name="sessionTimeout" value="${otter.zookeeper.sessionTimeout:60000}" />
 	</bean>
 	
 	<bean id="arbitrateExecutor" class="com.alibaba.otter.shared.common.utils.thread.ExecutorServiceFactoryBean">

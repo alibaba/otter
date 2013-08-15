@@ -30,7 +30,7 @@
 		select
 		<include refid="allAutoKeeperClusterColumns" />
 		from AUTOKEEPER_CLUSTER 
-		ORDER BY ID DESC 
+		ORDER BY ID ASC 
 		<dynamic>
 			<isNotEmpty property="offset">
 				<isNotEmpty property="length">

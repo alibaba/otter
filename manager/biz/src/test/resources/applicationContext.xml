@@ -10,7 +10,7 @@
     default-autowire="byName">
 
 	<!-- properties -->
-	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" lazy-init="false">
+	<bean class="com.alibaba.otter.shared.common.utils.spring.PropertyPlaceholderConfigurer" lazy-init="false">
 		<property name="ignoreResourceNotFound" value="true" />
 		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/><!-- 允许system覆盖 -->
 		<property name="locations">

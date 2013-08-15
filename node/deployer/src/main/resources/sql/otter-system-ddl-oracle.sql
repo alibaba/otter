@@ -40,5 +40,5 @@ CREATE TABLE IF NOT EXIST RETL.RETL_CLIENT;
 );
 CREATE SEQUENCE RETL.SEQ_RETL_CLIENT MINVALUE 1 MAXVALUE 1.00000000000000E+27 INCREMENT BY 1 START WITH 1 CACHE 100 NOORDER NOCYCLE;
 
---- 插入初始化数据
+/* 插入初始化数据 */
 merge /*+ use_nl(a b)*/ into XDUAL a using (select 1 as id , sysdate as x from retl.xdual) b on (a.id=b.id) when matched then update set a.x = b.x when not matched then insert (a.id , a.x) values (b.id , b.x)

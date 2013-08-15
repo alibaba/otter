@@ -4,7 +4,7 @@ $control.setTemplate("home:navigation.vm")
 <script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
 <script type="text/javascript" src="js/jquery.simplemodal-1.4.js"></script> 
 <script language="javascript">
-	changeNav("record");
+	changeNav("node");
 	
 	function NeatDialog(sHTML, sTitle, bCancel)
     {

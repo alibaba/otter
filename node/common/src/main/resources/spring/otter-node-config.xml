@@ -12,7 +12,7 @@
 	<bean id="nodeTaskService" class="com.alibaba.otter.node.common.config.impl.NodeTaskServiceImpl" depends-on="nodeCommunicationEndpoint">
 	</bean>
 	
-	<bean id="configClientService" class="com.alibaba.otter.node.common.config.impl.ConfigClientServiceImpl" >
-		<property name="timeout" value="7200000" /> <!-- 2小时 -->
+	<bean id="configClientService" class="com.alibaba.otter.node.common.config.impl.ConfigClientServiceImpl" depends-on="zookeeperClient">
+		<property name="timeout" value="3600000" /> <!-- 1小时 -->
 	</bean>
 </beans>

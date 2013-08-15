@@ -25,12 +25,8 @@ $control.setTemplate("home:navigation.vm")
   <th>运行模式：</th><td>$!canal.canalParameter.runMode</td>
   </tr>
   <tr>
-  <th>地区选择：</th><td>#if($!canal.canalParameter.areaType.isHzArea())杭州#elseif($!canal.canalParameter.areaType.isUsArea())美国#else 未知#end</td>
+  <th>Zookeeper集群：</th><td>$zkCluster.clusterName [ $stringUtil.join($zkCluster.serverList,",") ]</td>
   </tr>
-  <tr>
-  <th>ZK集群：</th><td>#foreach($addr in $canal.canalParameter.zkClusters) [$addr]  #end</td>
-  </tr>
-  
   <tr>
   <th>数据源类型：</th><td>$!canal.canalParameter.sourcingType</td>
   </tr>
@@ -78,12 +74,6 @@ $control.setTemplate("home:navigation.vm")
   </tr>
   #end
   
-  #if($!canal.canalParameter.storageMode.isMetaq())
-  <tr>
-  <th>metaq uri:</th><td>$!canal.canalParameter.metaqStoreUri</td>
-  </tr>
-  #end
-  
   #if($!canal.canalParameter.storageMode.isFile())
   <tr>
   <th>文件存储的目录位置：</th><td>$!canal.canalParameter.fileStorageDirectory</td>
@@ -102,15 +92,6 @@ $control.setTemplate("home:navigation.vm")
   <tr>
   <th>HA机制：</th><td>$!canal.canalParameter.haMode</td>
   </tr>
-  
-  #if($!canal.canalParameter.haMode.isTddl())
-  <tr>
-  <th>tddl group key：</th><td>$!canal.canalParameter.group</td>
-  </tr>
-  <tr>
-  <th>tddl app key：</th><td>$!canal.canalParameter.app</td>
-  </tr>
-  #end
   
   #if($!canal.canalParameter.haMode.isMedia())
   <tr>

@@ -2,7 +2,6 @@ package com.alibaba.otter.manager.biz.config.pipeline.dal.dataobject;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 import com.alibaba.otter.shared.common.model.config.pipeline.PipelineParameter;
 
@@ -17,9 +16,6 @@ public class PipelineDO implements Serializable {
     private PipelineParameter parameters;
     private String            description;                             // 描述信息
     private Long              channelId;                               // 对应关联的channel唯一标示id
-    private List<Long>        selectNodeId;
-    private List<Long>        extractNodeId;
-    private List<Long>        loadNodeId;
     private Date              gmtCreate;
     private Date              gmtModified;
 
@@ -61,30 +57,6 @@ public class PipelineDO implements Serializable {
 
     public void setChannelId(Long channelId) {
         this.channelId = channelId;
-    }
-
-    public List<Long> getSelectNodeId() {
-        return selectNodeId;
-    }
-
-    public void setSelectNodeId(List<Long> selectNodeId) {
-        this.selectNodeId = selectNodeId;
-    }
-
-    public List<Long> getExtractNodeId() {
-        return extractNodeId;
-    }
-
-    public void setExtractNodeId(List<Long> extractNodeId) {
-        this.extractNodeId = extractNodeId;
-    }
-
-    public List<Long> getLoadNodeId() {
-        return loadNodeId;
-    }
-
-    public void setLoadNodeId(List<Long> loadNodeId) {
-        this.loadNodeId = loadNodeId;
     }
 
     public Date getGmtCreate() {

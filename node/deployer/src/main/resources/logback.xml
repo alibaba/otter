@@ -181,7 +181,7 @@
         <level value="INFO" />  
         <appender-ref ref="FILE_MISS_LOG" />
     </logger>
-    <logger name="com.alibaba.otter.node.etl.OtterLauncher" additivity="false">  
+    <logger name="com.alibaba.otter.node.deployer.OtterLauncher" additivity="false">  
         <level value="INFO" />  
         <appender-ref ref="TASK-ROOT" />
     </logger>

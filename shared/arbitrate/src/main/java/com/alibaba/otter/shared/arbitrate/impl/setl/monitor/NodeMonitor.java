@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import org.I0Itec.zkclient.IZkChildListener;
+import org.I0Itec.zkclient.exception.ZkNodeExistsException;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -42,6 +43,16 @@ public class NodeMonitor implements Monitor {
             }
         };
         List<String> childs = zookeeper.subscribeChildChanges(ArbitrateConstants.NODE_NID_ROOT, childListener);
+        if (childs == null) {//如果为null，代表系统节点为初始化
+            try {
+                zookeeper.createPersistent(ArbitrateConstants.NODE_NID_ROOT, true);
+            } catch (ZkNodeExistsException e) {
+                //ignore 
+            }
+
+            childs = zookeeper.getChildren(ArbitrateConstants.NODE_NID_ROOT);
+        }
+
         initNodes(childs);
         // syncNodes();// 开始监视node节点的变化
         MonitorScheduler.register(this);

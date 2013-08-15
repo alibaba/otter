@@ -131,8 +131,12 @@
         <level value="info" />  
         <appender-ref ref="position" />
     </logger>
+    <logger name="com.alibaba.otter.manager.deployer" additivity="false">  
+        <level value="info" />  
+        <appender-ref ref="WEBX-ROOT" />
+    </logger>
     
-	<root level="INFO">
+	<root level="WARN">
 		<appender-ref ref="WEBX-ROOT" />
 	</root>
 </configuration>

@@ -5,23 +5,24 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.alibaba.otter.shared.common.utils.Assert;
 import com.alibaba.otter.canal.instance.manager.model.Canal;
 import com.alibaba.otter.canal.instance.manager.model.CanalParameter;
 import com.alibaba.otter.manager.biz.common.exceptions.ManagerException;
 import com.alibaba.otter.manager.biz.common.exceptions.RepeatConfigureException;
+import com.alibaba.otter.manager.biz.config.autokeeper.AutoKeeperClusterService;
 import com.alibaba.otter.manager.biz.config.canal.CanalService;
 import com.alibaba.otter.manager.biz.config.canal.dal.CanalDAO;
 import com.alibaba.otter.manager.biz.config.canal.dal.dataobject.CanalDO;
 import com.alibaba.otter.manager.biz.config.node.impl.NodeServiceImpl;
-import com.alibaba.otter.manager.biz.config.parameter.SystemParameterService;
-import com.alibaba.otter.shared.common.model.config.parameter.SystemParameter;
+import com.alibaba.otter.shared.common.model.autokeeper.AutoKeeperCluster;
+import com.alibaba.otter.shared.common.utils.Assert;
 import com.alibaba.otter.shared.common.utils.JsonUtils;
 
 /**
@@ -29,11 +30,11 @@ import com.alibaba.otter.shared.common.utils.JsonUtils;
  */
 public class CanalServiceImpl implements CanalService {
 
-    private static final Logger    logger = LoggerFactory.getLogger(NodeServiceImpl.class);
+    private static final Logger      logger = LoggerFactory.getLogger(NodeServiceImpl.class);
 
-    private CanalDAO               canalDao;
-    private TransactionTemplate    transactionTemplate;
-    private SystemParameterService systemParameterService;
+    private CanalDAO                 canalDao;
+    private TransactionTemplate      transactionTemplate;
+    private AutoKeeperClusterService autoKeeperClusterService;
 
     /**
      * 添加
@@ -221,14 +222,11 @@ public class CanalServiceImpl implements CanalService {
             canal.setName(canalDo.getName());
             canal.setStatus(canalDo.getStatus());
             canal.setDesc(canalDo.getDescription());
-            SystemParameter systemParameter = systemParameterService.find();
             CanalParameter parameter = canalDo.getParameters();
-            if (parameter.getAreaType() != null && parameter.getAreaType().isHzArea()) {
-                parameter.setZkClusters(systemParameter.getHzZkClusters());
-            } else if (parameter.getAreaType() != null && parameter.getAreaType().isUsArea()) {
-                parameter.setZkClusters(systemParameter.getUsZkClusters());
+            AutoKeeperCluster zkCluster = autoKeeperClusterService.findAutoKeeperClusterById(parameter.getZkClusterId());
+            if (zkCluster != null) {
+                parameter.setZkClusters(Arrays.asList(StringUtils.join(zkCluster.getServerList(), ',')));
             }
-
             canal.setCanalParameter(canalDo.getParameters());
             canal.setGmtCreate(canalDo.getGmtCreate());
             canal.setGmtModified(canalDo.getGmtModified());
@@ -258,8 +256,8 @@ public class CanalServiceImpl implements CanalService {
         this.transactionTemplate = transactionTemplate;
     }
 
-    public void setSystemParameterService(SystemParameterService systemParameterService) {
-        this.systemParameterService = systemParameterService;
+    public void setAutoKeeperClusterService(AutoKeeperClusterService autoKeeperClusterService) {
+        this.autoKeeperClusterService = autoKeeperClusterService;
     }
 
 }

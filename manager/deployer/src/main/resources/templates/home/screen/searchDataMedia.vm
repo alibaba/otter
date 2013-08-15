@@ -72,9 +72,9 @@ $control.setTemplate("home:navigation.vm")
 <div class="main">
    
   <div class="title"> 
-    <h2>搜索数据介质</h2>
+    <h2>搜索数据表</h2>
   </div>
-   <div class="crumbs"><a href="dataMediaList.htm">数据介质管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;搜索数据介质</div> 
+   <div class="crumbs"><a href="dataMediaList.htm">数据表配置</a>&nbsp;&nbsp;>&nbsp;&nbsp;搜索数据表</div> 
    <!--分页表单-->
    <form id="pageform" name="pageform" action="$homeModule.setTarget('dataMediaList.vm')" method="post">
     	$csrfToken.hiddenField
@@ -98,9 +98,9 @@ $control.setTemplate("home:navigation.vm")
   <table border="0" cellspacing="0" cellpadding="0" class="list changecolor_w" >
     <tr> 
       <th>序号</th>
-      <th>Table名字</th>
+      <th width="18%">Schema Name</th>
+      <th>Table Name</th>
       <th width="16%">DataSource</th>
-      <th width="18%">命名空间</th>
       <th width="10%">TabeId</th>
       <th width="31%">操作</th>
     </tr>
@@ -108,9 +108,9 @@ $control.setTemplate("home:navigation.vm")
 	
     <tr> 
       <td width="9%">$dataMedia.id</td>
+      <td>$dataMedia.namespace</td>
       <td width="16%">$dataMedia.name</td>
       <td>$dataMedia.source.name</td>
-      <td>$dataMedia.namespace</td>
       <td>33</td>
       <td>
 		#set ($editURL = $homeModule.setTarget("editDataMedia.vm").addQueryData("dataMediaId", $dataMedia.id))

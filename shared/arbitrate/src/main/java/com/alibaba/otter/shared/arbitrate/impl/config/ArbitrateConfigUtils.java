@@ -1,7 +1,10 @@
 package com.alibaba.otter.shared.arbitrate.impl.config;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.alibaba.otter.shared.common.model.config.channel.Channel;
 import com.alibaba.otter.shared.common.model.config.node.Node;
@@ -33,7 +36,8 @@ public class ArbitrateConfigUtils {
     public static List<String> getServerAddrs() {
         Node node = ArbitrateConfigRegistry.getConfig().currentNode();
         if (node != null) {
-            return node.getParameters().getZkClusters();
+            String addr = StringUtils.join(node.getParameters().getZkCluster().getServerList(), ',');
+            return Arrays.asList(addr);
         } else {
             return new ArrayList<String>();
         }

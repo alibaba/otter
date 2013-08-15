@@ -79,7 +79,7 @@ $control.setTemplate("home:navigation.vm")
   <div class="title"> 
     <h2>搜索数据源</h2>
   </div>
-   <div class="crumbs"><a href="dataSourceList.htm">数据源管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;搜索数据源</div> 
+   <div class="crumbs"><a href="dataSourceList.htm">数据源配置</a>&nbsp;&nbsp;>&nbsp;&nbsp;搜索数据源</div> 
    <!--分页表单-->
    <form id="pageform" name="pageform" action="$homeModule.setTarget('dataSourceList.vm')" method="post">
     	$csrfToken.hiddenField

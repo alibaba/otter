@@ -35,8 +35,8 @@ $control.setTemplate("home:navigation.vm")
   <table border="0" cellspacing="0" cellpadding="0" class="list changecolor_w" >
     <tr> 
       <th>序号</th>
-	  <th>命名空间</th>
-	  <th>介质名字</th>
+	  <th>Schema Name</th>
+	  <th>Table Name</th>
 	  <th>数据源</th>
 	  <th>源类型</th>
 	  <th>操作</th>

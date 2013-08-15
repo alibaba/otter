@@ -29,10 +29,10 @@
 	</bean>
 	 -->
 	<bean id="endpoint" class="com.alibaba.otter.shared.communication.core.impl.dubbo.DubboCommunicationEndpoint" init-method="initial" destroy-method="destory">
-		<property name="port" value="${otter.communication.manager.port}" />
+		<property name="port" value="${otter.communication.manager.port:1099}" />
 	</bean>
 	<bean id="communicationClient" class="com.alibaba.otter.shared.communication.core.impl.DefaultCommunicationClientImpl" init-method="initial" destroy-method="destory">
-		<property name="poolSize" value="${otter.communication.pool.size}" />
+		<property name="poolSize" value="${otter.communication.pool.size:10}" />
 		<property name="factory">
 			<bean class="com.alibaba.otter.shared.communication.core.impl.dubbo.DubboCommunicationConnectionFactory" />
 		</property>

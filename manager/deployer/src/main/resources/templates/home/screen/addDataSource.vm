@@ -17,7 +17,7 @@ $control.setTemplate("home:navigation.vm")
   <div class="title"> 
     <h2>添加数据源</h2>
   </div>
-  <div class="crumbs"><a href="dataSourceList.htm">数据源管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="addDataSource.htm">添加数据源</a></div>
+  <div class="crumbs"><a href="dataSourceList.htm">数据源配置</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="addDataSource.htm">添加数据源</a></div>
  
  <form name="addSourceForm" method="post" enctype="multipart/form-data">
 	$csrfToken.hiddenField
@@ -41,7 +41,6 @@ $control.setTemplate("home:navigation.vm")
             <select id="sourceType" name="$dataMediaSourceGroup.type.key" onchange="changeform();" >
             <option value="MYSQL">MySQL</option>
             <option value="ORACLE">Oracle</option>
-			<option value="NAPOLI">Napoli</option>
 			</select><span class="red">*</span>
         </td>
       </tr>
@@ -69,6 +68,7 @@ $control.setTemplate("home:navigation.vm")
 			<span class="red">#addDataSourceMessage ($dataMediaSourceGroup.url)</span>
 		</td>
       </tr>
+	  #**
 	  <tr> 
         <th>StorePath：</th>
         <td>
@@ -77,6 +77,7 @@ $control.setTemplate("home:navigation.vm")
 			<span class="red">#addDataSourceMessage ($dataMediaSourceGroup.storePath)</span>
 		</td>
       </tr>
+	  *#
 	  <tr> 
         <th>编码：</th>
         <td>
@@ -98,8 +99,6 @@ $control.setTemplate("home:navigation.vm")
         <td>
 			mysql: jdbc:mysql://10.20.144.15:3306/tddl_test_1<br/>
 			oracle : jdbc:oracle:thin:@10.20.144.29:1521:OINTEST<br/>
-			tddl : tddl://group?appKey=key1&groupKey=key2  (更改 key1 和 key2)<br/>
-			diamond : diamond://group?appKey=key1&groupKey=key2 (更改 key1 和 key2)<br/>
 			media : jdbc:mysql://groupKey=key (更改 key)
 		</td>
       </tr>

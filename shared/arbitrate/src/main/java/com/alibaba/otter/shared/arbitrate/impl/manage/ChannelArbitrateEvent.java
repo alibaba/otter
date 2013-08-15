@@ -64,6 +64,8 @@ public class ChannelArbitrateEvent implements ArbitrateEvent {
         } catch (ZkNodeExistsException e) {
             // 如果节点已经存在，则不抛异常
             // ignore
+        } catch (ZkNoNodeException e) {
+            zookeeper.createPersistent(path, data, true);//创建父节点
         } catch (ZkException e) {
             throw new ArbitrateException("Channel_init", channelId.toString(), e);
         }
@@ -323,8 +325,8 @@ public class ChannelArbitrateEvent implements ArbitrateEvent {
                 for (ProcessStat stat : stats) {
                     processIds.add(stat.getProcessId());
                 }
-                sendWarningMessage(pipeline.getId(), "can't restart by exist process["
-                                                     + StringUtils.join(processIds, ',') + "]");
+                sendWarningMessage(pipeline.getId(),
+                                   "can't restart by exist process[" + StringUtils.join(processIds, ',') + "]");
                 return false;
             }
         }

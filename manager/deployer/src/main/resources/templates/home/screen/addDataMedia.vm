@@ -21,9 +21,9 @@ function changeKeyword(id, name) {
 
 <div class="main">
   <div class="title"> 
-    <h2>添加数据介质</h2>
+    <h2>添加数据表</h2>
   </div>
-  <div class="crumbs"><a href="dataMediaList.htm">数据介质管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="addDataMedia.htm">添加数据介质</a></div>
+  <div class="crumbs"><a href="dataMediaList.htm">数据表配置</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="addDataMedia.htm">添加数据表</a></div>
 
  <form id="addDataMediaForm" name="addDataMediaForm" method="post" enctype="multipart/form-data">
 	$csrfToken.hiddenField

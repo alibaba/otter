@@ -14,11 +14,16 @@
 <div class="nav">
    <ul>
     <li id="sync"><a href="$channelListLink">同步管理</a></li>
-	<li id="node"><a href="$nodeListLink">机器管理</a></li>
+	<li id="node" class="sub_nav"><a href="#">机器管理</a>
+		<ul>
+    		<li><a href="$autoKeeperClustersListLink">zookeeper管理</a></li>
+    		<li><a href="$nodeListLink">Node管理</a></li>
+		</ul>
+	</li>
     <li id="datamedia" class="sub_nav"><a href="#">配置管理</a>
       <ul>
-        <li><a href="$dataMediaListLink">数据介质</a></li>
-        <li><a href="$dataMediaSourceListLink">数据源</a></li>
+        <li><a href="$dataMediaSourceListLink">数据源配置</a></li>
+        <li><a href="$dataMediaListLink">数据表配置</a></li>
 		<li><a href="$canalListLink">canal配置</a></li>
 		<li><a href="$dataMatrixListLink">主备配置</a></li>
       </ul>   
@@ -28,7 +33,6 @@
 			<li><a href="$logRecordLink">日志记录</a></li>
 			<li><a href="$alarmLogLink">监控列表</a></li>
 			<li><a href="${analysisTopStatLink}?topN=15&statTime=1&searchKey=">同步TOP</a></li>
-			<li><a href="$autoKeeperClustersListLink">zookeeper</a></li>
         </ul>
 	</li>
 	<li id="manual" class="sub_nav"><a href="#">使用文档</a>
@@ -48,7 +52,7 @@
 	    </li>
 	#end
    </ul>
-  <div class="about"><a href="http://b2b-doc.alibaba-inc.com/display/RC/Otter" target="_blank">About</a></div>
+  <div class="about"><a href="http://github.com/alibaba/otter" target="_blank">About</a></div>
 </div>
 
 <script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 

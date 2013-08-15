@@ -12,7 +12,7 @@ $control.setTemplate("home:navigation.vm")
   <div class="title"> 
     <h2>添加主备配置</h2>
   </div>
-  <div class="crumbs"><a href="dataMediaList.htm">数据介质管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="addDataMatrix.htm">添加主备配置</a></div>
+  <div class="crumbs"><a href="dataMatrixList.htm">主备配置</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="addDataMatrix.htm">添加主备配置</a></div>
 
  <form id="editDataMatrixForm" name="editDataMatrixForm" method="post" enctype="multipart/form-data">
 	$csrfToken.hiddenField

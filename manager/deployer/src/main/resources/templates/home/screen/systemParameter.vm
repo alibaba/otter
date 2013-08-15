@@ -74,65 +74,9 @@ $control.setTemplate("home:navigation.vm")
         <td>
             <select id="downloadType" name="$systemParameterDetailGroup.retriever.key">
             <option value="ARIA2C" #if($!systemParameter.retriever.name() == 'ARIA2C') selected  #end >ARIA2C</option>
-            <option value="MR4J" #if($!systemParameter.retriever.name() == 'MR4J') selected  #end >MR4J</option>
+            ##<option value="MR4J" #if($!systemParameter.retriever.name() == 'MR4J') selected  #end >MR4J</option>
 			</select><span class="red">*</span>
         </td>
-      </tr>
-	  <tr> 
-		<th>杭州ZooKeeper集群：</th>
-        <td>
-			<textarea class="service" name="$systemParameterDetailGroup.hzZkClusters.key" cols="45" rows="5" >#foreach($storeAddress in $!systemParameter.hzZkClusters)$storeAddress;#end</textarea><span class="red">*</span>
-			  <br />
-			  <span>格式如 10.20.10.20:8080;（必须以分号结束，可添多个）</span>
-			  <br />
-			<span class="red">#systemParameterMessage ($systemParameterDetailGroup.hzZkClusters)</span>
-		</td>
-      </tr>
-	  <tr> 
-		<th>美国ZooKeeper集群：</th>
-        <td>
-			<textarea class="service" name="$systemParameterDetailGroup.usZkClusters.key" cols="45" rows="5" >#foreach($storeAddress in $!systemParameter.usZkClusters)$storeAddress;#end</textarea><span class="red">*</span>
-			  <br />
-			  <span>格式如 10.20.10.20:8080;（必须以分号结束，可添多个）</span>
-			  <br />
-			<span class="red">#systemParameterMessage ($systemParameterDetailGroup.usZkClusters)</span>
-		</td>
-      </tr>
-	  <tr> 
-		<th>杭州Kv集群：</th>
-        <td>
-			<textarea class="service" name="$systemParameterDetailGroup.hzStoreClusters.key" cols="45" rows="5" >#foreach($storeAddress in $!systemParameter.hzStoreClusters)$storeAddress;#end</textarea><span class="red">*</span>
-			  <br />
-			  <span>格式如 10.20.10.20:8080;（必须以分号结束，可添多个）</span>
-			  <br />
-			<span class="red">#systemParameterMessage ($systemParameterDetailGroup.hzStoreClusters)</span>
-		</td>
-      </tr>
-	  <tr> 
-		<th>美国Kv集群：</th>
-        <td>
-			<textarea class="service" name="$systemParameterDetailGroup.usStoreClusters.key" cols="45" rows="5" >#foreach($storeAddress in $!systemParameter.usZkClusters)$storeAddress;#end</textarea><span class="red">*</span>
-			  <br />
-			  <span>格式如 10.20.10.20:8080;（必须以分号结束，可添多个）</span>
-			  <br />
-			<span class="red">#systemParameterMessage ($systemParameterDetailGroup.usStoreClusters)</span>
-		</td>
-      </tr>
-	  <tr> 
-		<th>杭州aranda地址：</th>
-        <td>
-			<input type="text" name="$systemParameterDetailGroup.hzArandaCluster.key" value="$!systemParameter.hzArandaCluster" class="setting_input"/>
-			<br />
-			<span class="red">#systemParameterMessage ($systemParameterDetailGroup.hzArandaCluster)</span>
-		</td>
-      </tr>
-	  <tr> 
-		<th>美国aranda地址：</th>
-        <td>
-			<input type="text" name="$systemParameterDetailGroup.usArandaCluster.key" value="$!systemParameter.usArandaCluster" class="setting_input"/>
-			<br />
-			<span class="red">#systemParameterMessage ($systemParameterDetailGroup.usArandaCluster)</span>
-		</td>
       </tr>
     </table> 
    </div>

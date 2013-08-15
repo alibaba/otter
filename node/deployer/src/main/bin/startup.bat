@@ -21,4 +21,4 @@ set OTTER_OPTS= -DappName=otter-node -Dlogback.configurationFile="%logback_confi
 
 set JAVA_OPTS= %JAVA_MEM_OPTS% %JAVA_OPTS_EXT% %JAVA_DEBUG_OPT% %OTTER_OPTS%
 
-java %JAVA_OPTS% -classpath "%CLASSPATH%" com.alibaba.otter.node.etl.OtterLauncher
+java %JAVA_OPTS% -classpath "%CLASSPATH%" com.alibaba.otter.node.deployer.OtterLauncher

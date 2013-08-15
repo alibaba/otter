@@ -30,7 +30,7 @@ $control.setTemplate("home:navigation.vm")
   <div class="title"> 
     <h2>编辑canal</h2>
   </div>
- <div class="crumbs"><a href="canalList.htm">canal管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="editCanal.htm">编辑canal</a></div>
+ <div class="crumbs"><a href="canalList.htm">canal管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="editCanal.htm?canalId=$canal.id">编辑canal</a></div>
  
  
 <form name="editCanalForm" method="post" enctype="multipart/form-data">
@@ -71,18 +71,18 @@ $control.setTemplate("home:navigation.vm")
         <th width="300">运行模式：</th>
         <td width="329">
             <input type="radio" name="$canalParameterGroup.runMode.key" value="EMBEDDED" id="RadioGroup1_0" #if($!canal.canalParameter.runMode.isEmbedded()) checked="checked" #end class="radio"/>嵌入式 &nbsp;
-            <input type="radio" name="$canalParameterGroup.runMode.key" value="SERVICE" id="RadioGroup1_1" #if($!canal.canalParameter.runMode.isService()) checked="checked" #end disable class="radio"/>独立服务 &nbsp;
+            <input type="radio" name="$canalParameterGroup.runMode.key" value="SERVICE" id="RadioGroup1_1" #if($!canal.canalParameter.runMode.isService()) checked="checked" #end disabled class="radio"/>独立服务 &nbsp;
 			<br />
 			<span class="red">#editCanalMessage ($canalParameterGroup.runMode)</span>
 		</td>
       </tr>
-	  <tr> 
-        <th>地区选择：</th>
+	 <tr> 
+        <th>zookeeper集群：</th>
         <td>
-            <select id="areaType" name="$canalParameterGroup.areaType.key">
-            <option value="HZ" #if($!canal.canalParameter.areaType.name() == 'HZ') selected  #end >杭州</option>
-            <option value="US" #if($!canal.canalParameter.areaType.name() == 'US') selected  #end >美国</option>
-			</select><span class="red">*</span>
+            <select id="zkCluster" name="$canalParameterGroup.autoKeeperClusterId.key">
+			#foreach($zkCluster in $zkClusters)
+            <option value="$zkCluster.id" #if($!canal.canalParameter.zkClusterId == $zkCluster.id)selected#end>$zkCluster.clusterName</option>
+			#end
         </td>
       </tr>
 	  #*
@@ -206,9 +206,8 @@ $control.setTemplate("home:navigation.vm")
 		<tr> 
         <th width="300">存储机制：</th>
         <td width="329">
-            <input type="radio" name="$canalParameterGroup.storageMode.key" value="MEMORY" onclick="changeDisplay('memoryStorage','table-row');changeDisplay('metaqStorage','none');changeDisplay('fileStorage','none');" id="RadioGroup4_0" #if($!canal.canalParameter.storageMode.isMemory()) checked="checked" #end class="radio" class="radio"/>memory &nbsp;
-			<input type="radio" name="$canalParameterGroup.storageMode.key" value="METAQ" onclick="changeDisplay('memoryStorage','none');changeDisplay('metaqStorage','table-row');changeDisplay('fileStorage','none');" id="RadioGroup4_1"  #if($!canal.canalParameter.storageMode.isMetaq()) checked="checked" #end class="radio"/>metaq &nbsp; 
-            <input type="radio" name="$canalParameterGroup.storageMode.key" value="FILE" onclick="changeDisplay('memoryStorage','none');changeDisplay('metaqStorage','none');changeDisplay('fileStorage','table-row');" id="RadioGroup4_2" #if($!canal.canalParameter.storageMode.isFile()) checked="checked" #end disabled class="radio"/>file &nbsp;
+            <input type="radio" name="$canalParameterGroup.storageMode.key" value="MEMORY" onclick="changeDisplay('memoryStorage','table-row');changeDisplay('fileStorage','none');" id="RadioGroup4_0" #if($!canal.canalParameter.storageMode.isMemory()) checked="checked" #end class="radio" class="radio"/>memory &nbsp;
+            <input type="radio" name="$canalParameterGroup.storageMode.key" value="FILE" onclick="changeDisplay('memoryStorage','none');changeDisplay('fileStorage','table-row');" id="RadioGroup4_2" #if($!canal.canalParameter.storageMode.isFile()) checked="checked" #end disabled class="radio"/>file &nbsp;
 			<br />
 			<span class="red">#editCanalMessage ($canalParameterGroup.storageMode)</span>
 		</td>
@@ -241,16 +240,6 @@ $control.setTemplate("home:navigation.vm")
 		</td>
       </tr>
 	  
-	    <tr class="metaqStorage"> 
-        <th width="300">metaq uri:</th>
-        <td width="329">
-			<input type="text" name="$canalParameterGroup.metaqStoreUri.key" value="$!canal.canalParameter.metaqStoreUri" class="setting_input"/>
-			<br />
-			<span>例如：<code>meta://anyhost/anypath?topic=a&consumerId=b&clientGroup=c&partitionDataId=d&partitionGroupId=e</code></span>
-			<br />
-			<span class="red">#editCanalMessage ($canalParameterGroup.metaqStoreUri)</span>
-		</td>
-      </tr>
 	 <tr class="fileStorage"> 
         <th width="300">文件存储的目录位置：</th>
         <td width="329">
@@ -294,29 +283,10 @@ $control.setTemplate("home:navigation.vm")
 	  <tr> 
         <th width="300">HA机制：</th>
         <td width="329">
-            <input type="radio" name="$canalParameterGroup.haMode.key" value="HEARTBEAT" onclick="changeDisplay('heartbeatHa','table-row');changeDisplay('tddlHa','none');changeDisplay('mediaHa','none');" id="RadioGroup6_0" #if($!canal.canalParameter.haMode.isHeartBeat()) checked="checked" #end class="radio"/>heartbeat &nbsp;
-			<input type="radio" name="$canalParameterGroup.haMode.key" value="TDDL" onclick="changeDisplay('heartbeatHa','none');changeDisplay('tddlHa','table-row');changeDisplay('mediaHa','none');" id="RadioGroup6_2" #if($!canal.canalParameter.haMode.isTddl()) checked="checked" #end  class="radio"/>tddl &nbsp;
-            <input type="radio" name="$canalParameterGroup.haMode.key" value="MEDIA" onclick="changeDisplay('heartbeatHa','none');changeDisplay('tddlHa','none');changeDisplay('mediaHa','table-row');" id="RadioGroup6_1" #if($!canal.canalParameter.haMode.isMedia()) checked="checked" #end class="radio"/>media &nbsp;
+            <input type="radio" name="$canalParameterGroup.haMode.key" value="HEARTBEAT" onclick="changeDisplay('heartbeatHa','table-row');changeDisplay('mediaHa','none');" id="RadioGroup6_0" #if($!canal.canalParameter.haMode.isHeartBeat()) checked="checked" #end class="radio"/>heartbeat &nbsp;
+            <input type="radio" name="$canalParameterGroup.haMode.key" value="MEDIA" onclick="changeDisplay('heartbeatHa','none');changeDisplay('mediaHa','table-row');" id="RadioGroup6_1" #if($!canal.canalParameter.haMode.isMedia()) checked="checked" #end class="radio"/>media &nbsp;
 			<br />
 			<span class="red">#editCanalMessage ($canalParameterGroup.haMode)</span>
-		</td>
-      </tr>
-	  
-	  <tr class="tddlHa">
-        <th width="300">tddl app key:</th>
-        <td width="329">
-			<input type="text" name="$canalParameterGroup.app.key" value="$!canal.canalParameter.app" class="setting_input"/>
-			<br />
-			<span class="red">#editCanalMessage ($canalParameterGroup.app)</span>
-		</td>
-      </tr>
-      
-     <tr class="tddlHa">
-        <th width="300">tddl group key:</th>
-        <td width="329">
-			<input type="text" name="$canalParameterGroup.group.key" value="$!canal.canalParameter.group" class="setting_input"/>
-			<br />
-			<span class="red">#editCanalMessage ($canalParameterGroup.group)</span>
 		</td>
       </tr>
 	  </div>
@@ -507,12 +477,6 @@ $control.setTemplate("home:navigation.vm")
 		changeDisplay('memoryStorage','none')
 	#end
 
-	#if($!canal.canalParameter.storageMode.isMetaq())
-		changeDisplay('metaqStorage','table-row')
-	#else
-		changeDisplay('metaqStorage','none')
-	#end
-
 	#if($!canal.canalParameter.storageMode.isFile())
 		changeDisplay('fileStorage','table-row')
 	#else
@@ -525,12 +489,6 @@ $control.setTemplate("home:navigation.vm")
 		changeDisplay('heartbeatHa','none')
 	#end
 
-	#if($!canal.canalParameter.haMode.isTddl())
-		changeDisplay('tddlHa','table-row')
-	#else
-		changeDisplay('tddlHa','none')
-	#end
-	
 	#if($!canal.canalParameter.haMode.isMedia())
 		changeDisplay('mediaHa','table-row')
 	#else

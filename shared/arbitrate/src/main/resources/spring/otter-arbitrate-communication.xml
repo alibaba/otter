@@ -10,7 +10,7 @@
 	default-autowire="byName" default-dependency-check="none">
 
 	<bean id="arbitrateCommunicationClient" class="com.alibaba.otter.shared.communication.core.impl.DefaultCommunicationClientImpl" init-method="initial" destroy-method="destory">
-		<property name="poolSize" value="${otter.communication.pool.size}" />
+		<property name="poolSize" value="${otter.communication.pool.size:10}" />
 		<property name="factory">
 			<bean class="com.alibaba.otter.shared.communication.core.impl.dubbo.DubboCommunicationConnectionFactory" />
 		</property>
@@ -19,6 +19,6 @@
 	<!-- Node communication -->
 	<bean id="arbitrateCommmunicationClient" class="com.alibaba.otter.shared.arbitrate.impl.communication.ArbitrateCommmunicationClient" scope="singleton" >
 		<property name="delegate" ref="arbitrateCommunicationClient" />
-		<property name="managerAddress" value="${otter.manager.address}" />
+		<property name="managerAddress" value="${otter.manager.address:127.0.0.1:1099}" />
 	</bean>
 </beans>

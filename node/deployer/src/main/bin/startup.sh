@@ -29,7 +29,7 @@ if [ -z "$ARIA2C" ]; then
 	
 	if [ -z "$ARIA2C" ]; then
 		echo "Cannot find a aria2c. Please set in your PATH in .bash_profile." 2>&2
-		exit 1;
+		#exit 1;
 	fi
 fi
 
@@ -113,7 +113,7 @@ then
   echo "cd to $bin_abs_path for workaround relative path"
   cd $bin_abs_path
 
-	$JAVA $JAVA_OPTS $JAVA_DEBUG_OPT $OTTER_OPTS -classpath .:$CLASSPATH com.alibaba.otter.node.etl.OtterLauncher 1>>$base/bin/nohup.out 2>&1 &
+	$JAVA $JAVA_OPTS $JAVA_DEBUG_OPT $OTTER_OPTS -classpath .:$CLASSPATH com.alibaba.otter.node.deployer.OtterLauncher 1>>$base/bin/nohup.out 2>&1 &
 	echo $! > $base/bin/otter.pid 
 
   echo "cd to $current_path for continue"

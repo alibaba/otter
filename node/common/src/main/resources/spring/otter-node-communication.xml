@@ -26,7 +26,7 @@
 	 -->
 	<bean id="endpoint" class="com.alibaba.otter.shared.communication.core.impl.dubbo.DubboCommunicationEndpoint" />
 	<bean id="communicationClient" class="com.alibaba.otter.shared.communication.core.impl.DefaultCommunicationClientImpl" init-method="initial" destroy-method="destory">
-		<property name="poolSize" value="${otter.communication.pool.size}" />
+		<property name="poolSize" value="${otter.communication.pool.size:10}" />
 		<property name="factory">
 			<bean class="com.alibaba.otter.shared.communication.core.impl.dubbo.DubboCommunicationConnectionFactory" />
 		</property>
@@ -36,7 +36,7 @@
 	<!-- Node communication -->
 	<bean id="nodeCommmunicationClient" class="com.alibaba.otter.node.common.communication.NodeCommmunicationClient" >
 		<property name="delegate" ref="communicationClient" />
-		<property name="managerAddress" value="${otter.manager.address}" />
+		<property name="managerAddress" value="${otter.manager.address:127.0.0.1:1099}" />
 		<property name="configClientService" ref="configClientService" />
 	</bean>
 	<bean id="nodeCommunicationEndpoint" class="com.alibaba.otter.node.common.communication.NodeCommunicationEndpoint" >

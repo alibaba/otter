@@ -41,9 +41,9 @@ $control.setTemplate("home:navigation.vm")
             <th width="8%">序号</th>
             <th width="8%">Canal名字</th>
 			<th width="8%">数据源类型</th>
-			<th width="8%">存储模式</th>
-			<th width="8%">Meta模式</th>
-			<th width="8%">索引模式</th>
+			<th width="10%">存储模式</th>
+			<th width="12%">Meta模式</th>
+			<th width="14%">索引模式</th>
         	<th width="24%">操作</th> 
          </tr>
            

@@ -32,7 +32,7 @@ public class PipelineArbitrateEvent implements ArbitrateEvent {
         String lockRootPath = ManagePathUtils.getLockRoot(channelId, pipelineId);
         String loadLockPath = lockRootPath + "/" + ArbitrateConstants.NODE_LOCK_LOAD;
         try {
-            zookeeper.create(path, new byte[0], CreateMode.PERSISTENT);
+            zookeeper.createPersistent(path, true);//创建父节点
             zookeeper.create(processRootPath, new byte[0], CreateMode.PERSISTENT);
             zookeeper.create(terminRootPath, new byte[0], CreateMode.PERSISTENT);
             zookeeper.create(remedyRootPath, new byte[0], CreateMode.PERSISTENT);

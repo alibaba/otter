@@ -12,15 +12,12 @@
 		<result property="parameters" column="PARAMETERS" />
 		<result property="description" column="DESCRIPTION" />
 		<result property="channelId" column="CHANNEL_ID" />
-		<result property="selectNodeId" column="SELECT_NODE_ID"/>
-		<result property="extractNodeId" column="EXTRACT_NODE_ID"/>
-		<result property="loadNodeId" column="LOAD_NODE_ID"/>
 		<result property="gmtCreate" column="GMT_CREATE" />
 		<result property="gmtModified" column="GMT_MODIFIED" />
 	</resultMap>
 
 	<!-- all pipeline columns -->
-	<sql id="allPipelineColumns">ID,NAME,PARAMETERS,DESCRIPTION,CHANNEL_ID,SELECT_NODE_ID,EXTRACT_NODE_ID,LOAD_NODE_ID,GMT_CREATE,GMT_MODIFIED
+	<sql id="allPipelineColumns">ID,NAME,PARAMETERS,DESCRIPTION,CHANNEL_ID,GMT_CREATE,GMT_MODIFIED
 	</sql>
 
 
@@ -90,9 +87,6 @@
 		PARAMETERS=#parameters#,
 		DESCRIPTION=#description#,
 		CHANNEL_ID=#channelId#,
-		SELECT_NODE_ID=#selectNodeId#,
-		EXTRACT_NODE_ID=#extractNodeId#,
-		LOAD_NODE_ID=#loadNodeId#,
 		GMT_MODIFIED = now() 
 		WHERE ID = #id#  
 	]]></update>
@@ -107,8 +101,8 @@
 	
 	<insert id="insertPipeline" parameterClass="pipeline">
 		insert into PIPELINE
-		(NAME, PARAMETERS,DESCRIPTION,CHANNEL_ID,SELECT_NODE_ID,EXTRACT_NODE_ID,LOAD_NODE_ID, GMT_CREATE, GMT_MODIFIED)
-		SELECT #name#,#parameters#,#description#,#channelId#,#selectNodeId#,#extractNodeId#,#loadNodeId#,now(),now()
+		(NAME, PARAMETERS,DESCRIPTION,CHANNEL_ID,GMT_CREATE, GMT_MODIFIED)
+		SELECT #name#,#parameters#,#description#,#channelId#,now(),now()
 		from dual
 		WHERE not exists (select * from PIPELINE
 		where PIPELINE.CHANNEL_ID = #channelId# and PIPELINE.NAME = #name#); 
@@ -116,17 +110,7 @@
 			select last_insert_id()
 		</selectKey>
 	</insert>
-<!--  
-	<insert id="insertPipeline" parameterClass="pipeline">
-		insert into PIPELINE
-		(NAME, PARAMETERS,DESCRIPTION,CHANNEL_ID,SELECT_NODE_ID,EXTRACT_NODE_ID,LOAD_NODE_ID, GMT_CREATE, GMT_MODIFIED)
-		values
-		(#name#,#parameters#,#description#,#channelId#,#selectNodeId#,#extractNodeId#,#loadNodeId#,now(),now())
-		<selectKey keyProperty="id" resultClass="long">
-			select last_insert_id()
-		</selectKey>
-	</insert>
- -->
+	
 	<delete id="deletePipelineById" parameterClass="long"><![CDATA[
     	delete from PIPELINE where ID = #value#
     ]]></delete>

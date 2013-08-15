@@ -4,7 +4,7 @@ $control.setTemplate("home:navigation.vm")
 <script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
 <script type="text/javascript" src="js/jquery.simplemodal-1.4.js"></script> 
 <script language="javascript">
-	changeNav("record");
+	changeNav("node");
 </script>
 
 
@@ -13,7 +13,7 @@ $control.setTemplate("home:navigation.vm")
 <div class="main">
    
   <div class="title"> 
-    <h2>Zookeeper集群管理</h2>
+    <h2>Zookeeper管理</h2>
   </div>
    <!--分页表单-->
    <form id="pageform" name="pageform" action="$homeModule.setTarget('nodeList.vm')" method="post">
@@ -46,9 +46,9 @@ $control.setTemplate("home:navigation.vm")
         <tr> 
           <td width="4%">$autoKeeperCluster.id</td>
 		  #set ($detailUrl = $homeModule.setTarget("autoKeeperClustersDetail.vm").addQueryData("clusterId", $autoKeeperCluster.id))
-          <td width="10%"><a href="$detailUrl">$autoKeeperCluster.clusterName</a></td>
-          <td width="50%">$autoKeeperCluster.serverList</td>
-		  <td width="15%">$autoKeeperCluster.description</td>
+          <td width="10%"><a href="$detailUrl">$!autoKeeperCluster.clusterName</a></td>
+          <td width="50%">$!autoKeeperCluster.serverList</td>
+		  <td width="15%">$!autoKeeperCluster.description</td>
           <td>
 			#set ($editURL = $homeModule.setTarget("editAutoKeeper.vm").addQueryData("clusterId", $autoKeeperCluster.id))
     		<a href="$editURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">编辑</span></a>

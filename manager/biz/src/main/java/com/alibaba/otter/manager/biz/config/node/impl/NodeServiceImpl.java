@@ -11,18 +11,18 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.alibaba.otter.shared.common.utils.Assert;
 import com.alibaba.otter.manager.biz.common.exceptions.ManagerException;
 import com.alibaba.otter.manager.biz.common.exceptions.RepeatConfigureException;
+import com.alibaba.otter.manager.biz.config.autokeeper.AutoKeeperClusterService;
 import com.alibaba.otter.manager.biz.config.node.NodeService;
 import com.alibaba.otter.manager.biz.config.node.dal.NodeDAO;
 import com.alibaba.otter.manager.biz.config.node.dal.dataobject.NodeDO;
-import com.alibaba.otter.manager.biz.config.parameter.SystemParameterService;
 import com.alibaba.otter.shared.arbitrate.ArbitrateManageService;
+import com.alibaba.otter.shared.common.model.autokeeper.AutoKeeperCluster;
 import com.alibaba.otter.shared.common.model.config.node.Node;
 import com.alibaba.otter.shared.common.model.config.node.NodeParameter;
 import com.alibaba.otter.shared.common.model.config.node.NodeStatus;
-import com.alibaba.otter.shared.common.model.config.parameter.SystemParameter;
+import com.alibaba.otter.shared.common.utils.Assert;
 import com.alibaba.otter.shared.common.utils.JsonUtils;
 
 /**
@@ -30,12 +30,12 @@ import com.alibaba.otter.shared.common.utils.JsonUtils;
  */
 public class NodeServiceImpl implements NodeService {
 
-    private static final Logger    logger = LoggerFactory.getLogger(NodeServiceImpl.class);
+    private static final Logger      logger = LoggerFactory.getLogger(NodeServiceImpl.class);
 
-    private NodeDAO                nodeDao;
-    private TransactionTemplate    transactionTemplate;
-    private SystemParameterService systemParameterService;
-    private ArbitrateManageService arbitrateManageService;
+    private NodeDAO                  nodeDao;
+    private TransactionTemplate      transactionTemplate;
+    private ArbitrateManageService   arbitrateManageService;
+    private AutoKeeperClusterService autoKeeperClusterService;
 
     /**
      * 添加
@@ -242,18 +242,13 @@ public class NodeServiceImpl implements NodeService {
             node.setPort(nodeDo.getPort());
             node.setDescription(nodeDo.getDescription());
             node.setStatus(nodeDo.getStatus());
-            // 处理下地域信息
-            SystemParameter systemParameter = systemParameterService.find();
+            // 处理下zk集群
             NodeParameter parameter = nodeDo.getParameters();
-            if (parameter.getAreaType() != null && parameter.getAreaType().isHzArea()) {
-                parameter.setZkClusters(systemParameter.getHzZkClusters());
-                parameter.setStoreClusters(systemParameter.getHzStoreClusters());
-                parameter.setArandaUrl(systemParameter.getHzArandaCluster());
-            } else if (parameter.getAreaType() != null && parameter.getAreaType().isUsArea()) {
-                parameter.setZkClusters(systemParameter.getUsZkClusters());
-                parameter.setStoreClusters(systemParameter.getUsStoreClusters());
-                parameter.setArandaUrl(systemParameter.getUsArandaCluster());
+            if (parameter.getZkCluster() != null) {
+                AutoKeeperCluster zkCluster = autoKeeperClusterService.findAutoKeeperClusterById(parameter.getZkCluster().getId());
+                parameter.setZkCluster(zkCluster);
             }
+
             node.setParameters(parameter);
             node.setGmtCreate(nodeDo.getGmtCreate());
             node.setGmtModified(nodeDo.getGmtModified());
@@ -288,8 +283,8 @@ public class NodeServiceImpl implements NodeService {
         this.arbitrateManageService = arbitrateManageService;
     }
 
-    public void setSystemParameterService(SystemParameterService systemParameterService) {
-        this.systemParameterService = systemParameterService;
+    public void setAutoKeeperClusterService(AutoKeeperClusterService autoKeeperClusterService) {
+        this.autoKeeperClusterService = autoKeeperClusterService;
     }
 
 }

@@ -20,9 +20,9 @@ function changeKeyword(id, name) {
 
 <div class="main">
   <div class="title"> 
-    <h2>编辑数据介质</h2>
+    <h2>编辑数据表</h2>
   </div>
-  <div class="crumbs"><a href="dataMediaList.htm">数据介质管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="editDataMedia.htm?dataMediaId=$dataMedia.id">编辑数据介质</a></div>
+  <div class="crumbs"><a href="dataMediaList.htm">数据表配置</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="editDataMedia.htm?dataMediaId=$dataMedia.id">编辑数据表</a></div>
   
   <form name="editDataMediaForm" method="post" enctype="multipart/form-data">
 	$csrfToken.hiddenField

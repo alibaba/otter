@@ -22,13 +22,12 @@ public class AutoKeeperClusterServiceImpl implements AutoKeeperClusterService {
 
     @Override
     public AutoKeeperCluster findAutoKeeperClusterById(Long id) {
-
-        return doToModel(autoKeeperClusterDao.findAutoKeeperClusterById(id));
+        AutoKeeperClusterDO autoKeeperClusterDO = autoKeeperClusterDao.findAutoKeeperClusterById(id);
+        return autoKeeperClusterDO == null ? null : doToModel(autoKeeperClusterDO);
     }
 
     @Override
     public List<AutoKeeperCluster> listAutoKeeperClusters() {
-
         return doToModel(autoKeeperClusterDao.listAutoKeeperClusters());
     }
 
@@ -60,7 +59,6 @@ public class AutoKeeperClusterServiceImpl implements AutoKeeperClusterService {
         return autoKeeperCluster;
     }
 
-    @Override
     public Integer getCount() {
         return autoKeeperClusterDao.getCount();
     }

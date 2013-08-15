@@ -1,10 +1,6 @@
 package com.alibaba.otter.manager.web.home.module.action;
 
-import java.util.Arrays;
-
 import javax.annotation.Resource;
-
-import org.apache.commons.lang.StringUtils;
 
 import com.alibaba.citrus.service.form.CustomErrors;
 import com.alibaba.citrus.service.form.Group;
@@ -14,19 +10,24 @@ import com.alibaba.citrus.turbine.dataresolver.FormGroup;
 import com.alibaba.citrus.turbine.dataresolver.Param;
 import com.alibaba.citrus.webx.WebxException;
 import com.alibaba.otter.manager.biz.common.exceptions.RepeatConfigureException;
+import com.alibaba.otter.manager.biz.config.autokeeper.AutoKeeperClusterService;
 import com.alibaba.otter.manager.biz.config.node.NodeService;
 import com.alibaba.otter.manager.biz.config.pipeline.PipelineService;
 import com.alibaba.otter.manager.web.common.WebConstant;
+import com.alibaba.otter.shared.common.model.autokeeper.AutoKeeperCluster;
 import com.alibaba.otter.shared.common.model.config.node.Node;
 import com.alibaba.otter.shared.common.model.config.node.NodeParameter;
 
 public class NodeAction extends AbstractAction {
 
     @Resource(name = "nodeService")
-    private NodeService     nodeService;
+    private NodeService              nodeService;
 
     @Resource(name = "pipelineService")
-    private PipelineService pipelineService;
+    private PipelineService          pipelineService;
+
+    @Resource(name = "autoKeeperClusterService")
+    private AutoKeeperClusterService autoKeeperClusterService;
 
     public void doAdd(@FormGroup("nodeInfo") Group nodeInfo, @FormGroup("nodeParameterInfo") Group nodeParameterInfo,
                       @FormField(name = "formNodeError", group = "nodeInfo") CustomErrors err, Navigator nav)
@@ -35,14 +36,11 @@ public class NodeAction extends AbstractAction {
         NodeParameter parameter = new NodeParameter();
         nodeInfo.setProperties(node);
         nodeParameterInfo.setProperties(parameter);
-        String storeClustersString = nodeParameterInfo.getField("storeClusters").getStringValue();
-        String zkClustersString = nodeParameterInfo.getField("zkClusters").getStringValue();
-
-        String[] storeClusters = StringUtils.split(storeClustersString, ";");
-        String[] zkClusters = StringUtils.split(zkClustersString, ";");
-
-        parameter.setStoreClusters(Arrays.asList(storeClusters));
-        parameter.setZkClusters(Arrays.asList(zkClusters));
+        Long autoKeeperclusterId = nodeParameterInfo.getField("autoKeeperclusterId").getLongValue();
+        if (autoKeeperclusterId != null && autoKeeperclusterId > 0) {
+            AutoKeeperCluster autoKeeperCluster = autoKeeperClusterService.findAutoKeeperClusterById(autoKeeperclusterId);
+            parameter.setZkCluster(autoKeeperCluster);
+        }
 
         node.setParameters(parameter);
         try {
@@ -65,14 +63,11 @@ public class NodeAction extends AbstractAction {
         NodeParameter parameter = new NodeParameter();
         nodeInfo.setProperties(node);
         nodeParameterInfo.setProperties(parameter);
-        String storeClustersString = nodeParameterInfo.getField("storeClusters").getStringValue();
-        String zkClustersString = nodeParameterInfo.getField("zkClusters").getStringValue();
-
-        String[] storeClusters = StringUtils.split(storeClustersString, ";");
-        String[] zkClusters = StringUtils.split(zkClustersString, ";");
-
-        parameter.setStoreClusters(Arrays.asList(storeClusters));
-        parameter.setZkClusters(Arrays.asList(zkClusters));
+        Long autoKeeperclusterId = nodeParameterInfo.getField("autoKeeperclusterId").getLongValue();
+        if (autoKeeperclusterId != null && autoKeeperclusterId > 0) {
+            AutoKeeperCluster autoKeeperCluster = autoKeeperClusterService.findAutoKeeperClusterById(autoKeeperclusterId);
+            parameter.setZkCluster(autoKeeperCluster);
+        }
 
         node.setParameters(parameter);
         try {

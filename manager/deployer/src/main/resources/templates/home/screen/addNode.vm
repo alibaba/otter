@@ -50,7 +50,7 @@ $control.setTemplate("home:navigation.vm")
 			<span class="red">#addNodeMessage ($nodeGroup.port)</span>
 		</td>
       </tr>
-	  #*
+	  #**
 	  <tr> 
         <th>ZooKeeper集群：</th>
         <td>
@@ -61,23 +61,13 @@ $control.setTemplate("home:navigation.vm")
 			<span class="red">#addNodeMessage ($nodeParameterGroup.zkClusters)</span>
 		</td>
       </tr>
-      <tr> 
-        <th>KV集群：</th>
-        <td>
-			<textarea class="service" name="$nodeParameterGroup.storeClusters.key" cols="45" rows="5" >$!nodeParameterGroup.storeClusters.value</textarea>
-			  <br />
-			  <span>格式如 10.20.10.20:8080;（必须以分号结束，可添多个）</span>
-			  <br />
-			<span class="red">#addNodeMessage ($nodeParameterGroup.storeClusters)</span>
-		</td>
-      </tr>
 	  *#
 	  <tr> 
         <th>下载端口：</th>
         <td>
-			<input type="text" name="$nodeParameterGroup.downloadPort.key" value="$!nodeParameterGroup.downloadPort.value" class="setting_input"/>
+			<input type="text" name="$nodeParameterGroup.downloadPort.key" value="$!nodeParameterGroup.downloadPort.value" class="setting_input"/><span class="red">*</span>
 			<br />
-			<span class="red">#addNodeMessage ($nodeParameterGroup.downloadPort)</span><span class="red">*</span>
+			<span class="red">#addNodeMessage ($nodeParameterGroup.downloadPort)</span>
 		</td>
       </tr>
 	  <tr> 
@@ -89,24 +79,15 @@ $control.setTemplate("home:navigation.vm")
 		</td>
       </tr>
 	  <tr> 
-        <th>地区选择：</th>
+        <th>zookeeper集群：</th>
         <td>
-            <select id="areaType" name="$nodeParameterGroup.areaType.key">
-            <option value="HZ" selected>杭州</option>
-            <option value="US" >美国</option>
+            <select id="zkCluster" name="$nodeParameterGroup.autoKeeperClusterId.key">
+			#foreach($zkCluster in $zkClusters)
+            <option value="$zkCluster.id" #if($velocityCount == 0)selected#end>$zkCluster.clusterName</option>
+			#end
 			</select><span class="red">*</span>
         </td>
       </tr>
-	  #*
-	  <tr> 
-        <th>Aranda地址：</th>
-        <td>
-			<input type="text" name="$nodeParameterGroup.arandaUrl.key" value="$!nodeParameterGroup.arandaUrl.value" class="setting_input"/>
-			<br />
-			<span class="red">#addNodeMessage ($nodeParameterGroup.arandaUrl)</span>
-		</td>
-      </tr>
-	  *#
       <tr>
        <th>描述：</th>
        <td>

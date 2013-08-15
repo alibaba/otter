@@ -386,7 +386,7 @@
 		<group name="dataMediaInfo" extends="csrfCheck">
 			<field name="formDataMediaError">
 				<fm-validators:custom-error id="invalidDataMedia">
-					<message>数据库中存在重复的数据介质</message>
+					<message>数据库中存在重复的数据表</message>
 				</fm-validators:custom-error>
 				<fm-validators:custom-error id="canntSelectDataMedia">
 					<message>数据库不正常，不能添加</message>
@@ -412,7 +412,7 @@
 		<group name="autokeeperClusterInfo" extends="csrfCheck">
 			<field name="formAutokeeperClusterError">
 				<fm-validators:custom-error id="invalidAutokeeperCluster">
-					<message>数据库中存在重复的数据介质</message>
+					<message>数据库中存在重复的数据表</message>
 				</fm-validators:custom-error>
 			</field>
 			<field name="id" displayName="cluster的id" />
@@ -571,20 +571,6 @@
 
 		<!-- - ======== - nodeParameter info - ======== -->
 		<group name="nodeParameterInfo" extends="csrfCheck">
-			<field name="storeClusters" displayName="STORE的服务器集群">
-				<!-- <required-validator> <message>必须填写${displayName}</message> </required-validator> -->
-				<fm-validators:regexp-validator
-					pattern="^((((?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\:\d+\,?)+)\;)+$">
-					<message>${displayName} 不符合格式（1.1.1.1:80;）</message>
-				</fm-validators:regexp-validator>
-			</field>
-			<field name="zkClusters" displayName="ZK的服务器集群">
-				<!-- <required-validator> <message>必须填写${displayName}</message> </required-validator> -->
-				<fm-validators:regexp-validator
-					pattern="^((((?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\:\d+\,?)+)\;)+$">
-					<message>${displayName} 不符合格式（1.1.1.1:80;）</message>
-				</fm-validators:regexp-validator>
-			</field>
 			<field name="downloadPort" displayName="下载端口">
 				<!-- <required-validator> <message>必须填写${displayName}</message> </required-validator> -->
 				<fm-validators:number-validator>
@@ -595,8 +581,7 @@
 				</fm-validators:number-validator>
 			</field>
 			<field name="externalIp" displayName="外部ip" />
-			<field name="arandaUrl" displayName="aranda访问url" />
-			<field name="areaType" displayName="地区选择" />
+			<field name="autoKeeperClusterId" displayName="zookeeper集群" />
 		</group>
 
 		<group name="userInfo" extends="csrfCheck">
@@ -633,9 +618,6 @@
 				</fm-validators:string-length-validator>
 			</field>
 			<field name="password" displayName="密码">
-				<fm-validators:string-length-validator minLength="6">
-					<message>${displayName} 密码必须大于6个字符</message>
-				</fm-validators:string-length-validator>
 				<fm-validators:required-validator>
 					<message>必须填写 ${displayName}</message>
 				</fm-validators:required-validator>
@@ -653,7 +635,6 @@
 		<group name="editUserInfo" extends="userInfo">
 			<field name="name" displayName="登录名" />
 			<field name="password" displayName="密码" />
-
 			<field name="rePassword" displayName="重新输入一次密码">
 				<fm-validators:string-compare-validator equalTo="password">
 					<message>两次密码输入不相同</message>
@@ -729,52 +710,6 @@
 					<message>必须填写${displayName}</message>
 				</fm-validators:required-validator>
 			</field>
-			<field name="hzZkClusters" displayName="杭州zk集群列表">
-				<fm-validators:required-validator>
-					<message>必须填写${displayName}</message>
-				</fm-validators:required-validator>
-				<fm-validators:regexp-validator
-					pattern="^((((?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\:\d+\,?)+)\;)+$">
-					<message>${displayName} 不符合格式（1.1.1.1:80;）</message>
-				</fm-validators:regexp-validator>
-			</field>
-			<field name="usZkClusters" displayName="美国zk集群列表">
-				<fm-validators:required-validator>
-					<message>必须填写${displayName}</message>
-				</fm-validators:required-validator>
-				<fm-validators:regexp-validator
-					pattern="^((((?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\:\d+\,?)+)\;)+$">
-					<message>${displayName} 不符合格式（1.1.1.1:80;）</message>
-				</fm-validators:regexp-validator>
-			</field>
-			<field name="hzStoreClusters" displayName="杭州store集群列表">
-				<fm-validators:required-validator>
-					<message>必须填写${displayName}</message>
-				</fm-validators:required-validator>
-				<fm-validators:regexp-validator
-					pattern="^((((?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\:\d+\,?)+)\;)+$">
-					<message>${displayName} 不符合格式（1.1.1.1:80;）</message>
-				</fm-validators:regexp-validator>
-			</field>
-			<field name="usStoreClusters" displayName="美国store集群列表">
-				<fm-validators:required-validator>
-					<message>必须填写${displayName}</message>
-				</fm-validators:required-validator>
-				<fm-validators:regexp-validator
-					pattern="^((((?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\:\d+\,?)+)\;)+$">
-					<message>${displayName} 不符合格式（1.1.1.1:80;）</message>
-				</fm-validators:regexp-validator>
-			</field>
-			<field name="hzArandaCluster" displayName="杭州aranda集群地址">
-				<fm-validators:required-validator>
-					<message>必须填写${displayName}</message>
-				</fm-validators:required-validator>
-			</field>
-			<field name="usArandaCluster" displayName="美国aranda集群地址">
-				<fm-validators:required-validator>
-					<message>必须填写${displayName}</message>
-				</fm-validators:required-validator>
-			</field>
 		</group>
 
 		<!-- - ======== - canal info - ======== -->
@@ -794,7 +729,7 @@
 			<field name="id" displayName="canal ID" />
 			<field name="runMode" displayName="运行模式" />
 			<field name="clusterMode" displayName="集群模式" />
-			<field name="areaType" displayName="地区选择" />
+			<field name="autoKeeperClusterId" displayName="zookeeper集群" />
 			<field name="zkClusters" displayName="ZK集群">
 				<fm-validators:regexp-validator
 					pattern="^((((?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\:\d+\,?)+)\;)+$">

@@ -48,6 +48,9 @@ public class CanalAction extends AbstractAction {
         String zkClustersString = canalParameterInfo.getField("zkClusters").getStringValue();
         String[] zkClusters = StringUtils.split(zkClustersString, ";");
         parameter.setZkClusters(Arrays.asList(zkClusters));
+
+        Long zkClusterId = canalParameterInfo.getField("autoKeeperClusterId").getLongValue();
+        parameter.setZkClusterId(zkClusterId);
         canal.setCanalParameter(parameter);
 
         String dbAddressesString = canalParameterInfo.getField("groupDbAddresses").getStringValue();
@@ -117,6 +120,9 @@ public class CanalAction extends AbstractAction {
         String zkClustersString = canalParameterInfo.getField("zkClusters").getStringValue();
         String[] zkClusters = StringUtils.split(zkClustersString, ";");
         parameter.setZkClusters(Arrays.asList(zkClusters));
+
+        Long zkClusterId = canalParameterInfo.getField("autoKeeperClusterId").getLongValue();
+        parameter.setZkClusterId(zkClusterId);
 
         String dbAddressesString = canalParameterInfo.getField("groupDbAddresses").getStringValue();
         if (StringUtils.isNotEmpty(dbAddressesString)) {

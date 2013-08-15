@@ -5,8 +5,6 @@ import java.util.List;
 import com.alibaba.otter.shared.common.model.autokeeper.AutoKeeperCluster;
 
 /**
- * 类AutoKeeperClusterServcer.java的实现描述：TODO 类实现描述
- * 
  * @author simon 2012-9-24 下午5:35:01
  * @version 4.1.0
  */

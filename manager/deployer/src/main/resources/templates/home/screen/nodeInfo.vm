@@ -46,19 +46,7 @@ $control.setTemplate("home:navigation.vm")
   <th>下载端口：</th><td>$!node.parameters.downloadPort</td>
   </tr>
   <tr>
-  <th>地区选择：</th><td>#if($!node.parameters.areaType.isHzArea())杭州#elseif($!node.parameters.areaType.isUsArea())美国#else 未知#end</td>
-  </tr>
-  <tr>
-  <th>外部ip地址：</th><td>$!node.parameters.externalIp</td>
-  </tr>
-  <tr>
-  <th>ZK集群：</th><td>#foreach($addr in $node.parameters.zkClusters) [$addr]  #end</td>
-  </tr>
-  <tr>
-  <th>Store集群：</th><td>#foreach($addr in $node.parameters.storeClusters) [$addr]  #end</td>
-  </tr>
-  <tr>
-  <th>aranda访问url：</th><td>$!node.parameters.arandaUrl</td>
+  <th>Zookeeper集群：</th><td>$node.parameters.zkCluster.clusterName [ $stringUtil.join($node.parameters.zkCluster.serverList,",") ]</td>
   </tr>
   <tr>
   <th>运行状态：</th><td>$!node.status</td>

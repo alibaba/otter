@@ -14,11 +14,11 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.otter.common.push.AbstractSubscribeManager;
 import com.alibaba.otter.common.push.SubscribeCallback;
-import com.alibaba.otter.common.push.utils.NamedThreadFactory;
 import com.alibaba.otter.shared.arbitrate.impl.communication.ArbitrateCommmunicationClient;
 import com.alibaba.otter.shared.common.model.config.ConfigException;
 import com.alibaba.otter.shared.common.utils.cache.RefreshMemoryMirror;
 import com.alibaba.otter.shared.common.utils.cache.RefreshMemoryMirror.ComputeFunction;
+import com.alibaba.otter.shared.common.utils.thread.NamedThreadFactory;
 import com.alibaba.otter.shared.communication.model.config.FindMediaEvent;
 
 /**
@@ -83,9 +83,8 @@ public class MediaSubscribeManager extends AbstractSubscribeManager {
             return;
         }
 
-        executor = new ScheduledThreadPoolExecutor(poolSize,
-            new NamedThreadFactory("canal-media-callback-worker"),
-            new ThreadPoolExecutor.CallerRunsPolicy());
+        executor = new ScheduledThreadPoolExecutor(poolSize, new NamedThreadFactory("canal-media-callback-worker"),
+                                                   new ThreadPoolExecutor.CallerRunsPolicy());
     }
 
     protected void doShutdown() {

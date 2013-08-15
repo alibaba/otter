@@ -66,26 +66,26 @@ public class PipelineServiceImpl implements PipelineService {
 
                     List<PipelineNodeRelationDO> pipelineNodeRelationDos = new ArrayList<PipelineNodeRelationDO>();
 
-                    for (Long nodeId : pipelineDo.getSelectNodeId()) {
+                    for (Node node : pipeline.getSelectNodes()) {
                         PipelineNodeRelationDO pipelineNodeRelationDo = new PipelineNodeRelationDO();
                         pipelineNodeRelationDo.setPipelineId(pipelineDo.getId());
-                        pipelineNodeRelationDo.setNodeId(nodeId);
+                        pipelineNodeRelationDo.setNodeId(node.getId());
                         pipelineNodeRelationDo.setLocation(Location.SELECT);
                         pipelineNodeRelationDos.add(pipelineNodeRelationDo);
                     }
 
-                    for (Long nodeId : pipelineDo.getExtractNodeId()) {
+                    for (Node node : pipeline.getExtractNodes()) {
                         PipelineNodeRelationDO pipelineNodeRelationDo = new PipelineNodeRelationDO();
                         pipelineNodeRelationDo.setPipelineId(pipelineDo.getId());
-                        pipelineNodeRelationDo.setNodeId(nodeId);
+                        pipelineNodeRelationDo.setNodeId(node.getId());
                         pipelineNodeRelationDo.setLocation(Location.EXTRACT);
                         pipelineNodeRelationDos.add(pipelineNodeRelationDo);
                     }
 
-                    for (Long nodeId : pipelineDo.getLoadNodeId()) {
+                    for (Node node : pipeline.getLoadNodes()) {
                         PipelineNodeRelationDO pipelineNodeRelationDo = new PipelineNodeRelationDO();
                         pipelineNodeRelationDo.setPipelineId(pipelineDo.getId());
-                        pipelineNodeRelationDo.setNodeId(nodeId);
+                        pipelineNodeRelationDo.setNodeId(node.getId());
                         pipelineNodeRelationDo.setLocation(Location.LOAD);
                         pipelineNodeRelationDos.add(pipelineNodeRelationDo);
                     }
@@ -125,26 +125,26 @@ public class PipelineServiceImpl implements PipelineService {
 
             List<PipelineNodeRelationDO> pipelineNodeRelationDos = new ArrayList<PipelineNodeRelationDO>();
 
-            for (Long nodeId : pipelineDo.getSelectNodeId()) {
+            for (Node node : pipeline.getSelectNodes()) {
                 PipelineNodeRelationDO pipelineNodeRelationDo = new PipelineNodeRelationDO();
                 pipelineNodeRelationDo.setPipelineId(pipelineDo.getId());
-                pipelineNodeRelationDo.setNodeId(nodeId);
+                pipelineNodeRelationDo.setNodeId(node.getId());
                 pipelineNodeRelationDo.setLocation(Location.SELECT);
                 pipelineNodeRelationDos.add(pipelineNodeRelationDo);
             }
 
-            for (Long nodeId : pipelineDo.getExtractNodeId()) {
+            for (Node node : pipeline.getExtractNodes()) {
                 PipelineNodeRelationDO pipelineNodeRelationDo = new PipelineNodeRelationDO();
                 pipelineNodeRelationDo.setPipelineId(pipelineDo.getId());
-                pipelineNodeRelationDo.setNodeId(nodeId);
+                pipelineNodeRelationDo.setNodeId(node.getId());
                 pipelineNodeRelationDo.setLocation(Location.EXTRACT);
                 pipelineNodeRelationDos.add(pipelineNodeRelationDo);
             }
 
-            for (Long nodeId : pipelineDo.getLoadNodeId()) {
+            for (Node node : pipeline.getLoadNodes()) {
                 PipelineNodeRelationDO pipelineNodeRelationDo = new PipelineNodeRelationDO();
                 pipelineNodeRelationDo.setPipelineId(pipelineDo.getId());
-                pipelineNodeRelationDo.setNodeId(nodeId);
+                pipelineNodeRelationDo.setNodeId(node.getId());
                 pipelineNodeRelationDo.setLocation(Location.LOAD);
                 pipelineNodeRelationDos.add(pipelineNodeRelationDo);
             }
@@ -521,32 +521,6 @@ public class PipelineServiceImpl implements PipelineService {
             pipelineDO.setParameters(pipeline.getParameters());
             pipelineDO.setDescription(pipeline.getDescription());
             pipelineDO.setChannelId(pipeline.getChannelId());
-            List<Long> selectNodeIds = new ArrayList<Long>();
-            List<Long> extractNodeIds = new ArrayList<Long>();
-            List<Long> loadNodeIds = new ArrayList<Long>();
-
-            if (null != pipeline.getSelectNodes()) {
-                // 遍历nodeId
-                for (Node selectNode : pipeline.getSelectNodes()) {
-                    selectNodeIds.add(selectNode.getId());
-                }
-            }
-            pipelineDO.setSelectNodeId(selectNodeIds);
-
-            if (null != pipeline.getExtractNodes()) {
-                for (Node extractNode : pipeline.getExtractNodes()) {
-                    extractNodeIds.add(extractNode.getId());
-                }
-            }
-            pipelineDO.setExtractNodeId(extractNodeIds);
-
-            if (null != pipeline.getLoadNodes()) {
-                for (Node loadNode : pipeline.getLoadNodes()) {
-                    loadNodeIds.add(loadNode.getId());
-                }
-            }
-            pipelineDO.setLoadNodeId(loadNodeIds);
-
             pipelineDO.setGmtCreate(pipeline.getGmtCreate());
             pipelineDO.setGmtModified(pipeline.getGmtModified());
 

@@ -214,12 +214,8 @@
 	<beans:bean class="org.springframework.beans.factory.config.CustomEditorConfigurer" depends-on="arbitrateConfigImpl">  
 	   <beans:property name="customEditors">  
 		    <beans:map>  
-		       <beans:entry key="com.alibaba.otter.manager.web.webx.valve.auth.url.URLProtected"> 
-		             <beans:bean class="com.alibaba.otter.manager.web.webx.valve.auth.url.URLProtectedEditor"/>     
-		       </beans:entry>
-		       <beans:entry key="com.alibaba.otter.manager.web.webx.valve.auth.action.ActionProtected"> 
-		             <beans:bean class="com.alibaba.otter.manager.web.webx.valve.auth.action.ActionProtectedEditor"/>     
-		       </beans:entry>
+		       <beans:entry key="com.alibaba.otter.manager.web.webx.valve.auth.url.URLProtected" value="com.alibaba.otter.manager.web.webx.valve.auth.url.URLProtectedEditor" /> 
+		       <beans:entry key="com.alibaba.otter.manager.web.webx.valve.auth.action.ActionProtected" value="com.alibaba.otter.manager.web.webx.valve.auth.action.ActionProtectedEditor" /> 
 		    </beans:map>
 	   </beans:property>
 	</beans:bean>
