@@ -57,6 +57,7 @@ public class PipelineParameter implements Serializable {
     private Boolean               enableCompatibleMissColumn = true;                        // 是否启用兼容字段不匹配处理
     private Boolean               skipNoRow                  = false;                       // 跳过反查没记录的情况
     private String                channelInfo;                                              // 同步标记，设置该标记后会在retl_mark中记录，在messageParse时进行check，相同则忽略
+    private Boolean               dryRun                     = false;                       //是否启用dry run模型，只记录load日志，不同步数据
 
     // ================================= channel parameter ================================
 
@@ -463,6 +464,18 @@ public class PipelineParameter implements Serializable {
 
     public void setChannelInfo(String channelInfo) {
         this.channelInfo = channelInfo;
+    }
+
+    public Boolean getDryRun() {
+        return dryRun == null ? false : dryRun;
+    }
+
+    public Boolean isDryRun() {
+        return dryRun == null ? false : dryRun;
+    }
+
+    public void setDryRun(Boolean dryRun) {
+        this.dryRun = dryRun;
     }
 
     // =============================channel parameter ==========================

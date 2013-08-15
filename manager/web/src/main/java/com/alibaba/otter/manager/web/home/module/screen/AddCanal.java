@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.util.CollectionUtils;
+
 import com.alibaba.citrus.turbine.Context;
 import com.alibaba.citrus.turbine.Navigator;
 import com.alibaba.otter.manager.biz.config.autokeeper.AutoKeeperClusterService;
@@ -16,7 +18,11 @@ public class AddCanal {
 
     public void execute(Context context, Navigator nav) throws Exception {
         List<AutoKeeperCluster> zkClusters = autoKeeperClusterService.listAutoKeeperClusters();
-        context.put("zkClusters", zkClusters);
+        if (CollectionUtils.isEmpty(zkClusters)) {
+            nav.redirectToLocation("addZookeeper.htm?message=init");
+        } else {
+            context.put("zkClusters", zkClusters);
+        }
     }
 
 }

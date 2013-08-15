@@ -9,8 +9,8 @@ import javax.annotation.Resource;
 import com.alibaba.citrus.turbine.Context;
 import com.alibaba.citrus.turbine.dataresolver.Param;
 import com.alibaba.citrus.util.Paginator;
-import com.alibaba.otter.shared.common.model.config.data.DataMedia;
 import com.alibaba.otter.manager.biz.config.datamedia.DataMediaService;
+import com.alibaba.otter.shared.common.model.config.data.DataMedia;
 
 public class SelectDataMedia {
 
@@ -21,6 +21,9 @@ public class SelectDataMedia {
                         @Param("local") String local, Context context) throws Exception {
         @SuppressWarnings("unchecked")
         Map<String, Object> condition = new HashMap<String, Object>();
+        if ("请输入关键字(目前支持DataMedia的ID、名字搜索)".equals(searchKey)) {
+            searchKey = "";
+        }
         condition.put("searchKey", searchKey);
 
         int count = dataMediaService.getCount(condition);

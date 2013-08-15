@@ -39,7 +39,8 @@ public class LogLoadInterceptor extends AbstractLoadInterceptor<DbLoadContext, E
 
     public void commit(DbLoadContext context) {
         // 成功时记录一下
-        boolean dumpThisEvent = context.getPipeline().getParameters().isDumpEvent();
+        boolean dumpThisEvent = context.getPipeline().getParameters().isDumpEvent()
+                                || context.getPipeline().getParameters().isDryRun();
         if (dump && dumpThisEvent && logger.isInfoEnabled()) {
             synchronized (LogLoadInterceptor.class) {
                 try {
@@ -62,7 +63,8 @@ public class LogLoadInterceptor extends AbstractLoadInterceptor<DbLoadContext, E
     }
 
     public void error(DbLoadContext context) {
-        boolean dumpThisEvent = context.getPipeline().getParameters().isDumpEvent();
+        boolean dumpThisEvent = context.getPipeline().getParameters().isDumpEvent()
+                                || context.getPipeline().getParameters().isDryRun();
         if (dump && dumpThisEvent && logger.isInfoEnabled()) {
             synchronized (LogLoadInterceptor.class) {
                 try {

@@ -232,6 +232,7 @@
 				</fm-validators:number-validator>
 			</field>
 			<field name="channelInfo" displayName="同步标记" />
+			<field name="dryRun" displayName="DryRun模式" />
 			<field name="batchTimeout" displayName="获取批次数据超时时间">
 				<fm-validators:if test="selectorMode.value == 'Canal'">
 					<fm-validators:required-validator>

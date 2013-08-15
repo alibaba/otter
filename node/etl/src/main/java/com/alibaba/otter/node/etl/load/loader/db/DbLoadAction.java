@@ -232,7 +232,12 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
                 }
             }
         }
-        doTwoPhase(context, batchDatas, true);
+
+        if (context.getPipeline().getParameters().isDryRun()) {
+            doDryRun(context, batchDatas, true);
+        } else {
+            doTwoPhase(context, batchDatas, true);
+        }
         batchDatas.clear();
 
         // 处理下insert/update
@@ -252,7 +257,11 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
             }
         }
 
-        doTwoPhase(context, batchDatas, true);
+        if (context.getPipeline().getParameters().isDryRun()) {
+            doDryRun(context, batchDatas, true);
+        } else {
+            doTwoPhase(context, batchDatas, true);
+        }
         batchDatas.clear();
     }
 
@@ -303,6 +312,20 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
 
         // 因为sqlTemplate构造sql时用了String.intern()的操作，保证相同字符串的引用是同一个，所以可以直接使用==进行判断，提升效率
         return source.getSql() == target.getSql();
+    }
+
+    private void doDryRun(DbLoadContext context, List<List<EventData>> totalRows, boolean canBatch) {
+        for (List<EventData> rows : totalRows) {
+            if (CollectionUtils.isEmpty(rows)) {
+                continue; // 过滤空记录
+            }
+
+            for (EventData row : rows) {
+                processStat(row, context);//直接记录成功状态
+            }
+
+            context.getProcessedDatas().addAll(rows);
+        }
     }
 
     /**
@@ -445,8 +468,7 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
 
         public Exception call() throws Exception {
             try {
-                Thread.currentThread().setName(
-                                               String.format(WORKER_NAME_FORMAT, context.getPipeline().getId(),
+                Thread.currentThread().setName(String.format(WORKER_NAME_FORMAT, context.getPipeline().getId(),
                                                              context.getPipeline().getName()));
                 return doCall();
             } finally {
@@ -667,8 +689,8 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
                             break;
                     }
                 } catch (SQLException ex) {
-                    logger.error("## SetParam error , [pairId={}, sqltype={}, value={}]", new Object[] {
-                            data.getPairId(), sqlType, param });
+                    logger.error("## SetParam error , [pairId={}, sqltype={}, value={}]",
+                                 new Object[] { data.getPairId(), sqlType, param });
                     throw ex;
                 }
             }
@@ -681,19 +703,7 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
                 failedDatas.add(data);// 记录到错误的临时队列，进行重试处理
             } else {
                 processedDatas.add(data); // 记录到成功的临时队列，commit也可能会失败。所以这记录也可能需要进行重试
-                LoadThroughput throughput = loadStatsTracker.getStat(context.getIdentity());
-                LoadCounter counter = throughput.getStat(data.getPairId());
-                EventType type = data.getEventType();
-                if (type.isInsert()) {
-                    counter.getInsertCount().incrementAndGet();
-                } else if (type.isUpdate()) {
-                    counter.getUpdateCount().incrementAndGet();
-                } else if (type.isDelete()) {
-                    counter.getDeleteCount().incrementAndGet();
-                }
-
-                counter.getRowCount().incrementAndGet();
-                counter.getRowSize().addAndGet(calculateSize(data));
+                DbLoadAction.this.processStat(data, context);
             }
         }
 
@@ -709,18 +719,35 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
             context.getProcessedDatas().addAll(allProcesedDatas);// 添加历史成功记录
         }
 
-        // 大致估算一下row记录的大小
-        private long calculateSize(EventData data) {
-            // long size = 0L;
-            // size += data.getKeys().toString().getBytes().length - 12 - data.getKeys().size() + 1L;
-            // size += data.getColumns().toString().getBytes().length - 12 - data.getKeys().size() + 1L;
-            // return size;
+    }
 
-            // byte[] bytes = JsonUtils.marshalToByte(data);// 走序列化的方式快速计算一下大小
-            // return bytes.length;
-
-            return data.getSize();// 数据不做计算，避免影响性能
+    private void processStat(EventData data, DbLoadContext context) {
+        LoadThroughput throughput = loadStatsTracker.getStat(context.getIdentity());
+        LoadCounter counter = throughput.getStat(data.getPairId());
+        EventType type = data.getEventType();
+        if (type.isInsert()) {
+            counter.getInsertCount().incrementAndGet();
+        } else if (type.isUpdate()) {
+            counter.getUpdateCount().incrementAndGet();
+        } else if (type.isDelete()) {
+            counter.getDeleteCount().incrementAndGet();
         }
+
+        counter.getRowCount().incrementAndGet();
+        counter.getRowSize().addAndGet(calculateSize(data));
+    }
+
+    // 大致估算一下row记录的大小
+    private long calculateSize(EventData data) {
+        // long size = 0L;
+        // size += data.getKeys().toString().getBytes().length - 12 - data.getKeys().size() + 1L;
+        // size += data.getColumns().toString().getBytes().length - 12 - data.getKeys().size() + 1L;
+        // return size;
+
+        // byte[] bytes = JsonUtils.marshalToByte(data);// 走序列化的方式快速计算一下大小
+        // return bytes.length;
+
+        return data.getSize();// 数据不做计算，避免影响性能
     }
 
     // =============== setter / getter ===============

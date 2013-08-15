@@ -69,6 +69,7 @@ public class FileLoadAction implements InitializingBean, DisposableBean {
         }
         FileLoadContext context = buildContext(fileBatch.getIdentity());
         context.setPrepareDatas(fileBatch.getFiles());
+        boolean isDryRun = context.getPipeline().getParameters().isDryRun();
         try {
             // 复制成功的文件信息
             WeightBuckets<FileData> buckets = buildWeightBuckets(fileBatch.getIdentity(), fileBatch.getFiles());
@@ -84,7 +85,11 @@ public class FileLoadAction implements InitializingBean, DisposableBean {
 
                 // 处理同一个weight下的数据
                 List<FileData> items = buckets.getItems(weight);
-                moveFiles(context, items, rootDir);
+                if (context.getPipeline().getParameters().isDryRun()) {
+                    dryRun(context, items, rootDir);
+                } else {
+                    moveFiles(context, items, rootDir);
+                }
 
                 controller.single(weight.intValue());
                 if (logger.isInfoEnabled()) {
@@ -92,24 +97,24 @@ public class FileLoadAction implements InitializingBean, DisposableBean {
                 }
             }
 
-            if (dump) {
+            if (dump || isDryRun) {
                 MDC.put(OtterConstants.splitPipelineLoadLogFileKey,
-                    String.valueOf(fileBatch.getIdentity().getPipelineId()));
+                        String.valueOf(fileBatch.getIdentity().getPipelineId()));
                 logger.info(FileloadDumper.dumpContext("successed", context));
                 MDC.remove(OtterConstants.splitPipelineLoadLogFileKey);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            if (dump) {
+            if (dump || isDryRun) {
                 MDC.put(OtterConstants.splitPipelineLoadLogFileKey,
-                    String.valueOf(fileBatch.getIdentity().getPipelineId()));
+                        String.valueOf(fileBatch.getIdentity().getPipelineId()));
                 logger.info(FileloadDumper.dumpContext("error", context));
                 MDC.remove(OtterConstants.splitPipelineLoadLogFileKey);
             }
         } catch (Exception e) {
-            if (dump) {
+            if (dump || isDryRun) {
                 MDC.put(OtterConstants.splitPipelineLoadLogFileKey,
-                    String.valueOf(fileBatch.getIdentity().getPipelineId()));
+                        String.valueOf(fileBatch.getIdentity().getPipelineId()));
                 logger.info(FileloadDumper.dumpContext("error", context));
                 MDC.remove(OtterConstants.splitPipelineLoadLogFileKey);
             }
@@ -165,7 +170,43 @@ public class FileLoadAction implements InitializingBean, DisposableBean {
         return configClientService.findPipeline(identity.getPipelineId());
     }
 
-    /*
+    private void dryRun(FileLoadContext context, List<FileData> fileDatas, File rootDir) {
+        for (FileData fileData : fileDatas) {
+            boolean isLocal = StringUtils.isBlank(fileData.getNameSpace());
+            String entryName = null;
+            if (true == isLocal) {
+                entryName = FilenameUtils.getPath(fileData.getPath()) + FilenameUtils.getName(fileData.getPath());
+            } else {
+                entryName = fileData.getNameSpace() + File.separator + fileData.getPath();
+            }
+            File sourceFile = new File(rootDir, entryName);
+            if (true == sourceFile.exists() && false == sourceFile.isDirectory()) {
+                if (false == isLocal) {
+                    throw new LoadException(fileData + " is not support!");
+                } else {
+                    // 记录一下文件的meta信息
+                    fileData.setSize(sourceFile.length());
+                    fileData.setLastModifiedTime(sourceFile.lastModified());
+                    context.getProcessedDatas().add(fileData);
+                }
+
+                LoadCounter counter = loadStatsTracker.getStat(context.getIdentity()).getStat(fileData.getPairId());
+                counter.getFileCount().incrementAndGet();
+                counter.getFileSize().addAndGet(fileData.getSize());
+            } else if (fileData.getEventType().isDelete()) {
+                // 删除对应的文件
+                if (false == isLocal) {
+                    throw new LoadException(fileData + " is not support!");
+                } else {
+                    context.getProcessedDatas().add(fileData);
+                }
+            } else {
+                context.getFailedDatas().add(fileData);// 失败记录
+            }
+        }
+    }
+
+    /**
      * 多线程处理文件加载，使用 fast-fail 策略
      */
     private void moveFiles(FileLoadContext context, List<FileData> fileDatas, File rootDir) {
@@ -238,9 +279,8 @@ public class FileLoadAction implements InitializingBean, DisposableBean {
         }
 
         public Exception call() throws Exception {
-            Thread.currentThread().setName(String.format(WORKER_NAME_FORMAT,
-                context.getPipeline().getId(),
-                context.getPipeline().getName()));
+            Thread.currentThread().setName(String.format(WORKER_NAME_FORMAT, context.getPipeline().getId(),
+                                                         context.getPipeline().getName()));
             try {
                 MDC.put(OtterConstants.splitPipelineLogFileKey, String.valueOf(context.getPipeline().getId()));
                 if (fileData == null) {
@@ -262,7 +302,7 @@ public class FileLoadAction implements InitializingBean, DisposableBean {
                 }
 
                 throw new LoadException(String.format("FileLoadWorker is error! createFile failed[%s]",
-                    fileData.getPath()), exception);
+                                                      fileData.getPath()), exception);
             } finally {
                 MDC.remove(OtterConstants.splitPipelineLogFileKey);
             }
@@ -280,7 +320,7 @@ public class FileLoadAction implements InitializingBean, DisposableBean {
         File sourceFile = new File(rootDir, entryName);
         if (true == sourceFile.exists() && false == sourceFile.isDirectory()) {
             if (false == isLocal) {
-                throw new RuntimeException(fileData + " is not support!");
+                throw new LoadException(fileData + " is not support!");
             } else {
                 File targetFile = new File(fileData.getPath());
                 // copy to product path
@@ -292,8 +332,7 @@ public class FileLoadAction implements InitializingBean, DisposableBean {
                     context.getProcessedDatas().add(fileData);
                 } else {
                     throw new LoadException(String.format("copy/rename [%s] to [%s] failed by unknow reason",
-                        sourceFile.getPath(),
-                        targetFile.getPath()));
+                                                          sourceFile.getPath(), targetFile.getPath()));
                 }
 
             }
@@ -304,7 +343,7 @@ public class FileLoadAction implements InitializingBean, DisposableBean {
         } else if (fileData.getEventType().isDelete()) {
             // 删除对应的文件
             if (false == isLocal) {
-                throw new RuntimeException(fileData + " is not support!");
+                throw new LoadException(fileData + " is not support!");
             } else {
                 File targetFile = new File(fileData.getPath());
                 if (NioUtils.delete(targetFile, retry)) {
@@ -320,13 +359,10 @@ public class FileLoadAction implements InitializingBean, DisposableBean {
     }
 
     public void afterPropertiesSet() throws Exception {
-        executor = new ThreadPoolExecutor(poolSize,
-            poolSize,
-            0L,
-            TimeUnit.MILLISECONDS,
-            new ArrayBlockingQueue<Runnable>(poolSize * 4),
-            new NamedThreadFactory(WORKER_NAME),
-            new ThreadPoolExecutor.CallerRunsPolicy());
+        executor = new ThreadPoolExecutor(poolSize, poolSize, 0L, TimeUnit.MILLISECONDS,
+                                          new ArrayBlockingQueue<Runnable>(poolSize * 4),
+                                          new NamedThreadFactory(WORKER_NAME),
+                                          new ThreadPoolExecutor.CallerRunsPolicy());
     }
 
     public void destroy() throws Exception {

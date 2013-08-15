@@ -1,4 +1,5 @@
 $control.setTemplate("home:navigation.vm")
+#set($user = $rundata.request.session.getAttribute("managerUser"))
 <script type="text/javascript" src="js/trcolor.js"></script>
 <script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
 <script type="text/javascript" src="js/jquery.simplemodal-1.4.js"></script> 
@@ -124,12 +125,16 @@ $control.setTemplate("home:navigation.vm")
 	  <td>$!source.encode</td>
       <td>$!source.url</td>
       <td>
-		<input type="button" value="添加" onclick="javascript:returnSelected('$source.id','$source.name')">
+		<input type="button" value="选择" onclick="javascript:returnSelected('$source.id','$source.name')">
 	  </td>
     </tr>
     #end
   </table>
   <!--常规按钮-->
+  #if($user.authorizeType.isAdmin())
+	<div class="btn"><a href="addDataSource.htm" target="_blank">添加</a></div>
+  #end
+  
   <!--分页-->
      <div class="page">共$paginator.items条数据&nbsp;&nbsp;第$paginator.page页/共$paginator.pages页&nbsp;&nbsp; 
        

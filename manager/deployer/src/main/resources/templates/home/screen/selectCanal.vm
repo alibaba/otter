@@ -58,11 +58,16 @@ $control.setTemplate("home:navigation.vm")
 				<td width="5%">$!seniorCanal.canalParameter.metaMode</td>
 				<td width="5%">$!seniorCanal.canalParameter.indexMode</td>
 				<td>
-					<input type="button" value="添加" onclick="javascript:returnSelected('$seniorCanal.id','$seniorCanal.name')">
+					<input type="button" value="选择" onclick="javascript:returnSelected('$seniorCanal.id','$seniorCanal.name')">
 				</td>
 		    </tr>
 		#end
      </table>
+	 
+	   <!--常规按钮-->
+     #if($user.authorizeType.isAdmin())
+		<div class="btn"><a href="addCanal.htm" target="_blank">添加</a></div>
+	 #end
 	 
      <!--分页-->
      <div class="page">共$paginator.items条数据&nbsp;&nbsp;第$paginator.page页/共$paginator.pages页&nbsp;&nbsp; 

@@ -9,8 +9,8 @@ import javax.annotation.Resource;
 import com.alibaba.citrus.turbine.Context;
 import com.alibaba.citrus.turbine.dataresolver.Param;
 import com.alibaba.citrus.util.Paginator;
-import com.alibaba.otter.shared.common.model.config.data.DataMediaSource;
 import com.alibaba.otter.manager.biz.config.datamediasource.DataMediaSourceService;
+import com.alibaba.otter.shared.common.model.config.data.DataMediaSource;
 
 public class SelectDataSource {
 
@@ -21,6 +21,9 @@ public class SelectDataSource {
                                                                                                                  throws Exception {
         @SuppressWarnings("unchecked")
         Map<String, Object> condition = new HashMap<String, Object>();
+        if ("请输入关键字(目前支持DataSource的ID、名字搜索)".equals(searchKey)) {
+            searchKey = "";
+        }
         condition.put("searchKey", searchKey);
 
         int count = dataMediaSourceService.getCount(condition);

@@ -6,12 +6,17 @@ $control.setTemplate("home:navigation.vm")
 </script>
 #macro (addAutoKeeperClusterMessage $field)
     #if (!$field.valid) $field.message #end
-#end	
+#end
+
 
 <div class="main">
   <div class="title"> 
-    <h2>添加集群</h2>
+    <h2>添加Zookeeper集群</h2>
   </div>
+
+#if($message == "init")
+	<span class="red">ZooKeeper集群为空，无法添加Node或Canal，请先至少添加一个ZooKeeper集群</span>
+#end
  
 <form name="addZkClusterForm" method="post" enctype="multipart/form-data">
 	$csrfToken.hiddenField

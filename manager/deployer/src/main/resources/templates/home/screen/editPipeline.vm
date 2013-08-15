@@ -273,6 +273,13 @@ $control.setTemplate("home:navigation.vm")
               <input type="radio" name="$pipelineParameterGroup.dumpEvent.key" value="false" id="RadioGroup1_3" #if (!$pipeline.parameters.dumpEvent) checked="checked" #end class="radio"/>否 
         </td>
       </tr>
+	   <tr class="super"> 
+        <th width="300">dryRun模式：</th>
+        <td width="329">
+              <input type="radio" name="$pipelineParameterGroup.dryRun.key" value="true" id="RadioGroup1_2"  #if ($pipeline.parameters.dryRun) checked="checked" #end class="radio"/>是
+              <input type="radio" name="$pipelineParameterGroup.dryRun.key" value="false" id="RadioGroup1_3" #if (!$pipeline.parameters.dryRun) checked="checked" #end class="radio"/>否 
+        </td>
+      </tr>
 	  <tr class="super"> 
         <th width="300">文件重复同步对比：</th>
         <td width="329">
