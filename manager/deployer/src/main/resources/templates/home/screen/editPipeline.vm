@@ -225,7 +225,7 @@ $control.setTemplate("home:navigation.vm")
         <th width="300">仲裁器调度模式：</th>
         <td width="329">
             <select name="$pipelineParameterGroup.arbitrateMode.key" id="select">
-            	<option value="AUTOMATIC" #if ($pipeline.parameters.arbitrateMode.isAutomatic()) selected="selected" #end>自动</option>
+            	<option value="AUTOMATIC" #if ($pipeline.parameters.arbitrateMode.isAutomatic()) selected="selected" #end>自动选择</option>
                 <option value="RPC" #if ($pipeline.parameters.arbitrateMode.isRpc()) selected="selected" #end>RPC</option>
 				<option value="ZOOKEEPER" #if ($pipeline.parameters.arbitrateMode.isZookeeper()) selected="selected" #end>ZOOKEEPER</option>
 				<option value="MEMORY" #if ($pipeline.parameters.arbitrateMode.isMemory()) selected="selected" #end>MEMORY</option>
@@ -246,7 +246,7 @@ $control.setTemplate("home:navigation.vm")
         <th width="300">传输模式：</th>
         <td width="329">
             <select name="$pipelineParameterGroup.pipeChooseType.key" id="select">
-            	<option value="AUTOMATIC" #if ($pipeline.parameters.pipeChooseType.isAutomatic()) selected="selected" #end>AUTOMATIC</option>
+            	<option value="AUTOMATIC" #if ($pipeline.parameters.pipeChooseType.isAutomatic()) selected="selected" #end>自动选择</option>
                 <option value="RPC" #if ($pipeline.parameters.pipeChooseType.isRpc()) selected="selected" #end>RPC</option>
 				<option value="HTTP" #if ($pipeline.parameters.pipeChooseType.isHttp()) selected="selected" #end>HTTP</option>
             </select><span class="red">*</span>
@@ -285,13 +285,6 @@ $control.setTemplate("home:navigation.vm")
         <td width="329">
               <input type="radio" name="$pipelineParameterGroup.fileDetect.key" value="true" id="RadioGroup1_2" #if ($pipeline.parameters.fileDetect) checked="checked" #end class="radio"/>是
               <input type="radio" name="$pipelineParameterGroup.fileDetect.key" value="false" id="RadioGroup1_3" #if (!$pipeline.parameters.fileDetect) checked="checked" #end class="radio"/>否 
-        </td>
-      </tr>
-	  <tr class="super"> 
-        <th width="300">local文件同步启用多线程：</th>
-        <td width="329">
-              <input type="radio" name="$pipelineParameterGroup.useLocalFileMutliThread.key" value="true" id="RadioGroup1_2" #if ($pipeline.parameters.useLocalFileMutliThread) checked="checked" #end class="radio"/>是
-              <input type="radio" name="$pipelineParameterGroup.useLocalFileMutliThread.key" value="false" id="RadioGroup1_3" #if (!$pipeline.parameters.useLocalFileMutliThread) checked="checked" #end class="radio"/>否 
         </td>
       </tr>
 	  <tr class="super"> 

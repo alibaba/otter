@@ -16,23 +16,11 @@ public class ChannelParameter implements Serializable {
 
     private static final long serialVersionUID            = 298053781205276645L;
     private Long              channelId;
-    private boolean           enableMainstem              = true;                    // 是否启用mainstem追取数据
-    private boolean           enableDetect                = false;                   // 是否启用冲突检测算法
     private boolean           enableRemedy                = false;                   // 是否启用冲突补救算法
     private RemedyAlgorithm   remedyAlgorithm             = RemedyAlgorithm.LOOPBACK; // 冲突补救算法
-    private int               remedyCheckTime             = 60 * 1000;               // 开启remedy后，补救程序的check时间
     private int               remedyDelayThresoldForMedia = 60;                      // 低于60秒钟的同步延迟，回环补救不反查
-    private DetectAlgorithm   detectAlgorithm             = DetectAlgorithm.COVERAGE; // 冲突检测算法
     private SyncMode          syncMode                    = SyncMode.FIELD;          // 同步模式：字段/整条记录
     private SyncConsistency   syncConsistency             = SyncConsistency.BASE;    // 同步一致性要求
-
-    public boolean isEnableDetect() {
-        return enableDetect;
-    }
-
-    public void setEnableDetect(boolean enableDetect) {
-        this.enableDetect = enableDetect;
-    }
 
     public boolean isEnableRemedy() {
         return enableRemedy;
@@ -42,37 +30,12 @@ public class ChannelParameter implements Serializable {
         this.enableRemedy = enableRemedy;
     }
 
-    public int getRemedyCheckTime() {
-        return remedyCheckTime;
-    }
-
-    public void setRemedyCheckTime(int remedyCheckTime) {
-        this.remedyCheckTime = remedyCheckTime;
-    }
-
     public int getRemedyDelayThresoldForMedia() {
         return remedyDelayThresoldForMedia <= 0 ? 10 : remedyDelayThresoldForMedia;
     }
 
     public void setRemedyDelayThresoldForMedia(int remedyDelayThresoldForMedia) {
         this.remedyDelayThresoldForMedia = remedyDelayThresoldForMedia;
-    }
-
-    public static enum DetectAlgorithm {
-        /** 优先覆盖 */
-        COVERAGE,
-
-        /** 普通模式-时间优先 */
-        ORDINARY;
-
-        public boolean isCoverage() {
-            return this.equals(DetectAlgorithm.COVERAGE);
-        }
-
-        public boolean isOrdinary() {
-            return this.equals(DetectAlgorithm.ORDINARY);
-        }
-
     }
 
     public static enum RemedyAlgorithm {
@@ -187,14 +150,6 @@ public class ChannelParameter implements Serializable {
         this.channelId = channelId;
     }
 
-    public DetectAlgorithm getDetectAlgorithm() {
-        return detectAlgorithm;
-    }
-
-    public void setDetectAlgorithm(DetectAlgorithm detectAlgorithm) {
-        this.detectAlgorithm = detectAlgorithm;
-    }
-
     public SyncMode getSyncMode() {
         return syncMode;
     }
@@ -209,14 +164,6 @@ public class ChannelParameter implements Serializable {
 
     public void setSyncConsistency(SyncConsistency syncConsistency) {
         this.syncConsistency = syncConsistency;
-    }
-
-    public boolean isEnableMainstem() {
-        return enableMainstem;
-    }
-
-    public void setEnableMainstem(boolean enableMainstem) {
-        this.enableMainstem = enableMainstem;
     }
 
     public RemedyAlgorithm getRemedyAlgorithm() {

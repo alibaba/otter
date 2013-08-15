@@ -212,7 +212,7 @@ $control.setTemplate("home:navigation.vm")
         <th width="300">仲裁器调度模式：</th>
         <td width="329">
             <select name="$pipelineParameterGroup.arbitrateMode.key" id="select">
-				<option value="AUTOMATIC">AUTOMATIC</option>
+				<option value="AUTOMATIC">自动选择</option>
                 <option value="RPC" selected="selected">RPC</option>
 				<option value="ZOOKEEPER" >ZOOKEEPER</option>
             	<option value="MEMORY">MEMORY</option>
@@ -235,7 +235,7 @@ $control.setTemplate("home:navigation.vm")
         <th width="300">传输模式：</th>
         <td width="329">
             <select name="$pipelineParameterGroup.pipeChooseType.key" id="select">
-            	<option value="AUTOMATIC" selected="selected">AUTOMATIC</option>
+            	<option value="AUTOMATIC" selected="selected">自动选择</option>
                 <option value="RPC">RPC</option>
 				<option value="HTTP">HTTP</option>
             </select><span class="red">*</span>
@@ -265,8 +265,8 @@ $control.setTemplate("home:navigation.vm")
 	  <tr class="super"> 
         <th width="300">dryRun模式：</th>
         <td width="329">
-              <input type="radio" name="$pipelineParameterGroup.dryRun.key" value="true" id="RadioGroup1_2" checked="checked" class="radio"/>是
-              <input type="radio" name="$pipelineParameterGroup.dryRun.key" value="false" id="RadioGroup1_3" class="radio"/>否 
+              <input type="radio" name="$pipelineParameterGroup.dryRun.key" value="true" id="RadioGroup1_2" class="radio"/>是
+              <input type="radio" name="$pipelineParameterGroup.dryRun.key" value="false" id="RadioGroup1_3" checked="checked" class="radio"/>否 
         </td>
       </tr>
 	  <tr class="super"> 
@@ -274,13 +274,6 @@ $control.setTemplate("home:navigation.vm")
         <td width="329">
               <input type="radio" name="$pipelineParameterGroup.fileDetect.key" value="true" id="RadioGroup1_2" class="radio"/>是
               <input type="radio" name="$pipelineParameterGroup.fileDetect.key" value="false" id="RadioGroup1_3" checked="checked" class="radio"/>否 
-        </td>
-      </tr>
-	  <tr class="super"> 
-        <th width="300">local文件同步启用多线程：</th>
-        <td width="329">
-              <input type="radio" name="$pipelineParameterGroup.useLocalFileMutliThread.key" value="true" id="RadioGroup1_2" checked="checked" class="radio"/>是
-              <input type="radio" name="$pipelineParameterGroup.useLocalFileMutliThread.key" value="false" id="RadioGroup1_3" class="radio"/>否 
         </td>
       </tr>
 	  <tr class="super"> 

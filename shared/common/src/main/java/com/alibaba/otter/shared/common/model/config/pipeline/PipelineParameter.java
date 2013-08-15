@@ -10,7 +10,6 @@ import org.springframework.util.ReflectionUtils;
 
 import com.alibaba.otter.shared.common.model.config.Transient;
 import com.alibaba.otter.shared.common.model.config.channel.ChannelParameter;
-import com.alibaba.otter.shared.common.model.config.channel.ChannelParameter.DetectAlgorithm;
 import com.alibaba.otter.shared.common.model.config.channel.ChannelParameter.RemedyAlgorithm;
 import com.alibaba.otter.shared.common.model.config.channel.ChannelParameter.SyncConsistency;
 import com.alibaba.otter.shared.common.model.config.channel.ChannelParameter.SyncMode;
@@ -39,7 +38,6 @@ public class PipelineParameter implements Serializable {
     private Integer               loadPoolSize               = 5;                           // load模块载入线程数，针对单个载入通道
     private Integer               fileLoadPoolSize           = 5;                           // 文件同步线程数
 
-    private Integer               processBatchsizeThresold   = 1000;                        // process最小同步的batchsize阀值，低于这个阀值不做并行度划分
     private Boolean               dumpEvent                  = true;                        // 是否需要dumpevent对象
     private Boolean               dumpSelector               = true;                        // 是否需要dumpSelector信息
     private Boolean               dumpSelectorDetail         = true;                        // 是否需要dumpSelector的详细信息
@@ -62,19 +60,11 @@ public class PipelineParameter implements Serializable {
     // ================================= channel parameter ================================
 
     @Transient
-    private Boolean               enableMainstem;                                           // 是否启用mainstem追取数据
-    @Transient
-    private Boolean               enableDetect;                                             // 是否启用冲突检测算法
-    @Transient
     private Boolean               enableRemedy;                                             // 是否启用冲突补救算法
     @Transient
     private RemedyAlgorithm       remedyAlgorithm;                                          // 冲突补救算法
     @Transient
     private Integer               remedyDelayThresoldForMedia;                              // 针对回环补救，如果反查速度过快，容易查到旧版本的数据记录，导致中美不一致，所以设置一个阀值，低于这个阀值的延迟不进行反查
-    @Transient
-    private Integer               remedyCheckTime;                                          // 开启remedy后，补救程序的check时间
-    @Transient
-    private DetectAlgorithm       detectAlgorithm;                                          // 冲突检测算法
     @Transient
     private SyncMode              syncMode;                                                 // 同步模式：字段/整条记录
     @Transient
@@ -283,10 +273,6 @@ public class PipelineParameter implements Serializable {
         this.loadPoolSize = loadPoolSize;
     }
 
-    public Integer getProcessBatchsizeThresold() {
-        return processBatchsizeThresold;
-    }
-
     public Integer getExtractPoolSize() {
         return extractPoolSize;
     }
@@ -480,32 +466,8 @@ public class PipelineParameter implements Serializable {
 
     // =============================channel parameter ==========================
 
-    public Boolean getEnableDetect() {
-        return enableDetect;
-    }
-
     public Boolean getEnableRemedy() {
         return enableRemedy;
-    }
-
-    public Boolean getEnableMainstem() {
-        return enableMainstem;
-    }
-
-    public void setEnableMainstem(Boolean enableMainstem) {
-        this.enableMainstem = enableMainstem;
-    }
-
-    public Boolean isEnableMainstem() {
-        return enableMainstem;
-    }
-
-    public Boolean isEnableDetect() {
-        return enableDetect;
-    }
-
-    public void setEnableDetect(Boolean enableDetect) {
-        this.enableDetect = enableDetect;
     }
 
     public Boolean isEnableRemedy() {
@@ -514,18 +476,6 @@ public class PipelineParameter implements Serializable {
 
     public void setEnableRemedy(Boolean enableRemedy) {
         this.enableRemedy = enableRemedy;
-    }
-
-    public Integer getRemedyCheckTime() {
-        return remedyCheckTime;
-    }
-
-    public DetectAlgorithm getDetectAlgorithm() {
-        return detectAlgorithm;
-    }
-
-    public void setDetectAlgorithm(DetectAlgorithm detectAlgorithm) {
-        this.detectAlgorithm = detectAlgorithm;
     }
 
     public SyncMode getSyncMode() {
@@ -572,14 +522,6 @@ public class PipelineParameter implements Serializable {
 
     public void setStoreExpiredTime(Integer storeExpiredTime) {
         this.storeExpiredTime = storeExpiredTime;
-    }
-
-    public void setProcessBatchsizeThresold(Integer processBatchsizeThresold) {
-        this.processBatchsizeThresold = processBatchsizeThresold;
-    }
-
-    public void setRemedyCheckTime(Integer remedyCheckTime) {
-        this.remedyCheckTime = remedyCheckTime;
     }
 
     public String getSystemSchema() {

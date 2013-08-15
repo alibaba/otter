@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -179,40 +177,10 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
      * 执行数据处理，比如数据冲突检测
      */
     private void doBefore(List<EventData> items, final DbLoadContext context, final DbLoadData loadData) {
-        boolean async = context.getPipeline().getParameters().isEnableDetect()
-                        && context.getChannel().getPipelines().size() != 1; // 如果存在冲突检测，则开启异步处理
-        if (async) {
-            ExecutorCompletionService completionService = new ExecutorCompletionService(executor);
-            List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
-            for (final EventData item : items) {
-                futures.add(completionService.submit(new Callable<Boolean>() {
-
-                    public Boolean call() throws Exception {
-                        return interceptor.before(context, item);
-                    }
-                }));
-            }
-            for (int i = 0; i < futures.size(); i++) {
-                Future<Boolean> future = futures.get(i);
-                boolean filtered = false;
-                try {
-                    filtered = future.get();
-                } catch (InterruptedException e) {
-                    logger.warn("conflict detect failed and ignore", e);
-                } catch (ExecutionException e) {
-                    logger.warn("conflict detect failed and ignore", e);
-                }
-                if (!filtered) { // 默认执行合并，store反查失败后，直接忽略冲突执行载入
-                    loadData.merge(items.get(i));
-                }
-            }
-
-        } else {
-            for (final EventData item : items) {
-                boolean filter = interceptor.before(context, item);
-                if (!filter) {
-                    loadData.merge(item);// 进行分类
-                }
+        for (final EventData item : items) {
+            boolean filter = interceptor.before(context, item);
+            if (!filter) {
+                loadData.merge(item);// 进行分类
             }
         }
     }

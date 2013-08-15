@@ -86,13 +86,13 @@ $control.setTemplate("home:navigation.vm")
   <th>跳过Load异常：</th><td>#if($!pipeline.parameters.skipLoadException) 开启 #else 关闭 #end</td>
   </tr>
   <tr class="super"> 
-  <th>仲裁器调度模式：</th><td>$!pipeline.parameters.arbitrateMode</td>
+  <th>仲裁器调度模式：</th><td>#if($!pipeline.parameters.arbitrateMode.isAutomatic()) 自动选择 #else $!pipeline.parameters.arbitrateMode #end</td>
   </tr>
   <tr class="super"> 
   <th>负载均衡算法：</th><td>$!pipeline.parameters.lbAlgorithm</td>
   </tr>
   <tr class="super"> 
-  <th>传输模式：</th><td>$!pipeline.parameters.pipeChooseType</td>
+  <th>传输模式：</th><td>#if($!pipeline.parameters.pipeChooseType.isAutomatic()) 自动选择 #else $!pipeline.parameters.pipeChooseType #end</td>
   </tr>
   <tr class="super"> 
   <th>记录selector日志：</th><td>#if($!pipeline.parameters.dumpSelector) 开启 #else 关闭 #end</td>
@@ -108,9 +108,6 @@ $control.setTemplate("home:navigation.vm")
   </tr>
   <tr class="super"> 
   <th>文件重复同步对比：</th><td>#if($!pipeline.parameters.fileDetect) 开启 #else 关闭 #end</td>
-  </tr>
-  <tr class="super"> 
-  <th>local文件同步启用多线程：</th><td>#if($!pipeline.parameters.useLocalFileMutliThread) 开启 #else 关闭 #end</td>
   </tr>
   <tr class="super"> 
   <th>文件传输加密：</th><td>#if($!pipeline.parameters.useFileEncrypt) 开启 #else 关闭 #end</td>

@@ -50,21 +50,8 @@
 					<message>必须填写${displayName}</message>
 				</fm-validators:required-validator>
 			</field>
-			<field name="remedyCheckTime" displayName="冲突补救间隔">
-				<fm-validators:if test="enableRemedy.value == true">
-					<fm-validators:required-validator>
-						<message>必须填写${displayName}</message>
-					</fm-validators:required-validator>
-					<fm-validators:number-validator>
-						<message>${displayName} 必须是数字且是整数</message>
-					</fm-validators:number-validator>
-					<fm-validators:number-validator greaterThan="0">
-						<message>${displayName} 必须是大于0的整数</message>
-					</fm-validators:number-validator>
-				</fm-validators:if>
-			</field>
 			<field name="remedyDelayThresoldForMedia"
-				displayName="冲突补救反查阀值">
+				displayName="一致性反查数据库阀值">
 				<fm-validators:if test="enableRemedy.value == true">
 					<fm-validators:required-validator>
 						<message>必须填写${displayName}</message>
@@ -77,21 +64,8 @@
 					</fm-validators:number-validator>
 				</fm-validators:if>
 			</field>
-			<field name="remedyAlgorithm" displayName="冲突补救算法">
+			<field name="remedyAlgorithm" displayName="一致性算法">
 				<fm-validators:if test="enableRemedy.value == true">
-					<fm-validators:required-validator>
-						<message>必须填写${displayName}</message>
-					</fm-validators:required-validator>
-				</fm-validators:if>
-			</field>
-			<field name="enableDetect" displayName="冲突检测">
-				<fm-validators:required-validator>
-					<message>必须填写${displayName}</message>
-				</fm-validators:required-validator>
-			</field>
-			<field name="enableMainstem" displayName="启用mainstem" />
-			<field name="detectAlgorithm" displayName="冲突检测算法">
-				<fm-validators:if test="enableDetect.value == true">
 					<fm-validators:required-validator>
 						<message>必须填写${displayName}</message>
 					</fm-validators:required-validator>
@@ -200,8 +174,7 @@
 			<field name="dumpSelectorDetail" displayName="是否记录selector详细日志" />
 			<field name="dumpEvent" displayName="是否记录load日志" />
 			<field name="home" displayName="主站点" />
-			<field name="useLocalFileMutliThread"
-				displayName="local文件同步启用多线程" />
+			<field name="useLocalFileMutliThread" displayName="local文件同步启用多线程" />
 			<field name="useFileEncrypt" displayName="文件传输加密" />
 			<field name="useExternalIp" displayName="启用公网同步" />
 			<field name="fileDetect" displayName="是否开启文件重复同步对比" />

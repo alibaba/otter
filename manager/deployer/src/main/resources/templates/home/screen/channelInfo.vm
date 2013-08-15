@@ -21,32 +21,21 @@ $control.setTemplate("home:navigation.vm")
   <th>运行状态：</th><td>#if($channel.status.isStart()) 运行 #elseif($channel.status.isPause()) 挂起 #elseif($channel.status.isStop()) 停止 #end</td>
   </tr>
   <tr>
-  <th>同步一致性：</th><td>#if ($channel.parameters.SyncConsistency.isMedia()) 基于介质 #elseif($channel.parameters.SyncConsistency.isStore()) 基于Store #elseif($channel.parameters.SyncConsistency.isBase()) 基于当前变更 #end</td>
+  <th>同步一致性：</th><td>#if ($channel.parameters.SyncConsistency.isMedia()) 基于数据库反查 #elseif($channel.parameters.SyncConsistency.isBase()) 基于当前日志变更 #end</td>
   </tr>
   <tr>
-  <th>同步模式：</th><td>#if($channel.parameters.syncMode.isRow()) 行记录同步 #else 字段记录同步 #end</td>
+  <th>同步模式：</th><td>#if($channel.parameters.syncMode.isRow()) 行记录同步 #else 列记录同步 #end</td>
   </tr>
   <tr>
-  <th>是否开启冲突检测：</th><td>#if($channel.parameters.isEnableDetect()) 开启 #else 关闭 #end</td>
-  </tr>
-  #if($channel.parameters.isEnableDetect())
-  <tr>
-  <th>冲突检测模式：</th><td>#if($channel.parameters.detectAlgorithm.isCoverage()) 站点优先 #else 时间优先 #end</td>
-  </tr>
-  #end
-  <tr>
-  <th>是否开启冲突补救：</th><td>#if($channel.parameters.isEnableRemedy()) 开启 #else 关闭 #end</td>
+  <th>是否开启数据一致性：</th><td>#if($channel.parameters.isEnableRemedy()) 开启 #else 关闭 #end</td>
   </tr>
   #if($channel.parameters.isEnableRemedy())
   <tr>
-  <th>冲突补救模式：</th><td>#if($channel.parameters.remedyAlgorithm.isLoopback()) 回环补救 #else 交集补救 #end</td>
+  <th>一致性算法：</th><td>#if($channel.parameters.remedyAlgorithm.isLoopback()) 单向回环补救 #else 时间交集补救 #end</td>
   </tr>
   <tr>
-  <th>冲突补救反查阀值：</th><td>$numberFormat.format($channel.parameters.remedyDelayThresoldForMedia) 秒</td>
+  <th>一致性反查数据库延迟阀值：</th><td>$numberFormat.format($channel.parameters.remedyDelayThresoldForMedia) 秒</td>
   </tr
-  <tr>
-  <th>冲突补救检测间隔：</th><td>$numberFormat.format($channel.parameters.remedyCheckTime) 秒</td>
-  </tr>
   #end
   <tr>
   <th>描述信息：</th><td>$!channel.description</td>
