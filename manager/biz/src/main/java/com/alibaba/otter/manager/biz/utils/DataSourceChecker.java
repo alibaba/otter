@@ -4,16 +4,25 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.sql.DataSource;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.alibaba.otter.manager.biz.common.DataSourceCreator;
 import com.alibaba.otter.manager.biz.config.datamediasource.DataMediaSourceService;
 import com.alibaba.otter.shared.common.model.config.ConfigHelper;
+import com.alibaba.otter.shared.common.model.config.ModeValueFilter;
+import com.alibaba.otter.shared.common.model.config.data.DataMedia.ModeValue;
 import com.alibaba.otter.shared.common.model.config.data.DataMediaSource;
 import com.alibaba.otter.shared.common.model.config.data.DataMediaType;
-import com.alibaba.otter.shared.common.model.config.data.DataMedia.ModeValue;
 import com.alibaba.otter.shared.common.model.config.data.db.DbMediaSource;
+import com.alibaba.otter.shared.common.utils.meta.DdlSchemaFilter;
+import com.alibaba.otter.shared.common.utils.meta.DdlTableNameFilter;
+import com.alibaba.otter.shared.common.utils.meta.DdlUtils;
 
 /**
  * @author simon 2011-11-25 下午04:57:55
@@ -225,6 +234,58 @@ public class DataSourceChecker {
 
         return TABLE_SUCCESS;
 
+    }
+
+    public String checkNamespaceTables(final String namespace, final String name, final Long dataSourceId) {
+        DataSource dataSource = null;
+        try {
+            DataMediaSource source = dataMediaSourceService.findById(dataSourceId);
+            DbMediaSource dbMediaSource = (DbMediaSource) source;
+            dataSource = dataSourceCreator.createDataSource(dbMediaSource);
+            JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+
+            List<String> schemaList;
+            {
+                ModeValue mode = ConfigHelper.parseMode(namespace);
+                String schemaPattern = ConfigHelper.makeSQLPattern(mode, namespace);
+                final ModeValueFilter modeValueFilter = ConfigHelper.makeModeValueFilter(mode, namespace);
+                schemaList = DdlUtils.findSchemas(jdbcTemplate, schemaPattern, new DdlSchemaFilter() {
+
+                    @Override
+                    public boolean accept(String schemaName) {
+                        return modeValueFilter.accept(schemaName);
+                    }
+                });
+            }
+
+            final List<String> matchSchemaTables = new ArrayList<String>();
+            matchSchemaTables.add("Find schema and tables:");
+            if (schemaList != null) {
+                ModeValue mode = ConfigHelper.parseMode(name);
+                String tableNamePattern = ConfigHelper.makeSQLPattern(mode, name);
+                final ModeValueFilter modeValueFilter = ConfigHelper.makeModeValueFilter(mode, name);
+                for (String schema : schemaList) {
+                    DdlUtils.findTables(jdbcTemplate, schema, schema, tableNamePattern, null, new DdlTableNameFilter() {
+
+                        @Override
+                        public boolean accept(String catalogName, String schemaName, String tableName) {
+                            if (modeValueFilter.accept(tableName)) {
+                                matchSchemaTables.add(schemaName + "." + tableName);
+                            }
+                            return false;
+                        }
+                    });
+                }
+            }
+            if (matchSchemaTables.size() == 1) {
+                return TABLE_FAIL;
+            }
+            return StringUtils.join(matchSchemaTables, "<br>\n");
+        } catch (Exception e) {
+            return TABLE_FAIL;
+        } finally {
+            dataSourceCreator.destroyDataSource(dataSource);
+        }
     }
 
     public void setDataMediaSourceService(DataMediaSourceService dataMediaSourceService) {

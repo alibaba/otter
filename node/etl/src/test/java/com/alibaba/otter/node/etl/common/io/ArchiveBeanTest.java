@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.math.RandomUtils;
 import org.testng.annotations.Test;
 
 import com.alibaba.otter.node.etl.BaseOtterTest;
@@ -29,7 +28,6 @@ public class ArchiveBeanTest extends BaseOtterTest {
     @Test
     public void test_simple() {
         File[] files = new File[10];
-        byte[][] datas = new byte[10][];
 
         List<FileData> fileDatas = new ArrayList<FileData>();
         File archiveFile = new File(tmp, "pack.zip");
@@ -91,24 +89,4 @@ public class ArchiveBeanTest extends BaseOtterTest {
         }
     }
 
-    private void check(byte[] src, byte[] dest) {
-        want.object(src).notNull();
-        want.object(dest).notNull();
-        want.bool(src.length == dest.length).is(true);
-
-        for (int i = 0; i < src.length; i++) {
-            if (src[i] != dest[i]) {
-                want.fail();
-            }
-        }
-    }
-
-    private byte[] getBlock(int length) {
-        byte[] rawData = new byte[length];
-        for (int i = 0; i < rawData.length; i++) {
-            rawData[i] = (byte) (' ' + RandomUtils.nextInt(95));
-
-        }
-        return rawData;
-    }
 }

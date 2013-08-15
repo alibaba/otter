@@ -8,13 +8,12 @@ import java.util.Arrays;
 import org.apache.commons.lang.math.RandomUtils;
 import org.testng.annotations.Test;
 
+import com.alibaba.otter.node.etl.BaseOtterTest;
 import com.alibaba.otter.node.etl.common.io.compress.Compressor;
 import com.alibaba.otter.node.etl.common.io.compress.impl.PackableObject;
 import com.alibaba.otter.node.etl.common.io.compress.impl.bzip2.BZip2Compressor;
 import com.alibaba.otter.node.etl.common.io.compress.impl.gzip.GzipCompressor;
-import com.alibaba.otter.node.etl.common.io.compress.impl.snappy.SnappyCompressor;
 import com.alibaba.otter.shared.common.utils.NioUtils;
-import com.alibaba.otter.node.etl.BaseOtterTest;
 
 /**
  * 数据压缩测试类
@@ -24,8 +23,7 @@ import com.alibaba.otter.node.etl.BaseOtterTest;
  */
 public class CompressorTest extends BaseOtterTest {
 
-    private static Compressor[] comps = new Compressor[] { new GzipCompressor(),
-            new BZip2Compressor(), new SnappyCompressor() };
+    private static Compressor[] comps = new Compressor[] { new GzipCompressor(), new BZip2Compressor() };
 
     @Test
     public void test_stream() {
@@ -79,8 +77,7 @@ public class CompressorTest extends BaseOtterTest {
                 File output = File.createTempFile("compress_", "jkt");
                 comp.compressTo(input, output);
 
-                Compressor icomp = (Compressor) PackableObject.identifyByHeader(output, Arrays
-                        .asList(comps));
+                Compressor icomp = (Compressor) PackableObject.identifyByHeader(output, Arrays.asList(comps));
 
                 InputStream decrypt = icomp.decompress(output);
                 byte[] result = NioUtils.read(decrypt);

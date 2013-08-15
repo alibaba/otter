@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.commons.lang.math.NumberUtils;
@@ -24,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.util.Assert;
 
@@ -53,6 +55,41 @@ public class DdlUtils {
         _defaultSizes.put(new Integer(8), "15,0");
         _defaultSizes.put(new Integer(3), "15,15");
         _defaultSizes.put(new Integer(2), "15,15");
+    }
+
+    /**
+     * !!! Only supports MySQL
+     */
+    @SuppressWarnings("unchecked")
+    public static List<String> findSchemas(JdbcTemplate jdbcTemplate, final String schemaPattern) {
+        try {
+            if (StringUtils.isEmpty(schemaPattern)) {
+                return jdbcTemplate.query("show databases", new SingleColumnRowMapper(String.class));
+            }
+            return jdbcTemplate.query("show databases like ?", new Object[] { schemaPattern },
+                                      new SingleColumnRowMapper(String.class));
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return new ArrayList<String>();
+        }
+    }
+
+    /**
+     * !!! Only supports MySQL
+     */
+    public static List<String> findSchemas(JdbcTemplate jdbcTemplate, final String schemaPattern,
+                                           final DdlSchemaFilter ddlSchemaFilter) {
+        List<String> schemas = findSchemas(jdbcTemplate, schemaPattern);
+        if (ddlSchemaFilter == null) {
+            return schemas;
+        }
+        List<String> filterSchemas = new ArrayList<String>();
+        for (String schema : schemas) {
+            if (ddlSchemaFilter.accept(schema)) {
+                filterSchemas.add(schema);
+            }
+        }
+        return filterSchemas;
     }
 
     public static Table findTable(JdbcTemplate jdbcTemplate, final String catalogName, final String schemaName,
@@ -115,6 +152,71 @@ public class DdlUtils {
                 makeAllColumnsPrimaryKeysIfNoPrimaryKeysFound(table);
 
                 return table;
+            }
+        });
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<Table> findTables(final JdbcTemplate jdbcTemplate, final String catalogName,
+                                         final String schemaName, final String tableNamePattern,
+                                         final DdlUtilsFilter filter, final DdlTableNameFilter tableNameFilter)
+                                                                                                               throws Exception {
+        return (List<Table>) jdbcTemplate.execute(new ConnectionCallback() {
+
+            public Object doInConnection(Connection con) throws SQLException, DataAccessException {
+                List<Table> tables = new ArrayList<Table>();
+                DatabaseMetaDataWrapper metaData = new DatabaseMetaDataWrapper();
+
+                try {
+                    if (filter != null) {
+                        con = filter.filterConnection(con);
+                        Assert.notNull(con);
+                    }
+                    DatabaseMetaData databaseMetaData = con.getMetaData();
+                    if (filter != null) {
+                        databaseMetaData = filter.filterDataBaseMetaData(jdbcTemplate, con, databaseMetaData);
+                        Assert.notNull(databaseMetaData);
+                    }
+
+                    metaData.setMetaData(databaseMetaData);
+                    metaData.setTableTypes(TableType.toStrings(SUPPORTED_TABLE_TYPES));
+                    String convertTableName = tableNamePattern;
+                    if (databaseMetaData.storesUpperCaseIdentifiers()) {
+                        metaData.setCatalog(catalogName.toUpperCase());
+                        metaData.setSchemaPattern(schemaName.toUpperCase());
+                        convertTableName = tableNamePattern.toUpperCase();
+                    }
+                    if (databaseMetaData.storesLowerCaseIdentifiers()) {
+                        metaData.setCatalog(catalogName.toLowerCase());
+                        metaData.setSchemaPattern(schemaName.toLowerCase());
+                        convertTableName = tableNamePattern.toLowerCase();
+                    }
+
+                    ResultSet tableData = null;
+                    try {
+                        tableData = metaData.getTables(convertTableName);
+
+                        while ((tableData != null) && tableData.next()) {
+                            Map<String, Object> values = readColumns(tableData, initColumnsForTable());
+
+                            Table table = readTable(metaData, values);
+                            if ((tableNameFilter == null)
+                                || tableNameFilter.accept(catalogName, schemaName, table.getName())) {
+                                tables.add(table);
+                            }
+                        }
+                    } finally {
+                        JdbcUtils.closeResultSet(tableData);
+                    }
+                } catch (Exception e) {
+                    logger.error(e.getMessage(), e);
+                }
+
+                for (Table table : tables) {
+                    makeAllColumnsPrimaryKeysIfNoPrimaryKeysFound(table);
+                }
+
+                return tables;
             }
         });
     }

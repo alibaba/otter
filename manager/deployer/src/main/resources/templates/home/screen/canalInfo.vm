@@ -42,11 +42,13 @@ $control.setTemplate("home:navigation.vm")
   <tr>
   <th>connectionCharset：</th><td>$!canal.canalParameter.connectionCharset</td>
   </tr>
+  #**
   #if($!canal.canalParameter.sourcingType.isMysql())
   <tr>
   <th>链接到mysql的slaveId：</th><td>$!canal.canalParameter.slaveId</td>
   </tr>
   #end
+  *#
   
   #if($!canal.canalParameter.sourcingType.isLocalBinlog())
   <tr>

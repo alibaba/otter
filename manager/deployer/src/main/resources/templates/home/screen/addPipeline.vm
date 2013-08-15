@@ -10,6 +10,13 @@ $control.setTemplate("home:navigation.vm")
 			changeDisplay('super','none');
 		}
 	}
+	
+	function changeKeyword(id, name) {
+    	if( document.getElementById("destinationName")){
+        	document.getElementById('destinationName').value = name;
+    	}
+	}
+
 //-->
 </script>
 #macro (addPipelineMessage $field)
@@ -138,9 +145,8 @@ $control.setTemplate("home:navigation.vm")
 	  <tr> 
         <th width="300">Canal名字：</th>
         <td width="329">
-              <input name="$pipelineParameterGroup.destinationName.key" value="$!pipelineParameterGroup.destinationName.value" type="text" class="setting_input"/><span class="red">*</span>
-			  <br />
-			  <span>通过名字唯一定位Canal配置</span>
+			  <input id="destinationName" name="$pipelineParameterGroup.destinationName.key" value="$!pipelineParameterGroup.destinationName.value" class="setting_input" />
+			  <input type="button" value="查找Canal" onclick="window.open('selectCanal.htm', 'selectCanal')"><span class="red">*</span>
 			  <br />
 			  <span class="red">#addPipelineMessage ($pipelineParameterGroup.destinationName)</span>
         </td>

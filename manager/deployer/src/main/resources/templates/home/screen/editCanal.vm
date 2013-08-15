@@ -143,7 +143,7 @@ $control.setTemplate("home:navigation.vm")
     	  <tr> 
             <th width="300">默认数据库schmea：</th>
             <td width="329">
-                <input type="text" name="$canalParameterGroup.defaultDatabaseName.key" value="$!canal.canalParameter.defaultDatabaseName" class="setting_input"/><span class="red">*</span>
+                <input type="text" name="$canalParameterGroup.defaultDatabaseName.key" value="$!canal.canalParameter.defaultDatabaseName" class="setting_input"/>
     			<br />
     			<span class="red">#editCanalMessage ($canalParameterGroup.defaultDatabaseName)</span>
     		</td>
@@ -157,7 +157,7 @@ $control.setTemplate("home:navigation.vm")
     			<span class="red">#editCanalMessage ($canalParameterGroup.connectionCharset)</span>
     		</td>
           </tr>
-		  
+		 #**
 		 <tr class="mysqlSourcing"> 
             <th width="300">链接到mysql的slaveId：</th>
             <td width="329">
@@ -166,7 +166,7 @@ $control.setTemplate("home:navigation.vm")
     			<span class="red">#editCanalMessage ($canalParameterGroup.slaveId)</span>
     		</td>
           </tr>
-		  
+		  *#
 		  <tr class="localSourcing">
             <th width="300">本地localBinlog目录：</th>
             <td width="329">

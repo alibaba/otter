@@ -180,6 +180,7 @@
 		<dwr:remote javascript="Hello">
 			<dwr:include method="check" />
 			<dwr:include method="checkMap" />
+			<dwr:include method="checkNamespaceTables" />
 		</dwr:remote>
 	</bean>
 	

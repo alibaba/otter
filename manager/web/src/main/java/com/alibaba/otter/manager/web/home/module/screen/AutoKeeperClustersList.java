@@ -21,7 +21,7 @@ public class AutoKeeperClustersList {
                                                                                                                  throws Exception {
         @SuppressWarnings("unchecked")
         Map<String, Object> condition = new HashMap<String, Object>();
-        if ("请输入关键字(目前支持Node的ID、名字搜索)".equals(searchKey)) {
+        if ("请输入关键字(目前支持Zookeeper的地址搜索)".equals(searchKey)) {
             searchKey = "";
         }
         condition.put("searchKey", searchKey);

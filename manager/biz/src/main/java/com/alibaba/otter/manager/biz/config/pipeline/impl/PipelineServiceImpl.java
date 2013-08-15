@@ -359,6 +359,7 @@ public class PipelineServiceImpl implements PipelineService {
             pipeline.setGmtCreate(pipelineDo.getGmtCreate());
             pipeline.setGmtModified(pipelineDo.getGmtModified());
             pipeline.setChannelId(pipelineDo.getChannelId());
+            pipeline.getParameters().setMainstemClientId(pipeline.getId().shortValue());
 
             // 组装DatamediaPair
             pipeline.setPairs(dataMediaPairService.listByPipelineId(pipelineDo.getId()));
@@ -416,6 +417,7 @@ public class PipelineServiceImpl implements PipelineService {
             pipeline.setGmtCreate(pipelineDo.getGmtCreate());
             pipeline.setGmtModified(pipelineDo.getGmtModified());
             pipeline.setChannelId(pipelineDo.getChannelId());
+            pipeline.getParameters().setMainstemClientId(pipeline.getId().shortValue());
 
             // 组装DatamediaPair
             pipeline.setPairs(dataMediaPairService.listByPipelineIdWithoutColumn(pipelineDo.getId()));
@@ -473,6 +475,7 @@ public class PipelineServiceImpl implements PipelineService {
             pipeline.setGmtCreate(pipelineDo.getGmtCreate());
             pipeline.setGmtModified(pipelineDo.getGmtModified());
             pipeline.setChannelId(pipelineDo.getChannelId());
+            pipeline.getParameters().setMainstemClientId(pipeline.getId().shortValue());
 
         } catch (Exception e) {
             logger.error("ERROR ## change the pipeline Do to Model has an exception");
@@ -519,7 +522,6 @@ public class PipelineServiceImpl implements PipelineService {
             pipelineDO.setId(pipeline.getId());
             pipelineDO.setName(pipeline.getName());
             pipelineDO.setParameters(pipeline.getParameters());
-            pipeline.getParameters().setMainstemClientId(pipeline.getId().shortValue());//强制设置为pipelineId
             pipelineDO.setDescription(pipeline.getDescription());
             pipelineDO.setChannelId(pipeline.getChannelId());
             pipelineDO.setGmtCreate(pipeline.getGmtCreate());

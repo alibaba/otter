@@ -18,3 +18,20 @@ function checkMap() {
 function callback(msg) {  
     DWRUtil.setValue('result', msg);  
 }
+
+function checkNamespaceTables() {  
+    var namespace = document.getElementById('namespace').value;
+    var name = document.getElementById('name').value;
+    var dataSourceId = document.getElementById('dataSourceId').value;
+    
+    Hello.checkNamespaceTables(namespace, name, dataSourceId, callback2);  
+}
+  
+function callback2(msg) {  
+    var result = document.getElementById('result');
+    if (/.*Find schema.*/.test(msg)) {
+        result.innerHTML = "<font style='color:color;'>" + msg + "</font>";
+    } else {
+        result.innerHTML = msg;
+    }
+}

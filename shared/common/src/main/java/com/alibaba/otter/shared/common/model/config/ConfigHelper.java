@@ -16,10 +16,10 @@ import org.apache.oro.text.regex.Perl5Matcher;
 import org.springframework.util.Assert;
 
 import com.alibaba.otter.shared.common.model.config.data.DataMedia;
-import com.alibaba.otter.shared.common.model.config.data.DataMediaPair;
-import com.alibaba.otter.shared.common.model.config.data.DataMediaSource;
 import com.alibaba.otter.shared.common.model.config.data.DataMedia.Mode;
 import com.alibaba.otter.shared.common.model.config.data.DataMedia.ModeValue;
+import com.alibaba.otter.shared.common.model.config.data.DataMediaPair;
+import com.alibaba.otter.shared.common.model.config.data.DataMediaSource;
 import com.alibaba.otter.shared.common.model.config.pipeline.Pipeline;
 import com.google.common.base.Function;
 import com.google.common.collect.MapMaker;
@@ -38,8 +38,7 @@ public class ConfigHelper {
                                                          public Pattern apply(String input) {
                                                              PatternCompiler pc = new Perl5Compiler();
                                                              try {
-                                                                 return pc.compile(
-                                                                                   input,
+                                                                 return pc.compile(input,
                                                                                    Perl5Compiler.CASE_INSENSITIVE_MASK
                                                                                            | Perl5Compiler.READ_ONLY_MASK);
                                                              } catch (MalformedPatternException e) {
@@ -154,6 +153,65 @@ public class ConfigHelper {
             return new ModeValue(Mode.WILDCARD, Arrays.asList(value));
         } else {
             return new ModeValue(Mode.SINGLE, Arrays.asList(value));
+        }
+    }
+
+    public static String makeSQLPattern(String rawValue) {
+        return makeSQLPattern(parseMode(rawValue), rawValue);
+    }
+
+    public static String makeSQLPattern(ModeValue mode, String rawValue) {
+        Assert.notNull(mode);
+        Assert.notNull(rawValue);
+        if (mode.getMode().isSingle()) {
+            return rawValue;
+        } else if (mode.getMode().isMulti()) {
+            return StringUtils.substringBefore(rawValue, "[") + "%";
+        } else if (mode.getMode().isWildCard()) {
+            StringBuilder sb = new StringBuilder(rawValue.length());
+            FOR_LOOP: for (int i = 0; i < rawValue.length(); i++) {
+                String charString = String.valueOf(rawValue.charAt(i));
+                if (isWildCard(charString)) {
+                    break FOR_LOOP;
+                } else {
+                    sb.append(rawValue.charAt(i));
+                }
+            }
+            return sb.toString() + "%";
+        } else {
+            throw new UnsupportedOperationException("unsupport mode:" + mode.getMode());
+        }
+    }
+
+    public static ModeValueFilter makeModeValueFilter(final ModeValue mode, final String rawValue) {
+        Assert.notNull(mode);
+        Assert.notNull(rawValue);
+        if (mode.getMode().isSingle()) {
+            return new ModeValueFilter() {
+
+                @Override
+                public boolean accept(String value) {
+                    return rawValue.equalsIgnoreCase(value);
+                }
+            };
+        } else if (mode.getMode().isWildCard()) {
+            return new ModeValueFilter() {
+
+                @Override
+                public boolean accept(String value) {
+                    return isWildCardMatch(rawValue, value);
+                }
+            };
+        } else if (mode.getMode().isMulti()) {
+            return new ModeValueFilter() {
+
+                @Override
+                public boolean accept(String value) {
+                    return (indexIgnoreCase(mode.getMultiValue(), value) != -1);
+                }
+            };
+        } else {
+            throw new UnsupportedOperationException("unsupport mode:" + mode.getMode());
         }
     }
 
