@@ -128,9 +128,6 @@ $control.setTemplate("home:navigation.vm")
   <tr class="super"> 
   <th>自定义同步标记：</th><td>$!pipeline.parameters.channelInfo</td>
   </tr>
-  <tr class="super"> 
-  <th>Store过期时间(秒)：</th><td>$!pipeline.parameters.storeExpiredTime</td>
-  </tr>
  </table>
  </div>
 </div>

@@ -47,8 +47,8 @@ $control.setTemplate("home:navigation.vm")
       </tr>
       <tr> 
         <th width="300">Select机器：</th>
-        <td width="329" class="textarea">
-			<select name="$pipelineGroup.selectNodeIds.key" multiple="multiple" style="width:200px">
+        <td width="329" class="textarea_b">
+			<select name="$pipelineGroup.selectNodeIds.key" multiple="multiple" style="height:100px;width:200px">
                 <optgroup label="Select">
 					#foreach ($node in $nodes)
     				<option value="$node.id" #if($!pipelineGroup.selectNodeIds.value == $node.id) selected #end>$node.name</option>
@@ -59,11 +59,11 @@ $control.setTemplate("home:navigation.vm")
 			<span class="red">#addPipelineMessage ($pipelineGroup.selectNodeIds)</span>
 		</td>
       </tr>
-	  #*
+	  #**
 	  <tr> 
         <th width="300">Extract机器：</th>
         <td width="329" class="textarea">
-			<select name="$pipelineGroup.extractNodeIds.key" multiple="multiple" style="width:200px">
+			<select name="$pipelineGroup.extractNodeIds.key" multiple="multiple" style="height:100px;width:200px">
                 <optgroup label="Extract">
 					#foreach ($node in $nodes)
     				<option value="$node.id" #if($!pipelineGroup.extractNodeIds.value == $node.id) selected #end>$node.name</option>
@@ -78,7 +78,7 @@ $control.setTemplate("home:navigation.vm")
       <tr> 
         <th width="300">Load机器：</th>
         <td width="329" class="textarea_b">
-			<select name="$pipelineGroup.loadNodeIds.key" multiple="multiple" style="width:200px">
+			<select name="$pipelineGroup.loadNodeIds.key" multiple="multiple" style="height:100px;width:200px">
                 <optgroup label="Load">
     				#foreach ($node in $nodes)
     				<option value="$node.id" #if($!pipelineGroup.loadNodeIds.value == $node.id) selected #end>$node.name</option>
@@ -316,14 +316,6 @@ $control.setTemplate("home:navigation.vm")
               <input name="$pipelineParameterGroup.channelInfo.key" type="text" class="setting_input"/>
 			  <br />
 			  <span class="red">#addPipelineMessage ($pipelineParameterGroup.channelInfo)</span>
-        </td>
-      </tr>
-	  <tr class="super"> 
-        <th width="300">Store过期时间(秒)：</th>
-        <td width="329">
-              <input name="$pipelineParameterGroup.storeExpiredTime.key" value="3600" type="text" class="setting_input"/><span class="red">*</span>
-			  <br />
-			  <span class="red">#addPipelineMessage ($pipelineParameterGroup.storeExpiredTime)</span>
         </td>
       </tr>
     </table>

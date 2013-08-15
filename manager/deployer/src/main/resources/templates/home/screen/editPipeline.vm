@@ -44,7 +44,7 @@ $control.setTemplate("home:navigation.vm")
       <tr> 
         <th width="300">Select机器：</th>
         <td width="329" class="textarea">
-			<select name="$pipelineGroup.selectNodeIds.key" multiple="multiple" >
+			<select name="$pipelineGroup.selectNodeIds.key" multiple="multiple" style="height:100px;width:200px">
                 <optgroup label="Select">
 					#foreach ($node in $nodes)
 						<option value="$node.id" 
@@ -61,11 +61,11 @@ $control.setTemplate("home:navigation.vm")
 			<span class="red">#editPipelineMessage ($pipelineGroup.selectNodeIds)</span>
 		</td>
       </tr>
-	  #*
+	  #**
 	  <tr> 
         <th width="300">Extract机器：</th>
         <td width="329" class="textarea_b">
-			<select name="$pipelineGroup.extractNodeIds.key" multiple="multiple" >
+			<select name="$pipelineGroup.extractNodeIds.key" multiple="multiple" style="height:100px;width:200px">
                 <optgroup label="Extract">
     				#foreach ($node in $nodes)
 						<option value="$node.id"
@@ -86,7 +86,7 @@ $control.setTemplate("home:navigation.vm")
       <tr> 
         <th width="300">Load机器：</th>
         <td width="329" class="textarea_b">
-			<select name="$pipelineGroup.loadNodeIds.key" multiple="multiple" >
+			<select name="$pipelineGroup.loadNodeIds.key" multiple="multiple" style="height:100px;width:200px">
                 <optgroup label="Load">
     				#foreach ($node in $nodes)
 						<option value="$node.id"
@@ -329,15 +329,6 @@ $control.setTemplate("home:navigation.vm")
 			  <br />
 			  <span class="red">#editPipelineMessage ($pipelineParameterGroup.channelInfo)</span>
         </td>
-      </tr>
-	   <tr class="super"> 
-        <th width="300">Store过期时间(秒)：</th>
-        <td width="329">
-              <input name="$pipelineParameterGroup.storeExpiredTime.key" value="$!pipeline.parameters.storeExpiredTime" type="text" class="setting_input"/><span class="red">*</span>
-			  <br />
-			  <span class="red">#editPipelineMessage ($pipelineParameterGroup.storeExpiredTime)</span>
-        </td>
-      </tr>
     </table>
  </div>
   <div class="btn"><a href="javascript:document.editPipelineForm.submit();">保存</a></div>

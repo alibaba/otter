@@ -23,7 +23,6 @@ $control.setTemplate("home:navigation.vm")
    <div class="crumbs"><a href="dataMediaList.htm">存储介质管理</a> </div> 
    <!--分页表单-->
    <form id="pageform" name="pageform" action="$homeModule.setTarget('selectDataMedia.vm')" method="post">
-    	$csrfToken.hiddenField
     	<input type="hidden" id="pageIndex" name="pageIndex" value=""/>
 		<input type="hidden" id="searchKey" name="searchKey" value="$!searchKey"/>
 		<input type="hidden" name="local" value="$!local"/>

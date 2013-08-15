@@ -88,7 +88,6 @@ $control.setTemplate("home:navigation.vm")
    <div class="crumbs">选择数据源</div> 
    <!--分页表单-->
    <form id="pageform" name="pageform" action="$homeModule.setTarget('selectDataSource.vm')" method="post">
-    	$csrfToken.hiddenField
     	<input type="hidden" id="pageIndex" name="pageIndex" value=""/>
 		<input type="hidden" id="searchKey" name="searchKey" value=""/>
    </form>
@@ -126,7 +125,6 @@ $control.setTemplate("home:navigation.vm")
       <td>$!source.url</td>
       <td>
 		<input type="button" value="添加" onclick="javascript:returnSelected('$source.id','$source.name')">
-	  
 	  </td>
     </tr>
     #end
