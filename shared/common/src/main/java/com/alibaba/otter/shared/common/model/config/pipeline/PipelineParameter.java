@@ -33,7 +33,6 @@ public class PipelineParameter implements Serializable {
     private String                destinationName;
     private Short                 mainstemClientId;                                         // mainstem订阅id
     private Integer               mainstemBatchsize          = 10000 * 10;                  // mainstem订阅批次大小
-    private Integer               storeExpiredTime           = 3600;                        // store数据过期时间
     private Integer               extractPoolSize            = 5;                           // extract模块载入线程数，针对单个载入通道
     private Integer               loadPoolSize               = 5;                           // load模块载入线程数，针对单个载入通道
     private Integer               fileLoadPoolSize           = 5;                           // 文件同步线程数
@@ -259,10 +258,6 @@ public class PipelineParameter implements Serializable {
 
     public void setHome(Boolean home) {
         this.home = home;
-    }
-
-    public Integer getStoreExpiredTime() {
-        return storeExpiredTime;
     }
 
     public Integer getLoadPoolSize() {
@@ -518,10 +513,6 @@ public class PipelineParameter implements Serializable {
 
     public void setMainstemBatchsize(Integer mainstemBatchsize) {
         this.mainstemBatchsize = mainstemBatchsize;
-    }
-
-    public void setStoreExpiredTime(Integer storeExpiredTime) {
-        this.storeExpiredTime = storeExpiredTime;
     }
 
     public String getSystemSchema() {
