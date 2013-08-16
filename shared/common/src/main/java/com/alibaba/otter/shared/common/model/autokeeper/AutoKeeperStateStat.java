@@ -8,12 +8,13 @@ package com.alibaba.otter.shared.common.model.autokeeper;
  */
 public class AutoKeeperStateStat extends AutoKeeperStat {
 
-    private long minLatency;
-    private long maxLatency;
-    private long avgLatency;
-    private long queued;    // 等待队列
-    private long recved;    // 接受队列
-    private long sent;      // 发送队列
+    private static final long serialVersionUID = 250466030211280762L;
+    private long              minLatency;
+    private long              maxLatency;
+    private long              avgLatency;
+    private long              queued;                                // 等待队列
+    private long              recved;                                // 接受队列
+    private long              sent;                                  // 发送队列
 
     public long getMinLatency() {
         return minLatency;

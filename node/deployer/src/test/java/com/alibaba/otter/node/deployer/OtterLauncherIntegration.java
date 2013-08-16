@@ -2,7 +2,6 @@ package com.alibaba.otter.node.deployer;
 
 import java.util.concurrent.CountDownLatch;
 
-import com.alibaba.otter.node.deployer.OtterLauncher;
 import com.alibaba.otter.node.etl.OtterContextLocator;
 
 /**
@@ -20,7 +19,7 @@ public class OtterLauncherIntegration {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(60 * 1000);
+                    Thread.sleep(60 * 1000 * 1000);
                 } catch (InterruptedException e) {
                 }
                 System.out.println("!!!!!!!!!!!!!!!!!!   start single");
@@ -38,7 +37,7 @@ public class OtterLauncherIntegration {
 
         };
         mainstem.start();
-        System.setProperty("nid", "14");
+        System.setProperty("nid", "4");
         OtterLauncher.main(null);
         latch.await();
     }

@@ -6,7 +6,7 @@ import java.util.Set;
 /**
  * zk服务对应统计信息
  * 
- *<pre>
+ * <pre>
  * 命令：echo stat | nc 10.20.144.51 2181
  * Zookeeper version: 3.3.6-1366786, built on 07/29/2012 06:22 GMT
  * Clients:
@@ -20,18 +20,19 @@ import java.util.Set;
  * Zxid: 0x1b03de020b
  * Mode: follower
  * Node count: 1758
- *</pre>
+ * </pre>
  * 
  * @author jianghang 2012-9-21 下午02:13:40
  * @version 4.1.0
  */
 public class AutoKeeperServerStat extends AutoKeeperStateStat {
 
+    private static final long             serialVersionUID = 617926406886982808L;
     private String                        address;
     private String                        version;
-    private AutoKeeperQuorumType          quorumType;                                               // 运行类型，leader/follower/observer
-    private long                          nodeCount;                                                // 总的节点数
-    private Set<AutoKeeperConnectionStat> connectionStats = new HashSet<AutoKeeperConnectionStat>(); // 客户端链接状态
+    private AutoKeeperQuorumType          quorumType;                                                // 运行类型，leader/follower/observer
+    private long                          nodeCount;                                                 // 总的节点数
+    private Set<AutoKeeperConnectionStat> connectionStats  = new HashSet<AutoKeeperConnectionStat>(); // 客户端链接状态
 
     public String getAddress() {
         return address;

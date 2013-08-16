@@ -52,7 +52,7 @@ $control.setTemplate("home:navigation.vm")
 				<td width="5%">$!dataMatrix.groupKey</td>
 				<td width="5%">$!dataMatrix.master</td>
 				<td width="5%">$!dataMatrix.slave</td>
-				<td width="8%">$!dataMatrix.gmtModified.toLocaleString()</td>
+				<td width="8%">$numberFormat.format($!dataMatrix.gmtModified)</td>
 				<td>
 					#set ($dataMatrixInfoURL = $homeModule.setTarget("dataMatrixInfo.vm").addQueryData("matrixId", $dataMatrix.id))
 					<a href="$dataMatrixInfoURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">查看</span></a>

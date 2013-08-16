@@ -110,7 +110,7 @@ $control.setTemplate("home:navigation.vm")
                     			<font color="#FF0000">无信息</font>
                     		#else
 								#set ($removeURL = $homeModule.setTarget("analysisStageStat.vm").addQueryData("pipelineId", $pipelineId).setAction("PositionAction").addQueryData("eventSubmitDoRemove", "true").render())
-                    			最后更新时间 : $positionData.modifiedTime.toLocaleString() <span class="ico_line">|</span> <a id="showtext-position" onClick="showdiv('contentid-position','showtext-position')"><span class="ico_font">查看</span></a>
+                    			最后更新时间 : $numberFormat.format($positionData.modifiedTime) <span class="ico_line">|</span> <a id="showtext-position" onClick="showdiv('contentid-position','showtext-position')"><span class="ico_font">查看</span></a>
 								#if($user.authorizeType.isAdmin())
 								<span class="ico_line">|</span><a href="javascript:if(confirm('确实要删除吗?'))location='$removeURL'"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">删除</span></a>
 								#end

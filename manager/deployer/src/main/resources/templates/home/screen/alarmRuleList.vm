@@ -118,7 +118,7 @@ $control.setTemplate("home:navigation.vm")
 				<td width="8%">$alarmRule.matchValue</td>
 				<td width="8%">#if($alarmRule.status.isEnable() && !$alarmRule.isPaused()) <img src="images/alarm.png" title="开启" width="22" height="22" /> #else <img src="images/alarm_on.png" title="暂停" width="22" height="22" /> #end</td>
 				<td width="8%">$alarmRule.receiverKey</td>
-				<td width="12%">#if($alarmRule.isPaused())$alarmRule.pauseTime.toLocaleString()#end</td>
+				<td width="12%">#if($alarmRule.isPaused())$numberFormat.format($alarmRule.pauseTime)#end</td>
 				<td width="24%">
 					<img src="images/ico_edit.png" width="13" height="13" /><span title="$alarmRule.description" class="ico_font">描述</span>
 					<span class="ico_line">|</span><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font"><a href="logRecordList.htm?pipelineId=$alarmRule.pipelineId&monitorName=$alarmRule.monitorName">历史</a></span>

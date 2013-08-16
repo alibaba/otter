@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +45,7 @@ public class StatsRemoteServiceImpl implements StatsRemoteService {
     private ThroughputStatService                          throughputStatService;
     private Long                                           statUnit     = 60 * 1000L;                                           //统计周期，默认60秒
     private ScheduledThreadPoolExecutor                    scheduler;
-    private Map<Long, DelayStat>                           delayStats;
+    private Map<Long, AvgStat>                             delayStats;
     private Map<Long, Map<ThroughputType, ThroughputStat>> throughputStats;
 
     public StatsRemoteServiceImpl(){
@@ -53,7 +54,12 @@ public class StatsRemoteServiceImpl implements StatsRemoteService {
         CommunicationRegistry.regist(StatisticsEventType.tableStat, this);
         CommunicationRegistry.regist(StatisticsEventType.throughputStat, this);
 
-        delayStats = new MapMaker().makeMap();
+        delayStats = new MapMaker().makeComputingMap(new Function<Long, AvgStat>() {
+
+            public AvgStat apply(Long pipelineId) {
+                return new AvgStat();
+            }
+        });
         throughputStats = new MapMaker().makeComputingMap(new Function<Long, Map<ThroughputType, ThroughputStat>>() {
 
             public Map<ThroughputType, ThroughputStat> apply(Long pipelineId) {
@@ -104,7 +110,7 @@ public class StatsRemoteServiceImpl implements StatsRemoteService {
             delayStatService.createDelayStat(stat);
         } else {
             synchronized (delayStats) {
-                delayStats.put(count.getPipelineId(), stat);
+                delayStats.get(count.getPipelineId()).merge(stat);
             }
         }
     }
@@ -151,22 +157,46 @@ public class StatsRemoteServiceImpl implements StatsRemoteService {
     private void flushDelayStat() {
         synchronized (delayStats) {
             // 需要做同步，避免delay数据丢失
-            Collection<DelayStat> stats = delayStats.values();
-            delayStats.clear();
-            for (DelayStat stat : stats) {
-                delayStatService.createDelayStat(stat);
+            for (Map.Entry<Long, AvgStat> stat : delayStats.entrySet()) {
+                if (stat.getValue().count.get() > 0) {
+                    DelayStat delay = new DelayStat();
+                    delay.setPipelineId(stat.getKey());
+                    delay.setDelayTime(stat.getValue().getAvg());
+                    delay.setDelayNumber(0L);
+                    delayStatService.createDelayStat(delay);
+                }
             }
+            delayStats.clear();
         }
     }
 
     private void flushThroughputStat() {
         synchronized (throughputStats) {
             Collection<Map<ThroughputType, ThroughputStat>> stats = throughputStats.values();
-            throughputStats.clear();
             for (Map<ThroughputType, ThroughputStat> stat : stats) {
                 for (ThroughputStat data : stat.values()) {
                     throughputStatService.createOrUpdateThroughput(data);
                 }
+            }
+            throughputStats.clear();
+        }
+    }
+
+    public static class AvgStat {
+
+        private AtomicLong number = new AtomicLong(0L);
+        private AtomicLong count  = new AtomicLong(0L);
+
+        public void merge(DelayStat stat) {
+            count.incrementAndGet();
+            number.addAndGet(stat.getDelayTime());
+        }
+
+        public Long getAvg() {
+            if (count.get() > 0) {
+                return number.get() / count.get();
+            } else {
+                return 0L;
             }
         }
     }

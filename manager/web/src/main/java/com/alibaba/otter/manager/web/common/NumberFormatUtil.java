@@ -3,7 +3,9 @@ package com.alibaba.otter.manager.web.common;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -66,6 +68,78 @@ public class NumberFormatUtil {
 
         DecimalFormat format = new DecimalFormat(PATTERN);
         return format.format(data);
+    }
+
+    public static String format(Date date) {
+        if (date == null) {
+            return null;
+        }
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return format.format(date);
+    }
+
+    public static String format(java.sql.Date date) {
+        if (date == null) {
+            return null;
+        }
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        return format.format(date);
+    }
+
+    public static String format(java.sql.Time time) {
+        if (time == null) {
+            return null;
+        }
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        return format.format(time);
+    }
+
+    public static String format(java.sql.Timestamp timestamp) {
+        if (timestamp == null) {
+            return null;
+        }
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:fffffffff");
+        return format.format(timestamp);
+    }
+
+    public static String formatDelay(Number data) {
+        if (data == null) {
+            return StringUtils.EMPTY;
+        }
+        long t = data.longValue();
+        if (t < 0) {
+            return String.valueOf(t);
+        }
+        int hour = 0;
+        int minute = 0;
+
+        while (t >= 60 * 60 * 1000) {
+            hour++;
+            t -= 60 * 60 * 1000;
+        }
+
+        while (t >= 60 * 1000) {
+            minute++;
+            t -= 60 * 1000;
+        }
+
+        List<String> result = new ArrayList<String>();
+        if (hour > 0) {
+            result.add(hour + "h");
+        }
+        if (minute > 0) {
+            result.add(minute + "m");
+        }
+
+        if (t > 0) {
+            DecimalFormat format = new DecimalFormat(PATTERN);
+            result.add(format.format((t * 1.0) / 1000) + "s");
+        }
+
+        if (result.size() == 0) {
+            return "0";
+        }
+        return StringUtils.join(result, " ");
     }
 
     public static String formatFileSize(Number data) {

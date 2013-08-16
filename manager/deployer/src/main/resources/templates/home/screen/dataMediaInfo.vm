@@ -1,12 +1,12 @@
 $control.setTemplate("home:navigation.vm")
 
 <div class="main">
- <div class="title"><h2>存储介质信息</h2></div>
- <div class="crumbs">存储介质信息</div>
+ <div class="title"><h2>数据表信息</h2></div>
+ <div class="crumbs">数据表信息</div>
  <div class="setting_box">
  <table cellpadding="0" cellspacing="0" class="setting">
   <tr>
-  <th>介质序号：</th><td>$!dataMedia.id</td>
+  <th>数据表序号：</th><td>$!dataMedia.id</td>
   </tr>
   <tr>
   <th>schema name：</th><td>$!dataMedia.namespace</td>

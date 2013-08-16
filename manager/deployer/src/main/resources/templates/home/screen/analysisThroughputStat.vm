@@ -59,7 +59,7 @@ $control.setTemplate("home:navigation.vm")
             <td>$numberFormat.formatFileSize($throughputInfos1.get($one).Quantity)</td>
             <td>$numberFormat.formatFileSize($throughputInfos1.get($five).Quantity)</span></td>
             <td>$numberFormat.formatFileSize($throughputInfos1.get($fifteen).Quantity)</td>
-            <td>$!throughputStat1.gmtModified.toLocaleString()</td>
+            <td>$!numberFormat.format($!throughputStat1.gmtModified)</td>
           </tr>
           <tr> 
             <td width="6%">$pipelineId</td>
@@ -70,7 +70,7 @@ $control.setTemplate("home:navigation.vm")
             <td>$numberFormat.formatFileSize($throughputInfos2.get($one).Quantity)</td>
             <td>$numberFormat.formatFileSize($throughputInfos2.get($five).Quantity)</td>
             <td>$numberFormat.formatFileSize($throughputInfos2.get($fifteen).Quantity)</td>
-            <td>$!throughputStat2.gmtModified.toLocaleString()</td>
+            <td>$!numberFormat.format($!throughputStat2.gmtModified)</td>
           </tr>
         </table>
              

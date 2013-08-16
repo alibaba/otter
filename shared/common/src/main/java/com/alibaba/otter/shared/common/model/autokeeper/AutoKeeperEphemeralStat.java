@@ -18,8 +18,9 @@ import java.util.List;
  */
 public class AutoKeeperEphemeralStat extends AutoKeeperStat {
 
-    private String       sessionId;
-    private List<String> paths;
+    private static final long serialVersionUID = 7706173088583901348L;
+    private String            sessionId;
+    private List<String>      paths;
 
     public String getSessionId() {
         return sessionId;

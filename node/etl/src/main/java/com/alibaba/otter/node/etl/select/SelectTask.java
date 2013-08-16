@@ -297,20 +297,18 @@ public class SelectTask extends GlobalTask {
                             if (profiling) {
                                 Long profilingEndTime = System.currentTimeMillis();
                                 stageAggregationCollector.push(pipelineId,
-                                    StageType.SELECT,
-                                    new AggregationItem(profilingStartTime, profilingEndTime));
+                                                               StageType.SELECT,
+                                                               new AggregationItem(profilingStartTime, profilingEndTime));
                             }
                             arbitrateEventService.selectEvent().single(etlEventData);
                         } catch (Throwable e) {
                             if (!isInterrupt(e)) {
-                                logger.error(String.format("[%s] selectwork executor is error! data:%s",
-                                    pipelineId,
-                                    etlEventData), e);
+                                logger.error(String.format("[%s] selectwork executor is error! data:%s", pipelineId,
+                                                           etlEventData), e);
                                 sendRollbackTermin(pipelineId, e);
                             } else {
                                 logger.info(String.format("[%s] selectwork executor is interrrupt! data:%s",
-                                    pipelineId,
-                                    etlEventData), e);
+                                                          pipelineId, etlEventData), e);
                             }
                         } finally {
                             Thread.currentThread().setName(currentName);
@@ -320,10 +318,8 @@ public class SelectTask extends GlobalTask {
                 };
 
                 // 构造pending任务，可在关闭线程时退出任务
-                SetlFuture extractFuture = new SetlFuture(StageType.SELECT,
-                    etlEventData.getProcessId(),
-                    pendingFuture,
-                    task);
+                SetlFuture extractFuture = new SetlFuture(StageType.SELECT, etlEventData.getProcessId(), pendingFuture,
+                                                          task);
                 executorService.execute(extractFuture);
 
             } catch (Throwable e) {
@@ -452,9 +448,9 @@ public class SelectTask extends GlobalTask {
         boolean status = terminData.getType().isNormal();
         if (lastStatus == false && status == true) {
             // 上一批失败，这一批成功，说明调度有问题
-            throw new SelectException(String.format("last status is rollback , but now [batchId:%d , processId:%d] is ack",
-                batchId,
-                terminData.getProcessId()));
+            throw new SelectException(
+                                      String.format("last status is rollback , but now [batchId:%d , processId:%d] is ack",
+                                                    batchId, terminData.getProcessId()));
         }
 
         if (terminData.getType().isNormal()) {
@@ -485,8 +481,7 @@ public class SelectTask extends GlobalTask {
     }
 
     /**
-     * 检查一下是否需要继续工作，因为mainstem代表一个节点是否为工作节点，一旦出现断网，另一个节点就会启用。此时会出现双节点同时工作，
-     * 所以需要做一个检查
+     * 检查一下是否需要继续工作，因为mainstem代表一个节点是否为工作节点，一旦出现断网，另一个节点就会启用。此时会出现双节点同时工作， 所以需要做一个检查
      */
     private void checkContinueWork() throws InterruptedException {
         boolean working = arbitrateEventService.mainStemEvent().check(pipelineId);
@@ -565,8 +560,7 @@ public class SelectTask extends GlobalTask {
         delayCount.setPipelineId(pipelineId);
         delayCount.setNumber(0L);// 不再统计delayNumber
         if (startTime != null && endTime != null) {
-            long delayTime = (endTime - startTime + 500) / 1000; // 4舍5入
-            delayCount.setTime(delayTime);// 以后改造成获取数据库的sysdate/now()
+            delayCount.setTime(endTime - startTime);// 以后改造成获取数据库的sysdate/now()
         }
 
         statisticsClientService.sendResetDelayCount(delayCount);

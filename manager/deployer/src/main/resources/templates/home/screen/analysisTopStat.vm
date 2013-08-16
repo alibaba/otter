@@ -40,8 +40,8 @@ a { text-decoration: none; }
             <th width="5%">TOP</th>
             <th width="12%">Channel名字</th>
 			<th width="10%">Pipeline信息</th>
-			<th width="9%">延迟时间(秒)</th>
-			<th width="9%">最后采集间隔(秒)</th>
+			<th width="9%">延迟时间</th>
+			<th width="9%">最后采集间隔</th>
 			<th width="9%">DB数量(${statTime}分种)</th>
 			<th width="9%">DB大小(${statTime}分种)</th>
 			<th width="9%">文件数量(${statTime}分种)</th>
@@ -60,13 +60,13 @@ a { text-decoration: none; }
 				#set ($pipelineURL = $homeModule.setTarget("pipelineList.vm").addQueryData("channelId", $top.channelId).addQueryData("pipelineId", $top.pipelineId))
 				<a href="$pipelineURL">$!top.pipelineName</a>
 			 </td>
-			 <td width="10%">$!numberFormat.format($!top.delayTime)</td>
+			 <td width="10%">$!numberFormat.formatDelay($!top.delayTime)</td>
 			 <td width="10%">
 				#if($!top.lastUpdateDelay)
     				#if($!top.lastUpdateDelay > 1800)
-    					<font color="#FF0000">$!top.lastUpdateDelay</font>
+    					<font color="#FF0000">$!top.lastUpdateDelay s</font>
     				#else
-    					$!top.lastUpdateDelay
+    					$!top.lastUpdateDelay s
 					#end
 				#else
 					无信息

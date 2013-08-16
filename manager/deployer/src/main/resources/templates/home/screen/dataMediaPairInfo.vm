@@ -28,10 +28,10 @@ $control.setTemplate("home:navigation.vm")
   <th>映射关系序号：</th><td>$!dataMediaPair.id</td>
   </tr>
   <tr>
-  <th>源端数据表：</th><td><span class="red">SCHEMA:</span>$!dataMediaPair.source.namespace<span class="red">NAME:</span><a href="dataMediaInfo.htm?dataMediaId=$dataMediaPair.source.id">$!dataMediaPair.source.name</a><span class="red">SOURCENAME:</span><a href="dataSourceInfo.htm?dataMediaSourceId=$dataMediaPair.source.source.id">$!dataMediaPair.source.source.name</a> </td>
+  <th>源端数据表：</th><td><span class="red">Schema Name:</span>$!dataMediaPair.source.namespace<span class="red">Table Name:</span><a href="dataMediaInfo.htm?dataMediaId=$dataMediaPair.source.id">$!dataMediaPair.source.name</a><span class="red">Source Name:</span><a href="dataSourceInfo.htm?dataMediaSourceId=$dataMediaPair.source.source.id">$!dataMediaPair.source.source.name</a> </td>
   </tr>
   <tr>
-  <th>目标数据表：</th><td><span class="red">SCHEMA:</span>$!dataMediaPair.target.namespace<span class="red">NAME:</span><a href="dataMediaInfo.htm?dataMediaId=$dataMediaPair.target.id">$!dataMediaPair.target.name</a><span class="red">SOURCENAME:</span><a href="dataSourceInfo.htm?dataMediaSourceId=$dataMediaPair.target.source.id">$!dataMediaPair.target.source.name</a></td>
+  <th>目标数据表：</th><td><span class="red">Schema Name:</span>$!dataMediaPair.target.namespace<span class="red">Table Name:</span><a href="dataMediaInfo.htm?dataMediaId=$dataMediaPair.target.id">$!dataMediaPair.target.name</a><span class="red">Source Name:</span><a href="dataSourceInfo.htm?dataMediaSourceId=$dataMediaPair.target.source.id">$!dataMediaPair.target.source.name</a></td>
   </tr>
   <tr>
   <th>权重：</th><td>$!dataMediaPair.pushWeight</td>

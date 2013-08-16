@@ -22,6 +22,19 @@ function sizeFormat(val, axis) {
     else 
       return val.toFixed(axis.tickDecimals) + " KB"; 
 }
+
+function delayFormat(val, axis) { 
+	if (val > 86400000)
+		return (val / 86400000).toFixed(axis.tickDecimals) + " d"; 
+	else if (val > 3600000) 
+      return (val / 3600000).toFixed(axis.tickDecimals) + " h"; 
+    else if (val > 60000) 
+    	return (val / 60000).toFixed(axis.tickDecimals) + " m"; 
+    else if (val > 1000)
+    	return (val / 1000).toFixed(axis.tickDecimals) + " s"; 
+    else 
+      return val.toFixed(axis.tickDecimals) + " ms"; 
+}
     
     function drawDelayGraph(id,flotData) {
         var delayOptions = {
@@ -42,7 +55,8 @@ function sizeFormat(val, axis) {
             },
             yaxis: {
                 tickFormatter: function(val, axis) {
-                    return strFormat(val.toFixed(axis.tickDecimals));
+//                	return strFormat(val.toFixed(axis.tickDecimals));
+                	return delayFormat(val, axis);
                 }
             }
         };

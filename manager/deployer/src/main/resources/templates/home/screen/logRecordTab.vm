@@ -165,7 +165,7 @@ a { text-decoration: none; }
 			 <td width="40%" class="message">
 				<a onclick="openDialog('$numberFormat.getHtmlOriginalContent($!logRecord.message)')">点击查看详细信息</a>
 			 </td>
-			  <td width="20%">$logRecord.gmtCreate.toLocaleString()</td>
+			  <td width="20%">$numberFormat.format($logRecord.gmtCreate)</td>
 		   </tr>
 		  #end
 		 

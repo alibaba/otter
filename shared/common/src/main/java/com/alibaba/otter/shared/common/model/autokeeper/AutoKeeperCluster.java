@@ -1,5 +1,6 @@
 package com.alibaba.otter.shared.common.model.autokeeper;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -13,14 +14,15 @@ import com.alibaba.otter.shared.common.utils.OtterToStringStyle;
  * @author jianghang 2012-9-21 下午01:54:17
  * @version 4.1.0
  */
-public class AutoKeeperCluster {
+public class AutoKeeperCluster implements Serializable {
 
-    private Long         id;
-    private String       clusterName;
-    private List<String> serverList; // 机器列表
-    private String       description; // 描述
-    private Date         gmtCreate;
-    private Date         gmtModified;
+    private static final long serialVersionUID = 6065960677054678659L;
+    private Long              id;
+    private String            clusterName;
+    private List<String>      serverList;                             // 机器列表
+    private String            description;                            // 描述
+    private Date              gmtCreate;
+    private Date              gmtModified;
 
     public Long getId() {
         return id;

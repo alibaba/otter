@@ -111,4 +111,8 @@ public class NodeCommmunicationClient implements DisposableBean {
         this.configClientService = configClientService;
     }
 
+    public String getManagerAddress() {
+        return StringUtils.join(managerAddress, ",");
+    }
+
 }

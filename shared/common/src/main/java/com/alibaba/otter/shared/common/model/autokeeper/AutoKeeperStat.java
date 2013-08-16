@@ -1,13 +1,16 @@
 package com.alibaba.otter.shared.common.model.autokeeper;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.alibaba.otter.shared.common.utils.OtterToStringStyle;
 
-public class AutoKeeperStat {
+public class AutoKeeperStat implements Serializable {
 
-    private String originalContent; // 原始的zk返回的文本信息
+    private static final long serialVersionUID = 1593638849202842131L;
+    private String            originalContent;                        // 原始的zk返回的文本信息
 
     public String getOriginalContent() {
         return originalContent;

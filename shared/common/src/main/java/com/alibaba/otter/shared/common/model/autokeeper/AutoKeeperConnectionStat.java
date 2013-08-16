@@ -16,11 +16,12 @@ import java.util.Set;
  */
 public class AutoKeeperConnectionStat extends AutoKeeperStateStat {
 
+    private static final long            serialVersionUID = -786367247388065889L;
     private String                       sessionId;
     private String                       serverAddress;
     private String                       clientAddress;
-    private Set<AutoKeeperWatchStat>     watchStats     = new HashSet<AutoKeeperWatchStat>();    // watcher请求状态
-    private Set<AutoKeeperEphemeralStat> ephemeralStats = new HashSet<AutoKeeperEphemeralStat>(); // 临时节点状态
+    private Set<AutoKeeperWatchStat>     watchStats       = new HashSet<AutoKeeperWatchStat>();    // watcher请求状态
+    private Set<AutoKeeperEphemeralStat> ephemeralStats   = new HashSet<AutoKeeperEphemeralStat>(); // 临时节点状态
 
     public String getServerAddress() {
         return serverAddress;

@@ -51,15 +51,14 @@ $control.setTemplate("home:navigation.vm")
             <th width="3%">序号</th>
             <th width="12%">源表</th>
             <th width="12%">目标表</th>
-            <th width="5%">提取权重</th>
-            <th width="5%">载入权重</th>
+            <th width="5%">权重</th>
 			<th width="7%">FileSize</th>
 			<th width="7%">FileCount</th>
 			<th width="7%">DeleteCount</th>
 			<th width="7%">UpdateCount</th>
 			<th width="7%">InsertCount</th>
             <th width="10%">最后同步时间</th>
-			<th width="16%">操作</th>
+			<th width="12%">操作</th>
             
           </tr>
 		  #foreach ($dataMediaPair in $dataMediaPairs)
@@ -67,14 +66,13 @@ $control.setTemplate("home:navigation.vm")
             <td width="5%">$!dataMediaPair.id</td>
             <td width="8%"><a href="dataMediaInfo.htm?dataMediaId=$dataMediaPair.source.id">$!dataMediaPair.source.namespace.$!dataMediaPair.source.name</a></td>
 			<td><a href="dataMediaInfo.htm?dataMediaId=$dataMediaPair.target.id">$!dataMediaPair.target.namespace.$!dataMediaPair.target.name</a></td>
-            <td>$!dataMediaPair.pullWeight</td>
             <td>$!dataMediaPair.pushWeight</td>
 			<td>$numberFormat.formatFileSize($tableStatMap.get($dataMediaPair.id).fileSize)</td>
 			<td>$numberFormat.format($tableStatMap.get($dataMediaPair.id).fileCount)</td>
 			<td>$numberFormat.format($tableStatMap.get($dataMediaPair.id).deleteCount)</td>
 			<td>$numberFormat.format($tableStatMap.get($dataMediaPair.id).updateCount)</td>
 			<td>$numberFormat.format($tableStatMap.get($dataMediaPair.id).insertCount)</td>
-            <td>$!tableStatMap.get($dataMediaPair.id).gmtModified.toLocaleString()</td>
+            <td>$numberFormat.format($!tableStatMap.get($dataMediaPair.id).gmtModified)</td>
 			<td>
 				#set ($dataMediaPairInfoURL = $homeModule.setTarget("dataMediaPairInfo.vm").addQueryData("dataMediaPairId", $dataMediaPair.id))
 				<a href="$dataMediaPairInfoURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">查看</span></a>

@@ -43,8 +43,7 @@ public class DataMediaAction extends AbstractAction {
 
         DataMedia dataMedia = new DataMedia();
         dataMediaInfo.setProperties(dataMedia);
-        DataMediaSource dataMediaSource = dataMediaSourceService.findById(dataMediaInfo.getField("sourceId")
-            .getLongValue());
+        DataMediaSource dataMediaSource = dataMediaSourceService.findById(dataMediaInfo.getField("sourceId").getLongValue());
         if (dataMediaSource.getType().isMysql() || dataMediaSource.getType().isOracle()) {
             dataMedia.setSource((DbMediaSource) dataMediaSource);
         } else if (dataMediaSource.getType().isNapoli() || dataMediaSource.getType().isMq()) {
@@ -75,13 +74,11 @@ public class DataMediaAction extends AbstractAction {
 
     public void doEdit(@FormGroup("dataMediaInfo") Group dataMediaInfo, @Param("pageIndex") int pageIndex,
                        @Param("searchKey") String searchKey,
-                       @FormGroup("dataMediaSourceInfo") Group dataMediaSourceInfo,
                        @FormField(name = "formDataMediaError", group = "dataMediaInfo") CustomErrors err, Navigator nav)
                                                                                                                         throws Exception {
         DataMedia dataMedia = new DataMedia();
         dataMediaInfo.setProperties(dataMedia);
-        DataMediaSource dataMediaSource = dataMediaSourceService.findById(dataMediaInfo.getField("sourceId")
-            .getLongValue());
+        DataMediaSource dataMediaSource = dataMediaSourceService.findById(dataMediaInfo.getField("sourceId").getLongValue());
         if (dataMediaSource.getType().isMysql() || dataMediaSource.getType().isOracle()) {
             dataMedia.setSource((DbMediaSource) dataMediaSource);
         } else if (dataMediaSource.getType().isNapoli() || dataMediaSource.getType().isMq()) {

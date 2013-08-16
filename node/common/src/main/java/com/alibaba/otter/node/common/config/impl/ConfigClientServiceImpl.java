@@ -47,7 +47,13 @@ public class ConfigClientServiceImpl implements InternalConfigClientService, Arb
     }
 
     public Node currentNode() {
-        return nodeCache.get(nid);
+        Node node = nodeCache.get(nid);
+        if (node == null) {
+            throw new ConfigException("nid:" + nid + " in manager[" + nodeCommmunicationClient.getManagerAddress()
+                                      + "]is not found!");
+        }
+
+        return node;
     }
 
     public Channel findChannel(Long channelId) {

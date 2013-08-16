@@ -239,7 +239,6 @@
 					<message>必须填写${displayName}</message>
 				</fm-validators:required-validator>
 			</field>
-			<field name="storePath" displayName="Nopili存储路径" />
 			<field name="encode" displayName="数据库编码">
 				<fm-validators:required-validator>
 					<message>必须选择${displayName}</message>
@@ -344,15 +343,15 @@
 			<field name="resolverText" displayName="resolver文本" />
 			<field name="filter" displayName="过滤器类" />
 			<field name="sourceDataMediaName"
-				displayName="源介质名称" />
+				displayName="源数据表名称" />
 			<field name="targetDataMediaName"
-				displayName="目标介质名称" />
-			<field name="sourceDataMediaId" displayName="源介质">
+				displayName="目标数据表名称" />
+			<field name="sourceDataMediaId" displayName="源数据表">
 				<fm-validators:required-validator>
 					<message>必须选择 ${displayName}</message>
 				</fm-validators:required-validator>
 			</field>
-			<field name="targetDataMediaId" displayName="目标介质">
+			<field name="targetDataMediaId" displayName="目标数据表">
 				<fm-validators:required-validator>
 					<message>必须选择 ${displayName}</message>
 				</fm-validators:required-validator>

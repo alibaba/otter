@@ -16,8 +16,8 @@ import com.alibaba.otter.node.etl.transform.exception.TransformException;
 import com.alibaba.otter.shared.common.model.config.ConfigHelper;
 import com.alibaba.otter.shared.common.model.config.data.ColumnPair;
 import com.alibaba.otter.shared.common.model.config.data.DataMedia;
-import com.alibaba.otter.shared.common.model.config.data.DataMediaPair;
 import com.alibaba.otter.shared.common.model.config.data.DataMedia.ModeValue;
+import com.alibaba.otter.shared.common.model.config.data.DataMediaPair;
 import com.alibaba.otter.shared.common.model.config.data.db.DbMediaSource;
 import com.alibaba.otter.shared.etl.model.EventColumn;
 import com.alibaba.otter.shared.etl.model.EventData;
@@ -68,7 +68,7 @@ public class RowDataTransformer extends AbstractOtterTransformer<EventData, Even
                                                                 (DbMediaSource) dataMedia.getSource());
 
             Table table = dbDialect.findTable(result.getSchemaName(), result.getTableName());
-            tableHolder = new TableInfoHolder(table, useTableTransform);
+            tableHolder = new TableInfoHolder(table, useTableTransform, enableCompatibleMissColumn);
         }
 
         // 处理column转化
@@ -204,13 +204,15 @@ public class RowDataTransformer extends AbstractOtterTransformer<EventData, Even
             // 双向同步新增字段，在一边加了字段后，虽然新的字段没有产生业务变化，但会因为某些原因导致传递了新的字段到T模块
             // 此时在目标库并不存在这个字段，导致一直挂起。ps. mysql新增字段时间不是一般的长
             // 所以，做了一个容错处理，针对目标库不存在的字段，如果变更记录在源库不存在变更，并且是null值的，允许丢弃该字段(其实最好还是要判断源库的column的defaultValue和当前值是否一致)
-            boolean canColumnsNotExist = false;
+            boolean canColumnsNotExist = tableHolder.isEnableCompatibleMissColumn();
             if (type == EventType.UPDATE) {
-                canColumnsNotExist = !scolumn.isUpdate() && scolumn.isNull();
+                // 非变更字段，且当前值为null
+                canColumnsNotExist &= !scolumn.isUpdate() && scolumn.isNull();
             } else if (type == EventType.INSERT) {
-                canColumnsNotExist = scolumn.isNull();
+                // 当前值为null
+                canColumnsNotExist &= scolumn.isNull();
             } else if (type == EventType.DELETE) {
-                canColumnsNotExist = !scolumn.isKey(); // 主键不允许不存在
+                canColumnsNotExist &= !scolumn.isKey(); // 主键不允许不存在
             }
 
             Column matchDbColumn = getMatchColumn(tableHolder.getTable().getColumns(), tcolumn.getColumnName());
@@ -325,10 +327,12 @@ public class RowDataTransformer extends AbstractOtterTransformer<EventData, Even
     static class TableInfoHolder {
 
         private Table   table;
-        private boolean useTableTransform = false;
+        private boolean useTableTransform          = true;
+        private boolean enableCompatibleMissColumn = true;
 
-        public TableInfoHolder(Table table, boolean useTableTransform){
+        public TableInfoHolder(Table table, boolean useTableTransform, boolean enableCompatibleMissColumn){
             this.useTableTransform = useTableTransform;
+            this.enableCompatibleMissColumn = enableCompatibleMissColumn;
             this.table = table;
         }
 
@@ -346,6 +350,14 @@ public class RowDataTransformer extends AbstractOtterTransformer<EventData, Even
 
         public void setUseTableTransform(boolean useTableTransform) {
             this.useTableTransform = useTableTransform;
+        }
+
+        public boolean isEnableCompatibleMissColumn() {
+            return enableCompatibleMissColumn;
+        }
+
+        public void setEnableCompatibleMissColumn(boolean enableCompatibleMissColumn) {
+            this.enableCompatibleMissColumn = enableCompatibleMissColumn;
         }
 
     }

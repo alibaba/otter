@@ -212,8 +212,8 @@ $control.setTemplate("home:navigation.vm")
         <th width="300">仲裁器调度模式：</th>
         <td width="329">
             <select name="$pipelineParameterGroup.arbitrateMode.key" id="select">
-				<option value="AUTOMATIC">自动选择</option>
-                <option value="RPC" selected="selected">RPC</option>
+				<option value="AUTOMATIC" selected="selected">自动选择</option>
+                <option value="RPC">RPC</option>
 				<option value="ZOOKEEPER" >ZOOKEEPER</option>
             	<option value="MEMORY">MEMORY</option>
             </select><span class="red">*</span>
@@ -307,8 +307,8 @@ $control.setTemplate("home:navigation.vm")
 	  <tr class="super"> 
         <th width="300">启用数据表类型转化：</th>
         <td width="329">
-              <input type="radio" name="$pipelineParameterGroup.useTableTransform.key" value="true" id="RadioGroup1_2" class="radio"/>是
-              <input type="radio" name="$pipelineParameterGroup.useTableTransform.key" value="false" id="RadioGroup1_3" checked="checked" class="radio"/>否 
+              <input type="radio" name="$pipelineParameterGroup.useTableTransform.key" value="true" id="RadioGroup1_2" checked="checked" class="radio"/>是
+              <input type="radio" name="$pipelineParameterGroup.useTableTransform.key" value="false" id="RadioGroup1_3" class="radio"/>否 
         </td>
       </tr>
 	  <tr class="super"> 

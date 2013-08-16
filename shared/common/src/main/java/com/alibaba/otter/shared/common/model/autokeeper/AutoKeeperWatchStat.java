@@ -28,8 +28,9 @@ import java.util.List;
  */
 public class AutoKeeperWatchStat extends AutoKeeperStat {
 
-    private String       sessionId;
-    private List<String> paths;
+    private static final long serialVersionUID = -448913735928277986L;
+    private String            sessionId;
+    private List<String>      paths;
 
     public String getSessionId() {
         return sessionId;

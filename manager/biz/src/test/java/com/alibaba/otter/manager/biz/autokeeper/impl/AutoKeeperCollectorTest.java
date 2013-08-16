@@ -11,8 +11,6 @@ import com.alibaba.otter.shared.common.model.autokeeper.AutoKeeperConnectionStat
 import com.alibaba.otter.shared.common.model.autokeeper.AutoKeeperServerStat;
 
 /**
- * 类AutoKeeperCollectorTest.java的实现描述：TODO 类实现描述
- * 
  * @author simon 2012-9-29 下午5:23:59
  * @version 4.1.0
  */

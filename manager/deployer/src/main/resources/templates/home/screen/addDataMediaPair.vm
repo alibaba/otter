@@ -39,39 +39,31 @@ function changeKeyword(id, name, local) {
     <table cellpadding="0" cellspacing="0" class="setting setting_otter">
 		<span class="red">#addDataMediaPairMessage ($dataMediaPairGroup.formDataMediaPairError)</span>
 	  <tr> 
-        <th>源介质：</th>
+        <th>源数据表：</th>
         <td>
 			<input id="sourceDataMediaName" type="text" name="$dataMediaPairGroup.sourceDataMediaName.key" value="$!dataMediaPairGroup.sourceDataMediaName.value" class="setting_input" readonly />
 			<input id="sourceDataMediaId" name="$dataMediaPairGroup.sourceDataMediaId.key" value="$!dataMediaPairGroup.sourceDataMediaId.value" type="hidden" class="setting_input"  />
-			<input type="button" value="查找存储介质" onclick="window.open('selectDataMedia.htm?local=source', 'selectSourceDataMedia')"><span class="red">*</span>
+			<input type="button" value="查找数据表" onclick="window.open('selectDataMedia.htm?local=source', 'selectSourceDataMedia')"><span class="red">*</span>
 			<br />
 			<span class="red">#addDataMediaPairMessage ($dataMediaPairGroup.sourceDataMediaId)</span>
 		</td>
       </tr>
 	  <tr> 
-        <th>目标介质：</th>
+        <th>目标数据表：</th>
         <td>
 			<input id="targetDataMediaName" type="text" name="$dataMediaPairGroup.targetDataMediaName.key" value="$!dataMediaPairGroup.targetDataMediaName.value" class="setting_input" readonly />
 			<input id="targetDataMediaId" name="$dataMediaPairGroup.targetDataMediaId.key" value="$!dataMediaPairGroup.targetDataMediaId.value" type="hidden" class="setting_input"  />
-			<input type="button" value="查找存储介质" onclick="window.open('selectDataMedia.htm?local=target', 'selectTargerDataMedia')"><span class="red">*</span>
+			<input type="button" value="查找数据表" onclick="window.open('selectDataMedia.htm?local=target', 'selectTargerDataMedia')"><span class="red">*</span>
 			<br />
 			<span class="red">#addDataMediaPairMessage ($dataMediaPairGroup.targetDataMediaId)</span>
 		</td>
       </tr>
       <tr>
-        <th>载入权重:</th>
+        <th>权重:</th>
         <td>
-          <input type="text" name="$dataMediaPairGroup.pushWeight.key" value="$!dataMediaPairGroup.pushWeight.value" id="textfield5" /><span class="red">*</span>
+          <input type="text" name="$dataMediaPairGroup.pushWeight.key" value="5" id="textfield5" /><span class="red">*</span>
 		  <br />
 		  <span class="red">#addDataMediaPairMessage ($dataMediaPairGroup.pushWeight)</span>
-        </td>
-      </tr>
-      <tr>
-        <th>提取权重:</th>
-        <td>
-          <input type="text" name="$dataMediaPairGroup.pullWeight.key" value="$!dataMediaPairGroup.pullWeight.value" id="textfield5" disabled />
-		  <br />
-		  <span class="red">#addDataMediaPairMessage ($dataMediaPairGroup.pullWeight)</span>
         </td>
       </tr>
 	  <tr>
