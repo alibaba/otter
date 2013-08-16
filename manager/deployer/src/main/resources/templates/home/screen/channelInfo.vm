@@ -34,7 +34,7 @@ $control.setTemplate("home:navigation.vm")
   <th>一致性算法：</th><td>#if($channel.parameters.remedyAlgorithm.isLoopback()) 单向回环补救 #else 时间交集补救 #end</td>
   </tr>
   <tr>
-  <th>一致性反查数据库延迟阀值：</th><td>$numberFormat.format($channel.parameters.remedyDelayThresoldForMedia) 秒</td>
+  <th>一致性反查数据库延迟阀值：</th><td>$!numberFormat.format($channel.parameters.remedyDelayThresoldForMedia) 秒</td>
   </tr
   #end
   <tr>

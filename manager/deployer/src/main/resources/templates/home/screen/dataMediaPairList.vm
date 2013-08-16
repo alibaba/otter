@@ -67,12 +67,12 @@ $control.setTemplate("home:navigation.vm")
             <td width="8%"><a href="dataMediaInfo.htm?dataMediaId=$dataMediaPair.source.id">$!dataMediaPair.source.namespace.$!dataMediaPair.source.name</a></td>
 			<td><a href="dataMediaInfo.htm?dataMediaId=$dataMediaPair.target.id">$!dataMediaPair.target.namespace.$!dataMediaPair.target.name</a></td>
             <td>$!dataMediaPair.pushWeight</td>
-			<td>$numberFormat.formatFileSize($tableStatMap.get($dataMediaPair.id).fileSize)</td>
-			<td>$numberFormat.format($tableStatMap.get($dataMediaPair.id).fileCount)</td>
-			<td>$numberFormat.format($tableStatMap.get($dataMediaPair.id).deleteCount)</td>
-			<td>$numberFormat.format($tableStatMap.get($dataMediaPair.id).updateCount)</td>
-			<td>$numberFormat.format($tableStatMap.get($dataMediaPair.id).insertCount)</td>
-            <td>$numberFormat.format($!tableStatMap.get($dataMediaPair.id).gmtModified)</td>
+			<td>$!numberFormat.formatFileSize($tableStatMap.get($dataMediaPair.id).fileSize)</td>
+			<td>$!numberFormat.format($tableStatMap.get($dataMediaPair.id).fileCount)</td>
+			<td>$!numberFormat.format($tableStatMap.get($dataMediaPair.id).deleteCount)</td>
+			<td>$!numberFormat.format($tableStatMap.get($dataMediaPair.id).updateCount)</td>
+			<td>$!numberFormat.format($tableStatMap.get($dataMediaPair.id).insertCount)</td>
+            <td>$!numberFormat.format($!tableStatMap.get($dataMediaPair.id).gmtModified)</td>
 			<td>
 				#set ($dataMediaPairInfoURL = $homeModule.setTarget("dataMediaPairInfo.vm").addQueryData("dataMediaPairId", $dataMediaPair.id))
 				<a href="$dataMediaPairInfoURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">查看</span></a>

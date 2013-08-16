@@ -182,8 +182,8 @@ function showTip(id) {
 			   
 			<div id="tabid1" style="clear:both;">
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            	总记录数: <span style="font-weight: bold;">$numberFormat.format($totalRecord1)</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            	总大小:<span style="font-weight: bold;">$numberFormat.formatFileSize($totalSize1)</span>
+            	总记录数: <span style="font-weight: bold;">$!numberFormat.format($totalRecord1)</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	总大小:<span style="font-weight: bold;">$!numberFormat.formatFileSize($totalSize1)</span>
             <br/><br/>
 			<fieldset id="Number1" style="border:1px #ccc solid; margin:0 0 20px 15px;width:730px;padding:25px 10px 20px 15px;"><legend><b>记录(条)</b></legend>
 			    <div id="rowNumber" style="width:700px;height:250px"></div>
@@ -194,8 +194,8 @@ function showTip(id) {
 			</div>
 			<div id="tabid2" style="clear:both;">
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            	总记录数: <span style="font-weight: bold;">$numberFormat.format($totalRecord2)</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            	总大小:<span style="font-weight: bold;">$numberFormat.formatFileSize($totalSize2)</span>
+            	总记录数: <span style="font-weight: bold;">$!numberFormat.format($totalRecord2)</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	总大小:<span style="font-weight: bold;">$!numberFormat.formatFileSize($totalSize2)</span>
             <br/><br/>
 			<fieldset id="Number2" style="border:1px #ccc solid; margin:0 0 20px 15px;width:730px;padding:25px 10px 20px 15px;"><legend><b>文件(个)</b></legend>
 			    <div id="fileNumber" style="width:700px;height:250px"></div>

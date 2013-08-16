@@ -115,11 +115,11 @@ $control.setTemplate("home:navigation.vm")
     		#end
 		#end
 	  </td>
-	  <td width="5%">$numberFormat.formatDelay($delayStats.get($pipeline.id).delayTime)</td>
+	  <td width="5%">$!numberFormat.formatDelay($delayStats.get($pipeline.id).delayTime)</td>
 	  #set($throughputStat = $throughputStats.get($pipeline.id))
-	  <td width="8%">$numberFormat.format($!throughputStat.gmtModified)</td>
+	  <td width="8%">$!numberFormat.format($!throughputStat.gmtModified)</td>
 	  #set($positionData = $positionDatas.get($pipeline.id))
-	  <td width="8%">$numberFormat.format($!positionData.modifiedTime)</td>
+	  <td width="8%">$!numberFormat.format($!positionData.modifiedTime)</td>
 	  <td width="3%">$alarmRuleStats.get($pipeline.id).size()</td>
 	  <td>
 		#set ($pipelineInfoURL = $homeModule.setTarget("pipelineInfo.vm").addQueryData("pipelineId", $pipeline.id))

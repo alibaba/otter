@@ -110,7 +110,7 @@ $control.setTemplate("home:navigation.vm")
                     			<font color="#FF0000">无信息</font>
                     		#else
 								#set ($removeURL = $homeModule.setTarget("analysisStageStat.vm").addQueryData("pipelineId", $pipelineId).setAction("PositionAction").addQueryData("eventSubmitDoRemove", "true").render())
-                    			最后更新时间 : $numberFormat.format($positionData.modifiedTime) <span class="ico_line">|</span> <a id="showtext-position" onClick="showdiv('contentid-position','showtext-position')"><span class="ico_font">查看</span></a>
+                    			最后更新时间 : $!numberFormat.format($positionData.modifiedTime) <span class="ico_line">|</span> <a id="showtext-position" onClick="showdiv('contentid-position','showtext-position')"><span class="ico_font">查看</span></a>
 								#if($user.authorizeType.isAdmin())
 								<span class="ico_line">|</span><a href="javascript:if(confirm('确实要删除吗?'))location='$removeURL'"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">删除</span></a>
 								#end
@@ -132,11 +132,11 @@ $control.setTemplate("home:navigation.vm")
 				#set($temp=$velocityCount)
     			#set($context = "")
 				#if($stageStat.number)
-					#set($context=$!{context} + "number:" + $numberFormat.format($stageStat.number) +"&#10;")
+					#set($context=$!{context} + "number:" + $!numberFormat.format($stageStat.number) +"&#10;")
 				#end
 				
 				#if($stageStat.size)
-					#set($context=$!{context} + "size:" + $numberFormat.format($stageStat.size)+"&#10;")
+					#set($context=$!{context} + "size:" + $!numberFormat.format($stageStat.size)+"&#10;")
 				#end
 				
 				#if($stageStat.exts && $stageStat.exts.size() > 0)
@@ -170,7 +170,7 @@ $control.setTemplate("home:navigation.vm")
 							#if($width<1)
 								#set($width=1)
 							#end
-							<td style="width:${width}px;height:60px;padding:0px 0px 0px 0px;">$numberFormat.format($time)</td>
+							<td style="width:${width}px;height:60px;padding:0px 0px 0px 0px;">$!numberFormat.format($time)</td>
 						#end
 						#if($stageStat.endTime)
 							#set($time = $stageStat.endTime - $stageStat.startTime)
@@ -178,14 +178,14 @@ $control.setTemplate("home:navigation.vm")
 							#if($width<1)
 								#set($width=1)
 							#end
-							<td id ="select" style="width:${width}px;height:60px;background-color:#D9B300;padding:0px 0px 0px 0px;" title="#noescape()$!context#end">$numberFormat.format($time)</td>
+							<td id ="select" style="width:${width}px;height:60px;background-color:#D9B300;padding:0px 0px 0px 0px;" title="#noescape()$!context#end">$!numberFormat.format($time)</td>
 						#else
 							#set($time = $stageEnd - $stageStat.startTime)
 							#set($width = $time * $offset)
 							#if($width<1)
 								#set($width=1)
 							#end
-							<td style="width:${width}px;height:60px;background-color:#FF2D2D;padding:0px 0px 0px 0px;" title="#noescape()$!context#end">$numberFormat.format($time)</td>
+							<td style="width:${width}px;height:60px;background-color:#FF2D2D;padding:0px 0px 0px 0px;" title="#noescape()$!context#end">$!numberFormat.format($time)</td>
 						#end
 					#end					
 				#end
@@ -197,7 +197,7 @@ $control.setTemplate("home:navigation.vm")
 							#if($width<1)
 								#set($width=1)
 							#end
-							<td style="width:${width}px;height:60px;padding:0px 0px 0px 0px;">$numberFormat.format($time)</td>
+							<td style="width:${width}px;height:60px;padding:0px 0px 0px 0px;">$!numberFormat.format($time)</td>
 						#end
 						#if($stageStat.endTime)
 							#set($time = $stageStat.endTime - $stageStat.startTime)
@@ -205,14 +205,14 @@ $control.setTemplate("home:navigation.vm")
 							#if($width<1)
 								#set($width=1)
 							#end
-							<td style="width:${width}px;height:60px;background-color:#FFC1E0;padding:0px 0px 0px 0px;" title="#noescape()$!context#end">$numberFormat.format($time)</td>
+							<td style="width:${width}px;height:60px;background-color:#FFC1E0;padding:0px 0px 0px 0px;" title="#noescape()$!context#end">$!numberFormat.format($time)</td>
 						#else
 							#set($time = $stageEnd - $stageStat.startTime)
 							#set($width = $time * $offset)
 							#if($width<1)
 								#set($width=1)
 							#end
-							<td style="width:${width}px;height:60px;background-color:#FF2D2D;padding:0px 0px 0px 0px;" title="#noescape()$!context#end">$numberFormat.format($time)</td>
+							<td style="width:${width}px;height:60px;background-color:#FF2D2D;padding:0px 0px 0px 0px;" title="#noescape()$!context#end">$!numberFormat.format($time)</td>
 						#end
 					#end
 				#end
@@ -224,7 +224,7 @@ $control.setTemplate("home:navigation.vm")
 							#if($width<1)
 								#set($width=1)
 							#end
-							<td style="width:${width}px;height:60px;padding:0px 0px 0px 0px;">$numberFormat.format($time)</td>
+							<td style="width:${width}px;height:60px;padding:0px 0px 0px 0px;">$!numberFormat.format($time)</td>
 						#end 
 						#if($stageStat.endTime)
 							#set($time = $stageStat.endTime - $stageStat.startTime)
@@ -232,14 +232,14 @@ $control.setTemplate("home:navigation.vm")
 							#if($width<1)
 								#set($width=1)
 							#end
-							<td style="width:${width}px;height:60px;background-color:#4DFFFF;padding:0px 0px 0px 0px;" title="#noescape()$!context#end">$numberFormat.format($time)</td>
+							<td style="width:${width}px;height:60px;background-color:#4DFFFF;padding:0px 0px 0px 0px;" title="#noescape()$!context#end">$!numberFormat.format($time)</td>
 						#else
 							#set($time = $stageEnd - $stageStat.startTime)
 							#set($width = $time * $offset)
 							#if($width<1)
 								#set($width=1)
 							#end
-							<td style="width:${width}px;height:60px;background-color:#FF2D2D;padding:0px 0px 0px 0px;" title="#noescape()$!context#end">$numberFormat.format($time)</td>
+							<td style="width:${width}px;height:60px;background-color:#FF2D2D;padding:0px 0px 0px 0px;" title="#noescape()$!context#end">$!numberFormat.format($time)</td>
 						#end
 					#end
 				#end
@@ -251,7 +251,7 @@ $control.setTemplate("home:navigation.vm")
 							#if($width<1)
 								#set($width=1)
 							#end
-							<td style="width:${width}px;height:60px;padding:0px 0px 0px 0px;">$numberFormat.format($time)</td>
+							<td style="width:${width}px;height:60px;padding:0px 0px 0px 0px;">$!numberFormat.format($time)</td>
 						#end
 						#if($stageStat.endTime)
 							#set($time = $stageStat.endTime - $stageStat.startTime)
@@ -259,7 +259,7 @@ $control.setTemplate("home:navigation.vm")
 							#if($width<1)
 								#set($width=1)
 							#end
-							<td style="width:${width}px;height:60px;background-color:#79FF79;padding:0px 0px 0px 0px;" title="#noescape()$!context#end">$numberFormat.format($time)</td>
+							<td style="width:${width}px;height:60px;background-color:#79FF79;padding:0px 0px 0px 0px;" title="#noescape()$!context#end">$!numberFormat.format($time)</td>
 							<td style="width:10px;height:60px;background-color:#2bbb2e;padding:0px 0px 0px 0px;"></td>
 						#else
 							#set($time = $stageEnd - $stageStat.startTime)
@@ -267,7 +267,7 @@ $control.setTemplate("home:navigation.vm")
 							#if($width<1)
 								#set($width=1)
 							#end
-							<td style="width:${width}px;height:60px;background-color:#FF2D2D;padding:0px 0px 0px 0px;" title="#noescape()$!context#end">$numberFormat.format($time)</td>
+							<td style="width:${width}px;height:60px;background-color:#FF2D2D;padding:0px 0px 0px 0px;" title="#noescape()$!context#end">$!numberFormat.format($time)</td>
 						#end
 					#end
 				#end

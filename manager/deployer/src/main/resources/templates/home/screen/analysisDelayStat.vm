@@ -133,7 +133,7 @@ function showTip(id){
 			</fieldset>
 			*#
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            	平均延迟: <span style="font-weight: bold;">$numberFormat.formatDelay($delayAvg)</span>
+            	平均延迟: <span style="font-weight: bold;">$!numberFormat.formatDelay($delayAvg)</span>
             <br/><br/>
 			<fieldset style="border:1px #ccc solid; margin:0 0 20px 15px;width:730px;padding:25px 10px 20px 15px;"><legend><b>延迟时间</b></legend>
 			    <div id="delayTime" style="width:700px;height:250px"></div>

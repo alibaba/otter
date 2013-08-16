@@ -53,23 +53,23 @@ $control.setTemplate("home:navigation.vm")
           <tr> 
             <td width="6%">$pipelineId</td>
             <td width="4%">FILE </td>
-            <td>$numberFormat.format($throughputInfos1.get($one).Tps)</td>
-            <td>$numberFormat.format($throughputInfos1.get($five).Tps)</td>
-            <td>$numberFormat.format($throughputInfos1.get($fifteen).Tps)</td>
-            <td>$numberFormat.formatFileSize($throughputInfos1.get($one).Quantity)</td>
-            <td>$numberFormat.formatFileSize($throughputInfos1.get($five).Quantity)</span></td>
-            <td>$numberFormat.formatFileSize($throughputInfos1.get($fifteen).Quantity)</td>
+            <td>$!numberFormat.format($throughputInfos1.get($one).Tps)</td>
+            <td>$!numberFormat.format($throughputInfos1.get($five).Tps)</td>
+            <td>$!numberFormat.format($throughputInfos1.get($fifteen).Tps)</td>
+            <td>$!numberFormat.formatFileSize($throughputInfos1.get($one).Quantity)</td>
+            <td>$!numberFormat.formatFileSize($throughputInfos1.get($five).Quantity)</span></td>
+            <td>$!numberFormat.formatFileSize($throughputInfos1.get($fifteen).Quantity)</td>
             <td>$!numberFormat.format($!throughputStat1.gmtModified)</td>
           </tr>
           <tr> 
             <td width="6%">$pipelineId</td>
             <td width="4%">ROW </td>
-            <td>$numberFormat.format($throughputInfos2.get($one).Tps)</td>
-            <td>$numberFormat.format($throughputInfos2.get($five).Tps)</td>
-            <td>$numberFormat.format($throughputInfos2.get($fifteen).Tps)</td>
-            <td>$numberFormat.formatFileSize($throughputInfos2.get($one).Quantity)</td>
-            <td>$numberFormat.formatFileSize($throughputInfos2.get($five).Quantity)</td>
-            <td>$numberFormat.formatFileSize($throughputInfos2.get($fifteen).Quantity)</td>
+            <td>$!numberFormat.format($throughputInfos2.get($one).Tps)</td>
+            <td>$!numberFormat.format($throughputInfos2.get($five).Tps)</td>
+            <td>$!numberFormat.format($throughputInfos2.get($fifteen).Tps)</td>
+            <td>$!numberFormat.formatFileSize($throughputInfos2.get($one).Quantity)</td>
+            <td>$!numberFormat.formatFileSize($throughputInfos2.get($five).Quantity)</td>
+            <td>$!numberFormat.formatFileSize($throughputInfos2.get($fifteen).Quantity)</td>
             <td>$!numberFormat.format($!throughputStat2.gmtModified)</td>
           </tr>
         </table>
