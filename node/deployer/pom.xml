@@ -11,7 +11,7 @@
 	<artifactId>node.deployer</artifactId>
 	<packaging>jar</packaging>
 	<name>node deployer for otter</name>
-	<url>http://github.com/agapple/otter</url>
+	<url>http://github.com/alibaba/otter</url>
 	
 	<dependencies>
 		<dependency>

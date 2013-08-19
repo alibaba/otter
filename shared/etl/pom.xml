@@ -11,7 +11,7 @@
 	<artifactId>shared.etl</artifactId>
 	<packaging>jar</packaging>
 	<name>etl shared module for otter</name>
-	<url>http://github.com/agapple/otter</url>
+	<url>http://github.com/alibaba/otter</url>
 	
 	<dependencies>
 		<dependency>

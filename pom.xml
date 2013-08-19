@@ -11,7 +11,12 @@
 	<packaging>pom</packaging>
 	<name>otter</name>
 	<version>4.2.0</version>
-	<url>http://github.com/agapple/otter</url>
+	<inceptionYear>2011</inceptionYear>
+	<url>http://github.com/alibaba/otter</url>
+	<organization>
+		<name>alibaba</name>
+		<url>http://www.alibaba.com</url>
+	</organization>
 	
 	<developers>
 		<developer>
@@ -42,9 +47,9 @@
 	</licenses>
 	
 	<scm>
-    <url>git@github.com:agapple/otter.git</url>
-    <connection>scm:git:git@github.com:agapple/otter.git</connection>
-    <developerConnection>scm:git:git@github.com:agapple/otter.git</developerConnection>
+    <url>git@github.com:alibaba/otter.git</url>
+    <connection>scm:git:git@github.com:alibaba/otter.git</connection>
+    <developerConnection>scm:git:git@github.com:alibaba/otter.git</developerConnection>
 	</scm>
 	
 	<repositories>

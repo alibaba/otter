@@ -11,7 +11,7 @@
 	<packaging>pom</packaging>
 	<name>manager module for otter</name>
 	<version>4.2.0</version>
-	<url>http://github.com/agapple/otter</url>
+	<url>http://github.com/alibaba/otter</url>
 	
 	<modules>
 		<module>biz</module>

@@ -11,7 +11,7 @@
 	<artifactId>shared.common</artifactId>
 	<packaging>jar</packaging>
 	<name>common module for otter</name>
-	<url>http://github.com/agapple/otter</url>
+	<url>http://github.com/alibaba/otter</url>
 	
 	<dependencies>
 		<!-- log -->

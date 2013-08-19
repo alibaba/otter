@@ -11,7 +11,7 @@
 	<artifactId>otter.extend</artifactId>
 	<packaging>jar</packaging>
 	<name>otter extend module for otter</name>
-	<url>http://github.com/agapple/otter</url>
+	<url>http://github.com/alibaba/otter</url>
 	<dependencies>
 		<dependency>
 			<groupId>com.alibaba.otter</groupId>
