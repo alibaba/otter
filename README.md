@@ -51,17 +51,18 @@ otter之前开源的一个子项目，开源链接地址：<a href="http://githu
 <a name="%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98" class="anchor" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="octicon octicon-link"></span></a>常见问题</h1>
 <p>See the page for FAQ: <a class="internal present" href="/agapple/otter/wiki/Faq">FAQ</a></p>
 <p> </p>
+
+<h1>
+<a name="%E7%89%88%E6%9C%AC%E7%9B%B8%E5%85%B3-" class="anchor" href="#%E7%89%88%E6%9C%AC%E7%9B%B8%E5%85%B3-"><span class="octicon octicon-link"></span></a>版本相关: </h1>
+<p>1. 建议版本：4.2.0  (otter开源版本从内部演变而来，所以初始版本直接从4.x开始) </p>
+<p>2. 下载发布包：<a href="https://github.com/agapple/otter_download">download </a></p>
+<p>3. maven依赖 ： 暂无 </p>
+<p>4. 详细的issues列表可查看：<a href="http://alibaba.github.io/otter/release.html">ReleaseNotes </a></p>
+
 <h1>
 <a name="%E9%97%AE%E9%A2%98%E5%8F%8D%E9%A6%88" class="anchor" href="#%E9%97%AE%E9%A2%98%E5%8F%8D%E9%A6%88"><span class="octicon octicon-link"></span></a>问题反馈</h1>
 <h3>
 <a name="%E6%B3%A8%E6%84%8Fcanalotter-qq%E8%AE%A8%E8%AE%BA%E7%BE%A4%E5%B7%B2%E7%BB%8F%E5%BB%BA%E7%AB%8B%E7%BE%A4%E5%8F%B7161559791-%E6%AC%A2%E8%BF%8E%E5%8A%A0%E5%85%A5%E8%BF%9B%E8%A1%8C%E6%8A%80%E6%9C%AF%E8%AE%A8%E8%AE%BA" class="anchor" href="#%E6%B3%A8%E6%84%8Fcanalotter-qq%E8%AE%A8%E8%AE%BA%E7%BE%A4%E5%B7%B2%E7%BB%8F%E5%BB%BA%E7%AB%8B%E7%BE%A4%E5%8F%B7161559791-%E6%AC%A2%E8%BF%8E%E5%8A%A0%E5%85%A5%E8%BF%9B%E8%A1%8C%E6%8A%80%E6%9C%AF%E8%AE%A8%E8%AE%BA"><span class="octicon octicon-link"></span></a>注意：canal&amp;otter QQ讨论群已经建立，群号：161559791 ，欢迎加入进行技术讨论。</h3>
-
-<h1>版本相关: </h1>
-1. 建议版本：4.2.0  (otter开源版本从内部演变而来，所以初始版本直接从4.x开始)
-2. 下载发布包：<a href="https://github.com/agapple/otter_download">download</href>
-3. maven依赖 ： 暂无
-4. 详细的issues列表可查看：<a href="http://alibaba.github.io/otter/release.html">ReleaseNotes</href>
-
 <p>1.  <span>qq交流群： 161559791</span></p>
 <p><span>2.  </span><span>邮件交流： jianghang115@gmail.com</span></p>
 <p><span>3.  </span><span>新浪微博： agapple0002</span></p>
