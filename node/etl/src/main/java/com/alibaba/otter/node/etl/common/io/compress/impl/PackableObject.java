@@ -29,8 +29,7 @@ public abstract class PackableObject {
     public abstract byte[] getHeader();
 
     /**
-     * Returns the default FileExtension for this archive, for example "zip",
-     * "tar"...
+     * Returns the default FileExtension for this archive, for example "zip", "tar"...
      */
     public abstract String getDefaultFileExtension();
 
@@ -61,9 +60,8 @@ public abstract class PackableObject {
     }
 
     /**
-     * Compares a file to a list of packables and identifies an object by
-     * header. If no matching header is found, it identifies the file by file
-     * extension. If identification was not successfull, null is returned
+     * Compares a file to a list of packables and identifies an object by header. If no matching header is found, it
+     * identifies the file by file extension. If identification was not successfull, null is returned
      * 
      * @param file the file to identify
      * @param packables a list of packables

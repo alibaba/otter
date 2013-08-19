@@ -48,7 +48,8 @@ public class JmxLoaderIntegration extends BaseOtterTest {
             Object result = mBeanServer.getAttribute(objectName, "HeapMemoryUsage");
             System.out.println(result);
 
-            JMXServiceURL address = new JMXServiceURL("service:jmx:rmi://10.13.91.201/jndi/rmi://10.13.91.201:1099/mbean");
+            JMXServiceURL address = new JMXServiceURL(
+                                                      "service:jmx:rmi://10.13.91.201/jndi/rmi://10.13.91.201:1099/mbean");
             Map environment = null;
 
             JMXConnector cntor = JMXConnectorFactory.connect(address, environment);

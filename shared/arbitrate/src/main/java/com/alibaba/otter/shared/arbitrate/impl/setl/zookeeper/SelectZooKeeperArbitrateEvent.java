@@ -118,12 +118,12 @@ public class SelectZooKeeperArbitrateEvent implements SelectArbitrateEvent {
             zookeeper.create(path, bytes, CreateMode.PERSISTENT);
         } catch (ZkNoNodeException e) {
             // process节点不存在，出现了rollback/shutdown操作，直接忽略
-            logger.warn("pipelineId[{}] select ignore processId[{}] single by data:{}", new Object[] {
-                    data.getPipelineId(), data.getProcessId(), data });
+            logger.warn("pipelineId[{}] select ignore processId[{}] single by data:{}",
+                        new Object[] { data.getPipelineId(), data.getProcessId(), data });
         } catch (ZkNodeExistsException e) {
             // process节点已存在，出现了ConnectionLoss retry操作
-            logger.warn("pipelineId[{}] select ignore processId[{}] single by data:{}", new Object[] {
-                    data.getPipelineId(), data.getProcessId(), data });
+            logger.warn("pipelineId[{}] select ignore processId[{}] single by data:{}",
+                        new Object[] { data.getPipelineId(), data.getProcessId(), data });
         } catch (ZkException e) {
             throw new ArbitrateException("Select_single", e.getMessage(), e);
         }

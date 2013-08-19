@@ -8,8 +8,7 @@ import com.alibaba.otter.shared.communication.core.model.CommunicationParam;
 import com.alibaba.otter.shared.communication.core.model.heart.HeartEvent;
 
 /**
- * 链接池内容管理工厂, @see {@linkplain GenericObjectPool} ,
- * {@linkplain PoolableObjectFactory}
+ * 链接池内容管理工厂, @see {@linkplain GenericObjectPool} , {@linkplain PoolableObjectFactory}
  * 
  * @author jianghang 2011-9-9 下午05:00:15
  */
@@ -17,7 +16,7 @@ public class CommunicationConnectionPoolableFactory implements KeyedPoolableObje
 
     private CommunicationConnectionFactory factory;
 
-    public CommunicationConnectionPoolableFactory(CommunicationConnectionFactory factory) {
+    public CommunicationConnectionPoolableFactory(CommunicationConnectionFactory factory){
         this.factory = factory;
     }
 
@@ -25,8 +24,7 @@ public class CommunicationConnectionPoolableFactory implements KeyedPoolableObje
         if (obj instanceof CommunicationConnectionPoolable) {
             factory.releaseConnection(((CommunicationConnectionPoolable) obj).getDelegate());// 关闭原始链接
         } else {
-            throw new IllegalArgumentException(
-                    "pool object is not CommunicationConnectionPoolable!");
+            throw new IllegalArgumentException("pool object is not CommunicationConnectionPoolable!");
         }
     }
 

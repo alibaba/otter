@@ -133,13 +133,11 @@ public abstract class AbstractOperationInterceptor extends AbstractLoadIntercept
         if (needInfo) {
             String infoColumn = context.getPipeline().getParameters().getSystemMarkTableInfo();
             String info = context.getPipeline().getParameters().getChannelInfo();// 记录一下channelInfo
-            affectedCount = dialect.getJdbcTemplate().update(
-                                                             MessageFormat.format(sql, new Object[] { markTableName,
+            affectedCount = dialect.getJdbcTemplate().update(MessageFormat.format(sql, new Object[] { markTableName,
                                                                      markTableColumn, infoColumn }),
                                                              new Object[] { threadId, channel.getId(), info });
         } else {
-            affectedCount = dialect.getJdbcTemplate().update(
-                                                             MessageFormat.format(sql, new Object[] { markTableName,
+            affectedCount = dialect.getJdbcTemplate().update(MessageFormat.format(sql, new Object[] { markTableName,
                                                                      markTableColumn }),
                                                              new Object[] { threadId, channel.getId() });
         }

@@ -46,8 +46,7 @@ public class RpcArbitrateEventTest extends BaseArbitrateEventTest {
 
         });
 
-        RpcStageEventDispatcher rpcStageEventDispatcher = (RpcStageEventDispatcher) this.getBeanFactory()
-            .getBean("rpcStageEventDispatcher");
+        RpcStageEventDispatcher rpcStageEventDispatcher = (RpcStageEventDispatcher) this.getBeanFactory().getBean("rpcStageEventDispatcher");
         terminEvent = (TerminRpcArbitrateEvent) this.getBeanFactory().getBean("terminRpcEvent");
 
         selectEvent = new SelectRpcArbitrateEvent();

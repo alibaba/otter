@@ -65,13 +65,10 @@ public class DbPerfIntergration extends BaseDbTest {
         final String sql = "insert into otter.ljhtable1 values(? , ? , ? , ?)";
 
         final CountDownLatch latch = new CountDownLatch(thread);
-        ExecutorService executor = new ThreadPoolExecutor(thread,
-            thread,
-            60,
-            TimeUnit.SECONDS,
-            new ArrayBlockingQueue(thread * 2),
-            new NamedThreadFactory("load"),
-            new ThreadPoolExecutor.CallerRunsPolicy());
+        ExecutorService executor = new ThreadPoolExecutor(thread, thread, 60, TimeUnit.SECONDS,
+                                                          new ArrayBlockingQueue(thread * 2),
+                                                          new NamedThreadFactory("load"),
+                                                          new ThreadPoolExecutor.CallerRunsPolicy());
 
         for (int sec = 0; sec < minute * 60; sec++) {
             // 执行秒循环
@@ -92,20 +89,16 @@ public class DbPerfIntergration extends BaseDbTest {
                                             int id = start + idx;
                                             StatementCreatorUtils.setParameterValue(ps, 1, Types.INTEGER, null, id);
                                             StatementCreatorUtils.setParameterValue(ps,
-                                                2,
-                                                Types.VARCHAR,
-                                                null,
-                                                RandomStringUtils.randomAlphabetic(1000));
+                                                                                    2,
+                                                                                    Types.VARCHAR,
+                                                                                    null,
+                                                                                    RandomStringUtils.randomAlphabetic(1000));
                                             // RandomStringUtils.randomAlphabetic()
                                             long time = new Date().getTime();
-                                            StatementCreatorUtils.setParameterValue(ps,
-                                                3,
-                                                Types.TIMESTAMP,
-                                                new Timestamp(time));
-                                            StatementCreatorUtils.setParameterValue(ps,
-                                                4,
-                                                Types.TIMESTAMP,
-                                                new Timestamp(time));
+                                            StatementCreatorUtils.setParameterValue(ps, 3, Types.TIMESTAMP,
+                                                                                    new Timestamp(time));
+                                            StatementCreatorUtils.setParameterValue(ps, 4, Types.TIMESTAMP,
+                                                                                    new Timestamp(time));
                                         }
 
                                         public int getBatchSize() {

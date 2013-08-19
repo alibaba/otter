@@ -19,8 +19,9 @@ public class WarningTerminProcess implements TerminProcess {
     private AlarmClientService  alarmClientService;
 
     public boolean process(TerminEventData data) {
-        logger.warn("nid:{}[{}:{}]", new Object[] { ArbitrateConfigUtils.getCurrentNid(), data.getPipelineId(),
-                data.getCode() + ":" + data.getDesc() });
+        logger.warn("nid:{}[{}:{}]",
+                    new Object[] { ArbitrateConfigUtils.getCurrentNid(), data.getPipelineId(),
+                            data.getCode() + ":" + data.getDesc() });
         alarmClientService.sendAlarm(ArbitrateConfigUtils.getCurrentNid(), data.getPipelineId(), data.getCode(),
                                      data.getDesc());
         return true;

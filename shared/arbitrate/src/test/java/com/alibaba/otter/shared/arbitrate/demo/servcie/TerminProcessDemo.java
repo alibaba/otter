@@ -75,13 +75,10 @@ public class TerminProcessDemo implements PipelineLifeCycle {
 
                         arbitrateEventService.terminEvent().ack(eventData);// 处理完了，通知下仲裁器
                         StringBuilder builder = new StringBuilder();
-                        builder.append("=============================== time : " + printDate(new Date().getTime())).append(
-                                                                                                                           "\n");
+                        builder.append("=============================== time : " + printDate(new Date().getTime())).append("\n");
 
                         builder.append("pipeline : ").append(pipelineId).append("\n");
-                        builder.append("\t termin : ").append(eventData.getProcessId()).append(" type : ").append(
-                                                                                                                  eventData.getType().name()).append(
-                                                                                                                                                     "\n");
+                        builder.append("\t termin : ").append(eventData.getProcessId()).append(" type : ").append(eventData.getType().name()).append("\n");
                         print.println(builder);
                         print.flush();
                     } catch (InterruptedException e) {

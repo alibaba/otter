@@ -7,8 +7,7 @@ import java.io.OutputStream;
 import com.alibaba.otter.node.etl.common.io.compress.exception.CompressException;
 
 /**
- * The Compressor Interface defines all operations for the compress/decompress
- * actions.
+ * The Compressor Interface defines all operations for the compress/decompress actions.
  */
 public interface Compressor {
 
@@ -22,8 +21,7 @@ public interface Compressor {
     public InputStream compress(File input) throws CompressException;
 
     /**
-     * Compresses this InputStream and returns an InputStream to the compressed
-     * file
+     * Compresses this InputStream and returns an InputStream to the compressed file
      * 
      * @param input Stream to compress
      * @return Stream to the compressed file
@@ -41,8 +39,7 @@ public interface Compressor {
     public byte[] compress(byte[] data) throws CompressException;
 
     /**
-     * Compresses the file input and creates a file in the same directory with
-     * the default file extension in its name.
+     * Compresses the file input and creates a file in the same directory with the default file extension in its name.
      * 
      * @param input the file to compress
      * @throws CompressException if the Compressor reports an error
@@ -59,8 +56,8 @@ public interface Compressor {
     public void compressTo(File input, File output) throws CompressException;
 
     /**
-     * Compresses the input stream and writes the compressed bytes to the output
-     * stream. This method must be implemented by all new compressortypes.
+     * Compresses the input stream and writes the compressed bytes to the output stream. This method must be implemented
+     * by all new compressortypes.
      * 
      * @param input InputStream to compress to
      * @param output OutputStream to which the byte shall be written
@@ -94,8 +91,7 @@ public interface Compressor {
     public byte[] decompress(byte[] data) throws CompressException;
 
     /**
-     * Decompresses this file and writes the decompressed byte to the output
-     * file
+     * Decompresses this file and writes the decompressed byte to the output file
      * 
      * @param input File to decompress
      * @param output File to write the decompressed bytes to
@@ -104,8 +100,7 @@ public interface Compressor {
     public void decompressTo(File input, File output) throws CompressException;
 
     /**
-     * Decompresses this file and writes the decompressed file to the
-     * output-stream
+     * Decompresses this file and writes the decompressed file to the output-stream
      * 
      * @param input Stream to decompress
      * @param output Stream to write the decompressed bytes to

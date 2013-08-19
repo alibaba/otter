@@ -23,13 +23,12 @@ public class BZip2Compressor extends AbstractCompressor {
     private static String       DEFAULT_FILE_EXTENSION = "bz2";
 
     /* Header BZ as byte-Array */
-    private static final byte[] HEADER                 = new byte[] { (byte) 'B', (byte) 'Z',
-            (byte) 'h'                                };
+    private static final byte[] HEADER                 = new byte[] { (byte) 'B', (byte) 'Z', (byte) 'h' };
 
     /* Name of this implementation */
     private static final String NAME                   = "bz2";
 
-    public BZip2Compressor() {
+    public BZip2Compressor(){
         super();
     }
 

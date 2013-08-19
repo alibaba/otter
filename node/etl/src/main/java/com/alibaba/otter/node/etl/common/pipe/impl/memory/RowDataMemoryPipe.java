@@ -123,12 +123,8 @@ public class RowDataMemoryPipe extends AbstractMemoryPipe<DbBatch, MemoryPipeKey
     private String buildFileName(Identity identity, String prefix) {
         Date now = new Date();
         String time = new SimpleDateFormat(DATE_FORMAT).format(now);
-        return MessageFormat.format("{0}-{1}-{2}-{3}-{4}",
-            prefix,
-            time,
-            String.valueOf(identity.getChannelId()),
-            String.valueOf(identity.getPipelineId()),
-            String.valueOf(identity.getProcessId()));
+        return MessageFormat.format("{0}-{1}-{2}-{3}-{4}", prefix, time, String.valueOf(identity.getChannelId()),
+                                    String.valueOf(identity.getPipelineId()), String.valueOf(identity.getProcessId()));
     }
 
     public void afterPropertiesSet() throws Exception {

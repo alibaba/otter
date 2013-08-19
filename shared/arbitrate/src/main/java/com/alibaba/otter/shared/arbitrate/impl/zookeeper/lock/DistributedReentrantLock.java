@@ -6,8 +6,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.zookeeper.KeeperException;
 
 /**
- * 基于{@linkplain ReentrantLock}和{@linkplain DistributedLock}
- * 的功能组合，实现多进程+多线程全方位的lock控制
+ * 基于{@linkplain ReentrantLock}和{@linkplain DistributedLock} 的功能组合，实现多进程+多线程全方位的lock控制
  * 
  * @author jianghang 2011-9-30 上午09:48:05
  * @version 4.0.0
@@ -17,7 +16,7 @@ public class DistributedReentrantLock extends DistributedLock {
     private static final String ID_FORMAT     = "Thread[{0}] Distributed[{1}]";
     private ReentrantLock       reentrantLock = new ReentrantLock();
 
-    public DistributedReentrantLock(String root) {
+    public DistributedReentrantLock(String root){
         super(root);
     }
 

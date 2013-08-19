@@ -26,7 +26,7 @@ import com.alibaba.otter.shared.common.model.config.node.Node;
  */
 public class BaseLoadBalanceTest extends BaseEventTest {
 
-    protected ZkClientx         zookeeper  = null;
+    protected ZkClientx          zookeeper  = null;
     protected Long               channelId  = 100L;
     protected Long               pipelineId = 100L;
     protected NodeArbitrateEvent nodeEvent;

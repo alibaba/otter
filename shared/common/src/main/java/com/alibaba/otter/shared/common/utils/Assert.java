@@ -1,6 +1,5 @@
 package com.alibaba.otter.shared.common.utils;
 
-
 public final class Assert {
 
     public static <T> T assertNotNull(T object) {
@@ -19,9 +18,8 @@ public final class Assert {
                 exceptionType = ExceptionType.ILLEGAL_ARGUMENT;
             }
 
-            throw exceptionType.newInstance(getMessage(message,
-                args,
-                "[Assertion failed] - the argument is required; it must not be null"));
+            throw exceptionType.newInstance(getMessage(message, args,
+                                                       "[Assertion failed] - the argument is required; it must not be null"));
         }
 
         return object;
@@ -44,9 +42,8 @@ public final class Assert {
                 exceptionType = ExceptionType.ILLEGAL_ARGUMENT;
             }
 
-            throw exceptionType.newInstance(getMessage(message,
-                args,
-                "[Assertion failed] - the object argument must be null"));
+            throw exceptionType.newInstance(getMessage(message, args,
+                                                       "[Assertion failed] - the object argument must be null"));
         }
 
         return object;
@@ -69,9 +66,8 @@ public final class Assert {
                 exceptionType = ExceptionType.ILLEGAL_ARGUMENT;
             }
 
-            throw exceptionType.newInstance(getMessage(message,
-                args,
-                "[Assertion failed] - the expression must be true"));
+            throw exceptionType.newInstance(getMessage(message, args,
+                                                       "[Assertion failed] - the expression must be true"));
         }
     }
 

@@ -17,7 +17,7 @@ public abstract class RandomLoadBalance extends AbstractLoadBalance implements L
 
     private int localPercent = 90; //local优先返回的权重，百分比
 
-    public RandomLoadBalance(Long pipelineId) {
+    public RandomLoadBalance(Long pipelineId){
         super(pipelineId);
     }
 

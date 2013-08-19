@@ -8,7 +8,7 @@ public class StopChannelEvent extends Event {
 
     private Long              channelId;                             // 对应的channelId
 
-    public StopChannelEvent() {
+    public StopChannelEvent(){
         super(ArbitrateEventType.stopChannel);
     }
 

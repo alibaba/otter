@@ -70,7 +70,7 @@ public class FileExtractor extends AbstractExtractor<DbBatch> {
         List<EventData> eventDatas = rowBatch.getDatas();
         for (EventData eventData : eventDatas) {
             List<DataMediaPair> dataMediaPairs = ConfigHelper.findDataMediaPairByMediaId(pipeline,
-                eventData.getTableId());
+                                                                                         eventData.getTableId());
             if (dataMediaPairs == null) {
                 throw new ExtractException("ERROR ## the dataMediaId = " + eventData.getTableId()
                                            + " dataMediaPair is null,please check");
@@ -79,10 +79,8 @@ public class FileExtractor extends AbstractExtractor<DbBatch> {
             for (DataMediaPair dataMediaPair : dataMediaPairs) {
                 if (dataMediaPair.getResolverData() == null
                     || dataMediaPair.getResolverData().getExtensionDataType() == null
-                    || (dataMediaPair.getResolverData().getExtensionDataType().isClazz() && StringUtils.isBlank(dataMediaPair.getResolverData()
-                        .getClazzPath()))
-                    || (dataMediaPair.getResolverData().getExtensionDataType().isSource() && StringUtils.isBlank(dataMediaPair.getResolverData()
-                        .getSourceText()))) {
+                    || (dataMediaPair.getResolverData().getExtensionDataType().isClazz() && StringUtils.isBlank(dataMediaPair.getResolverData().getClazzPath()))
+                    || (dataMediaPair.getResolverData().getExtensionDataType().isSource() && StringUtils.isBlank(dataMediaPair.getResolverData().getSourceText()))) {
                     continue;
                 }
 
@@ -106,9 +104,8 @@ public class FileExtractor extends AbstractExtractor<DbBatch> {
                     remoteDirectoryFetcherAware.setRemoteDirectoryFetcher(arandaRemoteDirectoryFetcher);
                 }
 
-                List<FileData> singleRowFileDatas = getSingleRowFileInfos(dataMediaPair.getId(),
-                    fileResolver,
-                    eventData);
+                List<FileData> singleRowFileDatas = getSingleRowFileInfos(dataMediaPair.getId(), fileResolver,
+                                                                          eventData);
                 // 做一下去重处理
                 for (FileData data : singleRowFileDatas) {
                     if (!fileDatas.contains(data)) {
@@ -196,8 +193,7 @@ public class FileExtractor extends AbstractExtractor<DbBatch> {
 
                         if (count >= retry) {
                             logger.warn(String.format("FileDetectCollector is error! collect failed[%s]",
-                                fileData.getNameSpace() + "/" + fileData.getPath()),
-                                exception);
+                                                      fileData.getNameSpace() + "/" + fileData.getPath()), exception);
                         }
                     }
                 });
@@ -207,9 +203,8 @@ public class FileExtractor extends AbstractExtractor<DbBatch> {
             logger.info("start pipelinep[{}] waitFor FileData Size : {} ", pipeline.getId(), fileDatas.size());
             // 等待所有都处理完成
             executorTemplate.waitForResult();
-            logger.info("end pipelinep[{}] waitFor FileData cost : {} ms ",
-                pipeline.getId(),
-                (System.currentTimeMillis() - start));
+            logger.info("end pipelinep[{}] waitFor FileData cost : {} ms ", pipeline.getId(),
+                        (System.currentTimeMillis() - start));
         } finally {
             if (executorTemplate != null) {
                 executorTemplateGetter.release(executorTemplate);

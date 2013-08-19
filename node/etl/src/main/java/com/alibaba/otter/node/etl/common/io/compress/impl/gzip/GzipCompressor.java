@@ -42,7 +42,7 @@ public class GzipCompressor extends AbstractCompressor {
             0                                         // Operating system (OS)
                                                        };
 
-    public GzipCompressor() {
+    public GzipCompressor(){
         super();
     }
 

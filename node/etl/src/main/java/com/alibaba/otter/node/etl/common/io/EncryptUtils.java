@@ -28,16 +28,14 @@ public class EncryptUtils {
 
         // 加密数据
         byte[] encryptData = aes.encrypt(compData);
-        return new EncryptedData(encryptData, aes.getSecretyKeyString(), ChecksumUtils
-                .checksum(encryptData));
+        return new EncryptedData(encryptData, aes.getSecretyKeyString(), ChecksumUtils.checksum(encryptData));
     }
 
     public static byte[] decrypt(EncryptedData encode) {
         String destCrc = ChecksumUtils.checksum(encode.getData());
         //验证sign
         if (false == StringUtils.equals(encode.getCrc(), destCrc)) {
-            throw new ChecksumException(String.format("orig: %s, parsed: %s not match", encode
-                    .getCrc(), destCrc));
+            throw new ChecksumException(String.format("orig: %s, parsed: %s not match", encode.getCrc(), destCrc));
         }
 
         // 调用加密工具类

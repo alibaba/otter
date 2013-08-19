@@ -64,27 +64,25 @@ public class LoadTask extends GlobalTask {
 
                             // 进行数据load处理
                             otterLoaderFactory.setStartTime(dbBatch.getRowBatch().getIdentity(),
-                                etlEventData.getStartTime());
+                                                            etlEventData.getStartTime());
 
                             processedContexts = otterLoaderFactory.load(dbBatch);
 
                             if (profiling) {
                                 Long profilingEndTime = System.currentTimeMillis();
                                 stageAggregationCollector.push(pipelineId,
-                                    StageType.LOAD,
-                                    new AggregationItem(profilingStartTime, profilingEndTime));
+                                                               StageType.LOAD,
+                                                               new AggregationItem(profilingStartTime, profilingEndTime));
                             }
                             // 处理完成后通知single已完成
                             arbitrateEventService.loadEvent().single(etlEventData);
                         } catch (Throwable e) {
                             if (!isInterrupt(e)) {
-                                logger.error(String.format("[%s] loadWork executor is error! data:%s",
-                                    pipelineId,
-                                    etlEventData), e);
+                                logger.error(String.format("[%s] loadWork executor is error! data:%s", pipelineId,
+                                                           etlEventData), e);
                             } else {
-                                logger.info(String.format("[%s] loadWork executor is interrrupt! data:%s",
-                                    pipelineId,
-                                    etlEventData), e);
+                                logger.info(String.format("[%s] loadWork executor is interrrupt! data:%s", pipelineId,
+                                                          etlEventData), e);
                             }
 
                             if (processedContexts != null) {// 说明load成功了，但是通知仲裁器失败了，需要记录下记录到store
@@ -96,7 +94,7 @@ public class LoadTask extends GlobalTask {
 
                                     } catch (Throwable ie) {
                                         logger.error(String.format("[%s] interceptor process error failed!", pipelineId),
-                                            ie);
+                                                     ie);
                                     }
                                 }
                             }
@@ -120,10 +118,8 @@ public class LoadTask extends GlobalTask {
                 };
 
                 // 构造pending任务，可在关闭线程时退出任务
-                SetlFuture extractFuture = new SetlFuture(StageType.LOAD,
-                    etlEventData.getProcessId(),
-                    pendingFuture,
-                    task);
+                SetlFuture extractFuture = new SetlFuture(StageType.LOAD, etlEventData.getProcessId(), pendingFuture,
+                                                          task);
                 executorService.execute(extractFuture);
             } catch (Throwable e) {
                 if (isInterrupt(e)) {

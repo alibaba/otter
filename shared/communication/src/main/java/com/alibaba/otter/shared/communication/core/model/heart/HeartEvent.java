@@ -12,7 +12,7 @@ public class HeartEvent extends Event {
 
     private static final long serialVersionUID = 8690886624112649424L;
 
-    public HeartEvent() {
+    public HeartEvent(){
         super(HeartEventType.HEARTBEAT);
     }
 

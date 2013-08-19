@@ -65,8 +65,7 @@ public class ViewExtractor extends AbstractExtractor<DbBatch> {
 
                 if (CollectionUtils.isEmpty(eventData.getKeys())) { // 无主键，报错
                     throw new ExtractException(
-                                               String.format(
-                                                             "eventData after viewExtractor has no pks , pls check! identity:%s, new eventData:%s",
+                                               String.format("eventData after viewExtractor has no pks , pls check! identity:%s, new eventData:%s",
                                                              dbBatch.getRowBatch().getIdentity().toString(),
                                                              eventData.toString()));
                 }

@@ -9,7 +9,7 @@ public abstract class ArbitrateLifeCycle {
     private Long             pipelineId;
     private volatile boolean stop = false; //是否关闭
 
-    public ArbitrateLifeCycle(Long pipelineId) {
+    public ArbitrateLifeCycle(Long pipelineId){
         this.pipelineId = pipelineId;
     }
 

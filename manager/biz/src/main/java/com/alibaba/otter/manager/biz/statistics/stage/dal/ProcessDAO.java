@@ -10,6 +10,7 @@ import com.alibaba.otter.manager.biz.statistics.stage.dal.dataobject.ProcessStat
  * @author danping.yudp
  */
 public interface ProcessDAO {
+
     public void insertProcessStat(ProcessStatDO processStat);
 
     public void deleteProcessStat(Long processId);

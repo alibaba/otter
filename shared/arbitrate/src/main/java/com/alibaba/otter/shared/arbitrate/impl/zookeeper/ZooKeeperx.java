@@ -271,25 +271,25 @@ public class ZooKeeperx {
     }
 
     private synchronized void cleanup(int version) { // 加锁操作，阻塞等待上一次的重建完成
-    // if (cversion.compareAndSet(version, version + 1)) {// 看一下version是否有变化，没变化就我来更新
-    // // ReflectionUtils.makeAccessible(zooKeeperField);
-    // // ReflectionUtils.setField(zooKeeperField, new ZooKeeperClient(), null);// 清空
-    // ZooKeeper oldZookeepre = zookeeper;
-    // zookeeper = ZooKeeperClient.createZookeeper();
-    //
-    // try {
-    // oldZookeepre.close(); // 关闭老链接
-    // } catch (InterruptedException e) {
-    // // ignore
-    // }
-    // for (SessionExpiredNotification notification : ZooKeeperClient.getNotifications()) {
-    // notification.notification(this);
-    // }
-    //
-    // cversion.incrementAndGet();// 更新一下版本号
-    // } else {
-    // // 更新失败，忽略。说明已经有别的线程重建过zookeeper，再做一次尝试
-    // }
+        // if (cversion.compareAndSet(version, version + 1)) {// 看一下version是否有变化，没变化就我来更新
+        // // ReflectionUtils.makeAccessible(zooKeeperField);
+        // // ReflectionUtils.setField(zooKeeperField, new ZooKeeperClient(), null);// 清空
+        // ZooKeeper oldZookeepre = zookeeper;
+        // zookeeper = ZooKeeperClient.createZookeeper();
+        //
+        // try {
+        // oldZookeepre.close(); // 关闭老链接
+        // } catch (InterruptedException e) {
+        // // ignore
+        // }
+        // for (SessionExpiredNotification notification : ZooKeeperClient.getNotifications()) {
+        // notification.notification(this);
+        // }
+        //
+        // cversion.incrementAndGet();// 更新一下版本号
+        // } else {
+        // // 更新失败，忽略。说明已经有别的线程重建过zookeeper，再做一次尝试
+        // }
     }
 
     public void destory() {

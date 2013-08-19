@@ -14,9 +14,9 @@ import com.alibaba.otter.shared.communication.core.model.Event;
 public class RmiCommunicationConnection implements CommunicationConnection {
 
     private CommunicationEndpoint endpoint;
-    private CommunicationParam   params;
+    private CommunicationParam    params;
 
-    public RmiCommunicationConnection(CommunicationParam params, CommunicationEndpoint endpoint) {
+    public RmiCommunicationConnection(CommunicationParam params, CommunicationEndpoint endpoint){
         this.params = params;
         this.endpoint = endpoint;
     }

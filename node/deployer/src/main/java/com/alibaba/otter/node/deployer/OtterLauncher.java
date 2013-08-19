@@ -33,7 +33,7 @@ public class OtterLauncher {
                         controller.stop();
                     } catch (Throwable e) {
                         logger.warn("WARN ##something goes wrong when stopping Otter Server:\n{}",
-                            ExceptionUtils.getFullStackTrace(e));
+                                    ExceptionUtils.getFullStackTrace(e));
                     } finally {
                         logger.info("INFO ## otter server is down.");
                     }
@@ -42,7 +42,7 @@ public class OtterLauncher {
             });
         } catch (Throwable e) {
             logger.error("ERROR ## Something goes wrong when starting up the Otter Server:\n{}",
-                ExceptionUtils.getFullStackTrace(e));
+                         ExceptionUtils.getFullStackTrace(e));
             System.exit(0);
         }
     }

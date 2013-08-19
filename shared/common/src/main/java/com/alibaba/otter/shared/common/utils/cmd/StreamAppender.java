@@ -12,16 +12,18 @@ import java.io.PrintWriter;
 import org.apache.commons.io.IOUtils;
 
 public class StreamAppender {
+
     private Thread      errWriter;
     private Thread      outWriter;
     private PrintWriter output;
 
-    public StreamAppender(OutputStream output) {
+    public StreamAppender(OutputStream output){
         this.output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(output)));
     }
 
     public void writeInput(final InputStream err, final InputStream out) {
         errWriter = new Thread() {
+
             BufferedReader reader = new BufferedReader(new InputStreamReader(err));
 
             public void run() {
@@ -39,6 +41,7 @@ public class StreamAppender {
             }
         };
         outWriter = new Thread() {
+
             BufferedReader reader = new BufferedReader(new InputStreamReader(out));
 
             public void run() {

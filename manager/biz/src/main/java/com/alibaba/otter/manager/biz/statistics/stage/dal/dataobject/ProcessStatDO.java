@@ -1,4 +1,3 @@
-
 package com.alibaba.otter.manager.biz.statistics.stage.dal.dataobject;
 
 import java.io.Serializable;
@@ -15,7 +14,8 @@ import com.alibaba.otter.shared.common.utils.OtterToStringStyle;
  * @author danping.yudp
  */
 
-public class ProcessStatDO implements Serializable{
+public class ProcessStatDO implements Serializable {
+
     private static final long serialVersionUID = -5625269232233751756L;
     private Long              pipelineId;
     private Long              processId;
@@ -50,4 +50,3 @@ public class ProcessStatDO implements Serializable{
         return ToStringBuilder.reflectionToString(this, OtterToStringStyle.DEFAULT_STYLE);
     }
 }
-

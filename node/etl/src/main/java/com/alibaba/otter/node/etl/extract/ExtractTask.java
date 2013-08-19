@@ -75,8 +75,7 @@ public class ExtractTask extends GlobalTask {
 
                             if (profiling) {
                                 Long profilingEndTime = System.currentTimeMillis();
-                                stageAggregationCollector.push(
-                                                               pipelineId,
+                                stageAggregationCollector.push(pipelineId,
                                                                StageType.EXTRACT,
                                                                new AggregationItem(profilingStartTime, profilingEndTime));
                             }

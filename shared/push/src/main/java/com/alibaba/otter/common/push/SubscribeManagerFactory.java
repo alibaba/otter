@@ -70,8 +70,8 @@ public class SubscribeManagerFactory implements ApplicationContextAware {
     public static void autowire(Object obj) {
         // 重新注入一下对象
         context.getAutowireCapableBeanFactory().autowireBeanProperties(obj,
-            AutowireCapableBeanFactory.AUTOWIRE_BY_NAME,
-            true);
+                                                                       AutowireCapableBeanFactory.AUTOWIRE_BY_NAME,
+                                                                       true);
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

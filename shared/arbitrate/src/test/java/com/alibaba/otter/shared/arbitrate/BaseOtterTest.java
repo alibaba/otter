@@ -35,7 +35,7 @@ public class BaseOtterTest extends org.jtester.testng.JTester {
     protected void autowire(Object obj) {
         // 重新注入一下对象
         ((AutowireCapableBeanFactory) TestedObject.getSpringBeanFactory()).autowireBeanProperties(obj,
-            AutowireCapableBeanFactory.AUTOWIRE_BY_NAME,
-            true);
+                                                                                                  AutowireCapableBeanFactory.AUTOWIRE_BY_NAME,
+                                                                                                  true);
     }
 }

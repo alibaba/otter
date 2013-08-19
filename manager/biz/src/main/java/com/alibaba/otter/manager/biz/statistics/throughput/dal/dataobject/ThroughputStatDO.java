@@ -1,4 +1,3 @@
-
 package com.alibaba.otter.manager.biz.statistics.throughput.dal.dataobject;
 
 import java.io.Serializable;

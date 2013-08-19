@@ -1,6 +1,5 @@
 package com.alibaba.otter.node.etl.launcher;
 
-
 public class ArbitrateInitIntegration {
 
     public static void main(String args[]) {

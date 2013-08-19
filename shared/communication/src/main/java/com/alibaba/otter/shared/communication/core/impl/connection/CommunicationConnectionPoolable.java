@@ -12,7 +12,7 @@ import com.alibaba.otter.shared.communication.core.model.Event;
 public class CommunicationConnectionPoolable implements CommunicationConnection {
 
     private CommunicationConnectionPoolFactory pool;
-    private CommunicationConnection     delegate;
+    private CommunicationConnection            delegate;
 
     public CommunicationConnectionPoolable(CommunicationConnection connection, CommunicationConnectionPoolFactory pool){
         this.delegate = connection;

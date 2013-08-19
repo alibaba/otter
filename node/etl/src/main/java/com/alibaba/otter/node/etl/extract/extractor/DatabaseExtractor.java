@@ -416,8 +416,7 @@ public class DatabaseExtractor extends AbstractExtractor<DbBatch> implements Ini
                 }
 
                 try {
-                    List<List<String>> result = dbDialect.getJdbcTemplate().query(
-                                                                                  selectSql,
+                    List<List<String>> result = dbDialect.getJdbcTemplate().query(selectSql,
                                                                                   keyTableData.columnValues,
                                                                                   keyTableData.columnTypes,
                                                                                   new RowDataMapper(

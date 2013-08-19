@@ -12,23 +12,23 @@ public class AESException extends NestableRuntimeException {
     private String            errorCode;
     private String            errorDesc;
 
-    public AESException(String errorCode) {
+    public AESException(String errorCode){
         super(errorCode);
     }
 
-    public AESException(String errorCode, Throwable cause) {
+    public AESException(String errorCode, Throwable cause){
         super(errorCode, cause);
     }
 
-    public AESException(String errorCode, String errorDesc) {
+    public AESException(String errorCode, String errorDesc){
         super(errorCode + ":" + errorDesc);
     }
 
-    public AESException(String errorCode, String errorDesc, Throwable cause) {
+    public AESException(String errorCode, String errorDesc, Throwable cause){
         super(errorCode + ":" + errorDesc, cause);
     }
 
-    public AESException(Throwable cause) {
+    public AESException(Throwable cause){
         super(cause);
     }
 

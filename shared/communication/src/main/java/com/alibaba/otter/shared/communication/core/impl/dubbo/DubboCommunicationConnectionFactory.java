@@ -25,9 +25,7 @@ public class DubboCommunicationConnectionFactory implements CommunicationConnect
     private final String                       DUBBO_SERVICE_URL = "dubbo://{0}:{1}/endpoint?client=netty&codec=dubbo&serialization=java&lazy=true&iothreads=4&threads=50&connections=30&acceptEvent.timeout=50000";
 
     private DubboProtocol                      protocol          = DubboProtocol.getDubboProtocol();
-    private ProxyFactory                       proxyFactory      = ExtensionLoader.getExtensionLoader(
-                                                                                                      ProxyFactory.class).getExtension(
-                                                                                                                                       "javassist");
+    private ProxyFactory                       proxyFactory      = ExtensionLoader.getExtensionLoader(ProxyFactory.class).getExtension("javassist");
 
     private Map<String, CommunicationEndpoint> connections       = null;
 

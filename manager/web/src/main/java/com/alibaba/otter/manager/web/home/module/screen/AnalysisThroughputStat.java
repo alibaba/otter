@@ -50,7 +50,7 @@ public class AnalysisThroughputStat {
         Map<AnalysisType, ThroughputInfo> throughputInfos2 = throughputStatService.listRealtimeThroughput(condition2);
         ThroughputStat throughputStat1 = throughputStatService.findThroughputStatByPipelineId(condition11);
         ThroughputStat throughputStat2 = throughputStatService.findThroughputStatByPipelineId(condition22);
-        
+
         context.put("throughputInfos1", throughputInfos1);
         context.put("throughputInfos2", throughputInfos2);
         context.put("channel", channel);

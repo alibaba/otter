@@ -585,8 +585,8 @@ public class MessageParser {
 
         boolean isMKey = dbColumn.isPrimaryKey();
         if (isMKey != isEKey) {
-            logger.info("table [{}] column [{}] is not match , isMeky: {}, isEkey {}", new Object[] { tableName,
-                    column.getName(), isMKey, isEKey });
+            logger.info("table [{}] column [{}] is not match , isMeky: {}, isEkey {}",
+                        new Object[] { tableName, column.getName(), isMKey, isEKey });
         }
         return isMKey;
     }

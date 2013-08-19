@@ -14,7 +14,7 @@ public class FindChannelEvent extends Event {
     private Long              channelId;                             // 对应的channelId, 可能为空
     private Long              pipelineId;                            // 对应的pipelineId, 可能为空
 
-    public FindChannelEvent() {
+    public FindChannelEvent(){
         super(ConfigEventType.findChannel);
     }
 

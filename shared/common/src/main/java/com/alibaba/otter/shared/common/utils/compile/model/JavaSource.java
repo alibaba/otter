@@ -15,14 +15,11 @@ public class JavaSource {
     private String source;
 
     public JavaSource(String sourceString){
-        String className = RegexUtils.findFirst(sourceString, "public class (?s).*?{").split("extends")[0].split("implements")[0].replaceAll(
-                                                                                                                                             "public class ",
-                                                                                                                                             StringUtils.EMPTY).replace(
-                                                                                                                                                                        "{",
+        String className = RegexUtils.findFirst(sourceString, "public class (?s).*?{").split("extends")[0].split("implements")[0].replaceAll("public class ",
+                                                                                                                                             StringUtils.EMPTY).replace("{",
                                                                                                                                                                         StringUtils.EMPTY).trim();
         String packageName = RegexUtils.findFirst(sourceString, "package (?s).*?;").replaceAll("package ",
-                                                                                               StringUtils.EMPTY).replaceAll(
-                                                                                                                             ";",
+                                                                                               StringUtils.EMPTY).replaceAll(";",
                                                                                                                              StringUtils.EMPTY).trim();
         this.packageName = packageName;
         this.className = className;

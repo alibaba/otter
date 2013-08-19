@@ -18,11 +18,11 @@ import com.alibaba.otter.shared.common.utils.cmd.Exec;
  */
 public class Aria2cDownload extends AbstractCommandDownload implements Aria2cConfig, Download {
 
-    public Aria2cDownload(String cmdPath, String url, String dir) {
+    public Aria2cDownload(String cmdPath, String url, String dir){
         super(cmdPath, url, dir, null);
     }
 
-    public Aria2cDownload(String cmdPath, String url, String dir, String[] params) {
+    public Aria2cDownload(String cmdPath, String url, String dir, String[] params){
         super(cmdPath, url, dir, params);
     }
 
@@ -30,9 +30,10 @@ public class Aria2cDownload extends AbstractCommandDownload implements Aria2cCon
     protected void buildCmd(String cmdPath, String[] params) {
         // 文件存在时，续传
         boolean retry = targetFile.exists();
-        this.cmd = String.format("%s %s-o %s -d %s -l %s/aria2c.log %s %s", cmdPath, retry ? "-c "
-                : "", targetFile.getName(), this.targetDir, this.targetDir, StringUtils.join(
-                ((params == null) || (params.length == 0)) ? ARIA2C_PARAM : params, ' '), url);
+        this.cmd = String.format("%s %s-o %s -d %s -l %s/aria2c.log %s %s", cmdPath, retry ? "-c " : "",
+                                 targetFile.getName(), this.targetDir, this.targetDir,
+                                 StringUtils.join(((params == null) || (params.length == 0)) ? ARIA2C_PARAM : params,
+                                                  ' '), url);
     }
 
     protected void analyzeResult(Exec.Result result) {

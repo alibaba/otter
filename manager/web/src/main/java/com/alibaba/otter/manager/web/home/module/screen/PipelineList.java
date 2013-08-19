@@ -79,8 +79,7 @@ public class PipelineList {
             throughputStats.put(pipeline.getId(), throughputStat);
             List<AlarmRule> alarmRules = alarmRuleService.getAlarmRules(pipeline.getId());
             alarmRuleStats.put(pipeline.getId(), alarmRules);
-            PositionEventData positionData = arbitrateViewService.getCanalCursor(
-                                                                                 pipeline.getParameters().getDestinationName(),
+            PositionEventData positionData = arbitrateViewService.getCanalCursor(pipeline.getParameters().getDestinationName(),
                                                                                  pipeline.getParameters().getMainstemClientId());
             positionDatas.put(pipeline.getId(), positionData);
         }

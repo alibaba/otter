@@ -19,7 +19,7 @@ public abstract class RoundRobinLoadBalance extends AbstractLoadBalance {
     private AtomicInteger    round        = new AtomicInteger(0);
     private int              localPercent = 90;                  //local优先返回的权重，百分比
 
-    public RoundRobinLoadBalance(Long pipelineId) {
+    public RoundRobinLoadBalance(Long pipelineId){
         super(pipelineId);
     }
 

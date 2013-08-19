@@ -13,23 +13,23 @@ public class PipeException extends NestableRuntimeException {
     private String            errorCode;
     private String            errorDesc;
 
-    public PipeException(String errorCode) {
+    public PipeException(String errorCode){
         super(errorCode);
     }
 
-    public PipeException(String errorCode, Throwable cause) {
+    public PipeException(String errorCode, Throwable cause){
         super(errorCode, cause);
     }
 
-    public PipeException(String errorCode, String errorDesc) {
+    public PipeException(String errorCode, String errorDesc){
         super(errorCode + ":" + errorDesc);
     }
 
-    public PipeException(String errorCode, String errorDesc, Throwable cause) {
+    public PipeException(String errorCode, String errorDesc, Throwable cause){
         super(errorCode + ":" + errorDesc, cause);
     }
 
-    public PipeException(Throwable cause) {
+    public PipeException(Throwable cause){
         super(cause);
     }
 

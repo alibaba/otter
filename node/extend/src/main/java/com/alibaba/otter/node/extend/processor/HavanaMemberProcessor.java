@@ -46,8 +46,7 @@ public class HavanaMemberProcessor extends AbstractEventProcessor {
             } else {
                 // 继续与操作
                 if (eventData.getEventType().isDelete() // delete类型直接放过
-                    || (StringUtils.isNotEmpty(writeSource.getColumnValue()) && !StringUtils.contains(
-                                                                                                      writeSource.getColumnValue(),
+                    || (StringUtils.isNotEmpty(writeSource.getColumnValue()) && !StringUtils.contains(writeSource.getColumnValue(),
                                                                                                       "CIW"))) {
                     return doProcess(eventData);
                 }

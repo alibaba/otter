@@ -35,7 +35,7 @@ public class ResourceBundleUtil {
      * @param bundleName 资源名
      * @throws MissingResourceException 资源文件不存在,则抛出运行期异常
      */
-    public ResourceBundleUtil(String bundleName) {
+    public ResourceBundleUtil(String bundleName){
         this.bundle = ResourceBundle.getBundle(bundleName);
     }
 

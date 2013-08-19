@@ -14,8 +14,8 @@ import java.util.Properties;
  * @author xiaoqing.zhouxq 2011-12-23 上午10:03:37
  */
 public class TestMysqlUnsignedNumber {
-    
-    public static void insertNumeric() throws ClassNotFoundException, SQLException{
+
+    public static void insertNumeric() throws ClassNotFoundException, SQLException {
         Class.forName("com.mysql.jdbc.Driver");
         Properties from = new Properties();
         from.put("user", "root");
@@ -23,21 +23,21 @@ public class TestMysqlUnsignedNumber {
         from.put("characterEncoding", "utf8");
         Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/erosa", from);
         PreparedStatement pst = conn.prepareStatement("insert into unsignednumeric(id,id1,id2,id3) values (?,?,?,?)");
-        pst.setLong(1, Integer.MAX_VALUE*2L);
+        pst.setLong(1, Integer.MAX_VALUE * 2L);
         pst.setLong(2, Integer.MIN_VALUE);
         pst.setBigDecimal(3, new BigDecimal("18446744073709551614"));
-        pst.setBigDecimal(4, new BigDecimal(Long.MIN_VALUE+""));
+        pst.setBigDecimal(4, new BigDecimal(Long.MIN_VALUE + ""));
         pst.executeUpdate();
-        
+
         pst.close();
         conn.close();
     }
 
     public static void main(String[] args) throws ClassNotFoundException, SQLException, InterruptedException {
-//        insertNumeric();
-//        
-//        Thread.sleep(1000L);
-        
+        //        insertNumeric();
+        //        
+        //        Thread.sleep(1000L);
+
         Class.forName("com.mysql.jdbc.Driver");
         Properties from = new Properties();
         from.put("user", "root");
@@ -47,11 +47,11 @@ public class TestMysqlUnsignedNumber {
         PreparedStatement pst = conn.prepareStatement("select id,id1,id3 from unsignednumeric");
         ResultSet rs = pst.executeQuery();
         while (rs.next()) {
-//            try {
-//                System.out.println(rs.getInt(1));
-//            } catch (Exception e) {
-//                System.out.println(rs.getLong(1));
-//            }
+            //            try {
+            //                System.out.println(rs.getInt(1));
+            //            } catch (Exception e) {
+            //                System.out.println(rs.getLong(1));
+            //            }
             System.out.println(rs.getLong(1));
             System.out.println(rs.getLong(2));
             System.out.println(rs.getBigDecimal(3));

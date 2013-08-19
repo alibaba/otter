@@ -13,23 +13,23 @@ public class LoadException extends NestableRuntimeException {
     private String            errorCode;
     private String            errorDesc;
 
-    public LoadException(String errorCode) {
+    public LoadException(String errorCode){
         super(errorCode);
     }
 
-    public LoadException(String errorCode, Throwable cause) {
+    public LoadException(String errorCode, Throwable cause){
         super(errorCode, cause);
     }
 
-    public LoadException(String errorCode, String errorDesc) {
+    public LoadException(String errorCode, String errorDesc){
         super(errorCode + ":" + errorDesc);
     }
 
-    public LoadException(String errorCode, String errorDesc, Throwable cause) {
+    public LoadException(String errorCode, String errorDesc, Throwable cause){
         super(errorCode + ":" + errorDesc, cause);
     }
 
-    public LoadException(Throwable cause) {
+    public LoadException(Throwable cause){
         super(cause);
     }
 

@@ -12,23 +12,23 @@ public class ArchiveException extends NestableRuntimeException {
     private String            errorCode;
     private String            errorDesc;
 
-    public ArchiveException(String errorCode) {
+    public ArchiveException(String errorCode){
         super(errorCode);
     }
 
-    public ArchiveException(String errorCode, Throwable cause) {
+    public ArchiveException(String errorCode, Throwable cause){
         super(errorCode, cause);
     }
 
-    public ArchiveException(String errorCode, String errorDesc) {
+    public ArchiveException(String errorCode, String errorDesc){
         super(errorCode + ":" + errorDesc);
     }
 
-    public ArchiveException(String errorCode, String errorDesc, Throwable cause) {
+    public ArchiveException(String errorCode, String errorDesc, Throwable cause){
         super(errorCode + ":" + errorDesc, cause);
     }
 
-    public ArchiveException(Throwable cause) {
+    public ArchiveException(Throwable cause){
         super(cause);
     }
 

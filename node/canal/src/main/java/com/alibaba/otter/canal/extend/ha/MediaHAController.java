@@ -58,15 +58,13 @@ public class MediaHAController extends AbstractCanalLifeCycle implements CanalHA
         DatasourceInfo fetched = this.supplier.fetchMaster();
         AuthenticationInfo masterFetched = AuthenticationInfoUtils.createFrom(fetched);
 
-        log.info(String.format("medialHAController started for  goup:[%s], and first auth info is : [%s]",
-            this.group,
-            masterFetched));
+        log.info(String.format("medialHAController started for  goup:[%s], and first auth info is : [%s]", this.group,
+                               masterFetched));
 
         this.availableAuthenticationInfo = customInfoIfNecessay(masterFetched);
 
-        log.info(String.format("medialHAController customed for goup:[%s], and first auth info is : [%s]",
-            this.group,
-            this.availableAuthenticationInfo));
+        log.info(String.format("medialHAController customed for goup:[%s], and first auth info is : [%s]", this.group,
+                               this.availableAuthenticationInfo));
 
         this.supplier.addSwtichCallback(new DatasourceChangeCallback() {
 
@@ -81,7 +79,7 @@ public class MediaHAController extends AbstractCanalLifeCycle implements CanalHA
     private void validate() {
         if (StringUtils.isEmpty(this.group)) {
             throw new IllegalStateException(String.format("app or group is empty, app is [%s] , group is [%s]",
-                this.group));
+                                                          this.group));
         }
     }
 
@@ -92,14 +90,12 @@ public class MediaHAController extends AbstractCanalLifeCycle implements CanalHA
 
     private void switchEventSource(AuthenticationInfo newMaster) {
         log.warn(String.format("MediaHAController received a datasource swith from [%s] to [%s]",
-            availableAuthenticationInfo,
-            newMaster));
+                               availableAuthenticationInfo, newMaster));
 
         customInfoIfNecessay(newMaster);
 
         log.warn(String.format("MediaHAController customed a datasource swith from [%s] to [%s]",
-            availableAuthenticationInfo,
-            newMaster));
+                               availableAuthenticationInfo, newMaster));
 
         availableAuthenticationInfo = newMaster;
         this.canalHASwitchable.doSwitch(newMaster);

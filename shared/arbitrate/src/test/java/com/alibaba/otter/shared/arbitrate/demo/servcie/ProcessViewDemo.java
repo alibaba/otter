@@ -67,8 +67,7 @@ public class ProcessViewDemo implements PipelineLifeCycle {
 
                     List<ProcessStat> processStats = arbitrateViewService.listProcesses(100L, pipelineId);
                     StringBuilder builder = new StringBuilder();
-                    builder.append("=============================== time : " + printDate(new Date().getTime())).append(
-                                                                                                                       "\n");
+                    builder.append("=============================== time : " + printDate(new Date().getTime())).append("\n");
 
                     builder.append("pipeline : ").append(pipelineId).append("\n");
                     for (ProcessStat processStat : processStats) {
@@ -76,8 +75,7 @@ public class ProcessViewDemo implements PipelineLifeCycle {
 
                         for (StageStat stageStat : processStat.getStageStats()) {
                             builder.append("\t\t ").append(stageStat.getStage().name());
-                            builder.append("    ====> startTime [").append(printDate(stageStat.getStartTime())).append(
-                                                                                                                       " ]");
+                            builder.append("    ====> startTime [").append(printDate(stageStat.getStartTime())).append(" ]");
                             if (stageStat.getEndTime() != null) {
                                 builder.append(" endTime [").append(printDate(stageStat.getEndTime())).append(" ]");
                             }

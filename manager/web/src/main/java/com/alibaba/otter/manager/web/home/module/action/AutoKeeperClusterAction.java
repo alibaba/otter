@@ -25,8 +25,7 @@ public class AutoKeeperClusterAction extends AbstractAction {
     @Resource(name = "autoKeeperCollector")
     private AutoKeeperCollector      autoKeeperCollector;
 
-    public void doAdd(
-                      @FormGroup("autokeeperClusterInfo") Group autokeeperClusterInfo,
+    public void doAdd(@FormGroup("autokeeperClusterInfo") Group autokeeperClusterInfo,
                       @FormField(name = "formAutokeeperClusterError", group = "autokeeperClusterInfo") CustomErrors err,
                       Navigator nav) throws Exception {
         AutoKeeperCluster autoKeeperCluster = new AutoKeeperCluster();
@@ -45,8 +44,7 @@ public class AutoKeeperClusterAction extends AbstractAction {
         nav.redirectTo(WebConstant.AUTO_KEEPER_CLUSTERS_LINK);
     }
 
-    public void doEdit(
-                       @FormGroup("autokeeperClusterInfo") Group autokeeperClusterInfo,
+    public void doEdit(@FormGroup("autokeeperClusterInfo") Group autokeeperClusterInfo,
                        @FormField(name = "formAutokeeperClusterError", group = "autokeeperClusterInfo") CustomErrors err,
                        Navigator nav) throws Exception {
         AutoKeeperCluster autoKeeperCluster = new AutoKeeperCluster();

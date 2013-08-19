@@ -12,23 +12,23 @@ public class CompressException extends NestableRuntimeException {
     private String            errorCode;
     private String            errorDesc;
 
-    public CompressException(String errorCode) {
+    public CompressException(String errorCode){
         super(errorCode);
     }
 
-    public CompressException(String errorCode, Throwable cause) {
+    public CompressException(String errorCode, Throwable cause){
         super(errorCode, cause);
     }
 
-    public CompressException(String errorCode, String errorDesc) {
+    public CompressException(String errorCode, String errorDesc){
         super(errorCode + ":" + errorDesc);
     }
 
-    public CompressException(String errorCode, String errorDesc, Throwable cause) {
+    public CompressException(String errorCode, String errorDesc, Throwable cause){
         super(errorCode + ":" + errorDesc, cause);
     }
 
-    public CompressException(Throwable cause) {
+    public CompressException(Throwable cause){
         super(cause);
     }
 

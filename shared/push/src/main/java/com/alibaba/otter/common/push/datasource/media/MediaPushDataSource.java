@@ -81,7 +81,7 @@ public class MediaPushDataSource implements DataSource {
 
                 public void masterChanged(DatasourceInfo newMaster) {
                     String newUrl = buildMysqlUrl(newMaster.getAddress().getAddress().getHostAddress(),
-                        newMaster.getAddress().getPort());
+                                                  newMaster.getAddress().getPort());
                     try {
                         ((BasicDataSource) delegate).close();
                         DataSource newDelegate = doCreateDataSource(newUrl);
@@ -96,7 +96,7 @@ public class MediaPushDataSource implements DataSource {
 
         DatasourceInfo datasourceInfo = dataSourceSupplier.fetchMaster();
         String url = buildMysqlUrl(datasourceInfo.getAddress().getAddress().getHostAddress(),
-            datasourceInfo.getAddress().getPort());
+                                   datasourceInfo.getAddress().getPort());
 
         delegate = doCreateDataSource(url);
     }

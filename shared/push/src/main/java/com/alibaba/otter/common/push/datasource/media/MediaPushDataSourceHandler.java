@@ -30,7 +30,7 @@ public class MediaPushDataSourceHandler implements DataSourceHanlder {
     private static final Logger                       log     = LoggerFactory.getLogger(MediaPushDataSourceHandler.class);
 
     private static final Pattern                      PATTERN = Pattern.compile("jdbc:mysql://groupKey=([^&/]+).*",
-                                                                  Pattern.CASE_INSENSITIVE);
+                                                                                Pattern.CASE_INSENSITIVE);
 
     /**
      * 一个pipeline下面有一组DataSource.<br>
@@ -68,12 +68,9 @@ public class MediaPushDataSourceHandler implements DataSourceHanlder {
                 return new MapMaker().makeComputingMap(new Function<DbMediaSource, DataSource>() {
 
                     public DataSource apply(DbMediaSource dbMediaSource) {
-                        return createDataSource(dbMediaSource.getUrl(),
-                            dbMediaSource.getUsername(),
-                            dbMediaSource.getPassword(),
-                            dbMediaSource.getDriver(),
-                            dbMediaSource.getType(),
-                            dbMediaSource.getEncode());
+                        return createDataSource(dbMediaSource.getUrl(), dbMediaSource.getUsername(),
+                                                dbMediaSource.getPassword(), dbMediaSource.getDriver(),
+                                                dbMediaSource.getType(), dbMediaSource.getEncode());
                     }
 
                 });
@@ -109,12 +106,8 @@ public class MediaPushDataSourceHandler implements DataSourceHanlder {
         }
 
         String groupKey = media.getGroupKey();
-        MediaPushDataSource mediaDataSource = new MediaPushDataSource(url,
-            userName,
-            password,
-            driverClassName,
-            dataMediaType,
-            encoding);
+        MediaPushDataSource mediaDataSource = new MediaPushDataSource(url, userName, password, driverClassName,
+                                                                      dataMediaType, encoding);
         mediaDataSource.setDbGroupKey(groupKey);
         mediaDataSource.init();
         return mediaDataSource;

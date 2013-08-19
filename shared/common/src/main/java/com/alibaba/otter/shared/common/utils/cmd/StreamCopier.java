@@ -13,8 +13,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 
 /**
- * A simple thread that copies one stream to another. Useful for copying a
- * process's output/error streams to this process's output/error streams.
+ * A simple thread that copies one stream to another. Useful for copying a process's output/error streams to this
+ * process's output/error streams.
  */
 public class StreamCopier extends Thread {
 
@@ -22,11 +22,11 @@ public class StreamCopier extends Thread {
     protected final OutputStream   out;
     protected final BufferedReader reader;
 
-    public StreamCopier(InputStream stream, OutputStream out) {
+    public StreamCopier(InputStream stream, OutputStream out){
         this(stream, out, null);
     }
 
-    public StreamCopier(InputStream stream, OutputStream out, String identifier) {
+    public StreamCopier(InputStream stream, OutputStream out, String identifier){
         if ((stream == null) || (out == null)) {
             throw new AssertionError("null streams not allowed");
         }

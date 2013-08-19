@@ -92,9 +92,8 @@ public class OtterTransformerFactory {
                     continue;
                 }
 
-                Object item = fileDataTransformer.transform(fileData, new OtterTransformerContext(identity,
-                    pair,
-                    pipeline));
+                Object item = fileDataTransformer.transform(fileData, new OtterTransformerContext(identity, pair,
+                                                                                                  pipeline));
                 if (item == null) {
                     continue;
                 }

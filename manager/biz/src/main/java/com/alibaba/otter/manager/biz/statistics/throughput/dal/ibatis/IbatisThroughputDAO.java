@@ -68,8 +68,7 @@ public class IbatisThroughputDAO extends SqlMapClientDaoSupport implements Throu
         Map<String, Object> param = new HashMap<String, Object>();
         param.put("pipelineIds", pipelineIds);
         param.put("minute", minute);
-        return (List<ThroughputStatDO>) getSqlMapClientTemplate().queryForList(
-                                                                               "listRealtimeThroughputStatByPipelineIds",
+        return (List<ThroughputStatDO>) getSqlMapClientTemplate().queryForList("listRealtimeThroughputStatByPipelineIds",
                                                                                param);
     }
 }

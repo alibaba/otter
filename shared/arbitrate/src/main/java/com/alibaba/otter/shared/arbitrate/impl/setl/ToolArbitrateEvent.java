@@ -132,7 +132,7 @@ public class ToolArbitrateEvent implements ArbitrateEvent {
     }
 
     /**
-     *释放对应的pipeline资源，是个同步调用
+     * 释放对应的pipeline资源，是个同步调用
      */
     public void release(Long pipelineId) {
         ArbitrateFactory.destory(pipelineId);

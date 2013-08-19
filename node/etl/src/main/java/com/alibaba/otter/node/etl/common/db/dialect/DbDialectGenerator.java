@@ -28,18 +28,12 @@ public class DbDialectGenerator {
 
         if (StringUtils.startsWithIgnoreCase(databaseName, ORACLE)) { // for
                                                                       // oracle
-            dialect = new OracleDialect(jdbcTemplate,
-                oracleLobHandler,
-                databaseName,
-                databaseMajorVersion,
-                databaseMinorVersion);
+            dialect = new OracleDialect(jdbcTemplate, oracleLobHandler, databaseName, databaseMajorVersion,
+                                        databaseMinorVersion);
         } else if (StringUtils.startsWithIgnoreCase(databaseName, MYSQL)) { // for
                                                                             // mysql
-            dialect = new MysqlDialect(jdbcTemplate,
-                defaultLobHandler,
-                databaseName,
-                databaseMajorVersion,
-                databaseMinorVersion);
+            dialect = new MysqlDialect(jdbcTemplate, defaultLobHandler, databaseName, databaseMajorVersion,
+                                       databaseMinorVersion);
         } else if (StringUtils.startsWithIgnoreCase(databaseName, TDDL_GROUP)) { // for
                                                                                  // tddl
                                                                                  // group

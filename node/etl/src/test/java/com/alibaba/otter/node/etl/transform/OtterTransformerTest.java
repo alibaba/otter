@@ -28,6 +28,7 @@ import com.alibaba.otter.shared.etl.model.FileBatch;
 import com.alibaba.otter.shared.etl.model.FileData;
 import com.alibaba.otter.shared.etl.model.Identity;
 import com.alibaba.otter.shared.etl.model.RowBatch;
+
 class OtterTransformerTest extends BaseDbTest {
 
     @SpringBeanFrom

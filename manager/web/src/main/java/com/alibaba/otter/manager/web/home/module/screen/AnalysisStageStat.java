@@ -110,8 +110,7 @@ public class AnalysisStageStat {
         // 获取下mainstem状态信息
         MainStemEventData mainstemData = arbitrateViewService.mainstemData(pipeline.getChannelId(), pipelineId);
 
-        PositionEventData positionData = arbitrateViewService.getCanalCursor(
-                                                                             pipeline.getParameters().getDestinationName(),
+        PositionEventData positionData = arbitrateViewService.getCanalCursor(pipeline.getParameters().getDestinationName(),
                                                                              pipeline.getParameters().getMainstemClientId());
 
         context.put("pipeline", pipeline);

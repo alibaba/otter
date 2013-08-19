@@ -74,10 +74,8 @@ public class DbDialectIntegration extends BaseDbTest {
                 affect = (Integer) jdbcTemplate.execute(sql, new PreparedStatementCallback() {
 
                     public Object doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {
-                        doPreparedStatement(ps,
-                            dbDialect,
-                            toTypes(columnTypes, pkColumnTypes),
-                            toValues(columnValues, pkColumnValues));
+                        doPreparedStatement(ps, dbDialect, toTypes(columnTypes, pkColumnTypes),
+                                            toValues(columnValues, pkColumnValues));
                         return ps.executeUpdate();
                     }
 
@@ -118,10 +116,8 @@ public class DbDialectIntegration extends BaseDbTest {
             int paramIndex = i + 1;
             String sqlValue = columnValues[i];
             int sqlType = columnTypes[i];
-            Object param = SqlUtils.stringToSqlValue(sqlValue,
-                sqlType,
-                SqlUtils.isTextType(sqlType),
-                dbDialect.isEmptyStringNulled());
+            Object param = SqlUtils.stringToSqlValue(sqlValue, sqlType, SqlUtils.isTextType(sqlType),
+                                                     dbDialect.isEmptyStringNulled());
             switch (sqlType) {
                 case Types.CLOB:
                     if (lobCreator == null) {

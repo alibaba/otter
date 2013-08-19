@@ -16,7 +16,7 @@ public class EncryptedData {
     private final byte[] data;
     private final String key;
 
-    public EncryptedData(byte[] data, String key, String crc) {
+    public EncryptedData(byte[] data, String key, String crc){
         this.data = data;
         this.key = key;
         this.crc = crc;

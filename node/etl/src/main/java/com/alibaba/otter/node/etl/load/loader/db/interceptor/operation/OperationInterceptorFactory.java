@@ -47,7 +47,7 @@ public class OperationInterceptorFactory extends AbstractLoadInterceptor<DbLoadC
         }
         DataMedia dataMedia = ConfigHelper.findDataMedia(context.getPipeline(), currentData.get(0).getTableId());
         DbDialect dbDialect = dbDialectFactory.getDbDialect(context.getIdentity().getPipelineId(),
-            (DbMediaSource) dataMedia.getSource());
+                                                            (DbMediaSource) dataMedia.getSource());
 
         if (dbDialect instanceof MysqlDialect) {
             return mysqlInterceptors;

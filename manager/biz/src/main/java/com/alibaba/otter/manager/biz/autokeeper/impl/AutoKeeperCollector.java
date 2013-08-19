@@ -89,54 +89,33 @@ public class AutoKeeperCollector implements InitializingBean {
             AutoKeeperConnectionStat autoKeeperConnectionStat = new AutoKeeperConnectionStat();
             autoKeeperConnectionStat.setOriginalContent(line);
             String clientIp = StringUtils.trimToEmpty(line.split(":")[0].replace("/", ""));
-            String sessionId = StringUtils.trimToEmpty(RegexUtils.findFirst(line.split(":")[1], "sid=(?s).*?[,)]")).replace(
-                                                                                                                            "sid=",
-                                                                                                                            StringUtils.EMPTY).replace(
-                                                                                                                                                       COMMA,
-                                                                                                                                                       StringUtils.EMPTY).replace(
-                                                                                                                                                                                  BRACKETS,
+            String sessionId = StringUtils.trimToEmpty(RegexUtils.findFirst(line.split(":")[1], "sid=(?s).*?[,)]")).replace("sid=",
+                                                                                                                            StringUtils.EMPTY).replace(COMMA,
+                                                                                                                                                       StringUtils.EMPTY).replace(BRACKETS,
                                                                                                                                                                                   StringUtils.EMPTY);
-            String queued = StringUtils.trimToEmpty(RegexUtils.findFirst(line.split(":")[1], "queued=(?s).*?[,)]")).replace(
-                                                                                                                            "queued=",
-                                                                                                                            StringUtils.EMPTY).replace(
-                                                                                                                                                       COMMA,
-                                                                                                                                                       StringUtils.EMPTY).replace(
-                                                                                                                                                                                  BRACKETS,
+            String queued = StringUtils.trimToEmpty(RegexUtils.findFirst(line.split(":")[1], "queued=(?s).*?[,)]")).replace("queued=",
+                                                                                                                            StringUtils.EMPTY).replace(COMMA,
+                                                                                                                                                       StringUtils.EMPTY).replace(BRACKETS,
                                                                                                                                                                                   StringUtils.EMPTY);
-            String receive = StringUtils.trimToEmpty(RegexUtils.findFirst(line.split(":")[1], "recved=(?s).*?[,)]")).replace(
-                                                                                                                             "recved=",
-                                                                                                                             StringUtils.EMPTY).replace(
-                                                                                                                                                        COMMA,
-                                                                                                                                                        StringUtils.EMPTY).replace(
-                                                                                                                                                                                   BRACKETS,
+            String receive = StringUtils.trimToEmpty(RegexUtils.findFirst(line.split(":")[1], "recved=(?s).*?[,)]")).replace("recved=",
+                                                                                                                             StringUtils.EMPTY).replace(COMMA,
+                                                                                                                                                        StringUtils.EMPTY).replace(BRACKETS,
                                                                                                                                                                                    StringUtils.EMPTY);
-            String sent = StringUtils.trimToEmpty(RegexUtils.findFirst(line.split(":")[1], "sent=(?s).*?[,)]")).replace(
-                                                                                                                        "sent=",
-                                                                                                                        StringUtils.EMPTY).replace(
-                                                                                                                                                   COMMA,
-                                                                                                                                                   StringUtils.EMPTY).replace(
-                                                                                                                                                                              BRACKETS,
+            String sent = StringUtils.trimToEmpty(RegexUtils.findFirst(line.split(":")[1], "sent=(?s).*?[,)]")).replace("sent=",
+                                                                                                                        StringUtils.EMPTY).replace(COMMA,
+                                                                                                                                                   StringUtils.EMPTY).replace(BRACKETS,
                                                                                                                                                                               StringUtils.EMPTY);
-            String minlat = StringUtils.trimToEmpty(RegexUtils.findFirst(line.split(":")[1], "minlat=(?s).*?[,)]")).replace(
-                                                                                                                            "minlat=",
-                                                                                                                            StringUtils.EMPTY).replace(
-                                                                                                                                                       COMMA,
-                                                                                                                                                       StringUtils.EMPTY).replace(
-                                                                                                                                                                                  BRACKETS,
+            String minlat = StringUtils.trimToEmpty(RegexUtils.findFirst(line.split(":")[1], "minlat=(?s).*?[,)]")).replace("minlat=",
+                                                                                                                            StringUtils.EMPTY).replace(COMMA,
+                                                                                                                                                       StringUtils.EMPTY).replace(BRACKETS,
                                                                                                                                                                                   StringUtils.EMPTY);
-            String avglat = StringUtils.trimToEmpty(RegexUtils.findFirst(line.split(":")[1], "avglat=(?s).*?[,)]")).replace(
-                                                                                                                            "avglat=",
-                                                                                                                            StringUtils.EMPTY).replace(
-                                                                                                                                                       COMMA,
-                                                                                                                                                       StringUtils.EMPTY).replace(
-                                                                                                                                                                                  BRACKETS,
+            String avglat = StringUtils.trimToEmpty(RegexUtils.findFirst(line.split(":")[1], "avglat=(?s).*?[,)]")).replace("avglat=",
+                                                                                                                            StringUtils.EMPTY).replace(COMMA,
+                                                                                                                                                       StringUtils.EMPTY).replace(BRACKETS,
                                                                                                                                                                                   StringUtils.EMPTY);
-            String maxlat = StringUtils.trimToEmpty(RegexUtils.findFirst(line.split(":")[1], "maxlat=(?s).*?[,)]")).replace(
-                                                                                                                            "maxlat=",
-                                                                                                                            StringUtils.EMPTY).replace(
-                                                                                                                                                       COMMA,
-                                                                                                                                                       StringUtils.EMPTY).replace(
-                                                                                                                                                                                  BRACKETS,
+            String maxlat = StringUtils.trimToEmpty(RegexUtils.findFirst(line.split(":")[1], "maxlat=(?s).*?[,)]")).replace("maxlat=",
+                                                                                                                            StringUtils.EMPTY).replace(COMMA,
+                                                                                                                                                       StringUtils.EMPTY).replace(BRACKETS,
                                                                                                                                                                                   StringUtils.EMPTY);
             autoKeeperConnectionStat.setServerAddress(ip);
             autoKeeperConnectionStat.setClientAddress(clientIp);
@@ -188,8 +167,7 @@ public class AutoKeeperCollector implements InitializingBean {
             } else if (line.contains(MODE_OBSERVER)) {
                 summary.setQuorumType(AutoKeeperQuorumType.OBSERVER);
             } else if (line.contains(STRING_LATENCY)) {
-                List<String> latency = Arrays.asList(StringUtils.trimToEmpty(
-                                                                             line.replace(STRING_LATENCY,
+                List<String> latency = Arrays.asList(StringUtils.trimToEmpty(line.replace(STRING_LATENCY,
                                                                                           StringUtils.EMPTY)).split("/"));
                 summary.setMinLatency(Long.parseLong(latency.get(0)));
                 summary.setAvgLatency(Long.parseLong(latency.get(1)));

@@ -95,7 +95,7 @@ public class AttachmentHttpPipe extends AbstractHttpPipe<Object, HttpPipeKey> im
                 } finally {
                     if (miss && logger.isInfoEnabled()) {
                         MDC.put(OtterConstants.splitPipelineLoadLogFileKey,
-                            String.valueOf(fileBatch.getIdentity().getPipelineId()));
+                                String.valueOf(fileBatch.getIdentity().getPipelineId()));
                         logger.info(FileloadDumper.dumpMissFileDatas(fileBatch.getIdentity(), fileData));
                     }
                 }
@@ -149,8 +149,7 @@ public class AttachmentHttpPipe extends AbstractHttpPipe<Object, HttpPipeKey> im
     private File unpackFile(HttpPipeKey key) {
         Pipeline pipeline = configClientService.findPipeline(key.getIdentity().getPipelineId());
         DataRetriever dataRetriever = dataRetrieverFactory.createRetriever(pipeline.getParameters().getRetriever(),
-            key.getUrl(),
-            downloadDir);
+                                                                           key.getUrl(), downloadDir);
         File archiveFile = null;
         try {
             dataRetriever.connect();
@@ -205,7 +204,8 @@ public class AttachmentHttpPipe extends AbstractHttpPipe<Object, HttpPipeKey> im
 
         // 去除末尾的.gzip后缀，做为解压目录
         String dir = StringUtils.removeEnd(archiveFile.getPath(),
-            FilenameUtils.EXTENSION_SEPARATOR_STR + FilenameUtils.getExtension(archiveFile.getPath()));
+                                           FilenameUtils.EXTENSION_SEPARATOR_STR
+                                                   + FilenameUtils.getExtension(archiveFile.getPath()));
         File unpackDir = new File(dir);
         // 开始解压
         getArchiveBean().unpack(archiveFile, unpackDir);
@@ -216,12 +216,8 @@ public class AttachmentHttpPipe extends AbstractHttpPipe<Object, HttpPipeKey> im
     private String buildFileName(Identity identity, String prefix) {
         Date now = new Date();
         String time = new SimpleDateFormat(DATE_FORMAT).format(now);
-        return MessageFormat.format("{0}-{1}-{2}-{3}-{4}.gzip",
-            prefix,
-            time,
-            String.valueOf(identity.getChannelId()),
-            String.valueOf(identity.getPipelineId()),
-            String.valueOf(identity.getProcessId()));
+        return MessageFormat.format("{0}-{1}-{2}-{3}-{4}.gzip", prefix, time, String.valueOf(identity.getChannelId()),
+                                    String.valueOf(identity.getPipelineId()), String.valueOf(identity.getProcessId()));
     }
 
     private ArchiveBean getArchiveBean() {

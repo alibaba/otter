@@ -12,7 +12,7 @@ public class NotifyChannelEvent extends Event {
 
     private static final long serialVersionUID = -8472088519060045661L;
 
-    public NotifyChannelEvent() {
+    public NotifyChannelEvent(){
         super(ConfigEventType.notifyChannel);
     }
 

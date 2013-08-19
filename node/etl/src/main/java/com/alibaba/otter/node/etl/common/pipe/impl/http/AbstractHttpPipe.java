@@ -31,8 +31,7 @@ public abstract class AbstractHttpPipe<T, KEY extends HttpPipeKey> implements Pi
 
     protected static final Long               DEFAULT_PERIOD = 60 * 1000L;
     protected static final String             DATE_FORMAT    = "yyyy-MM-dd-HH-mm-ss";
-    protected static ScheduledExecutorService schedulor      = Executors.newScheduledThreadPool(
-                                                                                                1,
+    protected static ScheduledExecutorService schedulor      = Executors.newScheduledThreadPool(1,
                                                                                                 new NamedThreadFactory(
                                                                                                                        "HttpPipe-Cleaner")); ;
     protected Logger                          logger         = LoggerFactory.getLogger(this.getClass());

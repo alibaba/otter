@@ -7,6 +7,7 @@ import java.util.Date;
  * @author simon
  */
 public class DataMediaDO implements Serializable {
+
     private static final long serialVersionUID = 1830886218829190716L;
 
     private Long              id;

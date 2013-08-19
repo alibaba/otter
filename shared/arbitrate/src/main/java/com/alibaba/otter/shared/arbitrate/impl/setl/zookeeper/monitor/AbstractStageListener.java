@@ -24,7 +24,7 @@ import com.alibaba.otter.shared.common.utils.zookeeper.ZkClientx;
 public abstract class AbstractStageListener extends ArbitrateLifeCycle implements StageListener {
 
     protected static final Logger logger    = LoggerFactory.getLogger(AbstractStageListener.class);
-    protected ZkClientx          zookeeper = ZooKeeperClient.getInstance();
+    protected ZkClientx           zookeeper = ZooKeeperClient.getInstance();
     protected ReplyProcessQueue   replyProcessIds;                                                 // 有响应的processId列表
     protected ReentrantLock       lock      = new ReentrantLock();
     protected StageMonitor        stageMonitor;

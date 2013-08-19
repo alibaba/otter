@@ -97,8 +97,8 @@ public class ConfigRemoteServiceImpl implements ConfigRemoteService {
             try {
                 String[] addrs = addrsList.toArray(new String[addrsList.size()]);
                 List<Boolean> result = (List<Boolean>) communicationClient.call(addrs, event); // 推送配置
-                logger.info("## notifyChannel to [{}] channel[{}] result[{}]", new Object[] {
-                        ArrayUtils.toString(addrs), channel.toString(), result });
+                logger.info("## notifyChannel to [{}] channel[{}] result[{}]",
+                            new Object[] { ArrayUtils.toString(addrs), channel.toString(), result });
 
                 boolean flag = true;
                 for (Boolean f : result) {

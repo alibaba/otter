@@ -52,10 +52,10 @@ public class AnalysisTopStat {
             top.setStatTime(Long.valueOf(minute));
             pipelineIds.add(top.getPipelineId());
         }
-        
+
         Map<Long, ChannelStatus> channelStatuses = new HashMap<Long, ChannelStatus>(tops.size(), 1f);
         Map<Long, MainStemEventData> mainstemStatuses = new HashMap<Long, MainStemEventData>(tops.size(), 1f);
-        
+
         if (pipelineIds.size() > 0) {
             List<ThroughputStat> stats = throughputStatService.listRealtimeThroughputByPipelineIds(pipelineIds, minute);
             for (ThroughputStat stat : stats) {
@@ -72,7 +72,6 @@ public class AnalysisTopStat {
                 }
             }
 
-            
             for (TopDelayStat top : tops) {
                 if (!channelStatuses.containsKey(top.getChannelId())) {
                     channelStatuses.put(top.getChannelId(),

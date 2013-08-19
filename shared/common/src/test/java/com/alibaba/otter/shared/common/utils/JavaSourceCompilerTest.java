@@ -17,8 +17,7 @@ public class JavaSourceCompilerTest extends BaseOtterTest {
 
         String javasource = null;
         try {
-            List<String> lines = IOUtils.readLines(Thread.currentThread().getContextClassLoader().getResourceAsStream(
-                                                                                                                      "compiler.txt"));
+            List<String> lines = IOUtils.readLines(Thread.currentThread().getContextClassLoader().getResourceAsStream("compiler.txt"));
             javasource = StringUtils.join(lines, "\n");
         } catch (IOException e1) {
             e1.printStackTrace();

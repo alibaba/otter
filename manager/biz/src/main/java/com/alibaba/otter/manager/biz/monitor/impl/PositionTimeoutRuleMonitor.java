@@ -62,8 +62,8 @@ public class PositionTimeoutRuleMonitor extends AbstractRuleMonitor {
         }
 
         if (flag) {
-            logRecordAlarm(pipelineId, MonitorName.POSITIONTIMEOUT, String.format(TIME_OUT_MESSAGE, pipelineId,
-                                                                                  (elapsed / 1000)));
+            logRecordAlarm(pipelineId, MonitorName.POSITIONTIMEOUT,
+                           String.format(TIME_OUT_MESSAGE, pipelineId, (elapsed / 1000)));
         }
     }
 

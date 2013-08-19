@@ -1,6 +1,5 @@
 package com.alibaba.otter.shared.arbitrate.impl.zookeeper;
 
-
 /**
  * zookeeper 出现session expired异常后的通知，允许业务实现自处理，比如重建ephemeral对象
  * 

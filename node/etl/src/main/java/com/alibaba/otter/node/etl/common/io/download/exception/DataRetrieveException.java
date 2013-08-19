@@ -13,23 +13,23 @@ public class DataRetrieveException extends NestableRuntimeException {
     private String            errorCode;
     private String            errorDesc;
 
-    public DataRetrieveException(String errorCode) {
+    public DataRetrieveException(String errorCode){
         super(errorCode);
     }
 
-    public DataRetrieveException(String errorCode, Throwable cause) {
+    public DataRetrieveException(String errorCode, Throwable cause){
         super(errorCode, cause);
     }
 
-    public DataRetrieveException(String errorCode, String errorDesc) {
+    public DataRetrieveException(String errorCode, String errorDesc){
         super(errorCode + ":" + errorDesc);
     }
 
-    public DataRetrieveException(String errorCode, String errorDesc, Throwable cause) {
+    public DataRetrieveException(String errorCode, String errorDesc, Throwable cause){
         super(errorCode + ":" + errorDesc, cause);
     }
 
-    public DataRetrieveException(Throwable cause) {
+    public DataRetrieveException(Throwable cause){
         super(cause);
     }
 

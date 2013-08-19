@@ -48,8 +48,8 @@ public class OtterDownStreamHandlerIntergration extends BaseOtterTest {
         handler.setDetectingIntervalInSeconds(1);
 
         ((AutowireCapableBeanFactory) TestedObject.getSpringBeanFactory()).autowireBeanProperties(handler,
-            AutowireCapableBeanFactory.AUTOWIRE_BY_NAME,
-            false);
+                                                                                                  AutowireCapableBeanFactory.AUTOWIRE_BY_NAME,
+                                                                                                  false);
 
         final CountDownLatch count = new CountDownLatch(1);
         ExecutorService executor = Executors.newFixedThreadPool(1);

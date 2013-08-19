@@ -55,8 +55,7 @@ public class RemedyIndexEventData extends EventData {
 
     public static String formatNodeName(RemedyIndexEventData eventData) {
         StringBuilder builder = new StringBuilder();
-        builder.append(eventData.getProcessId()).append(SPLIT).append(eventData.getStartTime()).append(SPLIT).append(
-                                                                                                                     eventData.getEndTime());
+        builder.append(eventData.getProcessId()).append(SPLIT).append(eventData.getStartTime()).append(SPLIT).append(eventData.getEndTime());
         return builder.toString();
     }
 

@@ -56,8 +56,8 @@ public class PipelineTimeoutRuleMonitor extends AbstractRuleMonitor {
         }
 
         if (flag) {
-            logRecordAlarm(pipelineId, MonitorName.PIPELINETIMEOUT, String.format(TIME_OUT_MESSAGE, pipelineId,
-                                                                                  (elapsed / 1000)));
+            logRecordAlarm(pipelineId, MonitorName.PIPELINETIMEOUT,
+                           String.format(TIME_OUT_MESSAGE, pipelineId, (elapsed / 1000)));
         }
     }
 

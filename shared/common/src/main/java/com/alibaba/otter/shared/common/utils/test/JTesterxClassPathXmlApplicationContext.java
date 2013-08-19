@@ -62,8 +62,7 @@ public class JTesterxClassPathXmlApplicationContext extends org.jtester.module.s
 
     /**
      * 自定义spring ReaderEventListener<br>
-     * 参见{@link DefaultBeanDefinitionDocumentReader} 和
-     * {@link BeanDefinitionParserDelegate}的initDefaults方法
+     * 参见{@link DefaultBeanDefinitionDocumentReader} 和 {@link BeanDefinitionParserDelegate}的initDefaults方法
      * 
      * <pre>
      * 复写defaultsRegistered方法，在跑单元测试中，强制设置default-lazy-init=true属性
@@ -82,10 +81,8 @@ public class JTesterxClassPathXmlApplicationContext extends org.jtester.module.s
 
     @Override
     public JTesterSpringContext createApplicationContext(List<String> locations, boolean ignoreNoSuchBean) {
-        JTesterSpringContext c = new JTesterxSpringContext(locations.toArray(new String[0]),
-            false,
-            null,
-            ignoreNoSuchBean);
+        JTesterSpringContext c = new JTesterxSpringContext(locations.toArray(new String[0]), false, null,
+                                                           ignoreNoSuchBean);
 
         TracerBeanManager.clear();
         return c;

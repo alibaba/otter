@@ -159,8 +159,7 @@ public class ZooKeeperx implements IZkConnection {
                     // 强制获取zk中的地址信息
                     ClientCnxn cnxn = (ClientCnxn) ReflectionUtils.getField(clientCnxnField, zk);
                     HostProvider hostProvider = (HostProvider) ReflectionUtils.getField(hostProviderField, cnxn);
-                    List<InetSocketAddress> serverAddrs = (List<InetSocketAddress>) ReflectionUtils.getField(
-                                                                                                             serverAddressesField,
+                    List<InetSocketAddress> serverAddrs = (List<InetSocketAddress>) ReflectionUtils.getField(serverAddressesField,
                                                                                                              hostProvider);
                     // 添加第二组集群列表
                     serverAddrs.addAll(new ConnectStringParser(cluster).getServerAddresses());

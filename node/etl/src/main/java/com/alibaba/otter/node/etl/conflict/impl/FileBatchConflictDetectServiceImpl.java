@@ -83,7 +83,7 @@ public class FileBatchConflictDetectServiceImpl implements FileBatchConflictDete
 
                         public void run() {
                             MDC.put(OtterConstants.splitPipelineLoadLogFileKey,
-                                String.valueOf(fileBatch.getIdentity().getPipelineId()));
+                                    String.valueOf(fileBatch.getIdentity().getPipelineId()));
                             // 处理更新类型
                             String namespace = source.getNameSpace();
                             String path = source.getPath();
@@ -137,10 +137,8 @@ public class FileBatchConflictDetectServiceImpl implements FileBatchConflictDete
             executorTemplate.waitForResult();
 
             if (pipeline.getParameters().getDumpEvent() && logger.isInfoEnabled()) {
-                logger.info(FileloadDumper.dumpFilterFileDatas(fileBatch.getIdentity(),
-                    fileBatch.getFiles().size(),
-                    result.size(),
-                    filter));
+                logger.info(FileloadDumper.dumpFilterFileDatas(fileBatch.getIdentity(), fileBatch.getFiles().size(),
+                                                               result.size(), filter));
             }
 
             // 构造返回结果

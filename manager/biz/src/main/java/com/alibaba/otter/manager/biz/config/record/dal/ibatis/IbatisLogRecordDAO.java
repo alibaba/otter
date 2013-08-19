@@ -79,8 +79,7 @@ public class IbatisLogRecordDAO extends SqlMapClientDaoSupport implements LogRec
     }
 
     public List<LogRecordDO> listByPipelineIdWithoutContent(Long pipelineId) {
-        List<LogRecordDO> logRecordDos = getSqlMapClientTemplate().queryForList(
-                                                                                "listLogRecordsByPipelineIdWithoutContent",
+        List<LogRecordDO> logRecordDos = getSqlMapClientTemplate().queryForList("listLogRecordsByPipelineIdWithoutContent",
                                                                                 pipelineId);
         return logRecordDos;
     }

@@ -135,9 +135,8 @@ public class OtterDownStreamHandler extends AbstractCanalLifeCycle implements Ca
                 errorEventData.setPipelineId(pipelineId);
                 errorEventData.setType(TerminType.WARNING);
                 errorEventData.setCode("mainstem");
-                errorEventData.setDesc(String.format(DETECTING_FAILED_MESSAGE,
-                    pipelineId,
-                    String.valueOf(detectingIntervalInSeconds * failedCount)));
+                errorEventData.setDesc(String.format(DETECTING_FAILED_MESSAGE, pipelineId,
+                                                     String.valueOf(detectingIntervalInSeconds * failedCount)));
                 arbitrateEventService.terminEvent().single(errorEventData);
             }
         }

@@ -25,16 +25,15 @@ public abstract class AbstractCommandRetriever implements DataRetriever {
     protected final Logger            logger = LoggerFactory.getLogger(getClass());
     protected AbstractCommandDownload download;
 
-    public AbstractCommandRetriever(String cmdPath, String url, String targetDir) {
+    public AbstractCommandRetriever(String cmdPath, String url, String targetDir){
         this.buildDownload(cmdPath, url, targetDir, null);
     }
 
-    public AbstractCommandRetriever(String cmdPath, String url, String targetDir, String[] params) {
+    public AbstractCommandRetriever(String cmdPath, String url, String targetDir, String[] params){
         this.buildDownload(cmdPath, url, targetDir, params);
     }
 
-    protected abstract void buildDownload(String cmdPath, String url, String targetDir,
-                                          String[] params);
+    protected abstract void buildDownload(String cmdPath, String url, String targetDir, String[] params);
 
     public void connect() throws DataRetrieveException {
         this.download.addObserver(new DefaultStatusObserver(logger));

@@ -1,4 +1,3 @@
-
 package com.alibaba.otter.manager.biz.statistics.table.dal.dataobject;
 
 import java.io.Serializable;

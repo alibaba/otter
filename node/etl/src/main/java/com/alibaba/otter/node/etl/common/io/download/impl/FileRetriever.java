@@ -25,7 +25,7 @@ public class FileRetriever implements DataRetriever {
     private long          mByteOffset;
     private File          mFile;
 
-    public FileRetriever(File pFile) {
+    public FileRetriever(File pFile){
         mFile = pFile;
     }
 

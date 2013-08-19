@@ -69,10 +69,8 @@ public class DbLoadMerger {
 
     private static void mergeInsert(EventData eventData, Map<RowKey, EventData> result) {
         // insert无主键变更的处理
-        RowKey rowKey = new RowKey(eventData.getTableId(),
-            eventData.getSchemaName(),
-            eventData.getTableName(),
-            eventData.getKeys());
+        RowKey rowKey = new RowKey(eventData.getTableId(), eventData.getSchemaName(), eventData.getTableName(),
+                                   eventData.getKeys());
         if (!result.containsKey(rowKey)) {
             result.put(rowKey, eventData);
         } else {
@@ -95,16 +93,12 @@ public class DbLoadMerger {
     }
 
     private static void mergeUpdate(EventData eventData, Map<RowKey, EventData> result) {
-        RowKey rowKey = new RowKey(eventData.getTableId(),
-            eventData.getSchemaName(),
-            eventData.getTableName(),
-            eventData.getKeys());
+        RowKey rowKey = new RowKey(eventData.getTableId(), eventData.getSchemaName(), eventData.getTableName(),
+                                   eventData.getKeys());
         if (!CollectionUtils.isEmpty(eventData.getOldKeys())) {// 存在主键变更
             // 需要解决(1->2 , 2->3)级联主键变更的问题
-            RowKey oldKey = new RowKey(eventData.getTableId(),
-                eventData.getSchemaName(),
-                eventData.getTableName(),
-                eventData.getOldKeys());
+            RowKey oldKey = new RowKey(eventData.getTableId(), eventData.getSchemaName(), eventData.getTableName(),
+                                       eventData.getOldKeys());
             if (!result.containsKey(oldKey)) {// 不需要级联
                 result.put(rowKey, eventData);
             } else {
@@ -154,10 +148,8 @@ public class DbLoadMerger {
 
     private static void mergeDelete(EventData eventData, Map<RowKey, EventData> result) {
         // 只保留pks，把columns去掉. 以后针对数据仓库可以开放delete columns记录
-        RowKey rowKey = new RowKey(eventData.getTableId(),
-            eventData.getSchemaName(),
-            eventData.getTableName(),
-            eventData.getKeys());
+        RowKey rowKey = new RowKey(eventData.getTableId(), eventData.getSchemaName(), eventData.getTableName(),
+                                   eventData.getKeys());
         if (!result.containsKey(rowKey)) {
             result.put(rowKey, eventData);
         } else {
@@ -169,10 +161,8 @@ public class DbLoadMerger {
                 eventData.getOldKeys().clear();// 清除oldKeys
 
                 result.remove(rowKey);// 删除老的对象
-                result.put(new RowKey(eventData.getTableId(),
-                    eventData.getSchemaName(),
-                    eventData.getTableName(),
-                    eventData.getKeys()), eventData); // key发生变化，需要重新构造一个RowKey
+                result.put(new RowKey(eventData.getTableId(), eventData.getSchemaName(), eventData.getTableName(),
+                                      eventData.getKeys()), eventData); // key发生变化，需要重新构造一个RowKey
             } else {
                 eventData.getOldKeys().clear();// 清除oldKeys
                 result.put(rowKey, eventData);

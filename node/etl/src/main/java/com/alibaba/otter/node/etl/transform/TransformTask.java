@@ -83,21 +83,19 @@ public class TransformTask extends GlobalTask {
                             if (profiling) {
                                 Long profilingEndTime = System.currentTimeMillis();
                                 stageAggregationCollector.push(pipelineId,
-                                    StageType.TRANSFORM,
-                                    new AggregationItem(profilingStartTime, profilingEndTime));
+                                                               StageType.TRANSFORM,
+                                                               new AggregationItem(profilingStartTime, profilingEndTime));
                             }
                             // 处理完成后通知single已完成
                             arbitrateEventService.transformEvent().single(etlEventData);
                         } catch (Throwable e) {
                             if (!isInterrupt(e)) {
-                                logger.error(String.format("[%s] transformWork executor is error! data:%s",
-                                    pipelineId,
-                                    etlEventData), e);
+                                logger.error(String.format("[%s] transformWork executor is error! data:%s", pipelineId,
+                                                           etlEventData), e);
                                 sendRollbackTermin(pipelineId, e);
                             } else {
                                 logger.info(String.format("[%s] transformWork executor is interrrupt! data:%s",
-                                    pipelineId,
-                                    etlEventData), e);
+                                                          pipelineId, etlEventData), e);
                             }
                         } finally {
                             Thread.currentThread().setName(currentName);
@@ -107,10 +105,8 @@ public class TransformTask extends GlobalTask {
                 };
 
                 // 构造pending任务，可在关闭线程时退出任务
-                SetlFuture extractFuture = new SetlFuture(StageType.TRANSFORM,
-                    etlEventData.getProcessId(),
-                    pendingFuture,
-                    task);
+                SetlFuture extractFuture = new SetlFuture(StageType.TRANSFORM, etlEventData.getProcessId(),
+                                                          pendingFuture, task);
                 executorService.execute(extractFuture);
 
             } catch (Throwable e) {

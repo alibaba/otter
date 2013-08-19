@@ -10,6 +10,7 @@ import com.alibaba.otter.shared.common.model.config.node.NodeStatus;
  * @author simon
  */
 public class NodeDO implements Serializable {
+
     private static final long serialVersionUID = 9148286590254926037L;
     private Long              id;                                     // 唯一标示id
     private String            name;                                   // 机器名字

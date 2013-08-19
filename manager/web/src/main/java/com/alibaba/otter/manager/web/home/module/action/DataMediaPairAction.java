@@ -58,8 +58,7 @@ public class DataMediaPairAction {
         dataMediaPairInfo.setProperties(dataMediaPair);
 
         // filter解析
-        ExtensionDataType filterType = ExtensionDataType.valueOf(dataMediaPairInfo.getField("filterType")
-            .getStringValue());
+        ExtensionDataType filterType = ExtensionDataType.valueOf(dataMediaPairInfo.getField("filterType").getStringValue());
         ExtensionData filterData = new ExtensionData();
         filterData.setExtensionDataType(filterType);
         if (filterType.isClazz()) {
@@ -70,8 +69,7 @@ public class DataMediaPairAction {
         dataMediaPair.setFilterData(filterData);
 
         // fileresovler解析
-        ExtensionDataType resolverType = ExtensionDataType.valueOf(dataMediaPairInfo.getField("resolverType")
-            .getStringValue());
+        ExtensionDataType resolverType = ExtensionDataType.valueOf(dataMediaPairInfo.getField("resolverType").getStringValue());
         ExtensionData resolverData = new ExtensionData();
         resolverData.setExtensionDataType(resolverType);
         if (resolverType.isClazz()) {
@@ -179,8 +177,7 @@ public class DataMediaPairAction {
         dataMediaPairInfo.setProperties(dataMediaPair);
 
         // filter解析
-        ExtensionDataType filterType = ExtensionDataType.valueOf(dataMediaPairInfo.getField("filterType")
-            .getStringValue());
+        ExtensionDataType filterType = ExtensionDataType.valueOf(dataMediaPairInfo.getField("filterType").getStringValue());
         ExtensionData filterData = new ExtensionData();
         filterData.setExtensionDataType(filterType);
         if (filterType.isClazz()) {
@@ -191,8 +188,7 @@ public class DataMediaPairAction {
         dataMediaPair.setFilterData(filterData);
 
         // fileresovler解析
-        ExtensionDataType resolverType = ExtensionDataType.valueOf(dataMediaPairInfo.getField("resolverType")
-            .getStringValue());
+        ExtensionDataType resolverType = ExtensionDataType.valueOf(dataMediaPairInfo.getField("resolverType").getStringValue());
         ExtensionData resolverData = new ExtensionData();
         resolverData.setExtensionDataType(resolverType);
         if (resolverType.isClazz()) {

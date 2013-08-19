@@ -79,7 +79,7 @@ public class LoadArbitrateEventTest extends BaseArbitrateEventTest {
             transformEvent.single(tdata2);
 
             SelectStageListener selectStageListener = ArbitrateFactory.getInstance(pipelineId,
-                SelectStageListener.class);
+                                                                                   SelectStageListener.class);
             selectStageListener.destory();
             // load stage
             EtlEventData ldata1 = loadEvent.await(pipelineId);

@@ -36,7 +36,8 @@ public class GlobalMonitorTest extends BaseOtterTest {
 
                                                           @Override
                                                           public void explore(List<AlarmRule> rules) {
-                                                              throw new RuntimeException(" exception happens in monitor executed");
+                                                              throw new RuntimeException(
+                                                                                         " exception happens in monitor executed");
                                                           }
                                                       };
 

@@ -12,23 +12,23 @@ public class CommunicationException extends NestableRuntimeException {
     private String            errorCode;
     private String            errorDesc;
 
-    public CommunicationException(String errorCode) {
+    public CommunicationException(String errorCode){
         super(errorCode);
     }
 
-    public CommunicationException(String errorCode, Throwable cause) {
+    public CommunicationException(String errorCode, Throwable cause){
         super(errorCode, cause);
     }
 
-    public CommunicationException(String errorCode, String errorDesc) {
+    public CommunicationException(String errorCode, String errorDesc){
         super(errorCode + ":" + errorDesc);
     }
 
-    public CommunicationException(String errorCode, String errorDesc, Throwable cause) {
+    public CommunicationException(String errorCode, String errorDesc, Throwable cause){
         super(errorCode + ":" + errorDesc, cause);
     }
 
-    public CommunicationException(Throwable cause) {
+    public CommunicationException(Throwable cause){
         super(cause);
     }
 
