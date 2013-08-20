@@ -15,9 +15,13 @@
 package com.alibaba.otter.common.push.datasource.media;
 
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 
+import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSource;
@@ -214,6 +218,22 @@ public class MediaPushDataSource implements DataSource {
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
         return delegate.getConnection(username, password);
+    }
+
+    // implemented from JDK7 @see http://docs.oracle.com/javase/7/docs/api/javax/sql/CommonDataSource.html#getParentLogger()
+    public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        try {
+            Method getParentLoggerMethod = CommonDataSource.class.getDeclaredMethod("getParentLogger", new Class<?>[0]);
+            return (java.util.logging.Logger) getParentLoggerMethod.invoke(delegate, new Object[0]);
+        } catch (NoSuchMethodException e) {
+            throw new SQLFeatureNotSupportedException(e);
+        } catch (InvocationTargetException e2) {
+            throw new SQLFeatureNotSupportedException(e2);
+        } catch (IllegalArgumentException e2) {
+            throw new SQLFeatureNotSupportedException(e2);
+        } catch (IllegalAccessException e2) {
+            throw new SQLFeatureNotSupportedException(e2);
+        }
     }
 
     // =============== setter & getter ================
