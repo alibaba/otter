@@ -1,9 +1,9 @@
 <h1>
 <a name="%E9%A1%B9%E7%9B%AE%E8%83%8C%E6%99%AF" class="anchor" href="#%E9%A1%B9%E7%9B%AE%E8%83%8C%E6%99%AF"><span class="octicon octicon-link"></span></a>项目背景</h1>
 <p>
-   阿里巴巴B2B公司，因为业务的特性，卖家主要集中在国内，买家主要集中在国外，所以衍生出了杭州和美国异地机房的需求，同时为了提升用户体验，整个机房的架构为双A，两边均可写，由此诞生了otter这样一个产品。 </p>
+   &nbsp;&nbsp;&nbsp;阿里巴巴B2B公司，因为业务的特性，卖家主要集中在国内，买家主要集中在国外，所以衍生出了杭州和美国异地机房的需求，同时为了提升用户体验，整个机房的架构为双A，两边均可写，由此诞生了otter这样一个产品。 </p>
 <p>
-   otter第一版本可追溯到04~05年，此次外部开源的版本为第4版，开发时间从2011年7月份一直持续到现在，目前阿里巴巴B2B内部的本地/异地机房的同步需求基本全上了otte4。
+   &nbsp;&nbsp;&nbsp;otter第一版本可追溯到04~05年，此次外部开源的版本为第4版，开发时间从2011年7月份一直持续到现在，目前阿里巴巴B2B内部的本地/异地机房的同步需求基本全上了otte4。
 </p>
 <strong>目前同步规模：</strong>
 <ol>
@@ -25,8 +25,8 @@
 <p>原理描述：</p>
 <p>1.   基于Canal开源产品，获取数据库增量日志数据。 什么是Canal,  请<a href="https://github.com/alibaba/canal">点击</a></p>
 <p>2.   典型管理系统架构，manager(web管理)+node(工作节点)</p>
-<p>&nbsp;&nbsp;&nbsp;        a.  manager运行时推送同步配置到node节点</p>
-<p>&nbsp;&nbsp;&nbsp;        b.  node节点将同步状态反馈到manager上</p>
+<p>       &nbsp;&nbsp;&nbsp; a.  manager运行时推送同步配置到node节点</p>
+<p>       &nbsp;&nbsp;&nbsp; b.  node节点将同步状态反馈到manager上</p>
 <p>3.  基于zookeeper，解决分布式状态调度的，允许多node节点之间协同工作. </p>
 <h3>
 <a name="%E4%BB%80%E4%B9%88%E6%98%AFcanal-" class="anchor" href="#%E4%BB%80%E4%B9%88%E6%98%AFcanal-"><span class="octicon octicon-link"></span></a>什么是canal? </h3>
@@ -34,22 +34,32 @@ otter之前开源的一个子项目，开源链接地址：<a href="http://githu
 <p> </p>
 <h1>
 <a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h1>
-<p>See the page for quick start: <a class="internal present" href="/agapple/otter/wiki/Introduction">Introduction</a>.</p>
+<p>See the page for quick start: <a class="internal present" href="https://github.com/alibaba/otter/wiki/Introduction">Introduction</a>.</p>
 <h1>
 <a name="quickstart" class="anchor" href="#quickstart"><span class="octicon octicon-link"></span></a>QuickStart</h1>
-<p>See the page for quick start: <a class="internal present" href="/agapple/otter/wiki/QuickStart">QuickStart</a>.</p>
+<p>See the page for quick start: <a class="internal present" href="https://github.com/alibaba/otter/wiki/QuickStart">QuickStart</a>.</p>
 <p> </p>
 <h1>
 <a name="adminguide" class="anchor" href="#adminguide"><span class="octicon octicon-link"></span></a>AdminGuide</h1>
-<p>See the page for admin deploy guide : <a class="internal present" href="/agapple/otter/wiki/Adminguide">AdminGuide</a></p>
+<p>See the page for admin deploy guide : <a class="internal present" href="https://github.com/alibaba/otter/wiki/Adminguide">AdminGuide</a></p>
 <p> </p>
 <h1>
 <a name="%E7%9B%B8%E5%85%B3%E6%96%87%E6%A1%A3" class="anchor" href="#%E7%9B%B8%E5%85%B3%E6%96%87%E6%A1%A3"><span class="octicon octicon-link"></span></a>相关文档</h1>
-<p>See the page for 文档: <a class="internal present" href="/agapple/otter/wiki/%E7%9B%B8%E5%85%B3ppt%26pdf">相关PPT&amp;PDF</a></p>
+<p>See the page for 文档: <a class="internal present" href="https://github.com/alibaba/otter/wiki/%E7%9B%B8%E5%85%B3ppt%26pdf">相关PPT&amp;PDF</a></p>
 <p> </p>
 <h1>
 <a name="%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98" class="anchor" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="octicon octicon-link"></span></a>常见问题</h1>
-<p>See the page for FAQ: <a class="internal present" href="/agapple/otter/wiki/Faq">FAQ</a></p>
+<p>See the page for FAQ: <a class="internal present" href="https://github.com/alibaba/otter/wiki/Faq">FAQ</a></p>
+<p> </p>
+
+<h1>
+<a name="%E7%89%88%E6%9C%AC%E7%9B%B8%E5%85%B3-" class="anchor" href="#%E7%89%88%E6%9C%AC%E7%9B%B8%E5%85%B3-"><span class="octicon octicon-link"></span></a>版本相关: </h1>
+<p>1. 建议版本：4.2.0  (otter开源版本从内部演变而来，所以初始版本直接从4.x开始) </p>
+<p>2. 下载发布包：<a href="https://github.com/agapple/otter_download">download </a></p>
+<p>3. maven依赖 ： 暂无 </p>
+<p>4. 详细的issues列表可查看：<a href="http://alibaba.github.io/otter/release.html">ReleaseNotes </a></p>
+
+
 <p> </p>
 <h1>
 <a name="%E9%97%AE%E9%A2%98%E5%8F%8D%E9%A6%88" class="anchor" href="#%E9%97%AE%E9%A2%98%E5%8F%8D%E9%A6%88"><span class="octicon octicon-link"></span></a>问题反馈</h1>
