@@ -114,13 +114,13 @@
 
 	<!-- listThroughputStatByPipelineId -->
 	<select id="listRealtimeThroughputStatByPipelineIds" resultMap="throughputStatSimpleResult">
-		select pipeline_id, type , sum(number) as number , sum(size) as size 
+		select PIPELINE_ID, type , sum(NUMBER) as number , sum(SIZE) as size 
 		from THROUGHPUT_STAT 
-		where pipeline_id in
+		where PIPELINE_ID in
 		<iterate property="pipelineIds" open="(" close=")" conjunction=",">
 			#pipelineIds[]#
 		</iterate>
-		and type in ('ROW','FILE') and end_time >= (now() - INTERVAL #minute# MINUTE)
-	 	group by pipeline_id , type;
+		and TYPE in ('ROW','FILE') and END_TIME >= (now() - INTERVAL #minute# MINUTE)
+	 	group by PIPELINE_ID , TYPE;
 	</select>
 </sqlMap>  

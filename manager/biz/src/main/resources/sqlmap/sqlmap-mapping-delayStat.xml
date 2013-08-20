@@ -20,12 +20,12 @@
 	</resultMap>
 	
 	<resultMap id="topDelayStatResult" class="topDelayStat">
-		<result property="channelName" column="channel_name" />
-		<result property="pipelineName" column="pipeline_name" />
-		<result property="channelId" column="channel_id" />
+		<result property="channelName" column="CHANNEL_NAME" />
+		<result property="pipelineName" column="PIPELINE_NAME" />
+		<result property="channelId" column="CHANNEL_ID" />
 		<result property="pipelineId" column="PIPELINE_ID" />
 		<result property="delayTime" column="DELAY_TIME" />
-		<result property="lastUpdate" column="gmt_create" />
+		<result property="lastUpdate" column="GMT_CREATE" />
 	</resultMap>
 	<!-- all delayStat columns -->
 	<sql id="allDelayStatColumns">ID,DELAY_TIME,DELAY_NUMBER,PIPELINE_ID,GMT_CREATE,GMT_MODIFIED</sql>
@@ -97,21 +97,21 @@
 	
 	<!-- listTopByName -->
 	<select id="listTopByName" resultMap="topDelayStatResult">
-		select p.* , d.delay_time , d.gmt_create
-		from delay_stat d , (
-			select p.channel_id , p.id as pipeline_id , c.name as channel_name, p.name as pipeline_name from channel c , pipeline p  
-			where 1 = 1 and c.id = p.channel_id
+		select p.* , d.DELAY_TIME , d.GMT_CREATE
+		from DELAY_STAT d , (
+			select p.CHANNEL_ID , p.ID as PIPELINE_ID , c.NAME as CHANNEL_NAME, p.NAME as PIPELINE_NAME from CHANNEL c , PIPELINE p  
+			where 1 = 1 and c.ID = p.CHANNEL_ID
 			<dynamic prepend="and">
 				<isNotEmpty property="searchKey">
-				c.name like concat('%',replace(#searchKey#,'_','\_'),'%')   
+				c.NAME like concat('%',replace(#searchKey#,'_','\_'),'%')   
 				</isNotEmpty>
 			</dynamic>
 			) p 
-			where d.id = (
-				select d1.id from delay_stat d1 
-					where d1.pipeline_id = p.pipeline_id order by d1.pipeline_id desc , d1.gmt_create desc limit 1
+			where d.ID = (
+				select d1.ID from DELAY_STAT d1 
+					where d1.PIPELINE_ID = p.PIPELINE_ID order by d1.PIPELINE_ID desc , d1.GMT_CREATE desc limit 1
 				)
-			order by d.delay_time desc , d.id desc
+			order by d.DELAY_TIME desc , d.ID desc
 			<dynamic>
 				<isNotEmpty property="topN" >
 						limit #topN#
