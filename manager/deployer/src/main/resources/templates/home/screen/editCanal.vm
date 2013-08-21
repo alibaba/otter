@@ -61,7 +61,7 @@ $control.setTemplate("home:navigation.vm")
       <tr> 
         <th width="300">canal名称：</th>
         <td width="329">
-            <input type="text" name="$canalGroup.name.key" value="$!canal.name" class="setting_input"/><span class="red">*</span>
+            <input type="text" name="$canalGroup.name.key" value="$!canal.name" disabled class="setting_input"/><span class="red">*</span>
 			<br />
 			<span class="red">#editCanalMessage ($canalGroup.name)</span>
 		</td>
@@ -107,8 +107,10 @@ $control.setTemplate("home:navigation.vm")
         <th width="300">数据源类型：</th>
         <td width="329">
             <input type="radio" name="$canalParameterGroup.sourcingType.key" value="MYSQL" onclick="changeDisplay('mysqlSourcing','table-row');changeDisplay('oracleSourcing','none');changeDisplay('localSourcing','none');" id="RadioGroup5_0" #if($!canal.canalParameter.sourcingType.isMysql()) checked="checked" #end class="radio"/>mysql &nbsp;
+			#**
 			<input type="radio" name="$canalParameterGroup.sourcingType.key" value="ORACLE" onclick="changeDisplay('mysqlSourcing','none');changeDisplay('oracleSourcing','table-row');changeDisplay('localSourcing','none');" id="RadioGroup5_1" #if($!canal.canalParameter.sourcingType.isOracle()) checked="checked" #end class="radio"/>oracle &nbsp;
             <input type="radio" name="$canalParameterGroup.sourcingType.key" value="LOCALBINLOG" onclick="changeDisplay('mysqlSourcing','none');changeDisplay('oracleSourcing','none');changeDisplay('localSourcing','table-row');" id="RadioGroup5_2" #if($!canal.canalParameter.sourcingType.isLocalBinlog()) checked="checked" #end class="radio"/>localbinlog &nbsp;
+			*#
 			<br />
 			<span class="red">#editCanalMessage ($canalParameterGroup.sourcingType)</span>
 		</td>

@@ -30,10 +30,13 @@ import org.slf4j.MDC;
 import org.springframework.util.CollectionUtils;
 
 import com.alibaba.otter.canal.extend.communication.CanalConfigClient;
+import com.alibaba.otter.canal.extend.ha.MediaHAController;
 import com.alibaba.otter.canal.instance.core.CanalInstance;
 import com.alibaba.otter.canal.instance.core.CanalInstanceGenerator;
 import com.alibaba.otter.canal.instance.manager.CanalInstanceWithManager;
 import com.alibaba.otter.canal.instance.manager.model.Canal;
+import com.alibaba.otter.canal.instance.manager.model.CanalParameter.HAMode;
+import com.alibaba.otter.canal.parse.ha.CanalHAController;
 import com.alibaba.otter.canal.protocol.CanalEntry.Entry;
 import com.alibaba.otter.canal.protocol.ClientIdentity;
 import com.alibaba.otter.canal.server.embeded.CanalServerWithEmbeded;
@@ -124,7 +127,20 @@ public class CanalEmbedSelector implements OtterSelector {
                 }
                 canal.getCanalParameter().setSlaveId(slaveId + pipelineId);
 
-                CanalInstanceWithManager instance = new CanalInstanceWithManager(canal, filter);
+                CanalInstanceWithManager instance = new CanalInstanceWithManager(canal, filter) {
+
+                    protected CanalHAController initHaController() {
+                        HAMode haMode = parameters.getHaMode();
+                        if (haMode.isMedia()) {
+                            return new MediaHAController(parameters.getMediaGroup(), parameters.getDbUsername(),
+                                                         parameters.getDbPassword(),
+                                                         parameters.getDefaultDatabaseName());
+                        } else {
+                            return super.initHaController();
+                        }
+                    }
+
+                };
                 instance.setAlarmHandler(otterAlarmHandler);
 
                 CanalEventSink eventSink = instance.getEventSink();
