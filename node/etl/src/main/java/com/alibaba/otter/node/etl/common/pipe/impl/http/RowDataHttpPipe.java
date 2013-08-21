@@ -15,20 +15,22 @@
 package com.alibaba.otter.node.etl.common.pipe.impl.http;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.util.CollectionUtils;
 
-import com.alibaba.otter.node.etl.common.io.EncryptUtils;
+import com.alibaba.fastjson.JSONReader;
+import com.alibaba.fastjson.JSONWriter;
 import com.alibaba.otter.node.etl.common.io.EncryptedData;
 import com.alibaba.otter.node.etl.common.io.download.DataRetriever;
 import com.alibaba.otter.node.etl.common.pipe.PipeDataType;
@@ -37,9 +39,6 @@ import com.alibaba.otter.node.etl.model.protobuf.BatchProto;
 import com.alibaba.otter.shared.common.model.config.channel.ChannelParameter.SyncConsistency;
 import com.alibaba.otter.shared.common.model.config.channel.ChannelParameter.SyncMode;
 import com.alibaba.otter.shared.common.model.config.pipeline.Pipeline;
-import com.alibaba.otter.shared.common.utils.ByteUtils;
-import com.alibaba.otter.shared.common.utils.JsonUtils;
-import com.alibaba.otter.shared.common.utils.NioUtils;
 import com.alibaba.otter.shared.etl.model.DbBatch;
 import com.alibaba.otter.shared.etl.model.EventColumn;
 import com.alibaba.otter.shared.etl.model.EventData;
@@ -69,7 +68,6 @@ public class RowDataHttpPipe extends AbstractHttpPipe<DbBatch, HttpPipeKey> {
     // ======================== help method ===================
     // 保存对应的dbBatch
     private HttpPipeKey saveDbBatch(DbBatch dbBatch) {
-        Map json = new HashMap();// 序列化对象
         RowBatch rowBatch = dbBatch.getRowBatch();
         // 转化为proto对象
         BatchProto.RowBatch.Builder rowBatchBuilder = BatchProto.RowBatch.newBuilder();
@@ -114,12 +112,11 @@ public class RowDataHttpPipe extends AbstractHttpPipe<DbBatch, HttpPipeKey> {
             rowBatchBuilder.addRows(rowDataBuilder.build());// 添加一条rowData记录
         }
 
-        json.put(ClassUtils.getShortClassName(rowBatch.getClass()), rowBatchBuilder.build().toByteArray());
-
         // 处理下FileBatch
         FileBatch fileBatch = dbBatch.getFileBatch();
+        BatchProto.FileBatch.Builder fileBatchBuilder = null;
         if (fileBatch != null) {
-            BatchProto.FileBatch.Builder fileBatchBuilder = BatchProto.FileBatch.newBuilder();
+            fileBatchBuilder = BatchProto.FileBatch.newBuilder();
             fileBatchBuilder.setIdentity(build(fileBatch.getIdentity()));
             // 构造对应的proto对象
             for (FileData fileData : fileBatch.getFiles()) {
@@ -138,33 +135,44 @@ public class RowDataHttpPipe extends AbstractHttpPipe<DbBatch, HttpPipeKey> {
 
                 fileBatchBuilder.addFiles(fileDataBuilder.build());// 添加一条fileData记录
             }
-
-            // 放到json中
-            json.put(ClassUtils.getShortClassName(fileBatch.getClass()), fileBatchBuilder.build().toByteArray());
         }
-
-        // 进行持久化
-        byte[] bytes = JsonUtils.marshalToByte(json);// 序列化
-        EncryptedData encryptedData = EncryptUtils.encrypt(bytes);
         // 处理构造对应的文件url
         String filename = buildFileName(rowBatch.getIdentity(), ClassUtils.getShortClassName(dbBatch.getClass()));
+        // 写入数据
         File file = new File(htdocsDir, filename);
+        JSONWriter writer = null;
         try {
-            NioUtils.write(encryptedData.getData(), file);
+            writer = new JSONWriter(new FileWriter(file));//超大文本写入
+            writer.startArray();
+            writer.writeValue(rowBatchBuilder.build().toByteArray());
+            if (fileBatch != null) {
+                writer.writeValue(fileBatchBuilder.build().toByteArray());
+
+            }
+            writer.endArray();
         } catch (IOException e) {
             throw new PipeException("write_byte_error", e);
+        } finally {
+            IOUtils.closeQuietly(writer);
         }
 
         HttpPipeKey key = new HttpPipeKey();
-        key.setCrc(encryptedData.getCrc());
-        key.setKey(encryptedData.getKey());
         key.setUrl(remoteUrlBuilder.getUrl(rowBatch.getIdentity().getPipelineId(), filename));
         key.setDataType(PipeDataType.DB_BATCH);
         key.setIdentity(rowBatch.getIdentity());
+        Pipeline pipeline = configClientService.findPipeline(rowBatch.getIdentity().getPipelineId());
+        if (pipeline.getParameters().getUseFileEncrypt()) {
+            // 加密处理
+            EncryptedData encryptedData = encryptFile(file);
+            key.setKey(encryptedData.getKey());
+            key.setCrc(encryptedData.getCrc());
+        }
+
         return key;
     }
 
     // 处理对应的dbBatch
+    @SuppressWarnings("resource")
     private DbBatch getDbBatch(HttpPipeKey key) {
         String dataUrl = key.getUrl();
         Pipeline pipeline = configClientService.findPipeline(key.getIdentity().getPipelineId());
@@ -182,15 +190,29 @@ public class RowDataHttpPipe extends AbstractHttpPipe<DbBatch, HttpPipeKey> {
             dataRetriever.disconnect();
         }
 
-        try {
-            byte[] bytes = NioUtils.read(archiveFile);
-            EncryptedData encryptedData = new EncryptedData(bytes, key.getKey(), key.getCrc());
-            byte[] protobytes = EncryptUtils.decrypt(encryptedData);
-            Map data = JsonUtils.unmarshalFromByte(protobytes, Map.class);
+        // 处理下有加密的数据
+        if (StringUtils.isNotEmpty(key.getKey()) && StringUtils.isNotEmpty(key.getCrc())) {
+            decodeFile(archiveFile, key.getKey(), key.getCrc());
+        }
 
-            String rowBatchKey = ClassUtils.getShortClassName(RowBatch.class);
-            // fastjson bug，byte[]数据无法正常反序列，base64手工反解密
-            byte[] rowBatchBytes = ByteUtils.base64StringToBytes((String) data.get(rowBatchKey));
+        JSONReader reader = null;
+        try {
+            byte[] rowBatchBytes = null;
+            byte[] fileBatchBytes = null;
+            reader = new JSONReader(new FileReader(archiveFile));
+            reader.startArray();
+            while (reader.hasNext()) {
+                if (rowBatchBytes == null) {
+                    rowBatchBytes = reader.readObject(byte[].class);
+                } else if (fileBatchBytes == null) {
+                    fileBatchBytes = reader.readObject(byte[].class);
+                } else {
+                    throw new PipeException("archive data json parse failed!");
+                }
+
+            }
+            reader.endArray();
+
             DbBatch dbBatch = new DbBatch();
             if (rowBatchBytes != null) {
                 BatchProto.RowBatch rowbatchProto = BatchProto.RowBatch.parseFrom(rowBatchBytes);
@@ -240,10 +262,7 @@ public class RowDataHttpPipe extends AbstractHttpPipe<DbBatch, HttpPipeKey> {
                 }
                 dbBatch.setRowBatch(rowBatch);
             }
-            String fileBatchKey = ClassUtils.getShortClassName(FileBatch.class);
-            String fileBatchStr = (String) data.get(fileBatchKey);
-            if (StringUtils.isNotEmpty(fileBatchStr)) { // 判断下是否存在file batch记录
-                byte[] fileBatchBytes = ByteUtils.base64StringToBytes(fileBatchStr);
+            if (fileBatchBytes != null) { // 判断下是否存在file batch记录
                 if (fileBatchBytes != null) {
                     BatchProto.FileBatch filebatchProto = BatchProto.FileBatch.parseFrom(fileBatchBytes);
                     // 构造原始的model对象
@@ -268,6 +287,8 @@ public class RowDataHttpPipe extends AbstractHttpPipe<DbBatch, HttpPipeKey> {
             return dbBatch;
         } catch (IOException e) {
             throw new PipeException("deserial_error", e);
+        } finally {
+            IOUtils.closeQuietly(reader);
         }
     }
 

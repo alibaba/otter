@@ -82,6 +82,7 @@ public abstract class PackableObject {
      * @return a matching packable object, or null
      * @throws IOException
      */
+    @SuppressWarnings("resource")
     public static PackableObject identifyByHeader(File file, List packables) throws IOException {
         FileInputStream fis = null;
         try {

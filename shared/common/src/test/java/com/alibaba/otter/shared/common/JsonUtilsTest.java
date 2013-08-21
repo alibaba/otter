@@ -14,6 +14,9 @@
 
 package com.alibaba.otter.shared.common;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +24,8 @@ import java.util.Map;
 
 import org.testng.annotations.Test;
 
+import com.alibaba.fastjson.JSONReader;
+import com.alibaba.fastjson.JSONWriter;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.SerializerFeature;
@@ -64,8 +69,59 @@ public class JsonUtilsTest extends BaseOtterTest {
         byte[] oneDates = ByteUtils.base64StringToBytes((String) target.get("one"));
         byte[] twoDates = ByteUtils.base64StringToBytes((String) target.get("two"));
 
-        want.array(oneDates).hasItems(one);
-        want.array(twoDates).hasItems(two);
+        check(oneDates, one);
+        check(twoDates, two);
+    }
+
+    @Test
+    public void test_bytes() {
+        Map data = new HashMap<String, byte[]>();
+        byte[] one = new byte[] { 1, 2, 3 };
+        byte[] two = new byte[] { 4, 5, 6 };
+        data.put("one", one);
+        data.put("two", two);
+
+        StringWriter jsonStr = new StringWriter();
+        JSONWriter writer = new JSONWriter(jsonStr);//超大文本写入
+        writer.startArray();
+        writer.writeValue(one);
+        writer.writeValue(two);
+        writer.endArray();
+        try {
+            writer.close();
+        } catch (IOException e) {
+        }
+
+        JSONReader reader = new JSONReader(new StringReader(jsonStr.getBuffer().toString()));
+        byte[] oneDates = null;
+        byte[] twoDates = null;
+        reader.startArray();
+        while (reader.hasNext()) {
+            if (oneDates == null) {
+                oneDates = reader.readObject(byte[].class);
+            } else if (twoDates == null) {
+                twoDates = reader.readObject(byte[].class);
+            } else {
+                want.fail("not possible");
+            }
+
+        }
+        reader.endArray();
+        reader.close();
+        check(oneDates, one);
+        check(twoDates, two);
+    }
+
+    private void check(byte[] src, byte[] dest) {
+        want.object(src).notNull();
+        want.object(dest).notNull();
+        want.bool(src.length == dest.length).is(true);
+
+        for (int i = 0; i < src.length; i++) {
+            if (src[i] != dest[i]) {
+                want.fail();
+            }
+        }
     }
 
     @Test

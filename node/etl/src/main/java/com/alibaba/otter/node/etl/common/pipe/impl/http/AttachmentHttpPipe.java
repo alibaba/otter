@@ -16,15 +16,12 @@ package com.alibaba.otter.node.etl.common.pipe.impl.http;
 
 import java.io.File;
 import java.io.InputStream;
-import java.io.RandomAccessFile;
-import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -35,10 +32,8 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 
 import com.alibaba.otter.node.etl.OtterConstants;
-import com.alibaba.otter.node.etl.common.io.EncryptUtils;
 import com.alibaba.otter.node.etl.common.io.EncryptedData;
 import com.alibaba.otter.node.etl.common.io.download.DataRetriever;
-import com.alibaba.otter.node.etl.common.io.signature.ChecksumException;
 import com.alibaba.otter.node.etl.common.pipe.PipeDataType;
 import com.alibaba.otter.node.etl.common.pipe.exception.PipeException;
 import com.alibaba.otter.node.etl.common.pipe.impl.http.archive.ArchiveBean;
@@ -46,7 +41,6 @@ import com.alibaba.otter.node.etl.common.pipe.impl.http.archive.ArchiveRetriverC
 import com.alibaba.otter.node.etl.common.pipe.impl.http.archive.LazyFileInputStream;
 import com.alibaba.otter.node.etl.load.loader.db.FileloadDumper;
 import com.alibaba.otter.shared.common.model.config.pipeline.Pipeline;
-import com.alibaba.otter.shared.common.utils.ByteUtils;
 import com.alibaba.otter.shared.etl.model.FileBatch;
 import com.alibaba.otter.shared.etl.model.FileData;
 import com.alibaba.otter.shared.etl.model.Identity;
@@ -60,7 +54,6 @@ import com.alibaba.otter.shared.etl.model.Identity;
 public class AttachmentHttpPipe extends AbstractHttpPipe<Object, HttpPipeKey> implements BeanFactoryAware {
 
     private static final Logger logger  = LoggerFactory.getLogger(AttachmentHttpPipe.class);
-    private static final String UTF_8   = "UTF-8";
     private BeanFactory         beanFactory;
     private boolean             encrypt = false;
 
@@ -126,35 +119,10 @@ public class AttachmentHttpPipe extends AbstractHttpPipe<Object, HttpPipeKey> im
         key.setDataType(PipeDataType.FILE_BATCH);
         key.setIdentity(fileBatch.getIdentity());
         if (encrypt || pipeline.getParameters().getUseFileEncrypt()) {
-            // 构造校验对象，这里考虑性能只将file path做为加密源
-            EncryptedData encryptedData = null;
-            try {
-                encryptedData = EncryptUtils.encrypt(file.getPath().getBytes(UTF_8));
-            } catch (UnsupportedEncodingException e) {
-                // ignore
-            }
-
-            // 写入校验信息
-            RandomAccessFile raf = null;
-            try {
-                raf = new RandomAccessFile(file, "rw");
-                long origLength = file.length();
-                int keyLength = ByteUtils.stringToBytes(encryptedData.getKey()).length;
-                int crcLength = ByteUtils.stringToBytes(encryptedData.getCrc()).length;
-                long totalLength = origLength + crcLength + keyLength;
-                raf.setLength(totalLength);
-                raf.seek(origLength);
-                raf.write(ByteUtils.stringToBytes(encryptedData.getKey()), 0, keyLength);
-                raf.seek(origLength + keyLength);
-                raf.write(ByteUtils.stringToBytes(encryptedData.getCrc()), 0, crcLength);
-
-                key.setCrc(encryptedData.getCrc());
-                key.setKey(encryptedData.getKey());
-            } catch (Exception e) {
-                throw new PipeException("write_encrypted_error", e);
-            } finally {
-                IOUtils.closeQuietly(raf);
-            }
+            // 加密处理
+            EncryptedData encryptedData = encryptFile(file);
+            key.setKey(encryptedData.getKey());
+            key.setCrc(encryptedData.getCrc());
         }
         return key;
     }
@@ -178,42 +146,7 @@ public class AttachmentHttpPipe extends AbstractHttpPipe<Object, HttpPipeKey> im
 
         // 处理下有加密的数据
         if (StringUtils.isNotEmpty(key.getKey()) && StringUtils.isNotEmpty(key.getCrc())) {
-            // 读取校验信息
-            RandomAccessFile raf = null;
-            try {
-                raf = new RandomAccessFile(archiveFile, "rw");
-
-                long totallength = archiveFile.length();
-                int keyLength = ByteUtils.stringToBytes(key.getKey()).length;
-                int crcLength = ByteUtils.stringToBytes(key.getCrc()).length;
-                // 长度字段起始位
-                long pos = totallength - keyLength - crcLength;
-                // 游标
-                raf.seek(pos);
-                // 读取key内容
-                byte[] keyBytes = new byte[keyLength];
-                raf.read(keyBytes, 0, keyLength);
-                String keystr = ByteUtils.bytesToString(keyBytes);
-                if (!key.getKey().equals(keystr)) {
-                    throw new ChecksumException("unmatch garble key with[" + key.getKey() + "],[" + keystr + "]");
-                }
-
-                // 读取校验码长度
-                raf.seek(pos + keyLength);
-                byte[] crcBytes = new byte[crcLength];
-                raf.read(crcBytes, 0, crcLength);
-                String crcStr = ByteUtils.bytesToString(crcBytes);
-                if (!key.getCrc().equals(crcStr)) {
-                    throw new ChecksumException("unmatch crc with[" + key.getCrc() + "],[" + crcStr + "]");
-                }
-
-                // 设置文件长度
-                raf.setLength(pos);
-            } catch (Exception e) {
-                throw new PipeException("read_encrypted_error", e);
-            } finally {
-                IOUtils.closeQuietly(raf);
-            }
+            decodeFile(archiveFile, key.getKey(), key.getCrc());
         }
 
         // 去除末尾的.gzip后缀，做为解压目录
