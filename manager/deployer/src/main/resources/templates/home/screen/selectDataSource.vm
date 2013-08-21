@@ -112,8 +112,8 @@ $control.setTemplate("home:navigation.vm")
       <th width="12%">Type</th>
 	  <th width="14%">驱动</th>
 	  <th width="14%">编码</th>
-      <th width="14%">URL</th>
-      <th width="27%">操作</th>
+      <th width="20%">URL</th>
+      <th width="20%">操作</th>
     </tr>
 	
 	#foreach ($source in $sources)

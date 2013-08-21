@@ -28,9 +28,9 @@ import com.alibaba.otter.shared.etl.model.EventData;
  */
 public class AbstractEventProcessor implements EventProcessor {
 
-    public EventData process(EventData eventData) {
+    public boolean process(EventData eventData) {
         // 默认啥都不处理
-        return eventData;
+        return true;
     }
 
     protected EventColumn getColumn(EventData eventData, String columnName) {

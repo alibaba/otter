@@ -49,8 +49,8 @@ $control.setTemplate("home:navigation.vm")
         <table border="0" cellspacing="0" cellpadding="0" class="list2 changecolor_g">
           <tr> 
             <th width="3%">序号</th>
-            <th width="12%">源表</th>
-            <th width="12%">目标表</th>
+            <th width="10%">源表</th>
+            <th width="10%">目标表</th>
             <th width="5%">权重</th>
 			<th width="7%">FileSize</th>
 			<th width="7%">FileCount</th>
@@ -58,7 +58,7 @@ $control.setTemplate("home:navigation.vm")
 			<th width="7%">UpdateCount</th>
 			<th width="7%">InsertCount</th>
             <th width="10%">最后同步时间</th>
-			<th width="12%">操作</th>
+			<th width="16%">操作</th>
             
           </tr>
 		  #foreach ($dataMediaPair in $dataMediaPairs)

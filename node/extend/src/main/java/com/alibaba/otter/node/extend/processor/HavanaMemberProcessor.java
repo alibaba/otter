@@ -29,7 +29,7 @@ import com.alibaba.otter.shared.etl.model.EventData;
  */
 public class HavanaMemberProcessor extends AbstractEventProcessor {
 
-    public EventData process(EventData eventData) {
+    public boolean process(EventData eventData) {
         EventColumn belong = getColumn(eventData, "belong_to");
         if (belong == null) {
             return doProcess(eventData);
@@ -67,10 +67,10 @@ public class HavanaMemberProcessor extends AbstractEventProcessor {
             }
         }
 
-        return null;
+        return false;
     }
 
-    private EventData doProcess(EventData eventData) {
+    private boolean doProcess(EventData eventData) {
         if (!eventData.getEventType().isDelete()) {
             // 缺省值为“OT:时间戳:随机串”.
             EventColumn writeSource = getColumn(eventData, "write_source");
@@ -79,6 +79,6 @@ public class HavanaMemberProcessor extends AbstractEventProcessor {
                 writeSource.setColumnValue("OT:" + System.currentTimeMillis() + ":" + RandomUtils.nextInt(10000));
             }
         }
-        return eventData;
+        return true;
     }
 }

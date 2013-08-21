@@ -38,8 +38,6 @@
                 </vm-plugins:escape-support>
             </plugins>
         </tpl-engines:velocity-engine>
-        <tpl-engines:freemarker-engine templateEncoding="UTF-8" path="/templates/${component}" />
-        <tpl-engines:jsp-engine path="/templates/${component}" />
     </services:template>
 
 	<!-- 名称查找规则。 -->

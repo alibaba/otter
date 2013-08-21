@@ -8,7 +8,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<groupId>com.alibaba.otter</groupId>
-	<artifactId>otter.extend</artifactId>
+	<artifactId>node.extend</artifactId>
 	<packaging>jar</packaging>
 	<name>otter extend module for otter</name>
 	<url>http://github.com/alibaba/otter</url>

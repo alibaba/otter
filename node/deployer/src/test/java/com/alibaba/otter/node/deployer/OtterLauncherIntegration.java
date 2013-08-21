@@ -51,7 +51,7 @@ public class OtterLauncherIntegration {
 
         };
         mainstem.start();
-        System.setProperty("nid", "4");
+        System.setProperty("nid", "2");
         OtterLauncher.main(null);
         latch.await();
     }

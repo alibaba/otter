@@ -60,7 +60,11 @@
 				  </exclusion>
 				  <exclusion>
 					<groupId>commons-digester</groupId>
-					<artifactId>ommons-digester</artifactId>
+					<artifactId>commons-digester</artifactId>
+				  </exclusion>
+				  <exclusion>
+					<groupId>commons-betwixt</groupId>
+					<artifactId>commons-betwixt</artifactId>
 				  </exclusion>
 				</exclusions>
 			</dependency>

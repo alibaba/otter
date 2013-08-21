@@ -25,9 +25,26 @@ import com.alibaba.otter.shared.etl.model.EventData;
 public interface EventProcessor {
 
     /**
-     * 自定义处理单条EventData对象
+     * 自定义处理单条EventData对象，如果要改变数据内容，请直接修改原对象而非new一个新的对象
      * 
-     * @return {@link EventData} 返回值=null，需要忽略该条数据
+     * <pre>
+     * EventData数据格式: 
+     *    a. schema name / table name
+     *    b. eventType : insert/update/delete
+     *    c. executeTime : 执行时间
+     *    d. keys / oldKeys : 主键字段 (如果是有主键变更，需要带上老主键的信息在oldKeys中)
+     *    e. columns :  非主键字段
+     * 
+     * EventColumn数据格式：
+     *    a. index : 字段在数据表中的顺序下标
+     *    b. columnType : 对应于sqlType
+     *    c. columnName : 字段名字
+     *    d. columnValue : 字段类型
+     *    e. isKey : 是否为主键
+     *    f. isNull : 是否为空值
+     * </pre>
+     * 
+     * @return false需要忽略该条数据，true代表继续处理
      */
-    public EventData process(EventData eventData);
+    public boolean process(EventData eventData);
 }

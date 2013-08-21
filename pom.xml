@@ -54,6 +54,16 @@
 	
 	<repositories>
 		<repository>
+			<id>Maven Central repository</id>
+			<url>http://repo1.maven.org/maven2/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
 			<id>java.net</id>
 			<url>http://download.java.net/maven/2/</url>
 			<releases>
@@ -160,12 +170,26 @@
 						<groupId>org.slf4j</groupId>
 						<artifactId>slf4j-api</artifactId>
 				  </exclusion>
+				  <exclusion>
+						<groupId>log4j</groupId>
+						<artifactId>log4j</artifactId>
+				  </exclusion>
+				  <exclusion>
+						<groupId>jline</groupId>
+						<artifactId>jline</artifactId>
+				  </exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>com.github.sgroschupf</groupId>
 				<artifactId>zkclient</artifactId>
 				<version>0.1</version>
+				<exclusions>
+				  <exclusion>
+						<groupId>log4j</groupId>
+						<artifactId>log4j</artifactId>
+				  </exclusion>
+				</exclusions>
 			</dependency>
 			<!-- mysql -->
 			<dependency>
@@ -178,6 +202,8 @@
 				<groupId>com.oracle</groupId>
 				<artifactId>ojdbc14</artifactId>
 				<version>10.2.0.3.0</version>
+				<scope>system</scope>
+				<systemPath>${user.dir}/lib/ojdbc14-10.2.0.3.0.jar</systemPath>
 			</dependency>
 			<!-- spring -->
 			<dependency>

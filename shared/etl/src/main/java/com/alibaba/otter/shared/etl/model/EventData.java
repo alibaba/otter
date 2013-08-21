@@ -62,6 +62,9 @@ public class EventData implements ObjectData, Serializable {
      */
     private List<EventColumn> keys             = new ArrayList<EventColumn>();
 
+    /**
+     * 非主键的其他字段
+     */
     private List<EventColumn> columns          = new ArrayList<EventColumn>();
 
     // ====================== 运行过程中对数据的附加属性 =============================

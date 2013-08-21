@@ -82,6 +82,7 @@
 		   	</Call>
 		   	<Get name="initParams">
 		   		<Put name="org.eclipse.jetty.servlet.Default.resourceBase"><Property name="jetty.htdocs" default="/tmp"/></Put>
+		   		<Put name="org.eclipse.jetty.servlet.Default.pathInfoOnly">true</Put>
 		   		<Put name="org.eclipse.jetty.servlet.Default.gzip">false</Put>
 		   		<!-- 
 		   		<Put name="org.eclipse.jetty.servlet.Default.relativeResourceBase">/tmp/</Put>

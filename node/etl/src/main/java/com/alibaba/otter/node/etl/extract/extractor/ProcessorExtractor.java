@@ -60,8 +60,8 @@ public class ProcessorExtractor extends AbstractExtractor<DbBatch> {
 
                 EventProcessor eventProcessor = extensionFactory.getExtension(EventProcessor.class,
                                                                               dataMediaPair.getFilterData());
-                EventData newEventData = eventProcessor.process(eventData);
-                if (newEventData == null) {
+                boolean process = eventProcessor.process(eventData);
+                if (!process) {
                     removeDatas.add(eventData);// 添加到删除记录中
                     break;
                 }

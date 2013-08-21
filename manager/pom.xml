@@ -32,6 +32,16 @@
                 <groupId>com.alibaba.citrus</groupId>
                 <artifactId>citrus-webx-all</artifactId>
                 <version>${webx_version}</version>
+                <exclusions>
+				  <exclusion>
+					<groupId>org.codehaus.groovy</groupId>
+					<artifactId>groovy-all</artifactId>
+				  </exclusion>
+				  <exclusion>
+					<groupId>org.freemarker</groupId>
+					<artifactId>freemarker</artifactId>
+				  </exclusion>
+				</exclusions>
             </dependency>
 			<!-- spring -->
             <dependency>
