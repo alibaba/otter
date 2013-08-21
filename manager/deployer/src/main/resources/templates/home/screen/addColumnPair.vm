@@ -62,7 +62,7 @@ $control.setTemplate("home:navigation.vm")
   <div class="title"> 
     <h2>Table详细</h2>
   </div> 
-<div class="crumbs"><a href="channelList.htm?channelId=$channelId">Channel管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="pipelineList.htm?channelId=$channelId">Pipeline管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="dataMediaPairList.htm?pipelineId=$pipelineId">映射关系管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="addColumnPair.htm?pipelineId=$dataMediaPair.pipelineId&channelId=$channelId&dataMediaPairId=$dataMediaPairId&sourceMediaId=$sourceMediaId&targetMediaId=$targetMediaId">编辑视图同步</a> </div>
+<div class="crumbs"><a href="channelList.htm?channelId=$channelId">Channel管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="pipelineList.htm?channelId=$channelId">Pipeline管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="dataMediaPairList.htm?pipelineId=$pipelineId">映射关系管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="addColumnPair.htm?pipelineId=$pipelineId&channelId=$channelId&dataMediaPairId=$dataMediaPairId&sourceMediaId=$sourceMediaId&targetMediaId=$targetMediaId">编辑视图同步</a> </div>
   <form name="addColumnPairForm" method="post" enctype="multipart/form-data">
 	$csrfToken.hiddenField
 	<input type="hidden" name="action" value="column_pair_action"/>

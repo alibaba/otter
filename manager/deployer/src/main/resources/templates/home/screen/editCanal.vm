@@ -167,6 +167,7 @@ $control.setTemplate("home:navigation.vm")
     		</td>
           </tr>
 		  *#
+		  <input type="hidden" name="$canalParameterGroup.slaveId.key" value="$!canal.canalParameter.slaveId" />
 		  <tr class="localSourcing">
             <th width="300">本地localBinlog目录：</th>
             <td width="329">

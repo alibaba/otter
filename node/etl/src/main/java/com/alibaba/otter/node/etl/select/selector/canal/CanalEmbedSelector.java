@@ -118,7 +118,11 @@ public class CanalEmbedSelector implements OtterSelector {
                 otterAlarmHandler.setPipelineId(pipelineId);
                 OtterContextLocator.autowire(otterAlarmHandler); // 注入一下spring资源
                 //设置下slaveId，保证多个piplineId下重复引用时不重复
-                canal.getCanalParameter().setSlaveId(canal.getCanalParameter().getSlaveId() + pipelineId);
+                long slaveId = 10000;//默认基数
+                if (canal.getCanalParameter().getSlaveId() != null) {
+                    slaveId = canal.getCanalParameter().getSlaveId();
+                }
+                canal.getCanalParameter().setSlaveId(slaveId + pipelineId);
 
                 CanalInstanceWithManager instance = new CanalInstanceWithManager(canal, filter);
                 instance.setAlarmHandler(otterAlarmHandler);
