@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.alibaba.otter</groupId>
     <artifactId>shared</artifactId>
-    <version>4.2.0</version>
+    <version>4.2.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <groupId>com.alibaba.otter</groupId>
