@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
+import com.alibaba.otter.node.etl.load.exception.LoadException;
 import com.alibaba.otter.shared.arbitrate.impl.setl.monitor.PermitMonitor;
 import com.alibaba.otter.shared.etl.model.EventColumn;
 import com.alibaba.otter.shared.etl.model.EventColumnIndexComparable;
@@ -93,11 +94,12 @@ public class DbLoadMerger {
             // 如果上一条变更是delete的，就直接用insert替换
             if (oldEventData.getEventType() == EventType.DELETE) {
                 result.put(rowKey, eventData);
-            } else if (oldEventData.getEventType() == EventType.UPDATE) {
+            } else if (oldEventData.getEventType() == EventType.UPDATE
+                       || oldEventData.getEventType() == EventType.INSERT) {
                 // insert之前出现了update逻辑上不可能，唯一的可能性主要是Freedom的介入，人为的插入了一条Insert记录
                 // 不过freedom一般不建议Insert操作，只建议执行update/delete操作. update默认会走merge
                 // sql,不存在即插入
-                logger.warn("update-insert happend. update[{}] , insert[{}]", oldEventData, eventData);
+                logger.warn("update-insert/insert-insert happend. before[{}] , after[{}]", oldEventData, eventData);
                 // 如果上一条变更是update的，就用insert替换，并且把上一条存在而这一条不存在的字段值拷贝到这一条中
                 EventData mergeEventData = replaceColumnValue(eventData, oldEventData);
                 mergeEventData.getOldKeys().clear();// 清空oldkeys，insert记录不需要
@@ -134,6 +136,8 @@ public class DbLoadMerger {
                     // 如果上一条变更是update的，把上一条存在而这一条不存在的数据拷贝到这一条中
                     EventData mergeEventData = replaceColumnValue(eventData, oldEventData);
                     result.put(rowKey, mergeEventData);
+                } else {
+                    throw new LoadException("delete(has old pks) + update impossible happed!");
                 }
             }
         } else {
@@ -155,6 +159,9 @@ public class DbLoadMerger {
                     // 如果上一条变更是update的，把上一条存在而这一条不存在的数据拷贝到这一条中
                     EventData mergeEventData = replaceColumnValue(eventData, oldEventData);
                     result.put(rowKey, mergeEventData);
+                } else if (oldEventData.getEventType() == EventType.DELETE) {
+                    //异常情况，出现 delete + update，那就直接更新为update
+                    result.put(rowKey, eventData);
                 }
             }
         }

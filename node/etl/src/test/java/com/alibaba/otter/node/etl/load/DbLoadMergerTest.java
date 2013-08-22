@@ -247,6 +247,34 @@ public class DbLoadMergerTest extends BaseDbTest {
         }
     }
 
+    /**
+     * 测试在主键发生变化后的merge操作，Insert/Insert
+     */
+    @Test
+    public void testMergeWithUpdateKeyOfII() {
+        Map<RowKey, EventData> mergeMap = new MapMaker().makeMap();
+        DbLoadMerger.merge(makeInsertEventData(), mergeMap);
+        DbLoadMerger.merge(makeInsertEventData(), mergeMap);
+
+        for (Entry<RowKey, EventData> entry : mergeMap.entrySet()) {
+            RowKey key = entry.getKey();
+            EventColumn keyColumn = key.getKeys().get(0);
+            Assert.assertEquals(KEY_VALUE, keyColumn.getColumnValue());
+            Assert.assertEquals(KEY_NAME, keyColumn.getColumnName());
+
+            EventData eventData = entry.getValue();
+            Assert.assertEquals(SCHEMA_NAME, eventData.getSchemaName());
+            Assert.assertEquals(TABLE_NAME, eventData.getTableName());
+            Assert.assertEquals(TABLE_ID, eventData.getTableId());
+            Assert.assertEquals(EventType.INSERT, eventData.getEventType());
+
+            List<EventColumn> oldKeys = eventData.getOldKeys();
+            List<EventColumn> keys = eventData.getKeys();
+
+            Assert.assertNotSame(oldKeys, keys);
+        }
+    }
+
     private EventData makeInsertEventData() {
         EventData eventData = new EventData();
         eventData.setEventType(EventType.INSERT);

@@ -34,7 +34,7 @@ public class EventData implements ObjectData, Serializable {
     private static final long serialVersionUID = -7071677425383765372L;
 
     /**
-     * otter内部维护的一套tableId，区别与从eromanga中得到的tableId.
+     * otter内部维护的一套tableId，与manager中得到的table Id对应
      */
     private long              tableId          = -1;
 
@@ -43,7 +43,7 @@ public class EventData implements ObjectData, Serializable {
     private String            schemaName;
 
     /**
-     * 变更数据的业务类型(I/U/D/C/A/E),与ErosaProtocol中定义的EventType一致.
+     * 变更数据的业务类型(I/U/D/C/A/E),与canal中的EntryProtocol中定义的EventType一致.
      */
     private EventType         eventType;
 
@@ -74,7 +74,7 @@ public class EventData implements ObjectData, Serializable {
     private long              size             = 1024;
 
     /**
-     * 同步映射的id
+     * 同步映射关系的id
      */
     private long              pairId           = -1;
 

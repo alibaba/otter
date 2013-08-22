@@ -47,8 +47,9 @@ public class EventColumn implements Serializable {
      * 因为FileResolver/EventProcessor会需要所有字段数据做分析，但又想保留按需字段同步模式
      * 
      * <pre>
+     * 可以简单理解isUpdate代表是否需要在目标库执行数据变更，针对update有效，默认insert/delete为true
      * 1. row模式，所有字段均为updated
-     * 2. field模式，通过store/db反查得到的结果，均为updated
+     * 2. field模式，通过db反查得到的结果，均为updated
      * 3. 其余场景，根据判断是否变更过，设置updated数据
      * </pre>
      */
@@ -72,7 +73,7 @@ public class EventColumn implements Serializable {
 
     public String getColumnValue() {
         if (isNull) {
-            // 如果为null值，强制设置为null, eromanga主要是走protobuf协议，String值默认为空字符，无法标示为null对象
+            // 如果为null值，强制设置为null, canal主要是走protobuf协议，String值默认为空字符，无法标示为null对象
             columnValue = null;
             return null;
         } else {
