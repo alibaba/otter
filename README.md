@@ -55,9 +55,8 @@ otter之前开源的一个子项目，开源链接地址：<a href="http://githu
 <h1>
 <a name="%E7%89%88%E6%9C%AC%E7%9B%B8%E5%85%B3-" class="anchor" href="#%E7%89%88%E6%9C%AC%E7%9B%B8%E5%85%B3-"><span class="octicon octicon-link"></span></a>版本相关: </h1>
 <p>1. 建议版本：4.2.0  (otter开源版本从内部演变而来，所以初始版本直接从4.x开始) </p>
-<p>2. 下载发布包：<a href="https://github.com/agapple/otter_download">download </a></p>
+<p>2. 下载发布包：<a href="https://github.com/alibaba/otter/releases">download </a></p>
 <p>3. maven依赖 ： 暂无 </p>
-<p>4. 详细的issues列表可查看：<a href="http://alibaba.github.io/otter/release.html">ReleaseNotes </a></p>
 
 
 <p> </p>
@@ -69,5 +68,5 @@ otter之前开源的一个子项目，开源链接地址：<a href="http://githu
 <p>1.  <span>qq交流群： 161559791</span></p>
 <p><span>2.  </span><span>邮件交流： jianghang115@gmail.com</span></p>
 <p><span>3.  </span><span>新浪微博： agapple0002</span></p>
-<p><span>4.  </span><span>报告issue：</span><a href="https://github.com/agapple/otter/issues">issues</a></p>
+<p><span>4.  </span><span>报告issue：</span><a href="https://github.com/alibaba/otter/issues">issues</a></p>
 <p> </p>
