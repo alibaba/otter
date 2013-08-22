@@ -32,10 +32,11 @@ public abstract class AuthenticationInfoUtils {
     public static AuthenticationInfo createFrom(DatasourceInfo datasourceInfo) {
         AuthenticationInfo authenticationInfo = new AuthenticationInfo();
         try {
-            BeanUtils.copyProperties(datasourceInfo, authenticationInfo);
+            BeanUtils.copyProperties(authenticationInfo, datasourceInfo);
         } catch (Exception e) {
             throw new CanalException(e);
         }
         return authenticationInfo;
     }
+
 }

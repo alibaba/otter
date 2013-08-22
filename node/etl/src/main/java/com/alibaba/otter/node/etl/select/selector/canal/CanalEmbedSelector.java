@@ -36,7 +36,10 @@ import com.alibaba.otter.canal.instance.core.CanalInstanceGenerator;
 import com.alibaba.otter.canal.instance.manager.CanalInstanceWithManager;
 import com.alibaba.otter.canal.instance.manager.model.Canal;
 import com.alibaba.otter.canal.instance.manager.model.CanalParameter.HAMode;
+import com.alibaba.otter.canal.parse.CanalEventParser;
 import com.alibaba.otter.canal.parse.ha.CanalHAController;
+import com.alibaba.otter.canal.parse.inbound.mysql.MysqlEventParser;
+import com.alibaba.otter.canal.parse.support.AuthenticationInfo;
 import com.alibaba.otter.canal.protocol.CanalEntry.Entry;
 import com.alibaba.otter.canal.protocol.ClientIdentity;
 import com.alibaba.otter.canal.server.embeded.CanalServerWithEmbeded;
@@ -137,6 +140,30 @@ public class CanalEmbedSelector implements OtterSelector {
                                                          parameters.getDefaultDatabaseName());
                         } else {
                             return super.initHaController();
+                        }
+                    }
+
+                    @Override
+                    protected void startEventParserInternal(CanalEventParser parser) {
+                        super.startEventParserInternal(parser);
+
+                        if (eventParser instanceof MysqlEventParser) {
+                            MysqlEventParser mysqlEventParser = (MysqlEventParser) eventParser;
+                            CanalHAController haController = mysqlEventParser.getHaController();
+
+                            if (haController instanceof MediaHAController) {
+                                ((MediaHAController) haController).setCanalHASwitchable(mysqlEventParser);
+                            }
+
+                            if (!haController.isStart()) {
+                                haController.start();
+                            }
+
+                            // 基于media的Ha，直接从tddl中获取数据库信息
+                            if (haController instanceof MediaHAController) {
+                                AuthenticationInfo authenticationInfo = ((MediaHAController) haController).getAvailableAuthenticationInfo();
+                                ((MysqlEventParser) eventParser).setMasterInfo(authenticationInfo);
+                            }
                         }
                     }
 

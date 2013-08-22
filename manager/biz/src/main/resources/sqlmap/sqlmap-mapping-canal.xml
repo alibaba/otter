@@ -23,7 +23,6 @@
 	<update id="updateCanal" parameterClass="canal"><![CDATA[
 		update CANAL
 		set
-		NAME=#name#,
 		DESCRIPTION=#description#,
 		PARAMETERS=#parameters#,
 		GMT_MODIFIED=now()
