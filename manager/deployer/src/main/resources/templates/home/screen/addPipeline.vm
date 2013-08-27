@@ -172,7 +172,7 @@ $control.setTemplate("home:navigation.vm")
 	  <tr class="canal"> 
         <th width="300">获取批次数据超时时间(毫秒): </th>
         <td width="329">
-              <input name="$pipelineParameterGroup.batchTimeout.key" value="500" type="text" class="setting_input"/><span class="red">*</span>
+              <input name="$pipelineParameterGroup.batchTimeout.key" value="100" type="text" class="setting_input"/><span class="red">*</span>
 			  <br />
 			  <span>格式: -1不进行控制，0代表永久，>0则按照指定时间控制</span>
 			  <br />
@@ -258,8 +258,8 @@ $control.setTemplate("home:navigation.vm")
 	  <tr class="super"> 
         <th width="300">记录load日志：</th>
         <td width="329">
-              <input type="radio" name="$pipelineParameterGroup.dumpEvent.key" value="true" id="RadioGroup1_2" checked="checked" class="radio"/>是
-              <input type="radio" name="$pipelineParameterGroup.dumpEvent.key" value="false" id="RadioGroup1_3" class="radio"/>否 
+              <input type="radio" name="$pipelineParameterGroup.dumpEvent.key" value="true" id="RadioGroup1_2" class="radio"/>是
+              <input type="radio" name="$pipelineParameterGroup.dumpEvent.key" value="false" id="RadioGroup1_3" checked="checked" class="radio"/>否 
         </td>
       </tr>
 	  <tr class="super"> 
