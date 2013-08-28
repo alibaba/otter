@@ -19,6 +19,10 @@ if [ -f $base/bin/otter.pid ] ; then
     exit 1
 fi
 
+if [ ! -d $base/logs/node ] ; then 
+	mkdir -p $base/logs/node
+fi
+
 if [ -z "$ARIA2C" ]; then
   ARIA2C=$(which aria2c)
 fi
@@ -113,7 +117,7 @@ then
   echo "cd to $bin_abs_path for workaround relative path"
   cd $bin_abs_path
 
-	$JAVA $JAVA_OPTS $JAVA_DEBUG_OPT $OTTER_OPTS -classpath .:$CLASSPATH com.alibaba.otter.node.deployer.OtterLauncher 1>>$base/bin/nohup.out 2>&1 &
+	$JAVA $JAVA_OPTS $JAVA_DEBUG_OPT $OTTER_OPTS -classpath .:$CLASSPATH com.alibaba.otter.node.deployer.OtterLauncher 1>>$base/logs/node/node.log 2>&1 &
 	echo $! > $base/bin/otter.pid 
 
   echo "cd to $current_path for continue"

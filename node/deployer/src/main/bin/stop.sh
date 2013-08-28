@@ -42,7 +42,7 @@ kill $pid
 LOOPS=0
 while (true); 
 do 
-	pid=`get_pid "appName=otter-node"`
+	pid=`get_pid "appName=otter-node" "$pid"`
     if [ "$pid" == "" ] ; then
     	echo "Oook! cost:$LOOPS"
     	`rm $pidfile`

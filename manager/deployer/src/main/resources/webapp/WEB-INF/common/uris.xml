@@ -133,11 +133,8 @@
 		<uris:turbine-uri id="sqlInitLink" exposed="true" extends="homeModule">
 			<target>initSql.vm</target>
 		</uris:turbine-uri>
-		<uris:turbine-uri id="managerGuideLink" exposed="true" extends="homeModule">
-			<target>managerGuide.vm</target>
-		</uris:turbine-uri>
-		<uris:turbine-uri id="featureGuideLink" exposed="true" extends="homeModule">
-			<target>featureGuide.vm</target>
+		<uris:turbine-uri id="wikiLink" exposed="true" extends="homeModule">
+			<target>wikiGuide.vm</target>
 		</uris:turbine-uri>
 	</services:uris>
 </beans:beans>

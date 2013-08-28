@@ -21,6 +21,10 @@ if [ -f $base/bin/otter.pid ] ; then
     exit 1
 fi
 
+if [ ! -d $base/logs ] ; then 
+	mkdir -p $base/logs
+fi
+
 ## set java path
 if [ -z "$JAVA" ] ; then
   JAVA=$(which java)
@@ -85,7 +89,7 @@ then
 	for i in $base/lib/*;
 		do CLASSPATH=$i:"$CLASSPATH";
 	done
- 	CLASSPATH="$base/webapp:$base/conf:$CLASSPATH";
+ 	CLASSPATH="$base:$base/conf:$CLASSPATH";
  	
  	echo "cd to $bin_abs_path for workaround relative path"
   	cd $bin_abs_path
@@ -93,7 +97,7 @@ then
 	echo LOG CONFIGURATION : $logback_configurationFile
 	echo otter conf : $otter_conf 
 	echo CLASSPATH :$CLASSPATH
-	$JAVA $JAVA_OPTS $JAVA_DEBUG_OPT $OTTER_OPTS -classpath .:$CLASSPATH com.alibaba.otter.manager.deployer.OtterManagerLauncher 1>>$base/bin/nohup.out 2>&1 &
+	$JAVA $JAVA_OPTS $JAVA_DEBUG_OPT $OTTER_OPTS -classpath .:$CLASSPATH com.alibaba.otter.manager.deployer.OtterManagerLauncher 1>>$base/logs/manager.log 2>&1 &
 	echo $! > $base/bin/otter.pid 
 	
 	echo "cd to $current_path for continue"

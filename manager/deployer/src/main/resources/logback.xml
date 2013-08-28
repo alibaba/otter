@@ -8,10 +8,10 @@
 	</appender>
 	<appender name="WEBX-ROOT" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<append>true</append>
-        <file>../logs/webx.log</file>
+        <file>../logs/manager.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
           <!-- daily rollover -->
-          <fileNamePattern>../logs/%d{yyyy-MM-dd}/webx-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+          <fileNamePattern>../logs/%d{yyyy-MM-dd}/manager-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
 		  <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
             <!-- or whenever the file size reaches 100MB -->
             <maxFileSize>30MB</maxFileSize>

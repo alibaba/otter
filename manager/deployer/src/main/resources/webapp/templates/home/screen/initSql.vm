@@ -15,7 +15,7 @@ $control.setTemplate("home:navigation.vm")
   </div>
    <div class="crumbs">MYSQL</div>
    <br/><br/><br/>
-   <h3>请DBA注意修改密码! retl的密码</h3>
+   <h3>说明：该脚本为双A机房数据库同步的初始化SQL，如无该需求请忽略之，注意修改密码</h3>
    	<pre>
 /*
 供 otter 使用， otter 需要对 retl.* 的读写权限，以及对业务表的读写权限

@@ -37,10 +37,9 @@
 	</li>
 	<li id="manual" class="sub_nav"><a href="#">使用文档</a>
 	      <ul>
-			<li><a href="$managerGuideLink">管理系统介绍</a></li>
-			<li><a href="$featureGuideLink">功能特性介绍</a></li>
+			<li><a href="$wikiLink">wiki文档</a></li>
 	        <li><a href="$sqlInitLink">数据库初始化</a></li>
-	      </ul>   
+	      </ul>
 	    </li>
 	#if($user.authorizeType.isAdmin())
 		<li id="user" class="sub_nav"><a href="#">系统管理</a>

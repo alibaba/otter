@@ -11,7 +11,7 @@
 	<appender name="TASK-ROOT" class="ch.qos.logback.classic.sift.SiftingAppender">
 		<discriminator>
 			<Key>otter</Key>
-			<DefaultValue>otter</DefaultValue>
+			<DefaultValue>node</DefaultValue>
 		</discriminator>
 		<sift>
 			<appender name="FILE-${otter}"

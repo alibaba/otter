@@ -6,7 +6,7 @@ set ENV_PATH=.\
 if "%OS%" == "Windows_NT" set ENV_PATH=%~dp0%
 
 set conf_dir=%ENV_PATH%\..\conf
-set webapp_dir=%ENV_PATH%\..\webapp
+set webapp_dir=%ENV_PATH%\..\
 set otter_conf=%conf_dir%\otter.properties
 set logback_configurationFile=%conf_dir%\logback.xml
 

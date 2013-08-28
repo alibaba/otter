@@ -14,10 +14,10 @@
 	<services:resource-loading>
 
 		<resource-alias pattern="/" name="/webapp" />
-		<resource-alias pattern="/templates" name="/classpath/templates" />
+		<resource-alias pattern="/templates" name="/webapp/templates" />
 		
 		<!-- 全局模板目录： /*/templates/global -->
-		<resource-alias pattern="/*/templates/global" name="/webapp/home/templates" />
+		<resource-alias pattern="/*/templates/global" name="/webapp/templates/home" />
 
 		<!-- 配置文件根目录：/conf -->
 		<resource-alias pattern="/conf" name="/webapp/WEB-INF" />

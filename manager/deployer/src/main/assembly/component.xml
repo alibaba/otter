@@ -9,8 +9,8 @@
 			<fileMode>0755</fileMode>
 		</fileSet>
 		<fileSet>
-			<directory>./src/main/resources/templates</directory>
-			<outputDirectory>webapp/templates</outputDirectory>
+			<directory>./src/main/resources/webapp</directory>
+			<outputDirectory>webapp</outputDirectory>
 			<includes>
 				<include>**/*</include>
 			</includes>

@@ -54,7 +54,7 @@
 	<!-- 综合设置。 -->
     <services:webx-configuration>
         <!-- 默认将productionMode设为true，建议在jetty插件中设置-DproductionMode=false。 -->
-        <productionMode>${productionMode:true}</productionMode>
+        <productionMode>${otter.manager.productionMode:true}</productionMode>
         <components defaultComponent="home" />
     </services:webx-configuration>
 
@@ -149,9 +149,7 @@
 						/.*alarmRuleList.*\.htm
 						/.*alarm_rule_list.*\.htm
 						/.*init_sql.*\.htm
-						/.*init_sql.*\.htm
-						/.*feature_guide.*\.htm
-						/.*manager_guide.*\.htm
+						/.*wiki_guide.*\.htm
 					</beans:value>
 				</beans:property>
 				<beans:property name="actionProtected">

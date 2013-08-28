@@ -44,6 +44,7 @@
 						<exclude>**/jetty.xml</exclude>
 						<exclude>**/logback.xml</exclude>
 						<exclude>**/otter.properties</exclude>
+						<exclude>**/webapp/**/*</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
