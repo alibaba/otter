@@ -55,6 +55,7 @@ import org.springframework.util.CollectionUtils;
 import com.alibaba.otter.node.common.config.ConfigClientService;
 import com.alibaba.otter.node.etl.common.db.dialect.DbDialect;
 import com.alibaba.otter.node.etl.common.db.dialect.DbDialectFactory;
+import com.alibaba.otter.node.etl.common.db.dialect.mysql.MysqlDialect;
 import com.alibaba.otter.node.etl.common.db.utils.SqlUtils;
 import com.alibaba.otter.node.etl.load.exception.LoadException;
 import com.alibaba.otter.node.etl.load.loader.LoadStatsTracker;
@@ -667,7 +668,15 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
                         case Types.BLOB:
                             lobCreator.setBlobAsBytes(ps, paramIndex, (byte[]) param);
                             break;
-
+                        case Types.TIME:
+                        case Types.TIMESTAMP:
+                        case Types.DATE:
+                            // 只处理mysql的时间类型，oracle的进行转化处理
+                            if (dbDialect instanceof MysqlDialect) {
+                                // 解决mysql的0000-00-00 00:00:00问题，直接依赖mysql driver进行处理，如果转化为Timestamp会出错
+                                ps.setObject(paramIndex, column.getColumnValue());
+                                break;
+                            }
                         default:
                             StatementCreatorUtils.setParameterValue(ps, paramIndex, sqlType, null, param);
                             break;

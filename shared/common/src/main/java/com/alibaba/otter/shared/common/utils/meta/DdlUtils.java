@@ -134,6 +134,9 @@ public class DdlUtils {
 
                     metaData.setMetaData(databaseMetaData);
                     metaData.setTableTypes(TableType.toStrings(SUPPORTED_TABLE_TYPES));
+                    metaData.setCatalog(catalogName);
+                    metaData.setSchemaPattern(schemaName);
+
                     String convertTableName = tableName;
                     if (databaseMetaData.storesUpperCaseIdentifiers()) {
                         metaData.setCatalog(catalogName.toUpperCase());
@@ -196,6 +199,9 @@ public class DdlUtils {
 
                     metaData.setMetaData(databaseMetaData);
                     metaData.setTableTypes(TableType.toStrings(SUPPORTED_TABLE_TYPES));
+                    metaData.setCatalog(catalogName);
+                    metaData.setSchemaPattern(schemaName);
+
                     String convertTableName = tableNamePattern;
                     if (databaseMetaData.storesUpperCaseIdentifiers()) {
                         metaData.setCatalog(catalogName.toUpperCase());
