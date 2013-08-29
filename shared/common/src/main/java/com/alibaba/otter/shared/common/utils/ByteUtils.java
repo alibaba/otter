@@ -105,6 +105,11 @@ public class ByteUtils {
         return 4;
     }
 
+    public static int bytes2int(byte[] data, int offset) {
+        ByteBuffer buffer = ByteBuffer.wrap(data, offset, 4);
+        return buffer.getInt();
+    }
+
     public static int long2bytes(long l, byte[] data, int offset) {
         data[offset++] = (byte) ((l >> 56) & 0xff);
         data[offset++] = (byte) ((l >> 48) & 0xff);
@@ -115,6 +120,11 @@ public class ByteUtils {
         data[offset++] = (byte) ((l >> 8) & 0xff);
         data[offset] = (byte) (l & 0xff);
         return 8;
+    }
+
+    public static long bytes2long(byte[] data, int offset) {
+        ByteBuffer buffer = ByteBuffer.wrap(data, offset, 8);
+        return buffer.getLong();
     }
 
 }

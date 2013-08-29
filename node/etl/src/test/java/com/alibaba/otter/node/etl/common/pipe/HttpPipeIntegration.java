@@ -105,6 +105,7 @@ public class HttpPipeIntegration extends BaseOtterTest {
         fileBatch.setIdentity(identity);
         File localFile = new File(tmp, "httpPipeTest.jpg");
         FileData localFileData = new FileData();
+        localFileData.setEventType(EventType.INSERT);
         localFileData.setPath(localFile.getPath());
         fileBatch.getFiles().add(localFileData);
         try {
