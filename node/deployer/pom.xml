@@ -78,7 +78,7 @@
 				<activeByDefault>true</activeByDefault>
 				<property>
 					<name>env</name>
-					<value>!release</value>
+					<value>dev</value>
 				</property>
 			</activation>
 
@@ -116,6 +116,33 @@
 							<!-- 发布模式使用的maven assembly插件描述文件 -->
 							<descriptors>
 								<descriptor>${basedir}/src/main/assembly/release.xml</descriptor>
+							</descriptors>
+							<!-- 如果一个应用的包含多个deploy模块，如果使用同样的包名， 如果把它们复制的一个目录中可能会失败，所以包名加了 artifactId以示区分 -->
+							<finalName>${project.artifactId}-${project.version}</finalName>
+							<!-- scm 要求 release 模式打出的包放到顶级目录下的target子目录中 -->
+							<outputDirectory>${project.parent.parent.build.directory}</outputDirectory>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<profile>
+			<id>mvn</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>mvn</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<configuration>
+							<!-- 发布模式使用的maven assembly插件描述文件 -->
+							<descriptors>
+								<descriptor>${basedir}/src/main/assembly/mvn.xml</descriptor>
 							</descriptors>
 							<!-- 如果一个应用的包含多个deploy模块，如果使用同样的包名， 如果把它们复制的一个目录中可能会失败，所以包名加了 artifactId以示区分 -->
 							<finalName>${project.artifactId}-${project.version}</finalName>
