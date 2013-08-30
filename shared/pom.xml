@@ -21,11 +21,6 @@
 		<module>push</module>
 	</modules>
 	
-	<properties>
-		<!--maven properties-->
-        <maven.test.skip>false</maven.test.skip>
-	</properties>
-	
 	<dependencyManagement>
 		<dependencies>
 			<dependency>

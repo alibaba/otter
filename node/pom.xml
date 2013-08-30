@@ -12,10 +12,6 @@
 	<name>node module for otter</name>
 	<version>4.2.1-SNAPSHOT</version>
 	<url>http://github.com/alibaba/otter</url>
-	<properties>
-		<!--maven properties-->
-        <maven.test.skip>false</maven.test.skip>
-	</properties>
 	
 	<modules>
 		<module>common</module>

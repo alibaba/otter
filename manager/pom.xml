@@ -20,8 +20,6 @@
 	</modules>
 	
 	<properties>
-		<!--maven properties-->
-        <maven.test.skip>false</maven.test.skip>
 		<webx_version>3.2.0</webx_version>
 	</properties>
 	
