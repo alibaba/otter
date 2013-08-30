@@ -54,28 +54,8 @@
 	
 	<repositories>
 		<repository>
-			<id>Maven Central repository</id>
-			<url>http://repo1.maven.org/maven2/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
 			<id>java.net</id>
 			<url>http://download.java.net/maven/2/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>alibaba</id>
-			<url>http://code.alibabatech.com/mvn/releases/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -87,6 +67,23 @@
 			<id>jtester-maven</id>
 			<name>JTester</name>
 			<url>http://jtester.googlecode.com/svn/m2/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>sonatype</id>
+			<name>sonatype</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</repository>
 	</repositories>
 	
