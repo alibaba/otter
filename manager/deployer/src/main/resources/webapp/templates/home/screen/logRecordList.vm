@@ -110,7 +110,9 @@ a { text-decoration: none; }
 				#if($logRecord.channel.id > 0)
 					#set ($channelURL = $homeModule.setTarget("channelList.vm").addQueryData("channelId", $logRecord.channel.id))
 					<a href="$channelURL">$logRecord.channel.name</a>
-				#else
+				#elseif($logRecord.channel.id == 0)
+					<a href="#">UnKnow</a>
+				#else	
 					<a href="#">manager</a>
 				#end
 			 </td>
@@ -118,6 +120,8 @@ a { text-decoration: none; }
 				#if($logRecord.pipeline.id > 0)
 					#set ($pipelineURL = $homeModule.setTarget("pipelineList.vm").addQueryData("channelId", $logRecord.channel.id).addQueryData("pipelineId", $logRecord.pipeline.id))
 					<a href="$pipelineURL">$logRecord.pipeline.name</a>
+				#elseif($logRecord.pipeline.id == 0)
+					<a href="#">UnKnow</a>
 				#else
 					<a href="#">manager</a>
 				#end
