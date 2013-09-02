@@ -16,65 +16,107 @@
 
 package com.alibaba.otter.node.extend.processor;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
-import org.apache.commons.lang.math.RandomUtils;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.otter.shared.etl.model.EventColumn;
 import com.alibaba.otter.shared.etl.model.EventData;
+import com.alibaba.otter.shared.etl.model.EventType;
 
 public class TestEventProcessor extends AbstractEventProcessor {
 
     public boolean process(EventData eventData) {
-        EventColumn belong = getColumn(eventData, "belong_to");
-        if (belong == null) {
-            return doProcess(eventData);
+        // 基本步骤：
+        // 1. 获取binlog中的变更字段
+        // 2. 根据业务逻辑进行判断，如果需要忽略本条数据同步，直接返回false，否则返回true
+        // 3. 根据业务逻辑进行逻辑转化，比如可以修改整个EventData数据.  
+
+        // 本文例子：源库的每条binlog变更，记录到一个日志表binlog
+        // create table test.binlog(
+        //        id bigint(20) auto_increment,
+        //        oschema varchar(256),
+        //        otable varchar(256),
+        //        gtime varchar(32)
+        //        ovalue text,
+        //        primary key(id);
+        //    )
+        // 在process处理中，可以修改EventData的任何数据，达到数据转换的效果, just have fun.
+        JSONObject col = new JSONObject();
+        JSONArray array = new JSONArray();
+        for (EventColumn column : eventData.getColumns()) {
+            JSONObject obj = this.doColumn(column);
+            array.add(obj);
         }
 
-        // 判断规则：
-        // (belong_to字段是包含4: || visited_idcs是数字并且visited_idcs & 2 >0) &&
-        // write_source不为空且write_source不包含"OT"字符串且不包含"CIW"字符串)
-
-        boolean pass = false;
-        pass |= StringUtils.contains(belong.getColumnValue(), "4:");
-
-        if (!pass) {// 第一个条件不满足，看一下第二个条件，两者是或者关系
-            EventColumn visited = getColumn(eventData, "visited_idcs");
-            if (visited == null) {
-                return doProcess(eventData);
-            }
-
-            pass |= NumberUtils.isDigits(visited.getColumnValue())
-                    && (Integer.valueOf(visited.getColumnValue()) & 2) > 0;
+        for (EventColumn key : eventData.getKeys()) {
+            JSONObject obj = this.doColumn(key);
+            array.add(obj);
         }
 
-        if (pass) {// 第三个条件和前两个条件是与关系，delete类型不判断write_source
-            // write_source为字符类型
-            EventColumn writeSource = getColumn(eventData, "write_source");
-            if (writeSource == null) {
-                return doProcess(eventData);
-            } else {
-                // 继续与操作
-                if (eventData.getEventType().isDelete() // delete类型直接放过
-                    || (StringUtils.isNotEmpty(writeSource.getColumnValue()) && !StringUtils.contains(writeSource.getColumnValue(),
-                                                                                                      "CIW"))) {
-                    return doProcess(eventData);
-                }
-            }
-        }
+        col.put("schema", eventData.getSchemaName());
+        col.put("table", eventData.getTableName());
+        col.put("columns", array);
+        col.put("dml", eventData.getEventType());
+        col.put("exectime", eventData.getExecuteTime());
 
-        return false;
+        // 构造新的主键
+        EventColumn id = new EventColumn();
+        id.setColumnValue(eventData.getSchemaName());
+        id.setColumnType(Types.BIGINT);
+        id.setColumnName("id");
+        // 构造新的字段
+        EventColumn schema = new EventColumn();
+        schema.setColumnValue(eventData.getSchemaName());
+        schema.setColumnType(Types.VARCHAR);
+        schema.setColumnName("oschema");
+
+        EventColumn table = new EventColumn();
+        table.setColumnValue(eventData.getTableName());
+        table.setColumnType(Types.VARCHAR);
+        table.setColumnName("otable");
+
+        EventColumn ovalue = new EventColumn();
+        ovalue.setColumnValue(col.toJSONString());
+        ovalue.setColumnType(Types.VARCHAR);
+        ovalue.setColumnName("ovalue");
+
+        EventColumn gtime = new EventColumn();
+        gtime.setColumnValue(eventData.getExecuteTime() + "");
+        gtime.setColumnType(Types.VARCHAR);
+        gtime.setColumnName("gtime");
+
+        // 替换为新的字段和主键信息
+        List<EventColumn> cols = new ArrayList<EventColumn>();
+        cols.add(schema);
+        cols.add(table);
+        cols.add(gtime);
+        cols.add(ovalue);
+        eventData.setColumns(cols);
+
+        List<EventColumn> keys = new ArrayList<EventColumn>();
+        keys.add(id);
+        eventData.setKeys(keys);
+
+        //修改数据meta信息
+        eventData.setEventType(EventType.INSERT);
+        eventData.setSchemaName("test");
+        eventData.setTableName("binlog");
+        return true;
     }
 
-    private boolean doProcess(EventData eventData) {
-        if (!eventData.getEventType().isDelete()) {
-            // 缺省值为“OT:时间戳:随机串”.
-            EventColumn writeSource = getColumn(eventData, "write_source");
-            if (writeSource != null) {
-                // 填入otter产生的信息
-                writeSource.setColumnValue("OT:" + System.currentTimeMillis() + ":" + RandomUtils.nextInt(10000));
-            }
+    private JSONObject doColumn(EventColumn column) {
+        JSONObject obj = new JSONObject();
+        obj.put("name", column.getColumnName());
+        obj.put("update", column.isUpdate());
+        obj.put("key", column.isKey());
+        if (column.getColumnType() != Types.BLOB && column.getColumnType() != Types.CLOB) {
+            obj.put("value", column.getColumnValue());
+        } else {
+            obj.put("value", "");
         }
-        return true;
+        return obj;
     }
 }
