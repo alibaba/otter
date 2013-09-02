@@ -23,13 +23,7 @@ import org.apache.commons.lang.math.RandomUtils;
 import com.alibaba.otter.shared.etl.model.EventColumn;
 import com.alibaba.otter.shared.etl.model.EventData;
 
-/**
- * 中美同步，支付宝的会员数据不同同步到美国
- * 
- * @author jianghang 2012-8-9 下午03:34:34
- * @version 4.1.0
- */
-public class HavanaMemberProcessor extends AbstractEventProcessor {
+public class TestEventProcessor extends AbstractEventProcessor {
 
     public boolean process(EventData eventData) {
         EventColumn belong = getColumn(eventData, "belong_to");
