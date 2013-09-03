@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 	    <groupId>com.alibaba.otter</groupId>
-	    <artifactId>otter.parent</artifactId>
+	    <artifactId>otter</artifactId>
 	    <version>4.2.2-SNAPSHOT</version>
 	</parent>
 	<groupId>com.alibaba.otter</groupId>
