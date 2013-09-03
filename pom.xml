@@ -6,7 +6,7 @@
 	    <version>7</version>
 	</parent>
 	<groupId>com.alibaba.otter</groupId>
-	<artifactId>otter</artifactId>
+	<artifactId>otter.parent</artifactId>
 	<packaging>pom</packaging>
 	<name>otter</name>
 	<version>4.2.2-SNAPSHOT</version>
