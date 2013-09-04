@@ -21,11 +21,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.ddlutils.model.Table;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.alibaba.otter.manager.biz.common.DataSourceCreator;
@@ -197,22 +199,26 @@ public class DataSourceChecker {
         try {
             DbMediaSource dbMediaSource = (DbMediaSource) source;
             dataSource = dataSourceCreator.createDataSource(dbMediaSource);
-            conn = dataSource.getConnection();
-            if (null == conn) {
-                return DATABASE_FAIL;
-            }
-
+            //            conn = dataSource.getConnection();
+            //            if (null == conn) {
+            //                return DATABASE_FAIL;
+            //            }
             ModeValue namespaceValue = ConfigHelper.parseMode(namespace);
             ModeValue nameValue = ConfigHelper.parseMode(name);
             String tempNamespace = namespaceValue.getSingleValue();
             String tempName = nameValue.getSingleValue();
 
-            String descSql = "desc " + tempNamespace + "." + tempName;
-            stmt = conn.createStatement();
+            //            String descSql = "desc " + tempNamespace + "." + tempName;
+            //            stmt = conn.createStatement();
 
             try {
-                stmt.executeQuery(descSql);
+                Table table = DdlUtils.findTable(new JdbcTemplate(dataSource), tempNamespace, tempNamespace, tempName);
+                if (table == null) {
+                    return SELECT_FAIL;
+                }
             } catch (SQLException se) {
+                return SELECT_FAIL;
+            } catch (Exception e) {
                 return SELECT_FAIL;
             }
 
@@ -241,8 +247,6 @@ public class DataSourceChecker {
             // return DELETE_FAIL;
             // }
 
-        } catch (SQLException se) {
-            return TABLE_FAIL;
         } finally {
             closeConnection(conn, stmt);
             dataSourceCreator.destroyDataSource(dataSource);
@@ -265,13 +269,17 @@ public class DataSourceChecker {
                 ModeValue mode = ConfigHelper.parseMode(namespace);
                 String schemaPattern = ConfigHelper.makeSQLPattern(mode, namespace);
                 final ModeValueFilter modeValueFilter = ConfigHelper.makeModeValueFilter(mode, namespace);
-                schemaList = DdlUtils.findSchemas(jdbcTemplate, schemaPattern, new DdlSchemaFilter() {
+                if (source.getType().isOracle()) {
+                    schemaList = Arrays.asList(namespace);
+                } else {
+                    schemaList = DdlUtils.findSchemas(jdbcTemplate, schemaPattern, new DdlSchemaFilter() {
 
-                    @Override
-                    public boolean accept(String schemaName) {
-                        return modeValueFilter.accept(schemaName);
-                    }
-                });
+                        @Override
+                        public boolean accept(String schemaName) {
+                            return modeValueFilter.accept(schemaName);
+                        }
+                    });
+                }
             }
 
             final List<String> matchSchemaTables = new ArrayList<String>();

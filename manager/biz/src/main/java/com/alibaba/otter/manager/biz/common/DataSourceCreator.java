@@ -44,7 +44,7 @@ public class DataSourceCreator implements DisposableBean {
 
     private int                     initialSize                   = 1;
 
-    private int                     maxActive                     = 1;
+    private int                     maxActive                     = 5;
 
     private int                     maxIdle                       = 1;
 

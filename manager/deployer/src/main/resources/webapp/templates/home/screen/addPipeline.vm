@@ -164,7 +164,7 @@ $control.setTemplate("home:navigation.vm")
 	  <tr> 
         <th width="300">消费批次大小：</th>
         <td width="329">
-              <input name="$pipelineParameterGroup.mainstemBatchsize.key" value="5000" type="text" class="setting_input"/><span class="red">*</span>
+              <input name="$pipelineParameterGroup.mainstemBatchsize.key" value="6000" type="text" class="setting_input"/><span class="red">*</span>
 			  <br />
 			  <span class="red">#addPipelineMessage ($pipelineParameterGroup.mainstemBatchsize)</span>
         </td>
