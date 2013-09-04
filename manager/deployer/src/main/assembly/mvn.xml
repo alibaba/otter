@@ -26,6 +26,10 @@
 			<source>./src/main/resources/otter.properties</source>
 			<outputDirectory>conf</outputDirectory>
 		</file>
+		<file>
+			<source>../../lib/ojdbc14-10.2.0.3.0.jar</source>
+			<outputDirectory>lib</outputDirectory>
+		</file>
 	</files>
 	<dependencySets>
 		<dependencySet>
