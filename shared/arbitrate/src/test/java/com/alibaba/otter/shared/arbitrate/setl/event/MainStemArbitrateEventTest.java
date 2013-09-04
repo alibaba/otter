@@ -61,7 +61,6 @@ public class MainStemArbitrateEventTest extends BaseEventTest {
         // mock 配置信息数据
         Mockit.setUpMock(ArbitrateConfigUtils.class, new Object() {
 
-            @SuppressWarnings("unused")
             @Mock
             public Channel getChannel(Long pipelineId) {
                 Channel channel = new Channel();
@@ -69,19 +68,16 @@ public class MainStemArbitrateEventTest extends BaseEventTest {
                 return channel;
             }
 
-            @SuppressWarnings("unused")
             @Mock
             public Pipeline getOppositePipeline(Long pipelineId) {
                 return null;// 没有反向同步
             }
 
-            @SuppressWarnings("unused")
             @Mock
             public int getParallelism(Long pipelineId) {
                 return 3;// 并行度
             }
 
-            @SuppressWarnings("unused")
             @Mock
             public Pipeline getPipeline(Long pipelineId) {
                 Pipeline pipeline = new Pipeline();
@@ -92,7 +88,6 @@ public class MainStemArbitrateEventTest extends BaseEventTest {
                 return pipeline;
             }
 
-            @SuppressWarnings("unused")
             @Mock
             public Long getCurrentNid() {
                 return nid;

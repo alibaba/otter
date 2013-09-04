@@ -54,7 +54,6 @@ public class RpcArbitrateEventTest extends BaseArbitrateEventTest {
     public void test_all() {
         Mockit.setUpMock(ArbitrateConfigUtils.class, new Object() {
 
-            @SuppressWarnings("unused")
             @Mock
             public int getParallelism(Long pipelineId) {
                 return 2;// 并行度

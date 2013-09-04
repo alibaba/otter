@@ -87,7 +87,6 @@ public class ArbitrateOppositeIntegration extends BaseEventTest {
         // mock 配置信息数据
         Mockit.setUpMock(ArbitrateConfigUtils.class, new Object() {
 
-            @SuppressWarnings("unused")
             @Mock
             public Channel getChannelByChannelId(Long channelId) {
                 Channel channel = new Channel();
@@ -101,7 +100,6 @@ public class ArbitrateOppositeIntegration extends BaseEventTest {
                 return channel;
             }
 
-            @SuppressWarnings("unused")
             @Mock
             public Pipeline getPipeline(Long pipelineId) {
                 Pipeline pipeline = new Pipeline();
@@ -112,19 +110,16 @@ public class ArbitrateOppositeIntegration extends BaseEventTest {
                 return pipeline;
             }
 
-            @SuppressWarnings("unused")
             @Mock
             public Long getCurrentNid() {
                 return oneNid;
             }
 
-            @SuppressWarnings("unused")
             @Mock
             public int getParallelism(Long pipelineId) {
                 return 3;// 并行度
             }
 
-            @SuppressWarnings("unused")
             @Mock
             public Pipeline getOppositePipeline(Long pipelineId) {
                 Pipeline pipeline = new Pipeline();
@@ -135,7 +130,6 @@ public class ArbitrateOppositeIntegration extends BaseEventTest {
                 return pipeline;
             }
 
-            @SuppressWarnings("unused")
             @Mock
             public Channel getChannel(Long pipelineId) {
                 Channel channel = new Channel();
@@ -154,7 +148,6 @@ public class ArbitrateOppositeIntegration extends BaseEventTest {
 
         Mockit.setUpMock(ArbitrateCommmunicationClient.class, new Object() {
 
-            @SuppressWarnings("unused")
             @Mock
             public Object callManager(final Event event) {
                 // do nothing

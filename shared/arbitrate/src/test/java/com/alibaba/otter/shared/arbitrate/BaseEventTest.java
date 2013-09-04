@@ -40,7 +40,6 @@ public class BaseEventTest extends BaseOtterTest {
         // ReflectionUtils.setField(zookeeperField, new ZooKeeperClient(), null);
         Mockit.setUpMock(ZooKeeperClient.class, new Object() {
 
-            @SuppressWarnings("unused")
             @Mock
             private List<String> getServerAddrs() {
                 return Arrays.asList(cluster1, cluster2);

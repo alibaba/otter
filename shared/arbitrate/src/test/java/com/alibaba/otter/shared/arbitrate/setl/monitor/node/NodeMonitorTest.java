@@ -58,7 +58,6 @@ public class NodeMonitorTest extends BaseEventTest {
         // 初始化节点
         Mockit.setUpMock(ArbitrateConfigUtils.class, new Object() {
 
-            @SuppressWarnings("unused")
             @Mock
             public Channel getChannel(Long pipelineId) {
                 Channel channel = new Channel();
@@ -66,7 +65,6 @@ public class NodeMonitorTest extends BaseEventTest {
                 return channel;
             }
 
-            @SuppressWarnings("unused")
             @Mock
             public Pipeline getOppositePipeline(Long pipelineId) {
                 Pipeline pipeline = new Pipeline();
@@ -74,7 +72,6 @@ public class NodeMonitorTest extends BaseEventTest {
                 return pipeline;
             }
 
-            @SuppressWarnings("unused")
             @Mock
             public Pipeline getPipeline(Long pipelineId) {
                 Pipeline pipeline = new Pipeline();

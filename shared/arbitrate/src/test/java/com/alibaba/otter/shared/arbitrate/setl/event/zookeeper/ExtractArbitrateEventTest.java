@@ -45,7 +45,6 @@ public class ExtractArbitrateEventTest extends BaseArbitrateEventTest {
     public void test_extract() {
         Mockit.setUpMock(ArbitrateConfigUtils.class, new Object() {
 
-            @SuppressWarnings("unused")
             @Mock
             public int getParallelism(Long pipelineId) {
                 return 2;//并行度

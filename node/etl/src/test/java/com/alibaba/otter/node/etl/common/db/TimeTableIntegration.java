@@ -18,7 +18,6 @@ package com.alibaba.otter.node.etl.common.db;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
@@ -157,9 +156,7 @@ public class TimeTableIntegration extends BaseDbTest {
                 case Types.TIME:
                 case Types.TIMESTAMP:
                 case Types.DATE:
-                    Timestamp value = new Timestamp(0, 0, 0, 0, 0, 0, 0);
-                    System.out.println(value);
-                    ps.setObject(paramIndex, new Timestamp(0, 0, 0, 0, 0, 0, 0));
+                    ps.setObject(paramIndex, sqlValue);
                     break;
                 default:
                     StatementCreatorUtils.setParameterValue(ps, paramIndex, sqlType, null, param);

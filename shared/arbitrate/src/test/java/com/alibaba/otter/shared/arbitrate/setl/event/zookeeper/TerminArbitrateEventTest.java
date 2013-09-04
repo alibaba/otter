@@ -124,13 +124,11 @@ public class TerminArbitrateEventTest extends BaseArbitrateEventTest {
     private void normalProcess() {
         Mockit.setUpMock(ArbitrateConfigUtils.class, new Object() {
 
-            @SuppressWarnings("unused")
             @Mock
             public int getParallelism(Long pipelineId) {
                 return 2;// 并行度
             }
 
-            @SuppressWarnings("unused")
             @Mock
             public Long getCurrentNid() {
                 return nid;

@@ -76,7 +76,6 @@ public class ZooKeeperClientTest extends BaseOtterTest {
 
         Mockit.setUpMock(ZooKeeperClient.class, new Object() {
 
-            @SuppressWarnings("unused")
             @Mock
             private List<String> getServerAddrs() {
                 return Arrays.asList(cluster1, cluster2);
@@ -87,7 +86,6 @@ public class ZooKeeperClientTest extends BaseOtterTest {
         // 初始化节点
         Mockit.setUpMock(NodeSessionExpired.class, new Object() {
 
-            @SuppressWarnings("unused")
             @Mock
             public void notification() {
                 return;

@@ -40,7 +40,6 @@ public class RoundRobinBalanceTest extends BaseLoadBalanceTest {
         // 初始化节点
         Mockit.setUpMock(ArbitrateConfigUtils.class, new Object() {
 
-            @SuppressWarnings("unused")
             @Mock
             public Pipeline getPipeline(Long pipelineId) {
                 Pipeline pipeline = new Pipeline();
@@ -76,7 +75,6 @@ public class RoundRobinBalanceTest extends BaseLoadBalanceTest {
         // 初始化节点
         Mockit.setUpMock(ArbitrateConfigUtils.class, new Object() {
 
-            @SuppressWarnings("unused")
             @Mock
             public Pipeline getPipeline(Long pipelineId) {
                 Pipeline pipeline = new Pipeline();

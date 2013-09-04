@@ -30,9 +30,9 @@ import com.alibaba.otter.shared.arbitrate.BaseEventTest;
 import com.alibaba.otter.shared.arbitrate.impl.config.ArbitrateConfigUtils;
 import com.alibaba.otter.shared.arbitrate.impl.manage.NodeArbitrateEvent;
 import com.alibaba.otter.shared.arbitrate.impl.setl.monitor.NodeMonitor;
-import com.alibaba.otter.shared.common.utils.zookeeper.ZkClientx;
 import com.alibaba.otter.shared.common.model.config.channel.Channel;
 import com.alibaba.otter.shared.common.model.config.node.Node;
+import com.alibaba.otter.shared.common.utils.zookeeper.ZkClientx;
 
 /**
  * lb 测试基础
@@ -59,7 +59,6 @@ public class BaseLoadBalanceTest extends BaseEventTest {
         // 初始化节点
         Mockit.setUpMock(ArbitrateConfigUtils.class, new Object() {
 
-            @SuppressWarnings("unused")
             @Mock
             public Channel getChannel(Long pipelineId) {
                 Channel channel = new Channel();
@@ -67,7 +66,6 @@ public class BaseLoadBalanceTest extends BaseEventTest {
                 return channel;
             }
 
-            @SuppressWarnings("unused")
             @Mock
             public Long getCurrentNid() {
                 return 1L;
