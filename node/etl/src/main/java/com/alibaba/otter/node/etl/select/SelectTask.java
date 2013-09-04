@@ -590,7 +590,7 @@ public class SelectTask extends GlobalTask {
             DelayCount delayCount = new DelayCount();
             delayCount.setPipelineId(pipelineId);
             delayCount.setNumber(0L);
-            long delayTime = (new Date().getTime() - otterSelector.lastEntryTime() + 500) / 1000;// 4舍5入
+            long delayTime = new Date().getTime() - otterSelector.lastEntryTime();
             delayCount.setTime(delayTime);
             statisticsClientService.sendResetDelayCount(delayCount);
         }
