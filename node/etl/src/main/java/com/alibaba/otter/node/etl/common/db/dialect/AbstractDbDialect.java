@@ -181,9 +181,14 @@ public abstract class AbstractDbDialect implements DbDialect {
                     DdlUtilsFilter filter = getDdlUtilsFilter(jdbcTemplate, names.get(0), names.get(0), names.get(1));
                     Table table = DdlUtils.findTable(jdbcTemplate, names.get(0), names.get(0), names.get(1), filter);
                     afterFindTable(table, jdbcTemplate, names.get(0), names.get(0), names.get(1));
-                    return table;
+                    if (table == null) {
+                        throw new NestableRuntimeException("no found table [" + names.get(0) + "." + names.get(1)
+                                                           + "] , pls check");
+                    } else {
+                        return table;
+                    }
                 } catch (Exception e) {
-                    throw new NestableRuntimeException("find table error : " + names.toString(), e);
+                    throw new NestableRuntimeException("find table [" + names.get(0) + "." + names.get(1) + "] error");
                 }
             }
         });

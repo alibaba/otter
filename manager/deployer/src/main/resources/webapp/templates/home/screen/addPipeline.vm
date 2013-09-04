@@ -107,7 +107,7 @@ $control.setTemplate("home:navigation.vm")
 	  <tr> 
         <th width="300">数据反查线程数：</th>
         <td width="329">
-			<input name="$pipelineParameterGroup.extractPoolSize.key" value="5" type="text" class="setting_input"/><span class="red">*</span>
+			<input name="$pipelineParameterGroup.extractPoolSize.key" value="10" type="text" class="setting_input"/><span class="red">*</span>
 			<br />
 			<span class="red">#addPipelineMessage ($pipelineParameterGroup.extractPoolSize)</span>
 		</td>
@@ -115,7 +115,7 @@ $control.setTemplate("home:navigation.vm")
 	  <tr> 
         <th width="300">数据载入线程数：</th>
         <td width="329">
-			<input name="$pipelineParameterGroup.loadPoolSize.key" value="10" type="text" class="setting_input"/><span class="red">*</span>
+			<input name="$pipelineParameterGroup.loadPoolSize.key" value="15" type="text" class="setting_input"/><span class="red">*</span>
 			<br />
 			<span class="red">#addPipelineMessage ($pipelineParameterGroup.loadPoolSize)</span>
 		</td>
@@ -123,7 +123,7 @@ $control.setTemplate("home:navigation.vm")
 	  <tr> 
         <th width="300">文件载入线程数：</th>
         <td width="329">
-			<input name="$pipelineParameterGroup.fileLoadPoolSize.key" value="10" type="text" class="setting_input"/><span class="red">*</span>
+			<input name="$pipelineParameterGroup.fileLoadPoolSize.key" value="15" type="text" class="setting_input"/><span class="red">*</span>
 			<br />
 			<span class="red">#addPipelineMessage ($pipelineParameterGroup.fileLoadPoolSize)</span>
 		</td>
@@ -164,7 +164,7 @@ $control.setTemplate("home:navigation.vm")
 	  <tr> 
         <th width="300">消费批次大小：</th>
         <td width="329">
-              <input name="$pipelineParameterGroup.mainstemBatchsize.key" value="4000" type="text" class="setting_input"/><span class="red">*</span>
+              <input name="$pipelineParameterGroup.mainstemBatchsize.key" value="5000" type="text" class="setting_input"/><span class="red">*</span>
 			  <br />
 			  <span class="red">#addPipelineMessage ($pipelineParameterGroup.mainstemBatchsize)</span>
         </td>
@@ -172,7 +172,7 @@ $control.setTemplate("home:navigation.vm")
 	  <tr class="canal"> 
         <th width="300">获取批次数据超时时间(毫秒): </th>
         <td width="329">
-              <input name="$pipelineParameterGroup.batchTimeout.key" value="100" type="text" class="setting_input"/><span class="red">*</span>
+              <input name="$pipelineParameterGroup.batchTimeout.key" value="-1" type="text" class="setting_input"/><span class="red">*</span>
 			  <br />
 			  <span>格式: -1不进行控制，0代表永久，>0则按照指定时间控制</span>
 			  <br />

@@ -223,7 +223,7 @@ $control.setTemplate("home:navigation.vm")
 	  <tr class="memoryStorage">
         <th width="300">内存存储buffer记录数：</th>
         <td width="329">
-            <input type="text" name="$canalParameterGroup.memoryStorageBufferSize.key" value="16384" class="setting_input"/><span class="red">*</span>
+            <input type="text" name="$canalParameterGroup.memoryStorageBufferSize.key" value="32768" class="setting_input"/><span class="red">*</span>
 			<br />
 			<span class="red">#addCanalMessage ($canalParameterGroup.memoryStorageBufferSize)</span>
 		</td>

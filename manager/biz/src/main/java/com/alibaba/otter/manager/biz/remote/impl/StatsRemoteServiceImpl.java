@@ -151,8 +151,8 @@ public class StatsRemoteServiceImpl implements StatsRemoteService {
                             old.setEndTime(stat.getEndTime());
                         }
 
-                        if (stat.getStartTime().before(stat.getStartTime())) {
-                            stat.setStartTime(stat.getStartTime());
+                        if (stat.getStartTime().before(old.getStartTime())) {
+                            old.setStartTime(stat.getStartTime());
                         }
                     } else {
                         data.put(stat.getType(), stat);
