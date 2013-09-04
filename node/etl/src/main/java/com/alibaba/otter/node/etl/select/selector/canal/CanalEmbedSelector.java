@@ -86,6 +86,7 @@ public class CanalEmbedSelector implements OtterSelector {
     private String                 filter;
     private int                    batchSize     = 10000;
     private long                   batchTimeout  = -1L;
+    private boolean                ddlSync       = true;
 
     private CanalConfigClient      canalConfigClient;
     private volatile boolean       running       = false;                                            // 是否处于运行中
@@ -110,6 +111,7 @@ public class CanalEmbedSelector implements OtterSelector {
         destination = pipeline.getParameters().getDestinationName();
         batchSize = pipeline.getParameters().getMainstemBatchsize();
         batchTimeout = pipeline.getParameters().getBatchTimeout();
+        ddlSync = pipeline.getParameters().getDdlSync();
         if (pipeline.getParameters().getDumpSelector() != null) {
             dump = pipeline.getParameters().getDumpSelector();
         }
@@ -131,6 +133,7 @@ public class CanalEmbedSelector implements OtterSelector {
                     slaveId = canal.getCanalParameter().getSlaveId();
                 }
                 canal.getCanalParameter().setSlaveId(slaveId + pipelineId);
+                canal.getCanalParameter().setDdlIsolation(ddlSync);
 
                 CanalInstanceWithManager instance = new CanalInstanceWithManager(canal, filter) {
 

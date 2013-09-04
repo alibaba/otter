@@ -63,7 +63,7 @@ public class PipelineParameter implements Serializable {
     private Long                  batchTimeout               = -1L;                         // 获取批量数据的超时时间,-1代表不进行超时控制，0代表永久，>0则表示按照指定的时间进行控制(单位毫秒)
     private Boolean               fileDetect                 = false;                       // 是否开启文件同步检测
     private Boolean               skipFreedom                = false;                       // 是否跳过自由门数据
-    private Boolean               useLocalFileMutliThread    = true;                        // 是否启用对local file同步启用多线程
+    private Boolean               useLocalFileMutliThread    = false;                       // 是否启用对local file同步启用多线程
     private Boolean               useFileEncrypt             = false;                       // 是否针对文件进行加密处理
     private Boolean               useExternalIp              = false;                       // 是否起用外部Ip
     private Boolean               useTableTransform          = true;                        // 是否启用转化机制，比如类型不同，默认为true，兼容老逻辑
@@ -71,6 +71,7 @@ public class PipelineParameter implements Serializable {
     private Boolean               skipNoRow                  = false;                       // 跳过反查没记录的情况
     private String                channelInfo;                                              // 同步标记，设置该标记后会在retl_mark中记录，在messageParse时进行check，相同则忽略
     private Boolean               dryRun                     = false;                       //是否启用dry run模型，只记录load日志，不同步数据
+    private Boolean               ddlSync                    = true;                        //是否支持ddl同步
 
     // ================================= channel parameter ================================
 
@@ -408,7 +409,7 @@ public class PipelineParameter implements Serializable {
     }
 
     public Boolean getUseLocalFileMutliThread() {
-        return useLocalFileMutliThread == null ? true : useLocalFileMutliThread;
+        return useLocalFileMutliThread == null ? false : useLocalFileMutliThread;
     }
 
     public void setUseLocalFileMutliThread(Boolean useLocalFileMutliThread) {
@@ -473,6 +474,14 @@ public class PipelineParameter implements Serializable {
 
     public void setDryRun(Boolean dryRun) {
         this.dryRun = dryRun;
+    }
+
+    public Boolean getDdlSync() {
+        return ddlSync == null ? true : ddlSync;
+    }
+
+    public void setDdlSync(Boolean ddlSync) {
+        this.ddlSync = ddlSync;
     }
 
     // =============================channel parameter ==========================

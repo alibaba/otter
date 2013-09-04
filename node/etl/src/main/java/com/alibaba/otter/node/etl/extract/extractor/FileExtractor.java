@@ -85,6 +85,10 @@ public class FileExtractor extends AbstractExtractor<DbBatch> {
         Pipeline pipeline = getPipeline(rowBatch.getIdentity().getPipelineId());
         List<EventData> eventDatas = rowBatch.getDatas();
         for (EventData eventData : eventDatas) {
+            if (eventData.getEventType().isDdl()) {
+                continue;
+            }
+
             List<DataMediaPair> dataMediaPairs = ConfigHelper.findDataMediaPairByMediaId(pipeline,
                                                                                          eventData.getTableId());
             if (dataMediaPairs == null) {

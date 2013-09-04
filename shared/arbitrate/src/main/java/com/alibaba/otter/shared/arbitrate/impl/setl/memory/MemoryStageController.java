@@ -89,6 +89,10 @@ public class MemoryStageController extends ArbitrateLifeCycle {
         progress.clear();
     }
 
+    public synchronized void clearProgress(Long processId) {
+        progress.remove(processId);
+    }
+
     /**
      * 处理异常termin结束
      */

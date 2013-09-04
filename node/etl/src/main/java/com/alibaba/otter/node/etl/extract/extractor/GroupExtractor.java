@@ -67,6 +67,10 @@ public class GroupExtractor extends AbstractExtractor<DbBatch> {
 
         List<EventData> eventDatas = dbBatch.getRowBatch().getDatas();
         for (EventData eventData : eventDatas) {
+            if (eventData.getEventType().isDdl()) {
+                continue;
+            }
+
             List<ColumnGroup> columnGroups = groupColumns.get(eventData.getTableId());
             if (!CollectionUtils.isEmpty(columnGroups)) {
                 for (ColumnGroup columnGroup : columnGroups) {

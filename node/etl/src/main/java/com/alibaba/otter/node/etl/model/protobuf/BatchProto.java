@@ -1926,6 +1926,14 @@ public final class BatchProto {
     // optional bool remedy = 13;
     boolean hasRemedy();
     boolean getRemedy();
+    
+    // optional string sql = 14;
+    boolean hasSql();
+    String getSql();
+    
+    // optional string ddlSchemaName = 15;
+    boolean hasDdlSchemaName();
+    String getDdlSchemaName();
   }
   public static final class RowData extends
       com.google.protobuf.GeneratedMessage
@@ -2229,6 +2237,70 @@ public final class BatchProto {
       return remedy_;
     }
     
+    // optional string sql = 14;
+    public static final int SQL_FIELD_NUMBER = 14;
+    private java.lang.Object sql_;
+    public boolean hasSql() {
+      return ((bitField0_ & 0x00000400) == 0x00000400);
+    }
+    public String getSql() {
+      java.lang.Object ref = sql_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        if (com.google.protobuf.Internal.isValidUtf8(bs)) {
+          sql_ = s;
+        }
+        return s;
+      }
+    }
+    private com.google.protobuf.ByteString getSqlBytes() {
+      java.lang.Object ref = sql_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8((String) ref);
+        sql_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    
+    // optional string ddlSchemaName = 15;
+    public static final int DDLSCHEMANAME_FIELD_NUMBER = 15;
+    private java.lang.Object ddlSchemaName_;
+    public boolean hasDdlSchemaName() {
+      return ((bitField0_ & 0x00000800) == 0x00000800);
+    }
+    public String getDdlSchemaName() {
+      java.lang.Object ref = ddlSchemaName_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        if (com.google.protobuf.Internal.isValidUtf8(bs)) {
+          ddlSchemaName_ = s;
+        }
+        return s;
+      }
+    }
+    private com.google.protobuf.ByteString getDdlSchemaNameBytes() {
+      java.lang.Object ref = ddlSchemaName_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8((String) ref);
+        ddlSchemaName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    
     private void initFields() {
       tableId_ = 0L;
       schemaName_ = "";
@@ -2243,6 +2315,8 @@ public final class BatchProto {
       syncConsistency_ = "";
       size_ = 0L;
       remedy_ = false;
+      sql_ = "";
+      ddlSchemaName_ = "";
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -2294,6 +2368,12 @@ public final class BatchProto {
       }
       if (((bitField0_ & 0x00000200) == 0x00000200)) {
         output.writeBool(13, remedy_);
+      }
+      if (((bitField0_ & 0x00000400) == 0x00000400)) {
+        output.writeBytes(14, getSqlBytes());
+      }
+      if (((bitField0_ & 0x00000800) == 0x00000800)) {
+        output.writeBytes(15, getDdlSchemaNameBytes());
       }
       getUnknownFields().writeTo(output);
     }
@@ -2355,6 +2435,14 @@ public final class BatchProto {
       if (((bitField0_ & 0x00000200) == 0x00000200)) {
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(13, remedy_);
+      }
+      if (((bitField0_ & 0x00000400) == 0x00000400)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(14, getSqlBytes());
+      }
+      if (((bitField0_ & 0x00000800) == 0x00000800)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(15, getDdlSchemaNameBytes());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -2521,6 +2609,10 @@ public final class BatchProto {
         bitField0_ = (bitField0_ & ~0x00000800);
         remedy_ = false;
         bitField0_ = (bitField0_ & ~0x00001000);
+        sql_ = "";
+        bitField0_ = (bitField0_ & ~0x00002000);
+        ddlSchemaName_ = "";
+        bitField0_ = (bitField0_ & ~0x00004000);
         return this;
       }
       
@@ -2626,6 +2718,14 @@ public final class BatchProto {
           to_bitField0_ |= 0x00000200;
         }
         result.remedy_ = remedy_;
+        if (((from_bitField0_ & 0x00002000) == 0x00002000)) {
+          to_bitField0_ |= 0x00000400;
+        }
+        result.sql_ = sql_;
+        if (((from_bitField0_ & 0x00004000) == 0x00004000)) {
+          to_bitField0_ |= 0x00000800;
+        }
+        result.ddlSchemaName_ = ddlSchemaName_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -2750,6 +2850,12 @@ public final class BatchProto {
         if (other.hasRemedy()) {
           setRemedy(other.getRemedy());
         }
+        if (other.hasSql()) {
+          setSql(other.getSql());
+        }
+        if (other.hasDdlSchemaName()) {
+          setDdlSchemaName(other.getDdlSchemaName());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -2847,6 +2953,16 @@ public final class BatchProto {
             case 104: {
               bitField0_ |= 0x00001000;
               remedy_ = input.readBool();
+              break;
+            }
+            case 114: {
+              bitField0_ |= 0x00002000;
+              sql_ = input.readBytes();
+              break;
+            }
+            case 122: {
+              bitField0_ |= 0x00004000;
+              ddlSchemaName_ = input.readBytes();
               break;
             }
           }
@@ -3696,6 +3812,78 @@ public final class BatchProto {
         remedy_ = false;
         onChanged();
         return this;
+      }
+      
+      // optional string sql = 14;
+      private java.lang.Object sql_ = "";
+      public boolean hasSql() {
+        return ((bitField0_ & 0x00002000) == 0x00002000);
+      }
+      public String getSql() {
+        java.lang.Object ref = sql_;
+        if (!(ref instanceof String)) {
+          String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
+          sql_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
+      }
+      public Builder setSql(String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00002000;
+        sql_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearSql() {
+        bitField0_ = (bitField0_ & ~0x00002000);
+        sql_ = getDefaultInstance().getSql();
+        onChanged();
+        return this;
+      }
+      void setSql(com.google.protobuf.ByteString value) {
+        bitField0_ |= 0x00002000;
+        sql_ = value;
+        onChanged();
+      }
+      
+      // optional string ddlSchemaName = 15;
+      private java.lang.Object ddlSchemaName_ = "";
+      public boolean hasDdlSchemaName() {
+        return ((bitField0_ & 0x00004000) == 0x00004000);
+      }
+      public String getDdlSchemaName() {
+        java.lang.Object ref = ddlSchemaName_;
+        if (!(ref instanceof String)) {
+          String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
+          ddlSchemaName_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
+      }
+      public Builder setDdlSchemaName(String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00004000;
+        ddlSchemaName_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearDdlSchemaName() {
+        bitField0_ = (bitField0_ & ~0x00004000);
+        ddlSchemaName_ = getDefaultInstance().getDdlSchemaName();
+        onChanged();
+        return this;
+      }
+      void setDdlSchemaName(com.google.protobuf.ByteString value) {
+        bitField0_ |= 0x00004000;
+        ddlSchemaName_ = value;
+        onChanged();
       }
       
       // @@protoc_insertion_point(builder_scope:com.alibaba.otter.node.etl.model.protobuf.RowData)
@@ -5303,7 +5491,7 @@ public final class BatchProto {
       "\tFileBatch\022E\n\010identity\030\001 \001(\01323.com.aliba" +
       "ba.otter.node.etl.model.protobuf.Identit" +
       "y\022B\n\005files\030\002 \003(\01323.com.alibaba.otter.nod",
-      "e.etl.model.protobuf.FileData\"\213\003\n\007RowDat" +
+      "e.etl.model.protobuf.FileData\"\257\003\n\007RowDat" +
       "a\022\017\n\007tableId\030\001 \001(\003\022\022\n\nschemaName\030\002 \001(\t\022\021" +
       "\n\ttableName\030\003 \001(\t\022\021\n\teventType\030\004 \001(\t\022B\n\007" +
       "oldKeys\030\005 \003(\01321.com.alibaba.otter.node.e" +
@@ -5313,14 +5501,15 @@ public final class BatchProto {
       ".otter.node.etl.model.protobuf.Column\022\023\n" +
       "\013executeTime\030\010 \001(\003\022\016\n\006pairId\030\t \001(\003\022\020\n\010sy" +
       "ncMode\030\n \001(\t\022\027\n\017syncConsistency\030\013 \001(\t\022\014\n",
-      "\004size\030\014 \001(\003\022\016\n\006remedy\030\r \001(\010\"z\n\006Column\022\r\n" +
-      "\005index\030\001 \001(\005\022\014\n\004name\030\002 \001(\t\022\r\n\005value\030\003 \001(" +
-      "\t\022\024\n\014isPrimaryKey\030\004 \001(\010\022\016\n\006isNull\030\005 \001(\010\022" +
-      "\014\n\004type\030\006 \001(\005\022\020\n\010isUpdate\030\007 \001(\010\"\207\001\n\010File" +
-      "Data\022\021\n\teventType\030\001 \001(\t\022\021\n\tnamespace\030\002 \001" +
-      "(\t\022\014\n\004path\030\003 \001(\t\022\030\n\020lastModifiedTime\030\004 \001" +
-      "(\003\022\014\n\004size\030\005 \001(\003\022\017\n\007tableId\030\006 \001(\003\022\016\n\006pai" +
-      "rId\030\t \001(\003B\016B\nBatchProtoH\001"
+      "\004size\030\014 \001(\003\022\016\n\006remedy\030\r \001(\010\022\013\n\003sql\030\016 \001(\t" +
+      "\022\025\n\rddlSchemaName\030\017 \001(\t\"z\n\006Column\022\r\n\005ind" +
+      "ex\030\001 \001(\005\022\014\n\004name\030\002 \001(\t\022\r\n\005value\030\003 \001(\t\022\024\n" +
+      "\014isPrimaryKey\030\004 \001(\010\022\016\n\006isNull\030\005 \001(\010\022\014\n\004t" +
+      "ype\030\006 \001(\005\022\020\n\010isUpdate\030\007 \001(\010\"\207\001\n\010FileData" +
+      "\022\021\n\teventType\030\001 \001(\t\022\021\n\tnamespace\030\002 \001(\t\022\014" +
+      "\n\004path\030\003 \001(\t\022\030\n\020lastModifiedTime\030\004 \001(\003\022\014" +
+      "\n\004size\030\005 \001(\003\022\017\n\007tableId\030\006 \001(\003\022\016\n\006pairId\030" +
+      "\t \001(\003B\016B\nBatchProtoH\001"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -5356,7 +5545,7 @@ public final class BatchProto {
           internal_static_com_alibaba_otter_node_etl_model_protobuf_RowData_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_com_alibaba_otter_node_etl_model_protobuf_RowData_descriptor,
-              new java.lang.String[] { "TableId", "SchemaName", "TableName", "EventType", "OldKeys", "Keys", "Columns", "ExecuteTime", "PairId", "SyncMode", "SyncConsistency", "Size", "Remedy", },
+              new java.lang.String[] { "TableId", "SchemaName", "TableName", "EventType", "OldKeys", "Keys", "Columns", "ExecuteTime", "PairId", "SyncMode", "SyncConsistency", "Size", "Remedy", "Sql", "DdlSchemaName", },
               com.alibaba.otter.node.etl.model.protobuf.BatchProto.RowData.class,
               com.alibaba.otter.node.etl.model.protobuf.BatchProto.RowData.Builder.class);
           internal_static_com_alibaba_otter_node_etl_model_protobuf_Column_descriptor =

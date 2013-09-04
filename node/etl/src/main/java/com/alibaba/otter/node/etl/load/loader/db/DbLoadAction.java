@@ -40,11 +40,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DeadlockLoserDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.StatementCallback;
 import org.springframework.jdbc.core.StatementCreatorUtils;
 import org.springframework.jdbc.support.lob.LobCreator;
 import org.springframework.transaction.TransactionStatus;
@@ -126,33 +128,39 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
             interceptor.prepare(context);
             // 执行重复录入数据过滤
             datas = context.getPrepareDatas();
-            WeightBuckets<EventData> buckets = buildWeightBuckets(context, datas);
-            List<Long> weights = buckets.weights();
-            controller.start(weights);// weights可能为空，也得调用start方法
-            if (CollectionUtils.isEmpty(datas)) {
-                logger.info("##no eventdata for load");
-            }
-            adjustPoolSize(context); // 根据manager配置调整线程池
-            adjustConfig(context); // 调整一下运行参数
-            // 按权重构建数据对象
-            // 处理数据
-            for (int i = 0; i < weights.size(); i++) {
-                Long weight = weights.get(i);
-                controller.await(weight.intValue());
-                // 处理同一个weight下的数据
-                List<EventData> items = buckets.getItems(weight);
-                logger.debug("##start load for weight:" + weight);
-                // 预处理下数据
+            // 处理下ddl语句，ddl/dml语句不可能是在同一个batch中，由canal进行控制
+            // 主要考虑ddl的幂等性问题，尽可能一个ddl一个batch，失败或者回滚都只针对这条sql
+            if (isDdlDatas(datas)) {
+                doDdl(context, datas);
+            } else {
+                WeightBuckets<EventData> buckets = buildWeightBuckets(context, datas);
+                List<Long> weights = buckets.weights();
+                controller.start(weights);// weights可能为空，也得调用start方法
+                if (CollectionUtils.isEmpty(datas)) {
+                    logger.info("##no eventdata for load");
+                }
+                adjustPoolSize(context); // 根据manager配置调整线程池
+                adjustConfig(context); // 调整一下运行参数
+                // 按权重构建数据对象
+                // 处理数据
+                for (int i = 0; i < weights.size(); i++) {
+                    Long weight = weights.get(i);
+                    controller.await(weight.intValue());
+                    // 处理同一个weight下的数据
+                    List<EventData> items = buckets.getItems(weight);
+                    logger.debug("##start load for weight:" + weight);
+                    // 预处理下数据
 
-                // 进行一次数据合并，合并相同pk的多次I/U/D操作
-                items = DbLoadMerger.merge(items);
-                // 按I/U/D进行归并处理
-                DbLoadData loadData = new DbLoadData();
-                doBefore(items, context, loadData);
-                // 执行load操作
-                doLoad(context, loadData);
-                controller.single(weight.intValue());
-                logger.debug("##end load for weight:" + weight);
+                    // 进行一次数据合并，合并相同pk的多次I/U/D操作
+                    items = DbLoadMerger.merge(items);
+                    // 按I/U/D进行归并处理
+                    DbLoadData loadData = new DbLoadData();
+                    doBefore(items, context, loadData);
+                    // 执行load操作
+                    doLoad(context, loadData);
+                    controller.single(weight.intValue());
+                    logger.debug("##end load for weight:" + weight);
+                }
             }
             interceptor.commit(context);
         } catch (InterruptedException e) {
@@ -174,6 +182,24 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
         context.setChannel(channel);
         context.setPipeline(pipeline);
         return context;
+    }
+
+    /**
+     * 分析整个数据，将datas划分为多个批次. ddl sql前的DML并发执行，然后串行执行ddl后，再并发执行DML
+     * 
+     * @return
+     */
+    private boolean isDdlDatas(List<EventData> eventDatas) {
+        boolean result = false;
+        for (EventData eventData : eventDatas) {
+            result |= eventData.getEventType().isDdl();
+            if (result && !eventData.getEventType().isDdl()) {
+                throw new LoadException("ddl/dml can't be in one batch, it's may be a bug , pls submit issues.",
+                                        DbLoadDumper.dumpEventDatas(eventDatas));
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -310,6 +336,38 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
             }
 
             context.getProcessedDatas().addAll(rows);
+        }
+    }
+
+    /**
+     * 执行ddl的调用，处理逻辑比较简单: 串行调用
+     * 
+     * @param context
+     * @param eventDatas
+     */
+    private void doDdl(DbLoadContext context, List<EventData> eventDatas) {
+        for (final EventData data : eventDatas) {
+            DataMedia dataMedia = ConfigHelper.findDataMedia(context.getPipeline(), data.getTableId());
+            final DbDialect dbDialect = dbDialectFactory.getDbDialect(context.getIdentity().getPipelineId(),
+                                                                      (DbMediaSource) dataMedia.getSource());
+            Boolean result = dbDialect.getJdbcTemplate().execute(new StatementCallback<Boolean>() {
+
+                public Boolean doInStatement(Statement stmt) throws SQLException, DataAccessException {
+                    Boolean result = false;
+                    if (dbDialect instanceof MysqlDialect && StringUtils.isNotEmpty(data.getDdlSchemaName())) {
+                        //如果mysql，执行ddl时，切换到在源库执行的schema上
+                        result &= stmt.execute("use " + data.getDdlSchemaName());
+                    }
+                    result &= stmt.execute(data.getSql());
+                    return result;
+                }
+            });
+
+            if (result) {
+                context.getProcessedDatas().add(data); //记录为成功处理的sql
+            } else {
+                context.getFailedDatas().add(data);
+            }
         }
     }
 

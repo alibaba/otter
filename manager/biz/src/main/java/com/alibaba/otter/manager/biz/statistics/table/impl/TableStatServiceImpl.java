@@ -145,10 +145,10 @@ public class TableStatServiceImpl implements TableStatService, InitializingBean 
         synchronized (tableStats) {
             // 需要做同步，避免delay数据丢失
             Collection<TableStat> stats = tableStats.values();
-            tableStats.clear();
             for (TableStat stat : stats) {
                 insertBehaviorHistory(stat);
             }
+            tableStats.clear();
         }
     }
 

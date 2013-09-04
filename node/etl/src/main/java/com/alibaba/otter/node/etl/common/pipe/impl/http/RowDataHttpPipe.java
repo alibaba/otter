@@ -115,6 +115,12 @@ public class RowDataHttpPipe extends AbstractHttpPipe<DbBatch, HttpPipeKey> {
 
             rowDataBuilder.setRemedy(eventData.isRemedy());
             rowDataBuilder.setSize(eventData.getSize());
+            if (StringUtils.isNotEmpty(eventData.getSql())) {
+                rowDataBuilder.setSql(eventData.getSql());
+            }
+            if (StringUtils.isNotEmpty(eventData.getDdlSchemaName())) {
+                rowDataBuilder.setDdlSchemaName(eventData.getDdlSchemaName());
+            }
             rowBatchBuilder.addRows(rowDataBuilder.build());// 添加一条rowData记录
         }
 
@@ -249,6 +255,8 @@ public class RowDataHttpPipe extends AbstractHttpPipe<DbBatch, HttpPipeKey> {
 
                 eventData.setRemedy(rowDataProto.getRemedy());
                 eventData.setSize(rowDataProto.getSize());
+                eventData.setSql(rowDataProto.getSql());
+                eventData.setDdlSchemaName(rowDataProto.getDdlSchemaName());
                 // 添加到总记录
                 rowBatch.merge(eventData);
             }

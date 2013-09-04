@@ -107,6 +107,10 @@ public class DatabaseExtractor extends AbstractExtractor<DbBatch> implements Ini
         List<Future> futures = new ArrayList<Future>();
         List<EventData> eventDatas = dbBatch.getRowBatch().getDatas();
         for (EventData eventData : eventDatas) {
+            if (eventData.getEventType().isDdl()) {
+                continue;
+            }
+
             DataItem item = new DataItem(eventData);
             // 针对row模式，需要去检查一下当前是否已经包含row记录的所有字段，如果发现字段不足，则执行一次数据库查询
             boolean flag = mustDb

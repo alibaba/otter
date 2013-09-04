@@ -107,6 +107,9 @@ $control.setTemplate("home:navigation.vm")
   <th>dryRun模式：</th><td>#if($!pipeline.parameters.isDryRun()) 开启 #else 关闭 #end</td>
   </tr>
   <tr class="super"> 
+  <th>支持ddl同步：</th><td>#if($!pipeline.parameters.ddlSync) 开启 #else 关闭 #end</td>
+  </tr>
+  <tr class="super"> 
   <th>文件重复同步对比：</th><td>#if($!pipeline.parameters.fileDetect) 开启 #else 关闭 #end</td>
   </tr>
   <tr class="super"> 

@@ -92,6 +92,14 @@ public enum EventType {
         return this.equals(EventType.QUERY);
     }
 
+    public boolean isDdl() {
+        return isCreate() || isAlter() || isErase();
+    }
+
+    public boolean isDml() {
+        return isInsert() || isUpdate() || isDelete();
+    }
+
     public static EventType valuesOf(String value) {
         EventType[] eventTypes = values();
         for (EventType eventType : eventTypes) {

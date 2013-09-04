@@ -81,9 +81,14 @@ public class EventData implements ObjectData, Serializable {
     private long              pairId           = -1;
 
     /**
-     * 当eventType = CREATE/ALTER/ERASE时，就是对应的sql语句，否则无效.
+     * 当eventType = CREATE/ALTER/ERASE时，就是对应的sql语句，其他情况为动态生成的INSERT/UPDATE/DELETE sql
      */
     private String            sql;
+
+    /**
+     * ddl/query的schemaName，会存在跨库ddl，需要保留执行ddl的当前schemaName
+     */
+    private String            ddlSchemaName;
 
     /**
      * 自定义的同步模式, 允许覆盖默认的pipeline parameter，比如针对补救数据同步
@@ -202,6 +207,14 @@ public class EventData implements ObjectData, Serializable {
 
     public void setSize(long size) {
         this.size = size;
+    }
+
+    public String getDdlSchemaName() {
+        return ddlSchemaName;
+    }
+
+    public void setDdlSchemaName(String ddlSchemaName) {
+        this.ddlSchemaName = ddlSchemaName;
     }
 
     public boolean isRemedy() {

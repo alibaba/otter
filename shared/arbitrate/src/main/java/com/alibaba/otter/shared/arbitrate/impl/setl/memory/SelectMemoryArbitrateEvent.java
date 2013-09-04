@@ -62,6 +62,7 @@ public class SelectMemoryArbitrateEvent implements SelectArbitrateEvent {
         } else {
             logger.warn("pipelineId[{}] select ignore processId[{}] by status[{}]", new Object[] { pipelineId,
                     processId, status });
+            stageController.clearProgress(processId);//将progress中清理掉，避免阻塞后续调度，因为最小的Id一直处于extract未完成阶段
             return await(pipelineId);// 递归调用
         }
     }

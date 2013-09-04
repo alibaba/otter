@@ -17,6 +17,7 @@
 package com.alibaba.otter.node.etl.select.selector;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -324,6 +325,58 @@ public class MessageParser {
             return null;
         }
 
+        String schemaName = entry.getHeader().getSchemaName();
+        String tableName = entry.getHeader().getTableName();
+        EventType eventType = EventType.valueOf(rowChange.getEventType().name());
+
+        // 处理下DDL操作
+        if (eventType.isQuery()) {
+            // 直接忽略query事件
+            return null;
+        }
+
+        // 首先判断是否为系统表
+        if (StringUtils.equalsIgnoreCase(pipeline.getParameters().getSystemSchema(), schemaName)) {
+            // do noting
+            if (eventType.isCreate() || eventType.isAlter() || eventType.isErase()) {
+                return null;
+            }
+
+            if (StringUtils.equalsIgnoreCase(pipeline.getParameters().getSystemDualTable(), tableName)) {
+                // 心跳表数据直接忽略
+                return null;
+            }
+        } else {
+            DataMedia dataMedia = ConfigHelper.findSourceDataMedia(pipeline, schemaName, tableName);
+            if (dataMedia == null) {
+                throw new SelectException("the namespace = " + schemaName + " name = " + tableName
+                                          + " dataMedia is null,please check , entry: " + entry.toString()
+                                          + " and rowdata: " + rowChange.toString());
+            }
+            if (eventType.isCreate() || eventType.isAlter() || eventType.isErase()) {
+                // 如果EventType是CREATE/ALTER，需要reload DataMediaInfo;并且把CREATE/ALTER类型的事件丢弃掉.
+                if (eventType.isCreate() || eventType.isAlter()) {
+                    DbDialect dbDialect = dbDialectFactory.getDbDialect(pipeline.getId(),
+                                                                        (DbMediaSource) dataMedia.getSource());
+                    dbDialect.reloadTable(schemaName, tableName);// 更新下meta信息
+                }
+
+                boolean ddlSync = pipeline.getParameters().getDdlSync();
+                if (ddlSync) {
+                    // 处理下ddl操作
+                    EventData eventData = new EventData();
+                    eventData.setSchemaName(schemaName);
+                    eventData.setTableName(tableName);
+                    eventData.setEventType(eventType);
+                    eventData.setExecuteTime(entry.getHeader().getExecuteTime());
+                    eventData.setSql(rowChange.getSql());
+                    eventData.setDdlSchemaName(rowChange.getDdlSchemaName());
+                    eventData.setTableId(dataMedia.getId());
+                    return Arrays.asList(eventData);
+                }
+            }
+        }
+
         List<EventData> eventDatas = new ArrayList<EventData>();
         for (RowData rowData : rowChange.getRowDatasList()) {
             EventData eventData = internParse(pipeline, entry, rowChange, rowData);
@@ -357,54 +410,24 @@ public class MessageParser {
         EventType eventType = eventData.getEventType();
         Table table = null;
         TableInfoHolder tableHolder = null;
-
-        if (eventType.isQuery()) {
-            // 直接忽略query事件
-            return null;
+        DataMedia dataMedia = ConfigHelper.findSourceDataMedia(pipeline, eventData.getSchemaName(),
+                                                               eventData.getTableName());
+        if (dataMedia == null) {
+            throw new SelectException("the namespace = " + eventData.getSchemaName() + " name = "
+                                      + eventData.getTableName() + " dataMedia is null,please check , entry: "
+                                      + entry.toString() + " and rowdata: " + rowChange.toString());
         }
-
-        // 首先判断是否为系统表
-        if (StringUtils.equalsIgnoreCase(pipeline.getParameters().getSystemSchema(), eventData.getSchemaName())) {
-            // do noting
-            if (eventType.isCreate() || eventType.isAlter() || eventType.isErase()) {
-                return null;
+        eventData.setTableId(dataMedia.getId());
+        if (useTableTransform || dataMedia.getSource().getType().isOracle()) {// oracle需要反查一次meta
+            // 如果设置了需要进行table meta转化，则反查一下table信息
+            // 比如oracle erosa解析时可能使用了非物理主键，需要直接使用，信任erosa的信息
+            DbDialect dbDialect = dbDialectFactory.getDbDialect(pipeline.getId(), (DbMediaSource) dataMedia.getSource());
+            table = dbDialect.findTable(eventData.getSchemaName(), eventData.getTableName());// 查询一下meta信息
+            if (table == null) {
+                logger.warn("find table[{}.{}] is null , may be drop table.", eventData.getSchemaName(),
+                            eventData.getTableName());
             }
-
-            if (StringUtils.equalsIgnoreCase(pipeline.getParameters().getSystemDualTable(), eventData.getTableName())) {
-                // 心跳表数据直接忽略
-                return null;
-            }
-        } else {
-            DataMedia dataMedia = ConfigHelper.findSourceDataMedia(pipeline, eventData.getSchemaName(),
-                                                                   eventData.getTableName());
-            if (dataMedia == null) {
-                throw new SelectException("the namespace = " + eventData.getSchemaName() + " name = "
-                                          + eventData.getTableName() + " dataMedia is null,please check , entry: "
-                                          + entry.toString() + " and rowdata: " + rowChange.toString());
-            }
-            eventData.setTableId(dataMedia.getId());
-            if (eventType.isCreate() || eventType.isAlter() || eventType.isErase()) {
-                // 如果EventType是CREATE/ALTER，需要reload DataMediaInfo;并且把CREATE/ALTER类型的事件丢弃掉.
-                if (eventType.isCreate() || eventType.isAlter()) {
-                    DbDialect dbDialect = dbDialectFactory.getDbDialect(pipeline.getId(),
-                                                                        (DbMediaSource) dataMedia.getSource());
-                    dbDialect.reloadTable(eventData.getSchemaName(), eventData.getTableName());// 更新下meta信息
-                }
-                return null;
-            }
-
-            if (useTableTransform || dataMedia.getSource().getType().isOracle()) {// oracle需要反查一次meta
-                // 如果设置了需要进行table meta转化，则反查一下table信息
-                // 比如oracle erosa解析时可能使用了非物理主键，需要直接使用，信任erosa的信息
-                DbDialect dbDialect = dbDialectFactory.getDbDialect(pipeline.getId(),
-                                                                    (DbMediaSource) dataMedia.getSource());
-                table = dbDialect.findTable(eventData.getSchemaName(), eventData.getTableName());// 查询一下meta信息
-                if (table == null) {
-                    logger.warn("find table[{}.{}] is null , may be drop table.", eventData.getSchemaName(),
-                                eventData.getTableName());
-                }
-                tableHolder = new TableInfoHolder(dbDialect, table, useTableTransform);
-            }
+            tableHolder = new TableInfoHolder(dbDialect, table, useTableTransform);
         }
 
         List<Column> beforeColumns = rowData.getBeforeColumnsList();

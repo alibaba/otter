@@ -65,6 +65,20 @@ public class RowDataTransformer extends AbstractOtterTransformer<EventData, Even
         result.setRemedy(data.isRemedy());
         result.setSyncMode(data.getSyncMode());
         result.setSize(data.getSize());
+        if (data.getEventType().isDdl()) {
+            // ddl不需要处理字段
+            if (StringUtils.equalsIgnoreCase(result.getSchemaName(), data.getSchemaName())
+                && StringUtils.equalsIgnoreCase(result.getTableName(), data.getTableName())) {
+                // 是否需要对ddl sql进行转化，暂时不支持异构，必须保证源表和目标表的名字相同
+                result.setDdlSchemaName(data.getDdlSchemaName());
+                result.setSql(data.getSql());
+                return result;
+            } else {
+                throw new TransformException("no support ddl for [" + data.getSchemaName() + "." + data.getTableName()
+                                             + "] to [" + result.getSchemaName() + "." + result.getTableName()
+                                             + "] , sql :" + data.getSql());
+            }
+        }
 
         Multimap<String, String> translateColumnNames = HashMultimap.create();
         if (context.getDataMediaPair().getColumnPairMode().isInclude()) { // 只针对正向匹配进行名字映射，exclude不做处理

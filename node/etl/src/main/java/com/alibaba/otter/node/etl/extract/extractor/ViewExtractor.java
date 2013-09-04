@@ -69,6 +69,10 @@ public class ViewExtractor extends AbstractExtractor<DbBatch> {
         List<EventData> eventDatas = dbBatch.getRowBatch().getDatas();
         Set<EventData> removeDatas = new HashSet<EventData>();// 使用set，提升remove时的查找速度
         for (EventData eventData : eventDatas) {
+            if (eventData.getEventType().isDdl()) {
+                continue;
+            }
+
             List<ColumnPair> columns = viewColumnPairs.get(eventData.getTableId());
             if (!CollectionUtils.isEmpty(columns)) {
                 // 组装需要同步的Column

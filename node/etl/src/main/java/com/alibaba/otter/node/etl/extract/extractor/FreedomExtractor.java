@@ -81,6 +81,9 @@ public class FreedomExtractor extends AbstractExtractor<DbBatch> {
         for (EventData eventData : eventDatas) {
             if (StringUtils.equalsIgnoreCase(bufferSchema, eventData.getSchemaName())
                 && StringUtils.equalsIgnoreCase(bufferTable, eventData.getTableName())) {
+                if (eventData.getEventType().isDdl()) {
+                    continue;
+                }
 
                 if (skipFreedom) {// 判断是否需要忽略
                     removeDatas.add(eventData);

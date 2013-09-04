@@ -56,6 +56,10 @@ message RowData {
     optional int64			size					= 12;
     /** isRemedy **/
     optional bool			remedy					= 13;
+    /** dml/ddl sql **/
+    optional string			sql						= 14;
+    /** current ddl schemaName **/
+    optional string			ddlSchemaName			= 15;
 }
 
 message Column {
