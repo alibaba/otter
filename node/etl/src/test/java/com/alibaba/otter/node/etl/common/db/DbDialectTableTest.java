@@ -16,14 +16,9 @@
 
 package com.alibaba.otter.node.etl.common.db;
 
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import org.apache.ddlutils.model.Column;
 import org.apache.ddlutils.model.Table;
 import org.jtester.annotations.SpringBeanByName;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.StatementCallback;
 import org.testng.annotations.Test;
 
 import com.alibaba.otter.node.etl.BaseDbTest;
@@ -46,24 +41,15 @@ public class DbDialectTableTest extends BaseDbTest {
     public void testMysqlTable() {
         DbDataMedia mysqlMedia = getMysqlMedia();
         DbDialect dbDialect = dbDialectFactory.getDbDialect(1L, mysqlMedia.getSource());
-        dbDialect.getJdbcTemplate().execute(new StatementCallback() {
+        Table table = dbDialect.findTable(mysqlMedia.getNamespace(), mysqlMedia.getName());
+        want.object(table).notNull();
 
-            public Object doInStatement(Statement stmt) throws SQLException, DataAccessException {
-                boolean result = false;
-                result &= stmt.execute("use retl");
-                result &= stmt.execute("create table xdual_3 like xdual");
-                return result;
-            }
-        });
-        //        Table table = dbDialect.findTable(mysqlMedia.getNamespace(), mysqlMedia.getName());
-        //        want.object(table).notNull();
-        //
-        //        System.out.println("tableName = " + table.getName());
-        //        Column[] columns = table.getColumns();
-        //        for (Column column : columns) {
-        //            System.out.println("columnName = " + column.getName() + ",columnType = " + column.getTypeCode()
-        //                               + ",isPrimary = " + column.isPrimaryKey() + ",nullable = " + column.isRequired());
-        //        }
+        System.out.println("tableName = " + table.getName());
+        Column[] columns = table.getColumns();
+        for (Column column : columns) {
+            System.out.println("columnName = " + column.getName() + ",columnType = " + column.getTypeCode()
+                               + ",isPrimary = " + column.isPrimaryKey() + ",nullable = " + column.isRequired());
+        }
 
     }
 

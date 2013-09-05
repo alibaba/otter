@@ -277,6 +277,13 @@ $control.setTemplate("home:navigation.vm")
         </td>
       </tr>
 	  <tr class="super"> 
+        <th width="300">跳过ddl异常：</th>
+        <td width="329">
+              <input type="radio" name="$pipelineParameterGroup.skipDdlException.key" value="true" id="RadioGroup2_0" class="radio"/>是
+              <input type="radio" name="$pipelineParameterGroup.skipDdlException.key" value="false" id="RadioGroup2_1" checked="checked" class="radio"/>否 
+        </td>
+      </tr>
+	  <tr class="super"> 
         <th width="300">文件重复同步对比：</th>
         <td width="329">
               <input type="radio" name="$pipelineParameterGroup.fileDetect.key" value="true" id="RadioGroup1_2" class="radio"/>是

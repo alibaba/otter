@@ -29,21 +29,26 @@ import com.alibaba.citrus.turbine.dataresolver.Param;
 import com.alibaba.otter.manager.biz.config.pipeline.PipelineService;
 import com.alibaba.otter.manager.biz.statistics.stage.ProcessStatService;
 import com.alibaba.otter.shared.arbitrate.ArbitrateViewService;
+import com.alibaba.otter.shared.arbitrate.impl.manage.ChannelArbitrateEvent;
 import com.alibaba.otter.shared.arbitrate.model.MainStemEventData;
 import com.alibaba.otter.shared.arbitrate.model.PositionEventData;
+import com.alibaba.otter.shared.common.model.config.channel.ChannelStatus;
 import com.alibaba.otter.shared.common.model.config.pipeline.Pipeline;
 import com.alibaba.otter.shared.common.model.statistics.stage.ProcessStat;
 
 public class AnalysisStageStat {
 
     @Resource(name = "pipelineService")
-    private PipelineService      pipelineService;
+    private PipelineService       pipelineService;
 
     @Resource(name = "processStatService")
-    private ProcessStatService   processStatService;
+    private ProcessStatService    processStatService;
 
     @Resource(name = "arbitrateViewService")
-    private ArbitrateViewService arbitrateViewService;
+    private ArbitrateViewService  arbitrateViewService;
+
+    @Resource(name = "channelEvent")
+    private ChannelArbitrateEvent channelArbitrateEvent;
 
     public void execute(@Param("pipelineId") Long pipelineId, Context context) throws Exception {
 
@@ -129,6 +134,8 @@ public class AnalysisStageStat {
         PositionEventData positionData = arbitrateViewService.getCanalCursor(pipeline.getParameters().getDestinationName(),
                                                                              pipeline.getParameters().getMainstemClientId());
 
+        ChannelStatus status = channelArbitrateEvent.status(pipeline.getChannelId());
+
         context.put("pipeline", pipeline);
         context.put("pipelineId", pipelineId);
         context.put("processStats", processStats);
@@ -138,5 +145,6 @@ public class AnalysisStageStat {
         context.put("processTime", processTime);
         context.put("mainstemData", mainstemData);
         context.put("positionData", positionData);
+        context.put("channelStatus", status);
     }
 }

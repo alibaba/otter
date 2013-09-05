@@ -70,8 +70,9 @@ public class PipelineParameter implements Serializable {
     private Boolean               enableCompatibleMissColumn = true;                        // 是否启用兼容字段不匹配处理
     private Boolean               skipNoRow                  = false;                       // 跳过反查没记录的情况
     private String                channelInfo;                                              // 同步标记，设置该标记后会在retl_mark中记录，在messageParse时进行check，相同则忽略
-    private Boolean               dryRun                     = false;                       //是否启用dry run模型，只记录load日志，不同步数据
-    private Boolean               ddlSync                    = true;                        //是否支持ddl同步
+    private Boolean               dryRun                     = false;                       // 是否启用dry run模型，只记录load日志，不同步数据
+    private Boolean               ddlSync                    = true;                        // 是否支持ddl同步
+    private Boolean               skipDdlException           = false;                       //是否跳过ddl执行异常
 
     // ================================= channel parameter ================================
 
@@ -482,6 +483,14 @@ public class PipelineParameter implements Serializable {
 
     public void setDdlSync(Boolean ddlSync) {
         this.ddlSync = ddlSync;
+    }
+
+    public Boolean getSkipDdlException() {
+        return skipDdlException == null ? false : skipDdlException;
+    }
+
+    public void setSkipDdlException(Boolean skipDdlException) {
+        this.skipDdlException = skipDdlException;
     }
 
     // =============================channel parameter ==========================

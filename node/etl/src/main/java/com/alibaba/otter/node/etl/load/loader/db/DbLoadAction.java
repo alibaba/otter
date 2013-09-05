@@ -350,24 +350,35 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
             DataMedia dataMedia = ConfigHelper.findDataMedia(context.getPipeline(), data.getTableId());
             final DbDialect dbDialect = dbDialectFactory.getDbDialect(context.getIdentity().getPipelineId(),
                                                                       (DbMediaSource) dataMedia.getSource());
-            Boolean result = dbDialect.getJdbcTemplate().execute(new StatementCallback<Boolean>() {
+            Boolean skipDdlException = context.getPipeline().getParameters().getSkipDdlException();
+            try {
+                Boolean result = dbDialect.getJdbcTemplate().execute(new StatementCallback<Boolean>() {
 
-                public Boolean doInStatement(Statement stmt) throws SQLException, DataAccessException {
-                    Boolean result = false;
-                    if (dbDialect instanceof MysqlDialect && StringUtils.isNotEmpty(data.getDdlSchemaName())) {
-                        //如果mysql，执行ddl时，切换到在源库执行的schema上
-                        result &= stmt.execute("use " + data.getDdlSchemaName());
+                    public Boolean doInStatement(Statement stmt) throws SQLException, DataAccessException {
+                        Boolean result = false;
+                        if (dbDialect instanceof MysqlDialect && StringUtils.isNotEmpty(data.getDdlSchemaName())) {
+                            //如果mysql，执行ddl时，切换到在源库执行的schema上
+                            result &= stmt.execute("use " + data.getDdlSchemaName());
+                        }
+                        result &= stmt.execute(data.getSql());
+                        return result;
                     }
-                    result &= stmt.execute(data.getSql());
-                    return result;
+                });
+                if (result) {
+                    context.getProcessedDatas().add(data); //记录为成功处理的sql
+                } else {
+                    context.getFailedDatas().add(data);
                 }
-            });
 
-            if (result) {
-                context.getProcessedDatas().add(data); //记录为成功处理的sql
-            } else {
-                context.getFailedDatas().add(data);
+            } catch (Throwable e) {
+                if (skipDdlException) {
+                    // do skip
+                    logger.warn("skip exception for ddl : {} , caused by {}", data, ExceptionUtils.getFullStackTrace(e));
+                } else {
+                    throw new LoadException(e);
+                }
             }
+
         }
     }
 

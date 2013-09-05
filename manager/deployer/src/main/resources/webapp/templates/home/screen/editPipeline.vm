@@ -215,7 +215,7 @@ $control.setTemplate("home:navigation.vm")
 		</td>
       </tr>
 	   <tr class="super"> 
-        <th width="300">是否跳过Load异常：</th>
+        <th width="300">跳过Load异常：</th>
         <td width="329">
               <input type="radio" name="$pipelineParameterGroup.skipLoadException.key" value="true" id="RadioGroup2_0" #if ($pipeline.parameters.skipLoadException) checked="checked" #end class="radio"/>是
               <input type="radio" name="$pipelineParameterGroup.skipLoadException.key" value="false" id="RadioGroup2_1" #if (!$pipeline.parameters.skipLoadException) checked="checked" #end class="radio"/>否 
@@ -285,6 +285,13 @@ $control.setTemplate("home:navigation.vm")
         <td width="329">
               <input type="radio" name="$pipelineParameterGroup.ddlSync.key" value="true" id="RadioGroup1_2" #if ($pipeline.parameters.ddlSync) checked="checked" #end class="radio"/>是
               <input type="radio" name="$pipelineParameterGroup.ddlSync.key" value="false" id="RadioGroup1_3" #if (!$pipeline.parameters.ddlSync) checked="checked" #end class="radio"/>否 
+        </td>
+      </tr>
+	  <tr class="super"> 
+        <th width="300">是否跳过ddl异常：</th>
+        <td width="329">
+              <input type="radio" name="$pipelineParameterGroup.skipDdlException.key" value="true" id="RadioGroup2_0" #if ($pipeline.parameters.skipDdlException) checked="checked" #end class="radio"/>是
+              <input type="radio" name="$pipelineParameterGroup.skipDdlException.key" value="false" id="RadioGroup2_1" #if (!$pipeline.parameters.skipDdlException) checked="checked" #end class="radio"/>否 
         </td>
       </tr>
 	  <tr class="super"> 

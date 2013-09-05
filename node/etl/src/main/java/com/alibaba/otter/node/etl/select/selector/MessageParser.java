@@ -338,7 +338,7 @@ public class MessageParser {
         // 首先判断是否为系统表
         if (StringUtils.equalsIgnoreCase(pipeline.getParameters().getSystemSchema(), schemaName)) {
             // do noting
-            if (eventType.isCreate() || eventType.isAlter() || eventType.isErase()) {
+            if (eventType.isDdl()) {
                 return null;
             }
 
@@ -353,9 +353,9 @@ public class MessageParser {
                                           + " dataMedia is null,please check , entry: " + entry.toString()
                                           + " and rowdata: " + rowChange.toString());
             }
-            if (eventType.isCreate() || eventType.isAlter() || eventType.isErase()) {
+            if (eventType.isDdl()) {
                 // 如果EventType是CREATE/ALTER，需要reload DataMediaInfo;并且把CREATE/ALTER类型的事件丢弃掉.
-                if (eventType.isCreate() || eventType.isAlter()) {
+                if (eventType.isCreate() || eventType.isAlter() || eventType.isRename()) {
                     DbDialect dbDialect = dbDialectFactory.getDbDialect(pipeline.getId(),
                                                                         (DbMediaSource) dataMedia.getSource());
                     dbDialect.reloadTable(schemaName, tableName);// 更新下meta信息

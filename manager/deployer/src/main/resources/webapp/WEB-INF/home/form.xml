@@ -166,7 +166,8 @@
 			</field>
 			<field name="useBatch" displayName="使用batch" />
 			<field name="needDeleteColumns" displayName="删除类型需要全字段" />
-			<field name="skipLoadException" displayName="是否跳过Load异常" />
+			<field name="skipLoadException" displayName="跳过Load异常" />
+			<field name="skipDdlException" displayName="跳过ddl异常" />
 			<field name="skipFreedom" displayName="跳过自由门数据" />
 			<field name="arbitrateMode" displayName="仲裁器调度模式" />
 			<field name="lbAlgorithm" displayName="负载均衡算法" />

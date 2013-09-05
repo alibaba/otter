@@ -264,8 +264,7 @@ function delayFormat(val, axis) {
             }], behaviorOptions);
         }
     }
-
-
+    
     function createBehaviorFlash(flotNumber1,flotNumber2,flotNumber3,flotNumber4,flotNumber5) {
         if (($("#insertNumber").width() !== 0) && ($("insertNumber").height() !== 0)) {
             $.plot($("#insertNumber"), [{
@@ -297,9 +296,9 @@ function delayFormat(val, axis) {
             }]);
         }
         
-        drawDelayGraph("#insertNumber",flotNumber1);
-        drawDelayGraph("#updateNumber",flotNumber2);
-        drawDelayGraph("#deleteNumber",flotNumber3);
+        drawBehaviorGraph("#insertNumber",flotNumber1);
+        drawBehaviorGraph("#updateNumber",flotNumber2);
+        drawBehaviorGraph("#deleteNumber",flotNumber3);
         plotThroughput("#fileNumber",flotNumber4);
         plotSizeThroughput("#fileSize",flotNumber5);
     }

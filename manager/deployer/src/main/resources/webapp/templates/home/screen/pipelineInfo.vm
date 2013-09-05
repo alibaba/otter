@@ -110,6 +110,9 @@ $control.setTemplate("home:navigation.vm")
   <th>支持ddl同步：</th><td>#if($!pipeline.parameters.ddlSync) 开启 #else 关闭 #end</td>
   </tr>
   <tr class="super"> 
+  <th>跳过ddl异常：</th><td>#if($!pipeline.parameters.skipDdlException) 开启 #else 关闭 #end</td>
+  </tr>
+  <tr class="super"> 
   <th>文件重复同步对比：</th><td>#if($!pipeline.parameters.fileDetect) 开启 #else 关闭 #end</td>
   </tr>
   <tr class="super"> 

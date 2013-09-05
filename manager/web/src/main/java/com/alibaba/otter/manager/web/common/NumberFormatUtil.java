@@ -141,15 +141,15 @@ public class NumberFormatUtil {
 
         List<String> result = new ArrayList<String>();
         if (hour > 0) {
-            result.add(hour + "h");
+            result.add(hour + " h");
         }
         if (minute > 0) {
-            result.add(minute + "m");
+            result.add(minute + " m");
         }
 
         if (t > 0) {
             DecimalFormat format = new DecimalFormat(PATTERN);
-            result.add(format.format((t * 1.0) / 1000) + "s");
+            result.add(format.format((t * 1.0) / 1000) + " s");
         }
 
         if (result.size() == 0) {

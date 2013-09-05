@@ -56,7 +56,17 @@ public enum EventType {
     /**
      * Query.
      */
-    QUERY("Q");
+    QUERY("Q"),
+
+    /**
+     * Truncate.
+     */
+    TRUNCATE("T"),
+
+    /**
+     * rename.
+     */
+    RENAME("R");
 
     private String value;
 
@@ -92,8 +102,16 @@ public enum EventType {
         return this.equals(EventType.QUERY);
     }
 
+    public boolean isTruncate() {
+        return this.equals(EventType.TRUNCATE);
+    }
+
+    public boolean isRename() {
+        return this.equals(EventType.RENAME);
+    }
+
     public boolean isDdl() {
-        return isCreate() || isAlter() || isErase();
+        return isCreate() || isAlter() || isErase() || isTruncate() || isRename();
     }
 
     public boolean isDml() {

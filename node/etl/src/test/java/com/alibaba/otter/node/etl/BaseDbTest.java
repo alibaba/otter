@@ -26,17 +26,17 @@ public class BaseDbTest extends BaseOtterTest {
         DbMediaSource dbMediaSource = new DbMediaSource();
         dbMediaSource.setId(10L);
         dbMediaSource.setDriver("com.mysql.jdbc.Driver");
-        dbMediaSource.setUsername("ottermysql");
-        dbMediaSource.setPassword("ottermysql");
-        dbMediaSource.setUrl("jdbc:mysql://10.20.144.29:3306");
+        dbMediaSource.setUsername("srf");
+        dbMediaSource.setPassword("srf");
+        dbMediaSource.setUrl("jdbc:mysql://10.20.153.53:3306/srf");
         dbMediaSource.setEncode("UTF-8");
         dbMediaSource.setType(DataMediaType.MYSQL);
 
         DbDataMedia dataMedia = new DbDataMedia();
         dataMedia.setSource(dbMediaSource);
         dataMedia.setId(1L);
-        dataMedia.setName("xdual");
-        dataMedia.setNamespace("retl");
+        dataMedia.setName("columns");
+        dataMedia.setNamespace("srf");
         return dataMedia;
     }
 

@@ -80,7 +80,7 @@ $control.setTemplate("home:navigation.vm")
 					 <table class="list changecolor_w" border="0" cellspacing="0" cellpadding="0" style="table-layout:fixed ; width:40%" onClick="displayLegendDiv(event);">
 					 <tr>
 						<td style="width:25%">mainstem状态 : </td>
-						<td style="width:65%">
+						<td style="width:72%">
                     		#if(!$mainstemData)
                     			<font color="#FF0000">未工作</font>
                     		#else
@@ -105,14 +105,18 @@ $control.setTemplate("home:navigation.vm")
 					 </tr>
 					 <tr>
 						<td style="width:25%">position 状态 : </td>
-						<td style="width:65%">
+						<td style="width:72%">
                     		#if(!$positionData)
                     			<font color="#FF0000">无信息</font>
                     		#else
 								#set ($removeURL = $homeModule.setTarget("analysisStageStat.vm").addQueryData("pipelineId", $pipelineId).setAction("PositionAction").addQueryData("eventSubmitDoRemove", "true").render())
-                    			最后更新时间 : $!numberFormat.format($positionData.modifiedTime) <span class="ico_line">|</span> <a id="showtext-position" onClick="showdiv('contentid-position','showtext-position')"><span class="ico_font">查看</span></a>
+                    			最后更新时间 : $!numberFormat.format($positionData.modifiedTime) <span class="ico_line">|</span><img src="images/ico_edit.png" width="13" height="13" /><a id="showtext-position" onClick="showdiv('contentid-position','showtext-position')"><span class="ico_font">查看</span></a>
 								#if($user.authorizeType.isAdmin())
-								<span class="ico_line">|</span><a href="javascript:if(confirm('确实要删除吗?'))location='$removeURL'"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">删除</span></a>
+    								#if($channelStatus.isStop()) 
+    									<span class="ico_line">|</span><a href="javascript:if(confirm('确实要删除吗?'))location='$removeURL'"><img src="images/ico_del.png" width="13" height="13" /><span class="ico_font">删除</span></a>
+    								#else
+    									<span class="ico_line">|</span><img src="images/ico_del.png" width="13" height="13" /><span class="ico_font" title="需要先停用channel">删除</span></a>
+    								#end
 								#end
     						#end
 						</b></td>
