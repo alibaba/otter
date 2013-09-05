@@ -66,7 +66,17 @@ public enum EventType {
     /**
      * rename.
      */
-    RENAME("R");
+    RENAME("R"),
+
+    /**
+     * create index.
+     */
+    CINDEX("CI"),
+
+    /**
+     * drop index.
+     */
+    DINDEX("DI");
 
     private String value;
 
@@ -110,8 +120,16 @@ public enum EventType {
         return this.equals(EventType.RENAME);
     }
 
+    public boolean isCindex() {
+        return this.equals(EventType.CINDEX);
+    }
+
+    public boolean isDindex() {
+        return this.equals(EventType.DINDEX);
+    }
+
     public boolean isDdl() {
-        return isCreate() || isAlter() || isErase() || isTruncate() || isRename();
+        return isCreate() || isAlter() || isErase() || isTruncate() || isRename() || isCindex() || isDindex();
     }
 
     public boolean isDml() {
