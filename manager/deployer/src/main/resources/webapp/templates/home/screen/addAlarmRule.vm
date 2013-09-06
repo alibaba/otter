@@ -36,7 +36,6 @@ $control.setTemplate("home:navigation.vm")
 				<option value="PROCESSTIMEOUT">Process超时</option>
             	<option value="POSITIONTIMEOUT" >Position超时</option>
 				<option value="EXCEPTION">异常</option>
-				<option value="PAUSED">挂起</option>
             </select><span class="red">*</span>
 		</td>
       </tr>
@@ -76,7 +75,7 @@ $control.setTemplate("home:navigation.vm")
 	  <tr> 
         <th>触发自动恢复阀值：</th>
         <td>
-			<input type="text" name="$alarmRuleGroup.recoveryThresold.key" value="$!alarmRuleGroup.recoveryThresold.value" class="setting_input"/><span class="red">*</span>
+			<input type="text" name="$alarmRuleGroup.recoveryThresold.key" value="2" class="setting_input"/><span class="red">*</span>
 			<br />
 			<span class="red">#addAlarmRuleMessage ($alarmRuleGroup.recoveryThresold)</span>
 		</td>
@@ -84,7 +83,7 @@ $control.setTemplate("home:navigation.vm")
       <tr>
        <th>描述：</th>
        <td>
-    		<textarea cols="45" rows="5" name="$alarmRuleGroup.description.key">$!nalarmRuleGroup.description.value</textarea>
+    		<textarea cols="45" rows="5" name="$alarmRuleGroup.description.key">$!alarmRuleGroup.description.value</textarea>
 	   </td>
       </tr>
     </table>

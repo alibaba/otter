@@ -16,7 +16,6 @@
 
 package com.alibaba.otter.manager.biz.common.alarm;
 
-import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,27 +28,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.CollectionUtils;
 
 /**
- * dragoon的报警服务实现
+ * 报警服务实现
  * 
  * @author jianghang 2011-11-3 上午11:12:16
  * @version 4.0.0
  */
-public class DragoonAlarmService implements AlarmService, InitializingBean, DisposableBean {
+public abstract class AbstractAlarmService implements AlarmService, InitializingBean, DisposableBean {
 
-    private static final Logger                logger = LoggerFactory.getLogger(DragoonAlarmService.class);
+    private static final Logger         logger = LoggerFactory.getLogger(AbstractAlarmService.class);
 
-    private BlockingQueue<Map<String, Object>> queue  = new LinkedBlockingQueue<Map<String, Object>>(3 * 3 * 3600);
-    private ExecutorService                    executor;
-    private int                                period = 150;                                                       // milliseconds
+    private BlockingQueue<AlarmMessage> queue  = new LinkedBlockingQueue<AlarmMessage>(3 * 3 * 3600);
+    private ExecutorService             executor;
+    private int                         period = 150;                                                // milliseconds
 
-    public void sendAlarm(Map<String, Object> data) {
-        if (CollectionUtils.isEmpty(data)) {
-            return;
-        }
-
+    public void sendAlarm(AlarmMessage data) {
         try {
             if (!queue.offer(data, 2, TimeUnit.SECONDS)) {
                 logger.error(String.format("alarm sent to queue error : [%s]", data.toString()));
@@ -59,11 +53,11 @@ public class DragoonAlarmService implements AlarmService, InitializingBean, Disp
         }
     }
 
-    protected void sendAlarmInternal() {
-        Map<String, Object> data = null;
+    private void sendAlarmInternal() {
+        AlarmMessage data = null;
         try {
             data = queue.take();
-            // PassiveSender.submit(data);
+            doSend(data);
             logger.info(String.format("has sent alarm [%s] to drgoon agent.", data.toString()));
         } catch (InterruptedException e) {
             logger.warn("otter-sendAlarm-worker was interrupted", e);
@@ -72,7 +66,8 @@ public class DragoonAlarmService implements AlarmService, InitializingBean, Disp
         }
     }
 
-    @Override
+    protected abstract void doSend(AlarmMessage data) throws Exception;
+
     public void afterPropertiesSet() throws Exception {
         executor = Executors.newFixedThreadPool(1);
         executor.submit(new Runnable() {
@@ -103,7 +98,7 @@ public class DragoonAlarmService implements AlarmService, InitializingBean, Disp
             return StringUtils.EMPTY;
         }
         StringBuilder sb = new StringBuilder();
-        for (Map<String, Object> data : queue) {
+        for (AlarmMessage data : queue) {
             sb.append(data.toString()).append("\n");
         }
 

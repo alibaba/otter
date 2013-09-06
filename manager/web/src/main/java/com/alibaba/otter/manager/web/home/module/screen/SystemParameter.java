@@ -19,6 +19,7 @@ package com.alibaba.otter.manager.web.home.module.screen;
 import javax.annotation.Resource;
 
 import com.alibaba.citrus.turbine.Context;
+import com.alibaba.citrus.turbine.dataresolver.Param;
 import com.alibaba.otter.manager.biz.config.parameter.SystemParameterService;
 
 public class SystemParameter {
@@ -26,8 +27,9 @@ public class SystemParameter {
     @Resource(name = "systemParameterService")
     private SystemParameterService systemParameterService;
 
-    public void execute(Context context) throws Exception {
+    public void execute(@Param("edit") Boolean edit, Context context) throws Exception {
         com.alibaba.otter.shared.common.model.config.parameter.SystemParameter systemParameter = systemParameterService.find();
+        context.put("edit", edit);
         context.put("systemParameter", systemParameter);
     }
 }

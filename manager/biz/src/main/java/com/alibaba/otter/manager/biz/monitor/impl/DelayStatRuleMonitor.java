@@ -16,9 +16,8 @@
 
 package com.alibaba.otter.manager.biz.monitor.impl;
 
+import java.util.Date;
 import java.util.List;
-
-import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.util.CollectionUtils;
@@ -34,10 +33,10 @@ import com.alibaba.otter.shared.common.model.statistics.delay.DelayStat;
  */
 public class DelayStatRuleMonitor extends AbstractRuleMonitor {
 
-    private static final String DELAY_NUMBER_MESSAGE = "pid:%s delay_number:%s";
-    private static final String DELAY_TIME_MESSAGE   = "pid:%s delay_time:%s seconds";
+    private static final String DELAY_TIME_MESSAGE        = "pid:%s delay_time:%s seconds";
+    private static final String DELAY_UPDATE_MESSAGE      = "pid:%s delay %s seconds no update";
+    private static final String DELAY_TIME_UPDATE_MESSAGE = "pid:%s delay_time:%s seconds, but delay %s seconds no update";
 
-    @Resource(name = "delayStatService")
     private DelayStatService    delayStatService;
 
     @Override
@@ -49,50 +48,35 @@ public class DelayStatRuleMonitor extends AbstractRuleMonitor {
         // 进入到监控项级别的rule，pipelineId一定是相同的
         Long pipelineId = rules.get(0).getPipelineId();
         DelayStat delayStat = delayStatService.findRealtimeDelayStat(pipelineId);
-        Long delayNumber = 0L;
         Long delayTime = 0L; // seconds
-        if (delayStat.getDelayNumber() != null) {
-            delayNumber = delayStat.getDelayNumber();
-
-        }
+        Long delayUpdate = 0L;
         if (delayStat.getDelayTime() != null) {
             delayTime = delayStat.getDelayTime();
         }
+        if (delayStat.getGmtCreate() != null) {
+            delayUpdate = new Date().getTime() - delayStat.getGmtCreate().getTime();
+        }
 
-        boolean delayNumberFlag = false;
         boolean delayTimeFlag = false;
+        boolean delayUpdateFlag = false;
         for (AlarmRule rule : rules) {
-            if (rule.getMonitorName().isQueueSize()) {
-                delayNumberFlag |= checkQueueSize(rule, delayNumber);
-            } else if (rule.getMonitorName().isDelayTime()) {
+            if (rule.getMonitorName().isDelayTime()) {
                 delayTimeFlag |= checkDelayTime(rule, delayTime);
+                if (delayTimeFlag) { //如果出现超时，再check下是否因为最后更新时间过久了
+                    delayUpdateFlag |= checkDelayTime(rule, delayUpdate);//检查delay统计的最后更新时间，这也做为delay监控的一部分
+                }
             }
         }
 
-        if (delayNumberFlag) {
-            logRecordAlarm(pipelineId, MonitorName.QUEUESIZE,
-                           String.format(DELAY_NUMBER_MESSAGE, pipelineId, delayNumber));
-        }
-
-        if (delayTimeFlag) {
+        if (delayTimeFlag && !delayUpdateFlag) {
             logRecordAlarm(pipelineId, MonitorName.DELAYTIME, String.format(DELAY_TIME_MESSAGE, pipelineId, delayTime));
+        } else if (delayTimeFlag && delayUpdateFlag) {
+            logRecordAlarm(pipelineId, MonitorName.DELAYTIME,
+                           String.format(DELAY_TIME_UPDATE_MESSAGE, pipelineId, delayTime, delayUpdate));
+        } else if (delayUpdateFlag) {
+            logRecordAlarm(pipelineId, MonitorName.DELAYTIME,
+                           String.format(DELAY_UPDATE_MESSAGE, pipelineId, delayUpdate));
         }
-    }
-
-    private boolean checkQueueSize(AlarmRule rule, Long delayNumber) {
-
-        if (!inPeriod(rule)) {
-            return false;
-        }
-
-        String matchValue = rule.getMatchValue();
-        matchValue = StringUtils.substringBeforeLast(matchValue, "@");
-        Long maxDelayNumber = Long.parseLong(StringUtils.trim(matchValue));
-        if (delayNumber >= maxDelayNumber) {
-            sendAlarm(rule, String.format(DELAY_NUMBER_MESSAGE, rule.getPipelineId(), delayNumber));
-            return true;
-        }
-        return false;
     }
 
     private boolean checkDelayTime(AlarmRule rule, Long delayTime) {
@@ -104,11 +88,15 @@ public class DelayStatRuleMonitor extends AbstractRuleMonitor {
         String matchValue = rule.getMatchValue();
         matchValue = StringUtils.substringBeforeLast(matchValue, "@");
         Long maxDelayTime = Long.parseLong(StringUtils.trim(matchValue));
-        if (delayTime >= maxDelayTime) {
+        if (delayTime >= maxDelayTime * 1000) {
             sendAlarm(rule, String.format(DELAY_TIME_MESSAGE, rule.getPipelineId(), delayTime));
             return true;
         }
         return false;
+    }
+
+    public void setDelayStatService(DelayStatService delayStatService) {
+        this.delayStatService = delayStatService;
     }
 
 }

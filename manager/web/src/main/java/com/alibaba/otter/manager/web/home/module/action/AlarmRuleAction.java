@@ -30,14 +30,19 @@ import com.alibaba.citrus.turbine.dataresolver.Param;
 import com.alibaba.citrus.webx.WebxException;
 import com.alibaba.otter.manager.biz.common.exceptions.RepeatConfigureException;
 import com.alibaba.otter.manager.biz.config.alarm.AlarmRuleService;
+import com.alibaba.otter.manager.biz.config.parameter.SystemParameterService;
 import com.alibaba.otter.shared.common.model.config.alarm.AlarmRule;
 import com.alibaba.otter.shared.common.model.config.alarm.AlarmRuleStatus;
 import com.alibaba.otter.shared.common.model.config.alarm.MonitorName;
+import com.alibaba.otter.shared.common.model.config.parameter.SystemParameter;
 
 public class AlarmRuleAction extends AbstractAction {
 
     @Resource(name = "alarmRuleService")
-    private AlarmRuleService alarmRuleService;
+    private AlarmRuleService       alarmRuleService;
+
+    @Resource(name = "systemParameterService")
+    private SystemParameterService systemParameterService;
 
     public void doAdd(@FormGroup("alarmRuleInfo") Group alarmRuleInfo,
                       @FormField(name = "formAlarmRuleError", group = "alarmRuleInfo") CustomErrors err, Navigator nav)
@@ -64,11 +69,12 @@ public class AlarmRuleAction extends AbstractAction {
             return;
         }
 
+        SystemParameter systemParameter = systemParameterService.find();
         AlarmRule alarmRule = new AlarmRule();
         alarmRule.setPipelineId(pipelineId);
         alarmRule.setDescription("one key added!");
         alarmRule.setAutoRecovery(Boolean.FALSE);
-        alarmRule.setReceiverKey("otterteam");
+        alarmRule.setReceiverKey(systemParameter.getDefaultAlarmReceiveKey());
         alarmRule.setStatus(AlarmRuleStatus.DISABLE);
         alarmRule.setRecoveryThresold(3);
         alarmRule.setIntervalTime(1800L);
@@ -81,13 +87,13 @@ public class AlarmRuleAction extends AbstractAction {
             alarmRule.setRecoveryThresold(2);
             alarmRuleService.create(alarmRule);
             alarmRule.setMonitorName(MonitorName.POSITIONTIMEOUT);
-            alarmRule.setMatchValue("1800");
+            alarmRule.setMatchValue("600");
             alarmRule.setIntervalTime(1800L);
             alarmRule.setAutoRecovery(true);
             alarmRule.setRecoveryThresold(0);
             alarmRuleService.create(alarmRule);
             alarmRule.setMonitorName(MonitorName.DELAYTIME);
-            alarmRule.setMatchValue("1800");
+            alarmRule.setMatchValue("600");
             alarmRule.setIntervalTime(1800L);
             alarmRule.setAutoRecovery(false);
             alarmRule.setRecoveryThresold(2);

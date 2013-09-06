@@ -13,13 +13,19 @@
      	<property name="nThreads" value="8" />
      	<property name="needConcurrent" value="true" />
      </bean>
+     
+     <bean id="selfMonitor" class="com.alibaba.otter.manager.biz.monitor.impl.SelfMonitor">
+     	<property name="enable" value="${otter.manager.self.monitor.enable:true}" />
+     	<property name="interval" value="${otter.manager.self.monitor.interval:120}" />
+     	<property name="monitor" ref="globalMonitor" />
+     </bean>
+     
      <bean id="pipelineMonitor" class="com.alibaba.otter.manager.biz.monitor.impl.PipelineMonitor" />
      
      <bean id="delayStatRuleMonitor" class="com.alibaba.otter.manager.biz.monitor.impl.DelayStatRuleMonitor" />
      <bean id="exceptionRuleMonitor" class="com.alibaba.otter.manager.biz.monitor.impl.ExceptionRuleMonitor" />
      <bean id="pipelineTimeoutRuleMonitor" class="com.alibaba.otter.manager.biz.monitor.impl.PipelineTimeoutRuleMonitor" />
      <bean id="processTimeoutRuleMonitor" class="com.alibaba.otter.manager.biz.monitor.impl.ProcessTimeoutRuleMonitor" />
-     <bean id="pausedRuleMonitor" class="com.alibaba.otter.manager.biz.monitor.impl.PausedRuleMonitor" />
      <bean id="positionTimeoutRuleMonitor" class="com.alibaba.otter.manager.biz.monitor.impl.PositionTimeoutRuleMonitor" />
      
      <bean id="alarmController" class="com.alibaba.otter.manager.biz.monitor.impl.DefaultAlarmController" />

@@ -39,7 +39,6 @@ $control.setTemplate("home:navigation.vm")
 				<option value="PROCESSTIMEOUT" #if($alarmRule.monitorName.isProcessTimeout()) selected="selected" #end>Process超时</option>
 				<option value="POSITIONTIMEOUT" #if($alarmRule.monitorName.isPositionTimeout()) selected="selected" #end>Position超时</option>
 				<option value="EXCEPTION" #if($alarmRule.monitorName.isException()) selected="selected" #end>异常</option>
-				<option value="PAUSED" #if($alarmRule.monitorName.isPaused()) selected="selected" #end>挂起</option>
             </select><span class="red">*</span>
 		</td>
       </tr>

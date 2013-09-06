@@ -61,6 +61,11 @@
                 <artifactId>spring-test</artifactId>
                 <version>${spring-version}</version>
             </dependency>
+            <dependency>
+				<groupId>javax.mail</groupId>
+				<artifactId>mail</artifactId>
+				<version>1.4.7</version>
+			</dependency>
             <!-- ibatis -->
 			<dependency>
                 <groupId>org.apache.ibatis</groupId>

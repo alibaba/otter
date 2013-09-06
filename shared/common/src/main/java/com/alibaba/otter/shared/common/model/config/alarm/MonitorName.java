@@ -21,11 +21,6 @@ package com.alibaba.otter.shared.common.model.config.alarm;
  * @version 4.1.0
  */
 public enum MonitorName {
-    /** 挂起异常 */
-    PAUSED,
-
-    /** 堆积 */
-    QUEUESIZE,
 
     /** 延迟 */
     DELAYTIME,
@@ -41,14 +36,6 @@ public enum MonitorName {
 
     /** position超时 */
     POSITIONTIMEOUT;
-
-    public boolean isPaused() {
-        return this.equals(MonitorName.PAUSED);
-    }
-
-    public boolean isQueueSize() {
-        return this.equals(MonitorName.QUEUESIZE);
-    }
 
     public boolean isDelayTime() {
         return this.equals(MonitorName.DELAYTIME);

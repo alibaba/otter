@@ -52,6 +52,16 @@ public class RestartAlarmRecovery implements AlarmRecovery, InitializingBean, Di
     private ArbitrateManageService                    arbitrateManageService;
     private ChannelService                            channelService;
 
+    public void recovery(Long channelId) {
+        AlarmRecoveryDelayed delayed = new AlarmRecoveryDelayed(channelId, -1, false, checkTime);
+        // 做异步处理，避免并发时重复执行recovery
+        synchronized (queue) {
+            if (!queue.contains(delayed)) {
+                queue.add(delayed);
+            }
+        }
+    }
+
     public void recovery(AlarmRule alarmRule) {
         Pipeline pipeline = pipelineService.findById(alarmRule.getPipelineId());
         AlarmRecoveryDelayed delayed = new AlarmRecoveryDelayed(pipeline.getChannelId(), alarmRule.getId(), false,

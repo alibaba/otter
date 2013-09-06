@@ -597,6 +597,12 @@
 					<message>必须填写${displayName}</message>
 				</fm-validators:required-validator>
 			</field>
+			<field name="defaultAlarmReceiver" displayName="默认报警联系人">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="alarmReceiver" displayName="自定义报警联系人"/>
 		</group>
 
 		<!-- - ======== - canal info - ======== -->

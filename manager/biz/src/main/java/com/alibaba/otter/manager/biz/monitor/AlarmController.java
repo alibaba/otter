@@ -16,8 +16,7 @@
 
 package com.alibaba.otter.manager.biz.monitor;
 
-import java.util.Map;
-
+import com.alibaba.otter.manager.biz.common.alarm.AlarmMessage;
 import com.alibaba.otter.shared.common.model.config.alarm.AlarmRule;
 
 /**
@@ -26,6 +25,6 @@ import com.alibaba.otter.shared.common.model.config.alarm.AlarmRule;
  */
 public interface AlarmController {
 
-    public Map<String, Object> control(AlarmRule rule, String message, Map<String, Object> data);
+    public AlarmMessage control(AlarmRule rule, String message, AlarmMessage data);
 
 }

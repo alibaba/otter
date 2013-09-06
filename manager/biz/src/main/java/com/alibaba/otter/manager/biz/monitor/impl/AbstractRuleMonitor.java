@@ -17,18 +17,16 @@
 package com.alibaba.otter.manager.biz.monitor.impl;
 
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
 
-import com.alibaba.otter.manager.biz.common.alarm.DragoonAlarmService;
+import com.alibaba.otter.manager.biz.common.alarm.AbstractAlarmService;
+import com.alibaba.otter.manager.biz.common.alarm.AlarmMessage;
 import com.alibaba.otter.manager.biz.config.record.LogRecordService;
 import com.alibaba.otter.manager.biz.monitor.AlarmController;
 import com.alibaba.otter.manager.biz.monitor.Monitor;
@@ -48,8 +46,8 @@ public abstract class AbstractRuleMonitor implements Monitor, PassiveMonitor {
 
     protected static final Logger log = LoggerFactory.getLogger("monitorInfo");
 
-    @Resource(name = "dragoonAlarmService")
-    private DragoonAlarmService   dragoonAlarmService;
+    @Resource(name = "alarmService")
+    private AbstractAlarmService  alarmService;
 
     @Resource(name = "logRecordService")
     private LogRecordService      logRecordService;
@@ -78,26 +76,19 @@ public abstract class AbstractRuleMonitor implements Monitor, PassiveMonitor {
     }
 
     protected void sendAlarm(AlarmRule rule, String message) {
-        Map<String, Object> data = new HashMap<String, Object>();
-        data.put(rule.getReceiverKey(), "otter");
-        data.put("message", message);
+        AlarmMessage data = new AlarmMessage();
+        data.setMessage(message);
+        data.setReceiveKey(rule.getReceiverKey());
 
         data = alarmController.control(rule, message, data);
         postProcessAlarmData(data);
 
-        if (CollectionUtils.isEmpty(data)) {
+        if (data == null) {
             log.info("has suppressed alarm : " + message);
             return;
         }
-
-        String[] receiverKeys = StringUtils.split(rule.getReceiverKey(), ',');
-        for (String receiverKey : receiverKeys) {
-            Map<String, Object> sendData = new HashMap<String, Object>(data);
-            sendData.put("receiveKey", receiverKey);
-
-            dragoonAlarmService.sendAlarm(sendData);
-            log.info("has send alarm : " + message + "; rule is " + sendData);
-        }
+        alarmService.sendAlarm(data);
+        log.info("has send alarm : " + data + "; rule is " + rule);
     }
 
     protected void logRecordAlarm(Long pipelineId, MonitorName monitorName, String message) {
@@ -116,7 +107,7 @@ public abstract class AbstractRuleMonitor implements Monitor, PassiveMonitor {
         logRecordService.create(logRecord);
     }
 
-    protected void postProcessAlarmData(Map<String, Object> data) {
+    protected void postProcessAlarmData(AlarmMessage data) {
         // do nothing by default
     }
 

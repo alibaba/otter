@@ -16,10 +16,10 @@
 
 package com.alibaba.otter.manager.biz.monitor.impl;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.alibaba.otter.manager.biz.common.alarm.AlarmMessage;
 import com.alibaba.otter.manager.biz.monitor.AlarmController;
 import com.alibaba.otter.manager.biz.monitor.AlarmRecovery;
 import com.alibaba.otter.shared.common.model.config.alarm.AlarmRule;
@@ -38,7 +38,7 @@ public class DefaultAlarmController implements AlarmController {
     private AlarmRecovery           restartAlarmRecovery;
 
     @Override
-    public Map<String, Object> control(AlarmRule rule, String message, Map<String, Object> data) {
+    public AlarmMessage control(AlarmRule rule, String message, AlarmMessage data) {
         // rule为空不控制
         if (rule == null) {
             return data;
@@ -76,7 +76,7 @@ public class DefaultAlarmController implements AlarmController {
         if (needAlarm) {
             return data;
         } else {
-            return Collections.emptyMap();
+            return null;
         }
     }
 
@@ -87,7 +87,7 @@ public class DefaultAlarmController implements AlarmController {
         private String      receiveKey;
         private String      matchValue;
 
-        public PoolKey(AlarmRule rule, String messageToSend, Map<String, Object> data){
+        public PoolKey(AlarmRule rule, String messageToSend, AlarmMessage data){
             // used to hash compute
             this.pipelineId = rule.getPipelineId();
             this.monitorName = rule.getMonitorName();

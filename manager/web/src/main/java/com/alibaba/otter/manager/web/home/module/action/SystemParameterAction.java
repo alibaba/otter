@@ -16,11 +16,19 @@
 
 package com.alibaba.otter.manager.web.home.module.action;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.alibaba.citrus.service.form.Group;
 import com.alibaba.citrus.turbine.Navigator;
 import com.alibaba.citrus.turbine.dataresolver.FormGroup;
+import com.alibaba.otter.manager.biz.common.exceptions.ManagerException;
 import com.alibaba.otter.manager.biz.config.parameter.SystemParameterService;
 import com.alibaba.otter.shared.common.model.config.parameter.SystemParameter;
 
@@ -37,7 +45,36 @@ public class SystemParameterAction extends AbstractAction {
 
         SystemParameter systemParameter = new SystemParameter();
         systemParameterDetailInfo.setProperties(systemParameter);
+        String defaultAlarmReceiver = systemParameterDetailInfo.getField("defaultAlarmReceiver").getStringValue();
+        String defaultAlarmReceiverStrs[] = StringUtils.split(defaultAlarmReceiver, "=");
+        if (defaultAlarmReceiverStrs.length != 2) {
+            throw new ManagerException("defaultAlarmReceiver[" + defaultAlarmReceiver + "] is not valid!");
+        }
+        systemParameter.setDefaultAlarmReceiveKey(defaultAlarmReceiverStrs[0]);
+        systemParameter.setDefaultAlarmReceiver(defaultAlarmReceiverStrs[1]);
+
+        String alarmReceiver = systemParameterDetailInfo.getField("alarmReceiver").getStringValue();
+
+        List<String> alarmReceivers = new ArrayList<String>();
+        String alarmReceiver1[] = StringUtils.split(alarmReceiver, "\n");
+        for (String alarmReceiverStr : alarmReceiver1) {
+            String[] alarmReceiver2 = StringUtils.split(alarmReceiverStr, ";");
+            for (String alarmReceiverStr2 : alarmReceiver2) {
+                alarmReceivers.add(alarmReceiverStr2);
+            }
+        }
+
+        Map<String, String> alarmReceiverMap = new LinkedHashMap<String, String>();
+        for (String alarmReceiverStr : alarmReceivers) {
+            String alarmReceiverStrs[] = StringUtils.split(alarmReceiverStr, "=");
+            if (alarmReceiverStrs.length != 2) {
+                throw new ManagerException("alarmReceiver[" + alarmReceiver + "] is not valid!");
+            }
+
+            alarmReceiverMap.put(alarmReceiverStrs[0], alarmReceiverStrs[1]);
+        }
+        systemParameter.setAlarmReceiver(alarmReceiverMap);
         systemParameterService.createOrUpdate(systemParameter);
-        nav.redirectToLocation("systemParameter.htm?");
+        nav.redirectToLocation("systemParameter.htm?edit=true");
     }
 }

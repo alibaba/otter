@@ -18,8 +18,11 @@ package com.alibaba.otter.shared.common.model.config.parameter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.alibaba.otter.shared.common.utils.OtterToStringStyle;
@@ -32,21 +35,24 @@ import com.alibaba.otter.shared.common.utils.OtterToStringStyle;
  */
 public class SystemParameter implements Serializable {
 
-    private static final long serialVersionUID      = -1780184554337059839L;
+    private static final long   serialVersionUID       = -1780184554337059839L;
 
-    private String            systemSchema          = "retl";                 // 默认为retl，不允许为空
-    private String            systemMarkTable       = "retl_mark";            // 双向同步标记表
-    private String            systemMarkTableColumn = "channel_id";           // 双向同步标记的列名
-    private String            systemMarkTableInfo   = "channel_info";         // 双向同步标记的info信息
-    private String            systemBufferTable     = "retl_buffer";          // otter同步系统buffer表
-    private String            systemDualTable       = "xdual";                // otter同步心跳表
-    private List<String>      hzZkClusters          = new ArrayList<String>(); // 杭州zk集群列表
-    private List<String>      usZkClusters          = new ArrayList<String>(); // 美国zk集群列表
-    private List<String>      hzStoreClusters       = new ArrayList<String>(); // 杭州store集群列表
-    private List<String>      usStoreClusters       = new ArrayList<String>(); // 美国store集群列表
-    private String            hzArandaCluster       = "";                     // 杭州aranda集群地址
-    private String            usArandaCluster       = "";                     // 美国aranda集群地址
-    private RetrieverType     retriever             = RetrieverType.ARIA2C;   // 下载方式
+    private String              systemSchema           = "retl";                             // 默认为retl，不允许为空
+    private String              systemMarkTable        = "retl_mark";                        // 双向同步标记表
+    private String              systemMarkTableColumn  = "channel_id";                       // 双向同步标记的列名
+    private String              systemMarkTableInfo    = "channel_info";                     // 双向同步标记的info信息
+    private String              systemBufferTable      = "retl_buffer";                      // otter同步系统buffer表
+    private String              systemDualTable        = "xdual";                            // otter同步心跳表
+    private List<String>        hzZkClusters           = new ArrayList<String>();            // 杭州zk集群列表
+    private List<String>        usZkClusters           = new ArrayList<String>();            // 美国zk集群列表
+    private List<String>        hzStoreClusters        = new ArrayList<String>();            // 杭州store集群列表
+    private List<String>        usStoreClusters        = new ArrayList<String>();            // 美国store集群列表
+    private String              hzArandaCluster        = "";                                 // 杭州aranda集群地址
+    private String              usArandaCluster        = "";                                 // 美国aranda集群地址
+    private RetrieverType       retriever              = RetrieverType.ARIA2C;               // 下载方式
+    private String              defaultAlarmReceiveKey = "otterteam";
+    private String              defaultAlarmReceiver   = "jianghang115@gmail.com";
+    private Map<String, String> alarmReceiver          = new LinkedHashMap<String, String>(); // 报警联系人
 
     public static enum RetrieverType {
         /** java版多线程下载 */
@@ -176,6 +182,45 @@ public class SystemParameter implements Serializable {
 
     public void setUsStoreClusters(List<String> usStoreClusters) {
         this.usStoreClusters = usStoreClusters;
+    }
+
+    public Map<String, String> getAlarmReceiver() {
+        return alarmReceiver;
+    }
+
+    public void setAlarmReceiver(Map<String, String> alarmReceiver) {
+        this.alarmReceiver = alarmReceiver;
+    }
+
+    public String getDefaultAlarmReceiveKey() {
+        return defaultAlarmReceiveKey;
+    }
+
+    public void setDefaultAlarmReceiveKey(String defaultAlarmReceiveKey) {
+        this.defaultAlarmReceiveKey = defaultAlarmReceiveKey;
+    }
+
+    public String getDefaultAlarmReceiver() {
+        return defaultAlarmReceiver;
+    }
+
+    public void setDefaultAlarmReceiver(String defaultAlarmReceiver) {
+        this.defaultAlarmReceiver = defaultAlarmReceiver;
+    }
+
+    // ================ helper method==================
+
+    public String getDefaultAlarmReceiverFormat() {
+        return defaultAlarmReceiveKey + "=" + defaultAlarmReceiver;
+    }
+
+    public String getAlarmReceiverFormat() {
+        List<String> result = new ArrayList<String>();
+        for (Map.Entry<String, String> entry : alarmReceiver.entrySet()) {
+            result.add(entry.getKey() + "=" + entry.getValue());
+        }
+
+        return StringUtils.join(result, "\n");
     }
 
     @Override

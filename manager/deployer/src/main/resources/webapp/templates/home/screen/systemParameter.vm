@@ -78,8 +78,26 @@ $control.setTemplate("home:navigation.vm")
 			</select><span class="red">*</span>
         </td>
       </tr>
+	  <tr> 
+        <th>默认报警联系人：</th>
+		<td>
+        <input type="text" name="$systemParameterDetailGroup.defaultAlarmReceiver.key" value="$!systemParameter.getDefaultAlarmReceiverFormat()" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#systemParameterMessage ($systemParameterDetailGroup.systemDualTable)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>自定义报警联系人：</th>
+		<td>
+		<textarea name="$systemParameterDetailGroup.alarmReceiver.key" cols="45" rows="5">$!systemParameter.getAlarmReceiverFormat()</textarea><span class="red">*</span>
+			<br />
+			<span>格式: otter1=xxx@gmail.com;otter2=xxx@gmail.com，多用户请用逗号分隔，分组请用分号分隔.</span>
+			<br />
+			<span class="red">#systemParameterMessage ($systemParameterDetailGroup.systemDualTable)</span>
+		</td>
+      </tr>
     </table> 
    </div>
-   <div class="btn"><a href="javascript:document.systemParameterForm.submit();">保存</a></div> 
+   <div class="btn"><a href="javascript:document.systemParameterForm.submit();">保存</a></div>  #if($edit) <font color="red">保存成功！ </font> #end 
   </form>
 </div>

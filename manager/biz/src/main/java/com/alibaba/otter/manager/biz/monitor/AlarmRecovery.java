@@ -29,6 +29,11 @@ public interface AlarmRecovery {
     /**
      * 根据规则，强制进行recovery操作
      */
+    public void recovery(Long channelId);
+
+    /**
+     * 根据规则，强制进行recovery操作
+     */
     public void recovery(AlarmRule alarmRule);
 
     /**

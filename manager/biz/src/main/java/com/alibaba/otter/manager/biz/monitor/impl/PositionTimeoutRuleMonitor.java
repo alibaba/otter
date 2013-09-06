@@ -24,12 +24,10 @@ import org.springframework.util.CollectionUtils;
 
 import com.alibaba.otter.manager.biz.config.pipeline.PipelineService;
 import com.alibaba.otter.manager.biz.monitor.MonitorRuleExplorerRegisty;
-import com.alibaba.otter.shared.arbitrate.ArbitrateManageService;
 import com.alibaba.otter.shared.arbitrate.ArbitrateViewService;
 import com.alibaba.otter.shared.arbitrate.model.PositionEventData;
 import com.alibaba.otter.shared.common.model.config.alarm.AlarmRule;
 import com.alibaba.otter.shared.common.model.config.alarm.MonitorName;
-import com.alibaba.otter.shared.common.model.config.channel.ChannelStatus;
 import com.alibaba.otter.shared.common.model.config.pipeline.Pipeline;
 
 /**
@@ -40,10 +38,9 @@ import com.alibaba.otter.shared.common.model.config.pipeline.Pipeline;
  */
 public class PositionTimeoutRuleMonitor extends AbstractRuleMonitor {
 
-    private PipelineService        pipelineService;
-    private ArbitrateViewService   arbitrateViewService;
-    private ArbitrateManageService arbitrateManageService;
-    private static final String    TIME_OUT_MESSAGE = "pid:%s position %s seconds no update";
+    private PipelineService      pipelineService;
+    private ArbitrateViewService arbitrateViewService;
+    private static final String  TIME_OUT_MESSAGE = "pid:%s position %s seconds no update";
 
     PositionTimeoutRuleMonitor(){
         MonitorRuleExplorerRegisty.register(MonitorName.POSITIONTIMEOUT, this);
@@ -58,11 +55,6 @@ public class PositionTimeoutRuleMonitor extends AbstractRuleMonitor {
         Pipeline pipeline = pipelineService.findById(pipelineId);
         PositionEventData data = arbitrateViewService.getCanalCursor(pipeline.getParameters().getDestinationName(),
                                                                      pipeline.getParameters().getMainstemClientId());
-        // 如果处于stop状态，则忽略报警
-        ChannelStatus status = arbitrateManageService.channelEvent().status(pipeline.getChannelId());
-        if (status == null || status.isStop()) {
-            return;
-        }
 
         long latestSyncTime = 0L;
         if (data != null && data.getModifiedTime() != null) {
@@ -105,10 +97,6 @@ public class PositionTimeoutRuleMonitor extends AbstractRuleMonitor {
 
     public void setArbitrateViewService(ArbitrateViewService arbitrateViewService) {
         this.arbitrateViewService = arbitrateViewService;
-    }
-
-    public void setArbitrateManageService(ArbitrateManageService arbitrateManageService) {
-        this.arbitrateManageService = arbitrateManageService;
     }
 
 }
