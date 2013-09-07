@@ -117,8 +117,8 @@ public class AlarmRuleAction extends AbstractAction {
      * 修改Node
      */
     public void doEdit(@FormGroup("alarmRuleInfo") Group alarmRuleInfo,
-                       @FormField(name = "formNodeError", group = "nodeInfo") CustomErrors err, Navigator nav)
-                                                                                                              throws Exception {
+                       @FormField(name = "formAlarmRuleError", group = "alarmRuleInfo") CustomErrors err, Navigator nav)
+                                                                                                                        throws Exception {
         AlarmRule alarmRule = new AlarmRule();
         alarmRuleInfo.setProperties(alarmRule);
 

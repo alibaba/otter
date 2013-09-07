@@ -33,7 +33,6 @@ $control.setTemplate("home:navigation.vm")
         <th width="300">监控项目：</th>
         <td width="329">
 			<select name="$alarmRuleGroup.monitorName.key" id="select">
-            	<option value="QUEUESIZE" #if($alarmRule.monitorName.isQueueSize()) selected="selected" #end>堆积</option>
                 <option value="DELAYTIME" #if($alarmRule.monitorName.isDelayTime()) selected="selected" #end>延迟</option>
 				<option value="PIPELINETIMEOUT" #if($alarmRule.monitorName.isPipelineTimeout()) selected="selected" #end>Pipeline超时</option>
 				<option value="PROCESSTIMEOUT" #if($alarmRule.monitorName.isProcessTimeout()) selected="selected" #end>Process超时</option>

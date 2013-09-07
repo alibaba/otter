@@ -421,7 +421,7 @@
 		<group name="alarmRuleInfo" extends="csrfCheck">
 			<field name="formAlarmRuleError">
 				<fm-validators:custom-error id="invalidAlarmRule">
-					<message>数据库中存在重复的Node配置(可能原因：Node重复，或者IP+PORT重复)</message>
+					<message>错误的监控配置</message>
 				</fm-validators:custom-error>
 			</field>
 			<field name="id" displayName="监控的ID" />

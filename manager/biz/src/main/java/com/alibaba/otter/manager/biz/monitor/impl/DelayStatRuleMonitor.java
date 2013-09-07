@@ -51,10 +51,10 @@ public class DelayStatRuleMonitor extends AbstractRuleMonitor {
         Long delayTime = 0L; // seconds
         Long delayUpdate = 0L;
         if (delayStat.getDelayTime() != null) {
-            delayTime = delayStat.getDelayTime();
+            delayTime = delayStat.getDelayTime() / 1000;
         }
         if (delayStat.getGmtCreate() != null) {
-            delayUpdate = new Date().getTime() - delayStat.getGmtCreate().getTime();
+            delayUpdate = (new Date().getTime() - delayStat.getGmtCreate().getTime()) / 1000;
         }
 
         boolean delayTimeFlag = false;
