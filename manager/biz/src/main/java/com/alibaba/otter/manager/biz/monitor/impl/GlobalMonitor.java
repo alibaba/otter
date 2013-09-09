@@ -73,17 +73,17 @@ public class GlobalMonitor implements Monitor, InitializingBean, DisposableBean 
     @Override
     public void explore() {
         Map<Long, List<AlarmRule>> rules = alarmRuleService.getAlarmRules(AlarmRuleStatus.ENABLE);
-        if (CollectionUtils.isEmpty(rules)) {
+        if (!CollectionUtils.isEmpty(rules)) {
+            if (needConcurrent) {
+                concurrentProcess(rules);
+            } else {// 串行
+                serialProcess(rules);
+            }
+        } else {
             log.warn("no enabled alarm rule at all. Check the rule setting please!");
-            return;
         }
 
-        if (needConcurrent) {
-            concurrentProcess(rules);
-        } else {// 串行
-            serialProcess(rules);
-        }
-
+        // 自动恢复机制
         if (recoveryPaused) {
             List<Long> channelIds = channelService.listAllChannelId();
             if (needConcurrent) {
