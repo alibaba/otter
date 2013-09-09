@@ -21,4 +21,7 @@ set OTTER_OPTS= -DappName=otter-node -Ddubbo.application.logger=slf4j -Dlogback.
 
 set JAVA_OPTS= %JAVA_MEM_OPTS% %JAVA_OPTS_EXT% %JAVA_DEBUG_OPT% %OTTER_OPTS%
 
+set CMD_STR= java %JAVA_OPTS% -classpath "%CLASSPATH%" com.alibaba.otter.node.deployer.OtterLauncher
+echo start cmd : %CMD_STR%
+
 java %JAVA_OPTS% -classpath "%CLASSPATH%" com.alibaba.otter.node.deployer.OtterLauncher
