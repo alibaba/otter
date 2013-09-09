@@ -444,6 +444,7 @@ public class MessageParser {
         Map<String, EventColumn> oldKeyColumns = new LinkedHashMap<String, EventColumn>();
         // 有变化的非主键
         Map<String, EventColumn> notKeyColumns = new LinkedHashMap<String, EventColumn>();
+
         if (eventType.isInsert()) {
             for (Column column : afterColumns) {
                 if (isKey(tableHolder, tableName, column)) {
@@ -467,9 +468,11 @@ public class MessageParser {
             for (Column column : beforeColumns) {
                 if (isKey(tableHolder, tableName, column)) {
                     oldKeyColumns.put(column.getName(), copyEventColumn(column, true, tableHolder));
-                } else if (needAllColumns && entry.getHeader().getSourceType() == CanalEntry.Type.ORACLE) {
-                    // 针对行记录同步时，针对oracle记录一下非主键的字段，因为update时针对未变更的字段在aftercolume里没有
-                    notKeyColumns.put(column.getName(), copyEventColumn(column, isRowMode, tableHolder));
+                } else {
+                    if (needAllColumns && entry.getHeader().getSourceType() == CanalEntry.Type.ORACLE) {
+                        // 针对行记录同步时，针对oracle记录一下非主键的字段，因为update时针对未变更的字段在aftercolume里没有
+                        notKeyColumns.put(column.getName(), copyEventColumn(column, isRowMode, tableHolder));
+                    }
                 }
             }
             for (Column column : afterColumns) {
@@ -494,23 +497,44 @@ public class MessageParser {
             }
         }
 
-        if (keyColumns.isEmpty()) {
+        List<EventColumn> keys = new ArrayList<EventColumn>(keyColumns.values());
+        List<EventColumn> oldKeys = new ArrayList<EventColumn>(oldKeyColumns.values());
+        List<EventColumn> columns = new ArrayList<EventColumn>(notKeyColumns.values());
+
+        Collections.sort(keys, new EventColumnIndexComparable());
+        Collections.sort(oldKeys, new EventColumnIndexComparable());
+        Collections.sort(columns, new EventColumnIndexComparable());
+        if (!keyColumns.isEmpty()) {
+            eventData.setKeys(keys);
+            if (eventData.getEventType().isUpdate() && !oldKeys.equals(keys)) { // update类型，如果存在主键不同,则记录下old keys为变更前的主键
+                eventData.setOldKeys(oldKeys);
+            }
+            eventData.setColumns(columns);
+        //} else if (CanalEntry.Type.MYSQL == entry.getHeader().getSourceType()) {
+        //    // 只支持mysql无主键同步
+        //    if (eventType.isUpdate()) {
+        //        List<EventColumn> oldColumns = new ArrayList<EventColumn>();
+        //        List<EventColumn> newColumns = new ArrayList<EventColumn>();
+        //        for (Column column : beforeColumns) {
+        //            oldColumns.add(copyEventColumn(column, true, tableHolder));
+        //        }
+		//
+        //        for (Column column : afterColumns) {
+        //            newColumns.add(copyEventColumn(column, true, tableHolder));
+        //        }
+        //        Collections.sort(oldColumns, new EventColumnIndexComparable());
+        //        Collections.sort(newColumns, new EventColumnIndexComparable());
+        //        eventData.setOldKeys(oldColumns);// 做为老主键
+        //        eventData.setKeys(newColumns);// 做为新主键，需要保证新老主键字段数量一致
+        //    } else {
+        //        // 针对无主键，等同为所有都是主键进行处理
+        //        eventData.setKeys(columns);
+        //    }
+        } else {
             throw new SelectException("this rowdata has no pks , entry: " + entry.toString() + " and rowData: "
                                       + rowData);
         }
 
-        List<EventColumn> keys = new ArrayList<EventColumn>(keyColumns.values());
-        List<EventColumn> oldKeys = new ArrayList<EventColumn>(oldKeyColumns.values());
-        List<EventColumn> columns = new ArrayList<EventColumn>(notKeyColumns.values());
-        Collections.sort(keys, new EventColumnIndexComparable());
-        Collections.sort(oldKeys, new EventColumnIndexComparable());
-        Collections.sort(columns, new EventColumnIndexComparable());
-
-        eventData.setKeys(keys);
-        if (eventData.getEventType().isUpdate() && !oldKeys.equals(keys)) { // update类型，如果存在主键不同,则记录下old keys为变更前的主键
-            eventData.setOldKeys(oldKeys);
-        }
-        eventData.setColumns(columns);
         return eventData;
     }
 

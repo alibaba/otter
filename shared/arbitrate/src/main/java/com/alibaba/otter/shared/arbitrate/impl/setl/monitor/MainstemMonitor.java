@@ -66,7 +66,7 @@ public class MainstemMonitor extends ArbitrateLifeCycle implements Monitor {
     private static final Logger        logger       = LoggerFactory.getLogger(MainstemMonitor.class);
     private ZkClientx                  zookeeper    = ZooKeeperClient.getInstance();
     private ScheduledExecutorService   delayExector = Executors.newScheduledThreadPool(1);
-    private int                        delayTime    = 60;
+    private int                        delayTime    = 5;
     private volatile MainStemEventData activeData;
     private IZkDataListener            dataListener;
     private BooleanMutex               mutex        = new BooleanMutex(false);

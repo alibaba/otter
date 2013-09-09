@@ -58,7 +58,7 @@ public class DeadNodeListener implements NodeListener, InitializingBean, Disposa
     private PassiveMonitor                       exceptionRuleMonitor;
     private ChannelService                       channelService;
     private ExecutorService                      executor;
-    private long                                 checkTime    = 90 * 1000L;                                     // 90秒
+    private long                                 checkTime    = 60 * 1000L;                                     // 30秒
     private volatile List<Long>                  currentNodes = new ArrayList<Long>();                          // 当前存活节点
 
     public DeadNodeListener(){

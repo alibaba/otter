@@ -45,7 +45,7 @@ public class RestartAlarmRecovery implements AlarmRecovery, InitializingBean, Di
 
     private static final Logger                       logger    = LoggerFactory.getLogger(RestartAlarmRecovery.class);
     private volatile DelayQueue<AlarmRecoveryDelayed> queue     = new DelayQueue<AlarmRecoveryDelayed>();
-    private long                                      checkTime = 30 * 1000L;                                         // 5秒
+    private long                                      checkTime = 10 * 1000L;                                         // 5秒
     private ExecutorService                           executor;
     private PipelineService                           pipelineService;
     private PassiveMonitor                            exceptionRuleMonitor;

@@ -81,7 +81,7 @@ else
 fi
 
 JAVA_OPTS=" $JAVA_OPTS -Djava.awt.headless=true -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8"
-OTTER_OPTS="-DappName=otter-manager -Dlogback.configurationFile=$logback_configurationFile -Dotter.conf=$otter_conf"
+OTTER_OPTS="-DappName=otter-manager -Ddubbo.application.logger=slf4j -Dlogback.configurationFile=$logback_configurationFile -Dotter.conf=$otter_conf"
 
 if [ -e $otter_conf -a -e $logback_configurationFile ]
 then 

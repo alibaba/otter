@@ -185,6 +185,10 @@
         <level value="INFO" />  
         <appender-ref ref="TASK-ROOT" />
     </logger>
+    <logger name="com.alibaba.dubbo.rpc.support.RpcUtils" additivity="false">  
+     	<level value="error" />  
+        <appender-ref ref="TASK-ROOT" />
+    </logger>
     <!-- 
     <logger name="com.alibaba.otter.shared.common.utils.thread.ExecutorTemplate" additivity="false">  
         <level value="INFO" />  

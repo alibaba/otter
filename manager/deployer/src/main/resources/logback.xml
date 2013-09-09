@@ -135,6 +135,10 @@
         <level value="info" />  
         <appender-ref ref="WEBX-ROOT" />
     </logger>
+    <logger name="com.alibaba.dubbo.rpc.support.RpcUtils" additivity="false">  
+     	<level value="error" />  
+        <appender-ref ref="WEBX-ROOT" />
+    </logger>
     
 	<root level="WARN">
 		<appender-ref ref="WEBX-ROOT" />
