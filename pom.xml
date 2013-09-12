@@ -96,7 +96,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring-version>3.1.2.RELEASE</spring-version>
 		<jetty_verion>8.1.7.v20120910</jetty_verion>
-		<otter_canal_version>1.0.10</otter_canal_version>
+		<otter_canal_version>1.0.11-SNAPSHOT</otter_canal_version>
 	</properties>
 	
 	<modules>
