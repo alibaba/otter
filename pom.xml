@@ -153,6 +153,11 @@
 				<artifactId>guava</artifactId>
 				<version>r08</version>
 			</dependency>
+			<dependency>
+				<groupId>com.google.protobuf</groupId>
+				<artifactId>protobuf-java</artifactId>
+				<version>2.4.1</version>
+			</dependency>
 			<!-- zookeeper -->
 			<dependency>
 				<groupId>org.apache.zookeeper</groupId>
