@@ -48,15 +48,18 @@ $control.setTemplate("home:navigation.vm")
           <td width="4%">$autoKeeperCluster.id</td>
 		  #set ($detailUrl = $homeModule.setTarget("autoKeeperClustersDetail.vm").addQueryData("clusterId", $autoKeeperCluster.id))
           <td width="10%"><a href="$detailUrl">$!autoKeeperCluster.clusterName</a></td>
-          <td width="50%">$!autoKeeperCluster.serverList</td>
+          <td width="40%">$!autoKeeperCluster.serverList</td>
 		  <td width="15%">$!autoKeeperCluster.description</td>
           <td>
-			#set ($editURL = $homeModule.setTarget("editAutoKeeper.vm").addQueryData("clusterId", $autoKeeperCluster.id))
-    		<a href="$editURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">编辑</span></a>
-			#set ($refreshURL = $homeModule.setAction("AutoKeeperClusterAction").addQueryData("clusterId", $autoKeeperCluster.id).addQueryData("eventSubmitDoRefresh", "true"))
-    		<span class="ico_line">|</span><a href="$refreshURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">刷新</span></a>
-			#set ($removeURL = $homeModule.setAction("AutoKeeperClusterAction").addQueryData("clusterId", $autoKeeperCluster.id).addQueryData("eventSubmitDoDelete", "true"))
-			<span class="ico_line">|</span><a href="$removeURL"><img src="images/ico_del.png" width="9" height="9"  />删除</a>
+			<a href="$detailUrl"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">查看</span></a>
+			#if($user.authorizeType.isAdmin())
+				#set ($editURL = $homeModule.setTarget("editAutoKeeper.vm").addQueryData("clusterId", $autoKeeperCluster.id))
+				<span class="ico_line">|</span><a href="$editURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">编辑</span></a>
+    			#set ($refreshURL = $homeModule.setAction("AutoKeeperClusterAction").addQueryData("clusterId", $autoKeeperCluster.id).addQueryData("eventSubmitDoRefresh", "true"))
+        		<span class="ico_line">|</span><a href="$refreshURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">刷新</span></a>
+    			#set ($removeURL = $homeModule.setAction("AutoKeeperClusterAction").addQueryData("clusterId", $autoKeeperCluster.id).addQueryData("eventSubmitDoDelete", "true"))
+    			<span class="ico_line">|</span><a href="$removeURL"><img src="images/ico_del.png" width="9" height="9"  />删除</a>
+			#end
 		  </td>
         </tr>
 	#end
