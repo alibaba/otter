@@ -50,7 +50,17 @@ public class DataMedia<Source extends DataMediaSource> implements Serializable {
     private Mode                mode;                                    // 使用ModeValue进行替代
 
     public static enum Mode {
-        SINGLE, MULTI, WILDCARD;
+        SINGLE(0), MULTI(1), WILDCARD(3);
+
+        private int value; // datamedia pair定义排序用
+
+        Mode(int value){
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
 
         public boolean isSingle() {
             return this == Mode.SINGLE;

@@ -18,6 +18,7 @@ package com.alibaba.otter.manager.biz.config.pipeline.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +39,8 @@ import com.alibaba.otter.manager.biz.config.pipeline.dal.dataobject.PipelineDO;
 import com.alibaba.otter.manager.biz.config.pipeline.dal.dataobject.PipelineNodeRelationDO;
 import com.alibaba.otter.manager.biz.config.pipeline.dal.dataobject.PipelineNodeRelationDO.Location;
 import com.alibaba.otter.shared.arbitrate.ArbitrateManageService;
+import com.alibaba.otter.shared.common.model.config.data.DataMediaPair;
+import com.alibaba.otter.shared.common.model.config.data.DataMediaPairComparable;
 import com.alibaba.otter.shared.common.model.config.node.Node;
 import com.alibaba.otter.shared.common.model.config.pipeline.Pipeline;
 import com.alibaba.otter.shared.common.utils.Assert;
@@ -378,7 +381,9 @@ public class PipelineServiceImpl implements PipelineService {
             pipeline.getParameters().setMainstemClientId(pipeline.getId().shortValue());
 
             // 组装DatamediaPair
-            pipeline.setPairs(dataMediaPairService.listByPipelineId(pipelineDo.getId()));
+            List<DataMediaPair> pairs = dataMediaPairService.listByPipelineId(pipelineDo.getId());
+            Collections.sort(pairs, new DataMediaPairComparable());
+            pipeline.setPairs(pairs);
 
             // 组装Node
             List<PipelineNodeRelationDO> relations = pipelineNodeRelationDao.listByPipelineIds(pipelineDo.getId());
@@ -436,7 +441,9 @@ public class PipelineServiceImpl implements PipelineService {
             pipeline.getParameters().setMainstemClientId(pipeline.getId().shortValue());
 
             // 组装DatamediaPair
-            pipeline.setPairs(dataMediaPairService.listByPipelineIdWithoutColumn(pipelineDo.getId()));
+            List<DataMediaPair> pairs = dataMediaPairService.listByPipelineIdWithoutColumn(pipelineDo.getId());
+            Collections.sort(pairs, new DataMediaPairComparable());
+            pipeline.setPairs(pairs);
 
             // 组装Node
             List<PipelineNodeRelationDO> relations = pipelineNodeRelationDao.listByPipelineIds(pipelineDo.getId());

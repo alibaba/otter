@@ -55,8 +55,8 @@ public class ConfigHelper {
                                                              PatternCompiler pc = new Perl5Compiler();
                                                              try {
                                                                  return pc.compile(input,
-                                                                                   Perl5Compiler.CASE_INSENSITIVE_MASK
-                                                                                           | Perl5Compiler.READ_ONLY_MASK);
+                                                                     Perl5Compiler.CASE_INSENSITIVE_MASK
+                                                                             | Perl5Compiler.READ_ONLY_MASK);
                                                              } catch (MalformedPatternException e) {
                                                                  throw new ConfigException(e);
                                                              }
@@ -87,20 +87,6 @@ public class ConfigHelper {
         for (DataMediaPair pair : pipeline.getPairs()) {
             if (isMatch(pair.getSource(), namespace, name)) {
                 return pair.getSource();
-            }
-        }
-
-        throw new ConfigException("no such DataMedia , the namespace = " + namespace + " name = " + name);
-    }
-
-    /**
-     * 根据NameSpace和Name得到对应的DataMedia.
-     */
-    public static DataMedia<? extends DataMediaSource> findTargetDataMedia(Pipeline pipeline, String namespace,
-                                                                           String name) {
-        for (DataMediaPair pair : pipeline.getPairs()) {
-            if (isMatch(pair.getTarget(), namespace, name)) {
-                return pair.getTarget();
             }
         }
 
@@ -267,7 +253,8 @@ public class ConfigHelper {
     }
 
     private static boolean isWildCard(String value) {
-        return StringUtils.containsAny(value, new char[] { '*', '?', '+', '{', '}', '[', ']', '\\', '$', '^', '.' });
+        return StringUtils.containsAny(value, new char[] { '*', '?', '+', '|', '(', ')', '{', '}', '[', ']', '\\', '$',
+                '^', '.' });
     }
 
     private static boolean isWildCardMatch(String matchPattern, String value) {
