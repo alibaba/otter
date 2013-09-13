@@ -46,7 +46,7 @@ $control.setTemplate("home:navigation.vm")
 	#foreach($autoKeeperCluster in $autoKeeperClusters)
         <tr> 
           <td width="4%">$autoKeeperCluster.id</td>
-		  #set ($detailUrl = $homeModule.setTarget("autoKeeperClustersDetail.vm").addQueryData("clusterId", $autoKeeperCluster.id))
+		  #set ($detailUrl = $homeModule.setTarget("autoKeeperClustersDetail.vm").addQueryData("clusterId", $autoKeeperCluster.id).render())
           <td width="10%"><a href="$detailUrl">$!autoKeeperCluster.clusterName</a></td>
           <td width="40%">$!autoKeeperCluster.serverList</td>
 		  <td width="15%">$!autoKeeperCluster.description</td>

@@ -97,9 +97,9 @@ $control.setTemplate("home:navigation.vm")
     <tr> 
         <th>url示例说明</th>
         <td>
-			mysql: jdbc:mysql://10.20.144.15:3306/tddl_test_1<br/>
-			oracle : jdbc:oracle:thin:@10.20.144.29:1521:OINTEST<br/>
-			media : jdbc:mysql://groupKey=key (更改 key)
+			mysql例子: jdbc:mysql://10.20.144.15:3306<br/>
+			oracle例子 : jdbc:oracle:thin:@10.20.144.29:1521:OINTEST<br/>
+			media例子 : jdbc:mysql://groupKey=key (更改 key)
 		</td>
       </tr>
       

@@ -255,17 +255,19 @@
 					<message>左右映射关系数量不一致</message>
 				</fm-validators:custom-error>
 			</field>
+			<field name="id" displayName="id" />
 			<field name="dltTarget_l" displayName="源字段集合" />
 			<field name="dltTarget_r" displayName="目标字段集合" />
 		</group>
 
 		<!-- - ======== - 字段组 - ======== -->
 		<group name="columnPairGroupInfo" extends="csrfCheck">
-			<field name="formColumnPairError">
-				<fm-validators:custom-error id="invalidColumnPair">
-					<message>左右映射关系数量不一致</message>
+			<field name="formColumnPairGroupError">
+				<fm-validators:custom-error id="invalidColumnPairGroup">
+					<message>映射组出错</message>
 				</fm-validators:custom-error>
 			</field>
+			<field name="id" displayName="id" />
 			<field name="groupResult" displayName="字段组集合" />
 		</group>
 

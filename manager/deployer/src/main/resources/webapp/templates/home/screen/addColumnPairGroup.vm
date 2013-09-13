@@ -56,8 +56,10 @@ $control.setTemplate("home:navigation.vm")
 	<input type="hidden" name="sourceMediaId" value="$sourceMediaId" />
 	<input type="hidden" name="targetMediaId" value="$targetMediaId" />
 	<input type="hidden" name="pipelineId" value="$pipelineId" />
-  <div class="sel_l">
 	#set ($columnGroup = $form.columnPairGroupInfo.defaultInstance)
+	<input type="hidden" name="$columnGroup.id.key" value="1"/>
+	
+  <div class="sel_l">
   <div class="box1"> 
         <select id="dltSource" name="dltSource"  multiple="multiple"> 
 			#foreach ($columnPair in $preColumnPairs)
@@ -80,7 +82,7 @@ $control.setTemplate("home:navigation.vm")
   </div> 
   
   <input  id="submit" type="submit" name="submitKey" value="保存" class="button"></input>
-  <span class="red">#addColumnPairGroupMessage ($columnGroup.formColumnPairError)</span>
+  <span class="red">#addColumnPairGroupMessage ($columnGroup.formColumnPairGroupError)</span>
   </div>
   
   </form>  

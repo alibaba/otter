@@ -47,7 +47,7 @@ public class ColumnPairGroupAction {
     public void doSave(@Param("dataMediaPairId") Long dataMediaPairId, @Param("submitKey") String submitKey,
                        @Param("pipelineId") Long pipelineId,
                        @FormGroup("columnPairGroupInfo") Group columnPairGroupInfo,
-                       @FormField(name = "formColumnPairError", group = "columnPairInfo") CustomErrors err,
+                       @FormField(name = "formColumnPairGroupError", group = "columnPairGroupInfo") CustomErrors err,
                        Navigator nav) throws Exception {
         String[] columnPairStrings = columnPairGroupInfo.getField("groupResult").getStringValues();
         ColumnGroup columnGroup = new ColumnGroup();

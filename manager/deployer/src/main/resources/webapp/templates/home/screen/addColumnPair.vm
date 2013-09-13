@@ -72,8 +72,9 @@ $control.setTemplate("home:navigation.vm")
 	<input type="hidden" name="targetMediaId" value="$targetMediaId" />
 	<input type="hidden" name="pipelineId" value="$pipelineId" />
 	<input type="hidden" name="channelId" value="$channelId" />
+	#set ($columnPair = $form.columnPairInfo.defaultInstance)
+	<input type="hidden" name="$columnPair.id.key" value="1"/>
   <div class="sel_l">
-	#set ($columnPairGroup = $form.columnPairInfo.defaultInstance)
   <div class="box1"> 
         <select id="dltSource_l" name="dltSource_l"  multiple="multiple"> 
 			#foreach ($sourceColumn in $sourceColumns)
@@ -88,7 +89,7 @@ $control.setTemplate("home:navigation.vm")
         <input type="button" class="btn_up2" onclick="AddAll($('#dltTarget_l'),$('#dltSource_l'))" /> 
   </div> 
   <div class="box3"> 
-        <select id="dltTarget_l" name="$columnPairGroup.dltTarget_l.key" multiple="multiple"> 
+        <select id="dltTarget_l" name="$columnPair.dltTarget_l.key" multiple="multiple"> 
 			#foreach ($underSourceColumn in $underSourceColumns)
 				<option value="$!underSourceColumn" selected="selected">$!underSourceColumn</option> 
             #end
@@ -97,7 +98,7 @@ $control.setTemplate("home:navigation.vm")
   
   <input type="submit" id="submit" name="submitKey" value="保存" class="button"></input>
   <input type="submit" id="submitnext" name="submitKey" value="下一步" class="button"></input>
-  <span class="red">#addColumnPairMessage ($columnPairGroup.formColumnPairError)</span>
+  <span class="red">#addColumnPairMessage ($columnPair.formColumnPairError)</span>
   </div>
   
   <div class="sel_r">
@@ -115,7 +116,7 @@ $control.setTemplate("home:navigation.vm")
         <input type="button" class="btn_up2" onclick="AddAll($('#dltTarget_r'),$('#dltSource_r'))" /> 
   </div> 
   <div class="box3"> 
-        <select id="dltTarget_r" name="$columnPairGroup.dltTarget_r.key" multiple="multiple"> 
+        <select id="dltTarget_r" name="$columnPair.dltTarget_r.key" multiple="multiple"> 
 			#foreach ($underTargetColumn in $underTargetColumns)
 				<option value="$!underTargetColumn" selected="selected">$!underTargetColumn</option> 
             #end
