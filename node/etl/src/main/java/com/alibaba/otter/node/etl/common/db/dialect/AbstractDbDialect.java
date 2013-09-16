@@ -188,7 +188,8 @@ public abstract class AbstractDbDialect implements DbDialect {
                         return table;
                     }
                 } catch (Exception e) {
-                    throw new NestableRuntimeException("find table [" + names.get(0) + "." + names.get(1) + "] error");
+                    throw new NestableRuntimeException("find table [" + names.get(0) + "." + names.get(1) + "] error",
+                        e);
                 }
             }
         });
