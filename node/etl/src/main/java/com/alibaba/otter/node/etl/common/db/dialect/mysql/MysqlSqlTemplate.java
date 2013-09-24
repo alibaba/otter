@@ -52,15 +52,19 @@ public class MysqlSqlTemplate extends AbstractSqlTemplate {
         sql.append(")");
         sql.append(" on duplicate key update ");
 
+        size = columnNames.length;
+        for (int i = 0; i < size; i++) {
+            sql.append(appendEscape(columnNames[i]))
+                .append("=values(")
+                .append(appendEscape(columnNames[i]))
+                .append(")");
+            sql.append(" , ");
+        }
+
         // mysql merge sql匹配了uniqe / primary key时都会执行update，所以需要更新pk信息
         size = pkNames.length;
         for (int i = 0; i < size; i++) {
-            sql.append(appendEscape(pkNames[i])).append("=values(").append(appendEscape(pkNames[i])).append(")").append(" , ");
-        }
-
-        size = columnNames.length;
-        for (int i = 0; i < size; i++) {
-            sql.append(appendEscape(columnNames[i])).append("=values(").append(appendEscape(columnNames[i])).append(")");
+            sql.append(appendEscape(pkNames[i])).append("=values(").append(appendEscape(pkNames[i])).append(")");
             sql.append((i + 1 < size) ? " , " : "");
         }
 
