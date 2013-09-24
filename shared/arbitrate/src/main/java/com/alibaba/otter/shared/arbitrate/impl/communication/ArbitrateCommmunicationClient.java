@@ -106,7 +106,11 @@ public class ArbitrateCommmunicationClient {
 
     private String convertToAddress(Long nid) {
         Node node = ArbitrateConfigUtils.findNode(nid);
-        return node.getIp() + ":" + node.getPort();
+        if (node.getParameters().getUseExternalIp()) {
+            return node.getParameters().getExternalIp() + ":" + node.getPort();
+        } else {
+            return node.getIp() + ":" + node.getPort();
+        }
     }
 
     // ================== setter / getter =====================

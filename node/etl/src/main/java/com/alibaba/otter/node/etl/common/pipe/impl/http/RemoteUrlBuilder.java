@@ -45,12 +45,13 @@ public class RemoteUrlBuilder implements InitializingBean {
         Node node = configClientService.currentNode();
         Pipeline pipeline = configClientService.findPipeline(pipelineId);
         String ip = node.getIp();
-        if (pipeline.getParameters().getUseExternalIp()) {
+        if (node.getParameters().getUseExternalIp() || pipeline.getParameters().getUseExternalIp()) {
             ip = node.getParameters().getExternalIp();
 
             if (StringUtils.isEmpty(ip)) {
                 throw new ArchiveException(String.format("pipelineId:%s useExternalIp by nid[%s] has no external ip",
-                                                         String.valueOf(pipelineId), String.valueOf(node.getId())));
+                    String.valueOf(pipelineId),
+                    String.valueOf(node.getId())));
             }
         }
 

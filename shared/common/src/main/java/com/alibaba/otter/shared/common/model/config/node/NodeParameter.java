@@ -32,9 +32,11 @@ import com.alibaba.otter.shared.common.utils.OtterToStringStyle;
 public class NodeParameter implements Serializable {
 
     private static final long serialVersionUID = -4788966688697451950L;
+    private Integer           mbeanPort;                               // mbean端口
     private Integer           downloadPort;                            // 下载端口
     private AutoKeeperCluster zkCluster;                               // zk的集群
     private String            externalIp;                              // 外部ip
+    private Boolean           useExternalIp    = false;                // 是否使用外部ip，此优先级高于pipeline参数，设置后包括rpc/pipe都将使用外部ip
 
     public Integer getDownloadPort() {
         return downloadPort;
@@ -42,6 +44,14 @@ public class NodeParameter implements Serializable {
 
     public void setDownloadPort(Integer downloadPort) {
         this.downloadPort = downloadPort;
+    }
+
+    public Integer getMbeanPort() {
+        return mbeanPort;
+    }
+
+    public void setMbeanPort(Integer mbeanPort) {
+        this.mbeanPort = mbeanPort;
     }
 
     public AutoKeeperCluster getZkCluster() {
@@ -58,6 +68,14 @@ public class NodeParameter implements Serializable {
 
     public void setExternalIp(String externalIp) {
         this.externalIp = externalIp;
+    }
+
+    public Boolean getUseExternalIp() {
+        return useExternalIp == null ? false : useExternalIp;
+    }
+
+    public void setUseExternalIp(Boolean useExternalIp) {
+        this.useExternalIp = useExternalIp;
     }
 
     @Override

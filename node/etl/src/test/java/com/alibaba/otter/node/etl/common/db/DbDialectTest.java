@@ -44,22 +44,23 @@ import com.alibaba.otter.shared.common.model.config.data.db.DbDataMedia;
 
 public class DbDialectTest extends BaseDbTest {
 
-    private static final String SCHEMA_NAME    = "srf";
-    private static final String TABLE_NAME     = "columns";
+    private static final String MYSQL_SCHEMA_NAME  = "srf";
+    private static final String ORACLE_SCHEMA_NAME = "otter2";
+    private static final String TABLE_NAME         = "columns";
     @SpringBeanByName
     private DbDialectFactory    dbDialectFactory;
     // private String[] allColumns = { "alias_name", "amount", "text_b",
     // "text_c", "curr_date",
     // "gmt_create", "gmt_modify", "id", "name" };
 
-    private String[]            pkColumns      = { "id", "name" };
-    private String[]            columns        = { "alias_name", "amount", "text_b", "text_c", "curr_date",
-            "gmt_create", "gmt_modify"        };
+    private String[]            pkColumns          = { "id", "name" };
+    private String[]            columns            = { "alias_name", "amount", "text_b", "text_c", "curr_date",
+            "gmt_create", "gmt_modify"            };
 
-    private String[]            pkColumnValues = { "1", "ljh" };
+    private String[]            pkColumnValues     = { "1", "ljh" };
 
     // [116,101,120,116,95,98]
-    private String[]            columnValues   = { "hello", "100.01", "text_b", "text_c", "2011-01-01",
+    private String[]            columnValues       = { "hello", "100.01", "text_b", "text_c", "2011-01-01",
             "2011-01-01 11:11:11", "2011-01-01 11:11:11" };
 
     @Test(expectedExceptions = RuntimeException.class)
@@ -80,33 +81,37 @@ public class DbDialectTest extends BaseDbTest {
                 int affect = 0;
                 String sql = null;
                 // 执行insert
-                sql = sqlTemplate.getInsertSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns);
+                sql = sqlTemplate.getInsertSql(MYSQL_SCHEMA_NAME, TABLE_NAME, pkColumns, columns);
                 System.out.println(sql);
                 affect = (Integer) jdbcTemplate.execute(sql, new PreparedStatementCallback() {
 
                     public Object doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {
-                        doPreparedStatement(ps, dbDialect, toTypes(columnTypes, pkColumnTypes),
-                                            toValues(columnValues, pkColumnValues));
+                        doPreparedStatement(ps,
+                            dbDialect,
+                            toTypes(columnTypes, pkColumnTypes),
+                            toValues(columnValues, pkColumnValues));
                         return ps.executeUpdate();
                     }
 
                 });
                 want.number(affect).isEqualTo(1);
                 // 执行update
-                sql = sqlTemplate.getUpdateSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns);
+                sql = sqlTemplate.getUpdateSql(MYSQL_SCHEMA_NAME, TABLE_NAME, pkColumns, columns);
                 System.out.println(sql);
                 affect = (Integer) jdbcTemplate.execute(sql, new PreparedStatementCallback() {
 
                     public Object doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {
-                        doPreparedStatement(ps, dbDialect, toTypes(columnTypes, pkColumnTypes),
-                                            toValues(columnValues, pkColumnValues));
+                        doPreparedStatement(ps,
+                            dbDialect,
+                            toTypes(columnTypes, pkColumnTypes),
+                            toValues(columnValues, pkColumnValues));
                         return ps.executeUpdate();
                     }
 
                 });
                 want.number(affect).isEqualTo(1);
                 // 执行deleate
-                sql = sqlTemplate.getDeleteSql(SCHEMA_NAME, TABLE_NAME, pkColumns);
+                sql = sqlTemplate.getDeleteSql(MYSQL_SCHEMA_NAME, TABLE_NAME, pkColumns);
                 System.out.println(sql);
                 affect = (Integer) jdbcTemplate.execute(sql, new PreparedStatementCallback() {
 
@@ -118,13 +123,15 @@ public class DbDialectTest extends BaseDbTest {
                 });
                 want.number(affect).isEqualTo(1);
                 // 执行merge
-                sql = sqlTemplate.getMergeSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns, null);
+                sql = sqlTemplate.getMergeSql(MYSQL_SCHEMA_NAME, TABLE_NAME, pkColumns, columns, null);
                 System.out.println(sql);
                 affect = (Integer) jdbcTemplate.execute(sql, new PreparedStatementCallback() {
 
                     public Object doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {
-                        doPreparedStatement(ps, dbDialect, toTypes(columnTypes, pkColumnTypes),
-                                            toValues(columnValues, pkColumnValues));
+                        doPreparedStatement(ps,
+                            dbDialect,
+                            toTypes(columnTypes, pkColumnTypes),
+                            toValues(columnValues, pkColumnValues));
                         return ps.executeUpdate();
                     }
 
@@ -154,33 +161,37 @@ public class DbDialectTest extends BaseDbTest {
                 int affect = 0;
                 String sql = null;
                 // 执行insert
-                sql = sqlTemplate.getInsertSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns);
+                sql = sqlTemplate.getInsertSql(ORACLE_SCHEMA_NAME, TABLE_NAME, pkColumns, columns);
                 System.out.println(sql);
                 affect = (Integer) jdbcTemplate.execute(sql, new PreparedStatementCallback() {
 
                     public Object doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {
-                        doPreparedStatement(ps, dbDialect, toTypes(columnTypes, pkColumnTypes),
-                                            toValues(columnValues, pkColumnValues));
+                        doPreparedStatement(ps,
+                            dbDialect,
+                            toTypes(columnTypes, pkColumnTypes),
+                            toValues(columnValues, pkColumnValues));
                         return ps.executeUpdate();
                     }
 
                 });
                 want.number(affect).isEqualTo(1);
                 // 执行update
-                sql = sqlTemplate.getUpdateSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns);
+                sql = sqlTemplate.getUpdateSql(ORACLE_SCHEMA_NAME, TABLE_NAME, pkColumns, columns);
                 System.out.println(sql);
                 affect = (Integer) jdbcTemplate.execute(sql, new PreparedStatementCallback() {
 
                     public Object doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {
-                        doPreparedStatement(ps, dbDialect, toTypes(columnTypes, pkColumnTypes),
-                                            toValues(columnValues, pkColumnValues));
+                        doPreparedStatement(ps,
+                            dbDialect,
+                            toTypes(columnTypes, pkColumnTypes),
+                            toValues(columnValues, pkColumnValues));
                         return ps.executeUpdate();
                     }
 
                 });
                 want.number(affect).isEqualTo(1);
                 // 执行deleate
-                sql = sqlTemplate.getDeleteSql(SCHEMA_NAME, TABLE_NAME, pkColumns);
+                sql = sqlTemplate.getDeleteSql(ORACLE_SCHEMA_NAME, TABLE_NAME, pkColumns);
                 System.out.println(sql);
                 affect = (Integer) jdbcTemplate.execute(sql, new PreparedStatementCallback() {
 
@@ -192,14 +203,16 @@ public class DbDialectTest extends BaseDbTest {
                 });
                 want.number(affect).isEqualTo(1);
                 // 执行merge
-                sql = sqlTemplate.getMergeSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns, null);
+                sql = sqlTemplate.getMergeSql(ORACLE_SCHEMA_NAME, TABLE_NAME, pkColumns, columns, null);
                 System.out.println(sql);
 
                 affect = (Integer) jdbcTemplate.execute(sql, new PreparedStatementCallback() {
 
                     public Object doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {
-                        doPreparedStatement(ps, dbDialect, toTypes(columnTypes, pkColumnTypes),
-                                            toValues(columnValues, pkColumnValues));
+                        doPreparedStatement(ps,
+                            dbDialect,
+                            toTypes(columnTypes, pkColumnTypes),
+                            toValues(columnValues, pkColumnValues));
                         return ps.executeUpdate();
                     }
 
@@ -239,8 +252,10 @@ public class DbDialectTest extends BaseDbTest {
             int paramIndex = i + 1;
             String sqlValue = columnValues[i];
             int sqlType = columnTypes[i];
-            Object param = SqlUtils.stringToSqlValue(sqlValue, sqlType, SqlUtils.isTextType(sqlType),
-                                                     dbDialect.isEmptyStringNulled());
+            Object param = SqlUtils.stringToSqlValue(sqlValue,
+                sqlType,
+                SqlUtils.isTextType(sqlType),
+                dbDialect.isEmptyStringNulled());
             switch (sqlType) {
                 case Types.CLOB:
                     if (lobCreator == null) {

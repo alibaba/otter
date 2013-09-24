@@ -469,7 +469,23 @@
 					<message>${displayName} 必须是大于0的整数</message>
 				</fm-validators:number-validator>
 			</field>
-			<field name="externalIp" displayName="外部ip" />
+			<field name="mbeanPort" displayName="MBean端口">
+				<!-- <required-validator> <message>必须填写${displayName}</message> </required-validator> -->
+				<fm-validators:number-validator>
+					<message>${displayName} 必须是数字且是整数</message>
+				</fm-validators:number-validator>
+				<fm-validators:number-validator greaterThan="0">
+					<message>${displayName} 必须是大于0的整数</message>
+				</fm-validators:number-validator>
+			</field>
+			<field name="externalIp" displayName="外部IP">
+				<fm-validators:if test="useExternalIp.value">
+					<fm-validators:required-validator>
+						<message>启用外部IP通讯时必须填写${displayName}</message>
+					</fm-validators:required-validator>
+				</fm-validators:if>
+			</field>
+			<field name="useExternalIp" displayName="启用外部IP" />
 			<field name="autoKeeperClusterId" displayName="zookeeper集群" />
 		</group>
 

@@ -72,7 +72,19 @@ $control.setTemplate("home:navigation.vm")
         <td>
 			<input type="text" name="$nodeParameterGroup.downloadPort.key" value="$!node.parameters.downloadPort" class="setting_input"/><span class="red">*</span>
 			<br />
+			<span>可为空，不填写默认即为：机器端口 + 1</span>
+		    <br />
 			<span class="red">#editNodeMessage ($nodeParameterGroup.downloadPort)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>Mbean端口：</th>
+        <td>
+			<input type="text" name="$nodeParameterGroup.mbeanPort.key" value="$!node.parameters.mbeanPort" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span>可为空，不填写默认即为：机器端口 + 2</span>
+		    <br />
+			<span class="red">#editNodeMessage ($nodeParameterGroup.mbeanPort)</span>
 		</td>
       </tr>
 	  <tr> 
@@ -82,6 +94,13 @@ $control.setTemplate("home:navigation.vm")
 			<br />
 			<span class="red">#editNodeMessage ($nodeParameterGroup.externalIp)</span>
 		</td>
+      </tr>
+	  <tr> 
+        <th>启用外部IP：</th>
+        <td width="329">
+              <input type="radio" name="$nodeParameterGroup.useExternalIp.key" value="true" #if($!node.parameters.useExternalIp) checked="checked" #end id="RadioGroup2_0" class="radio"/>是
+              <input type="radio" name="$nodeParameterGroup.useExternalIp.key" value="false" #if(!$!node.parameters.useExternalIp) checked="checked" #end id="RadioGroup2_1" class="radio"/>否 
+        </td>
       </tr>
 	  <tr> 
         <th>zookeeper集群：</th>

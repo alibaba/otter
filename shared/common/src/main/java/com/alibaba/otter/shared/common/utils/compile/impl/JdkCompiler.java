@@ -34,8 +34,8 @@ public class JdkCompiler implements JavaSourceCompiler {
 
     public JdkCompiler(){
         options = new ArrayList<String>();
-        options.add("-target");
-        options.add("1.6");
+        // options.add("-target");
+        // options.add("1.6");
     }
 
     public Class compile(String sourceString) {
@@ -47,9 +47,8 @@ public class JdkCompiler implements JavaSourceCompiler {
         try {
 
             final DiagnosticCollector<JavaFileObject> errs = new DiagnosticCollector<JavaFileObject>();
-            JdkCompileTask compileTask = new JdkCompileTask(
-                                                            new JdkCompilerClassLoader(this.getClass().getClassLoader()),
-                                                            options);
+            JdkCompileTask compileTask = new JdkCompileTask(new JdkCompilerClassLoader(this.getClass().getClassLoader()),
+                options);
             String fullName = javaSource.getPackageName() + "." + javaSource.getClassName();
             Class newClass = compileTask.compile(fullName, javaSource.getSource(), errs);
             return newClass;

@@ -68,10 +68,20 @@ public class NodeMBeanServiceImpl implements NodeRemoteService {
             public MBeanServerConnection apply(Long nid) {
                 Node node = nodeService.findById(nid);
                 String ip = node.getIp();
+                if (node.getParameters().getUseExternalIp()) {
+                    ip = node.getParameters().getExternalIp();
+                }
+
                 int port = node.getPort().intValue() + 1;
+                Integer mbeanPort = node.getParameters().getMbeanPort();
+                if (mbeanPort != null && mbeanPort != 0) {// 做个兼容处理，<=4.2.2版本没有mbeanPort设置
+                    port = mbeanPort;
+                }
+
                 try {
-                    JMXServiceURL serviceURL = new JMXServiceURL(MessageFormat.format(SERVICE_URL, ip,
-                                                                                      String.valueOf(port)));
+                    JMXServiceURL serviceURL = new JMXServiceURL(MessageFormat.format(SERVICE_URL,
+                        ip,
+                        String.valueOf(port)));
                     JMXConnector cntor = JMXConnectorFactory.connect(serviceURL, null);
                     MBeanServerConnection mbsc = cntor.getMBeanServerConnection();
                     return mbsc;
@@ -109,8 +119,10 @@ public class NodeMBeanServiceImpl implements NodeRemoteService {
 
     public void setProfile(Long nid, boolean profile) {
         try {
-            mbeanServers.get(nid).invoke(objectName, "setProfile", new Object[] { profile },
-                                         new String[] { "java.lang.Boolean" });
+            mbeanServers.get(nid).invoke(objectName,
+                "setProfile",
+                new Object[] { profile },
+                new String[] { "java.lang.Boolean" });
         } catch (Exception e) {
             mbeanServers.remove(nid);
             throw new ManagerException(e);
@@ -119,8 +131,10 @@ public class NodeMBeanServiceImpl implements NodeRemoteService {
 
     public void setThreadPoolSize(Long nid, int size) {
         try {
-            mbeanServers.get(nid).invoke(objectName, "setThreadPoolSize", new Object[] { size },
-                                         new String[] { "java.lang.Integer" });
+            mbeanServers.get(nid).invoke(objectName,
+                "setThreadPoolSize",
+                new Object[] { size },
+                new String[] { "java.lang.Integer" });
         } catch (Exception e) {
             mbeanServers.remove(nid);
             throw new ManagerException(e);
@@ -190,8 +204,10 @@ public class NodeMBeanServiceImpl implements NodeRemoteService {
 
     private Object invoke(Long nid, Long pipelineId, String method) {
         try {
-            return mbeanServers.get(nid).invoke(objectName, method, new Object[] { pipelineId },
-                                                new String[] { "java.lang.Long" });
+            return mbeanServers.get(nid).invoke(objectName,
+                method,
+                new Object[] { pipelineId },
+                new String[] { "java.lang.Long" });
         } catch (Exception e) {
             mbeanServers.remove(nid);
             throw new ManagerException(e);

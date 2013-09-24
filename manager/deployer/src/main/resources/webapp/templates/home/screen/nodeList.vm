@@ -61,7 +61,7 @@ $control.setTemplate("home:navigation.vm")
              </div>
           </div>      
           </td>
-          <td>$seniorNode.ip</td>
+          <td>#if($seniorNode.parameters.useExternalIp) $seniorNode.parameters.externalIp (外) #else $seniorNode.ip #end</td>
           <td>$seniorNode.port</td>
           <td>#if($seniorNode.status.isStart()) 已启动 #else <font color="#FF0000">未启动</font> #end</td>
           <td>

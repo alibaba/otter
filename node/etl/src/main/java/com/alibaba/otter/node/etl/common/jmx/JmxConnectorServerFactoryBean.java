@@ -27,6 +27,7 @@ import javax.management.JMException;
 import org.springframework.jmx.support.ConnectorServerFactoryBean;
 
 import com.alibaba.otter.node.common.config.ConfigClientService;
+import com.alibaba.otter.shared.common.model.config.node.Node;
 
 /**
  * 扩展实现spring的jmx connector
@@ -40,7 +41,13 @@ public class JmxConnectorServerFactoryBean extends ConnectorServerFactoryBean {
     private ConfigClientService configClientService;
 
     public void afterPropertiesSet() throws JMException, IOException {
-        int port = configClientService.currentNode().getPort().intValue() + 1; // 默认为通讯端口+1
+        Node node = configClientService.currentNode();
+        int port = node.getPort().intValue() + 1;
+        Integer mbeanPort = node.getParameters().getMbeanPort();
+        if (mbeanPort != null && mbeanPort != 0) {// 做个兼容处理，<=4.2.2版本没有mbeanPort设置
+            port = mbeanPort;
+        }
+
         String serviceUrl = MessageFormat.format(SERVER_URL, String.valueOf(port));
         super.setServiceUrl(serviceUrl);
         super.setObjectName("connector:name=rmi");

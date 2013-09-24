@@ -82,7 +82,8 @@ public class ConfigRemoteServiceImpl implements ConfigRemoteService {
         // 组装当前otter所有的存活的node节点
         // List<Node> nodes = nodeService.listAll();
         // for (Node node : nodes) {
-        // if (node.getStatus().isStart() && StringUtils.isNotEmpty(node.getIp()) && node.getPort() != 0) {
+        // if (node.getStatus().isStart() &&
+        // StringUtils.isNotEmpty(node.getIp()) && node.getPort() != 0) {
         // final String addr = node.getIp() + ":" + node.getPort();
         // addrsList.add(addr);
         // }
@@ -97,6 +98,9 @@ public class ConfigRemoteServiceImpl implements ConfigRemoteService {
             for (Node node : nodes) {
                 if (node.getStatus().isStart() && StringUtils.isNotEmpty(node.getIp()) && node.getPort() != 0) {
                     String addr = node.getIp() + ":" + node.getPort();
+                    if (node.getParameters().getUseExternalIp()) {
+                        addr = node.getParameters().getExternalIp() + ":" + node.getPort();
+                    }
                     addrsSet.add(addr);
                 }
             }
@@ -114,7 +118,7 @@ public class ConfigRemoteServiceImpl implements ConfigRemoteService {
                 String[] addrs = addrsList.toArray(new String[addrsList.size()]);
                 List<Boolean> result = (List<Boolean>) communicationClient.call(addrs, event); // 推送配置
                 logger.info("## notifyChannel to [{}] channel[{}] result[{}]",
-                            new Object[] { ArrayUtils.toString(addrs), channel.toString(), result });
+                    new Object[] { ArrayUtils.toString(addrs), channel.toString(), result });
 
                 boolean flag = true;
                 for (Boolean f : result) {

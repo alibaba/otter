@@ -1,19 +1,23 @@
-package com.alibaba.otter.node.extend.fileresolver.icbu;
+package com.alibaba.otter.node.extend.fileresolver;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import com.alibaba.otter.shared.common.model.config.ConfigHelper;
 
+import com.alibaba.otter.shared.etl.extend.fileresolver.FileInfo;
 
-public class ReviewComplainFileResolver extends ConfigHelper {
+public class TestFileResolver extends AbstractFileResolver {
 
-    public Object getFileInfo(Map<String, String> rowMap) {
-        String[] arr = StringUtils.split(rowMap.get("UPLOAD_ENVIDENCE_PATHS"), ',');
-        if (arr == null) return null;
-        return null;
+    public FileInfo[] getFileInfo(Map<String, String> rowMap) {
+        
+        String path = rowMap.get("FIELD"); 
+        FileInfo fileInfo = null;
+        if (StringUtils.isNotEmpty(path)) {
+            fileInfo = new FileInfo(path);
+            return new FileInfo[] { fileInfo };
+        } else {
+            return null;
+        }
     }
 
 }

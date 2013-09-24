@@ -52,6 +52,15 @@ public class NodeAction extends AbstractAction {
         NodeParameter parameter = new NodeParameter();
         nodeInfo.setProperties(node);
         nodeParameterInfo.setProperties(parameter);
+
+        if (parameter.getDownloadPort() == null || parameter.getDownloadPort() == 0) {
+            parameter.setDownloadPort(node.getPort().intValue() + 1);
+        }
+
+        if (parameter.getMbeanPort() == null || parameter.getMbeanPort() == 0) {
+            parameter.setMbeanPort(node.getPort().intValue() + 2);
+        }
+
         Long autoKeeperclusterId = nodeParameterInfo.getField("autoKeeperclusterId").getLongValue();
         if (autoKeeperclusterId != null && autoKeeperclusterId > 0) {
             AutoKeeperCluster autoKeeperCluster = autoKeeperClusterService.findAutoKeeperClusterById(autoKeeperclusterId);
@@ -79,6 +88,15 @@ public class NodeAction extends AbstractAction {
         NodeParameter parameter = new NodeParameter();
         nodeInfo.setProperties(node);
         nodeParameterInfo.setProperties(parameter);
+
+        if (parameter.getDownloadPort() == null || parameter.getDownloadPort() == 0) {
+            parameter.setDownloadPort(node.getPort().intValue() + 1);
+        }
+
+        if (parameter.getMbeanPort() == null || parameter.getMbeanPort() == 0) {
+            parameter.setMbeanPort(node.getPort().intValue() + 2);
+        }
+
         Long autoKeeperclusterId = nodeParameterInfo.getField("autoKeeperclusterId").getLongValue();
         if (autoKeeperclusterId != null && autoKeeperclusterId > 0) {
             AutoKeeperCluster autoKeeperCluster = autoKeeperClusterService.findAutoKeeperClusterById(autoKeeperclusterId);

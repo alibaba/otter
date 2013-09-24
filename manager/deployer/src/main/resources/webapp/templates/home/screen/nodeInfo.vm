@@ -46,6 +46,15 @@ $control.setTemplate("home:navigation.vm")
   <th>下载端口：</th><td>$!node.parameters.downloadPort</td>
   </tr>
   <tr>
+  <th>MBean端口：</th><td>$!node.parameters.mbeanPort</td>
+  </tr>
+  <tr>
+  <th>外部IP：</th><td>$!node.parameters.externalIp</td>
+  </tr>
+  <tr>
+  <th>启用外部IP：</th><td>#if($!node.parameters.useExternalIp) 是 #else 否 #end</td>
+  </tr>
+  <tr>
   <th>Zookeeper集群：</th><td>$node.parameters.zkCluster.clusterName [ $stringUtil.join($node.parameters.zkCluster.serverList,",") ]</td>
   </tr>
   <tr>

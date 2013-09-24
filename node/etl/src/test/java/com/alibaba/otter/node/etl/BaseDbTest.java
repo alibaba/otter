@@ -46,7 +46,7 @@ public class BaseDbTest extends BaseOtterTest {
         dbMediaSource.setDriver("oracle.jdbc.OracleDriver");
         dbMediaSource.setUsername("otter2");
         dbMediaSource.setPassword("jonathan");
-        dbMediaSource.setUrl("jdbc:oracle:thin:@10.20.144.29:1521:crmgsb");
+        dbMediaSource.setUrl("jdbc:oracle:thin:@10.20.144.29:1521:ointest");
         dbMediaSource.setEncode("UTF-8");
         dbMediaSource.setType(DataMediaType.ORACLE);
 
@@ -54,7 +54,7 @@ public class BaseDbTest extends BaseOtterTest {
         dataMedia.setSource(dbMediaSource);
         dataMedia.setId(2L);
         dataMedia.setName("columns");
-        dataMedia.setNamespace("srf");
+        dataMedia.setNamespace("otter2");
         return dataMedia;
     }
 

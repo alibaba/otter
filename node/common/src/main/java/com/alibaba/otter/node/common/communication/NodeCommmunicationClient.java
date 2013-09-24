@@ -104,7 +104,11 @@ public class NodeCommmunicationClient implements DisposableBean {
 
     private String convertToAddress(Long nid) {
         Node node = configClientService.findNode(nid);
-        return node.getIp() + ":" + node.getPort();
+        if (node.getParameters().getUseExternalIp()) {
+            return node.getParameters().getExternalIp() + ":" + node.getPort();
+        } else {
+            return node.getIp() + ":" + node.getPort();
+        }
     }
 
     public void destroy() throws Exception {
