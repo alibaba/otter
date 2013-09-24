@@ -9,7 +9,7 @@
 	<artifactId>otter</artifactId>
 	<packaging>pom</packaging>
 	<name>otter</name>
-	<version>4.2.3</version>
+	<version>4.2.4-SNAPSHOT</version>
 	<inceptionYear>2011</inceptionYear>
 	<url>http://github.com/alibaba/otter</url>
 	<organization>
