@@ -82,8 +82,9 @@ public class DdlUtils {
             if (StringUtils.isEmpty(schemaPattern)) {
                 return jdbcTemplate.query("show databases", new SingleColumnRowMapper(String.class));
             }
-            return jdbcTemplate.query("show databases like ?", new Object[] { schemaPattern },
-                                      new SingleColumnRowMapper(String.class));
+            return jdbcTemplate.query("show databases like ?",
+                new Object[] { schemaPattern },
+                new SingleColumnRowMapper(String.class));
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return new ArrayList<String>();
@@ -277,14 +278,11 @@ public class DdlUtils {
                 if (col != null) {
                     col.setPrimaryKey(true);
                 } else {
-                    throw new NullPointerException(
-                                                   String.format("%s pk %s is null - %s %s",
-                                                                 tableName,
-                                                                 key,
-                                                                 ToStringBuilder.reflectionToString(metaData,
-                                                                                                    ToStringStyle.SIMPLE_STYLE),
-                                                                 ToStringBuilder.reflectionToString(values,
-                                                                                                    ToStringStyle.SIMPLE_STYLE)));
+                    throw new NullPointerException(String.format("%s pk %s is null - %s %s",
+                        tableName,
+                        key,
+                        ToStringBuilder.reflectionToString(metaData, ToStringStyle.SIMPLE_STYLE),
+                        ToStringBuilder.reflectionToString(values, ToStringStyle.SIMPLE_STYLE)));
                 }
             }
         }
@@ -307,12 +305,15 @@ public class DdlUtils {
     private static List<MetaDataColumnDescriptor> initColumnsForColumn() {
         List<MetaDataColumnDescriptor> result = new ArrayList<MetaDataColumnDescriptor>();
 
-        // As suggested by Alexandre Borgoltz, we're reading the COLUMN_DEF first because Oracle
-        // has problems otherwise (it seemingly requires a LONG column to be the first to be read)
+        // As suggested by Alexandre Borgoltz, we're reading the COLUMN_DEF
+        // first because Oracle
+        // has problems otherwise (it seemingly requires a LONG column to be the
+        // first to be read)
         // See also DDLUTILS-29
         result.add(new MetaDataColumnDescriptor("COLUMN_DEF", Types.VARCHAR));
 
-        // we're also reading the table name so that a model reader impl can filter manually
+        // we're also reading the table name so that a model reader impl can
+        // filter manually
         result.add(new MetaDataColumnDescriptor("TABLE_NAME", Types.VARCHAR));
         result.add(new MetaDataColumnDescriptor("COLUMN_NAME", Types.VARCHAR));
         result.add(new MetaDataColumnDescriptor("TYPE_NAME", Types.VARCHAR));
@@ -331,10 +332,12 @@ public class DdlUtils {
 
         result.add(new MetaDataColumnDescriptor("COLUMN_NAME", Types.VARCHAR));
 
-        // we're also reading the table name so that a model reader impl can filter manually
+        // we're also reading the table name so that a model reader impl can
+        // filter manually
         result.add(new MetaDataColumnDescriptor("TABLE_NAME", Types.VARCHAR));
 
-        // the name of the primary key is currently only interesting to the pk index name resolution
+        // the name of the primary key is currently only interesting to the pk
+        // index name resolution
         result.add(new MetaDataColumnDescriptor("PK_NAME", Types.VARCHAR));
 
         return result;
@@ -365,24 +368,29 @@ public class DdlUtils {
             // if (PropertyUtils.isWriteable(con, propIncludeSynonyms)) {
             // try {
             // String includeSynonymsMethodName = "setIncludeSynonyms";
-            // boolean previousSynonyms = (Boolean) PropertyUtils.getProperty(con, propIncludeSynonyms);
+            // boolean previousSynonyms = (Boolean)
+            // PropertyUtils.getProperty(con, propIncludeSynonyms);
             //
             // if (logger.isInfoEnabled()) {
-            // logger.info("ORACLE: switch includeSynonyms to " + previousSynonyms);
+            // logger.info("ORACLE: switch includeSynonyms to " +
+            // previousSynonyms);
             // }
             //
             // try {
-            // MethodUtils.invokeMethod(con, includeSynonymsMethodName, !previousSynonyms);
+            // MethodUtils.invokeMethod(con, includeSynonymsMethodName,
+            // !previousSynonyms);
             // columns = readColumns(metaData, tableName);
             //
             // if (false == columns.isEmpty()) {
             // return columns;
             // }
             // } finally {
-            // MethodUtils.invokeMethod(con, includeSynonymsMethodName, previousSynonyms);
+            // MethodUtils.invokeMethod(con, includeSynonymsMethodName,
+            // previousSynonyms);
             // }
             //
-            // throw new SQLException("ORACLE: no column found for " + tableName);
+            // throw new SQLException("ORACLE: no column found for " +
+            // tableName);
             // } catch (IllegalAccessException e) {
             // logger.error(e.getMessage(), e);
             // } catch (InvocationTargetException e) {
@@ -407,9 +415,30 @@ public class DdlUtils {
         column.setTypeCode(((Integer) values.get("DATA_TYPE")).intValue());
 
         String typeName = (String) values.get("TYPE_NAME");
+        // column.setType(typeName);
 
         if ((typeName != null) && typeName.startsWith("TIMESTAMP")) {
             column.setTypeCode(Types.TIMESTAMP);
+        }
+        // modify 2013-09-25，处理下unsigned
+        if ((typeName != null) && StringUtils.containsIgnoreCase(typeName, "UNSIGNED")) {
+            // 如果为unsigned，往上调大一个量级，避免数据溢出
+            switch (column.getTypeCode()) {
+                case Types.TINYINT:
+                    column.setTypeCode(Types.SMALLINT);
+                    break;
+                case Types.SMALLINT:
+                    column.setTypeCode(Types.INTEGER);
+                    break;
+                case Types.INTEGER:
+                    column.setTypeCode(Types.BIGINT);
+                    break;
+                case Types.BIGINT:
+                    column.setTypeCode(Types.DECIMAL);
+                    break;
+                default:
+                    break;
+            }
         }
 
         Integer precision = (Integer) values.get("NUM_PREC_RADIX");
@@ -443,7 +472,6 @@ public class DdlUtils {
 
         column.setRequired("NO".equalsIgnoreCase(((String) values.get("IS_NULLABLE")).trim()));
         column.setDescription((String) values.get("REMARKS"));
-
         return column;
     }
 
@@ -453,7 +481,7 @@ public class DdlUtils {
         MetaDataColumnDescriptor descriptor;
 
         for (Iterator<MetaDataColumnDescriptor> it = columnDescriptors.iterator(); it.hasNext(); values.put(descriptor.getName(),
-                                                                                                            descriptor.readColumn(resultSet))) {
+            descriptor.readColumn(resultSet))) {
             descriptor = (MetaDataColumnDescriptor) it.next();
         }
 
@@ -469,7 +497,7 @@ public class DdlUtils {
             Map<String, Object> values;
 
             for (pkData = metaData.getPrimaryKeys(tableName); pkData.next(); pks.add(readPrimaryKeyName(metaData,
-                                                                                                        values))) {
+                values))) {
                 values = readColumns(pkData, initColumnsForPK());
             }
 

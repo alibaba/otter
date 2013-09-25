@@ -45,7 +45,7 @@ import com.alibaba.otter.shared.common.model.config.data.db.DbDataMedia;
 public class DbDialectTest extends BaseDbTest {
 
     private static final String MYSQL_SCHEMA_NAME  = "srf";
-    private static final String ORACLE_SCHEMA_NAME = "otter2";
+    private static final String ORACLE_SCHEMA_NAME = "srf";
     private static final String TABLE_NAME         = "columns";
     @SpringBeanByName
     private DbDialectFactory    dbDialectFactory;

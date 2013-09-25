@@ -45,7 +45,6 @@ $control.setTemplate("home:navigation.vm")
             <select id="sourceType" name="$dataMediaSourceGroup.type.key">			
 				<option value="MYSQL" #if($source.type.isMysql()) selected="selected" #end>MySQL</option>
 				<option value="ORACLE" #if($source.type.isOracle()) selected="selected" #end>Oracle</option>
-				<option value="NAPOLI" #if($source.type.isNapoli()) selected="selected" #end>Napoli</option>
 			</select><span class="red">*</span>
         </td>
 	  </tr>

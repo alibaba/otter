@@ -56,10 +56,10 @@ public class SqlUtils {
         sqlTypeToJavaTypeMap.put(Types.TINYINT, Integer.class);
         sqlTypeToJavaTypeMap.put(Types.SMALLINT, Integer.class);
         sqlTypeToJavaTypeMap.put(Types.BIT, Integer.class);
-        sqlTypeToJavaTypeMap.put(Types.INTEGER, Long.class);
+        sqlTypeToJavaTypeMap.put(Types.INTEGER, Integer.class);
 
         // long
-        sqlTypeToJavaTypeMap.put(Types.BIGINT, BigDecimal.class);
+        sqlTypeToJavaTypeMap.put(Types.BIGINT, Long.class);
 
         // decimal
         sqlTypeToJavaTypeMap.put(Types.REAL, Float.class);
@@ -168,7 +168,8 @@ public class SqlUtils {
                     String fromEncoding = StringUtils.isBlank(sourceEncoding) ? "UTF-8" : sourceEncoding;
                     String toEncoding = StringUtils.isBlank(targetEncoding) ? "UTF-8" : targetEncoding;
 
-                    // if (false == StringUtils.equalsIgnoreCase(fromEncoding, toEncoding)) {
+                    // if (false == StringUtils.equalsIgnoreCase(fromEncoding,
+                    // toEncoding)) {
                     try {
                         return new String(source.getBytes(fromEncoding), toEncoding);
                     } catch (UnsupportedEncodingException e) {
@@ -182,13 +183,15 @@ public class SqlUtils {
     }
 
     /**
-     * Retrieve a JDBC column value from a ResultSet, using the specified value type.
+     * Retrieve a JDBC column value from a ResultSet, using the specified value
+     * type.
      * <p>
      * Uses the specifically typed ResultSet accessor methods, falling back to
      * {@link #getResultSetValue(java.sql.ResultSet, int)} for unknown types.
      * <p>
-     * Note that the returned value may not be assignable to the specified required type, in case of an unknown type.
-     * Calling code needs to deal with this case appropriately, e.g. throwing a corresponding exception.
+     * Note that the returned value may not be assignable to the specified
+     * required type, in case of an unknown type. Calling code needs to deal
+     * with this case appropriately, e.g. throwing a corresponding exception.
      * 
      * @param rs is the ResultSet holding the data
      * @param index is the column index
@@ -258,13 +261,17 @@ public class SqlUtils {
     }
 
     /**
-     * Retrieve a JDBC column value from a ResultSet, using the most appropriate value type. The returned value should
-     * be a detached value object, not having any ties to the active ResultSet: in particular, it should not be a Blob
-     * or Clob object but rather a byte array respectively String representation.
+     * Retrieve a JDBC column value from a ResultSet, using the most appropriate
+     * value type. The returned value should be a detached value object, not
+     * having any ties to the active ResultSet: in particular, it should not be
+     * a Blob or Clob object but rather a byte array respectively String
+     * representation.
      * <p>
-     * Uses the <code>getObject(index)</code> method, but includes additional "hacks" to get around Oracle 10g returning
-     * a non-standard object for its TIMESTAMP datatype and a <code>java.sql.Date</code> for DATE columns leaving out
-     * the time portion: These columns will explicitly be extracted as standard <code>java.sql.Timestamp</code> object.
+     * Uses the <code>getObject(index)</code> method, but includes additional
+     * "hacks" to get around Oracle 10g returning a non-standard object for its
+     * TIMESTAMP datatype and a <code>java.sql.Date</code> for DATE columns
+     * leaving out the time portion: These columns will explicitly be extracted
+     * as standard <code>java.sql.Timestamp</code> object.
      * 
      * @param rs is the ResultSet holding the data
      * @param index is the column index
