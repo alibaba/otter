@@ -15,7 +15,7 @@
         <property name="removeAbandonedTimeout"><value>180</value></property>
         <property name="timeBetweenEvictionRunsMillis"><value>60000</value></property>
         <property name="minEvictableIdleTimeMillis"><value>180000</value></property>
-        <property name="connectionProperties"><value>clientEncoding=UTF-8</value></property>
+        <property name="connectionProperties"><value>useUnicode=true;characterEncoding=utf-8</value></property>
         <!-- sql检查配置,在idle空闲线程检查时,检查链接有效性，丢弃无效的链接,实现自动重连-->
         <!-- 注意使用cobar时,因为走了F5进行负载,F5默认5分钟会关闭空闲链接,所以需要通过心跳SQL保证数据库链接不被异常关闭 -->
         <property name="testWhileIdle"><value>true</value></property>
