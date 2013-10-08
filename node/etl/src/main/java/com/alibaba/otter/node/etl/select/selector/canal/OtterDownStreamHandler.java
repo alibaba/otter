@@ -29,9 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-import com.alibaba.otter.canal.common.AbstractCanalLifeCycle;
-import com.alibaba.otter.canal.common.CanalLifeCycle;
-import com.alibaba.otter.canal.sink.CanalEventDownStreamHandler;
+import com.alibaba.otter.canal.sink.AbstractCanalEventDownStreamHandler;
 import com.alibaba.otter.canal.sink.CanalEventSink;
 import com.alibaba.otter.canal.store.model.Event;
 import com.alibaba.otter.node.etl.OtterConstants;
@@ -47,7 +45,7 @@ import com.alibaba.otter.shared.common.utils.thread.NamedThreadFactory;
  * @author jianghang 2012-7-31 下午03:27:18
  * @version 4.1.0
  */
-public class OtterDownStreamHandler extends AbstractCanalLifeCycle implements CanalEventDownStreamHandler<Event>, CanalLifeCycle {
+public class OtterDownStreamHandler extends AbstractCanalEventDownStreamHandler<List<Event>> {
 
     private static final Logger      logger                   = LoggerFactory.getLogger(OtterDownStreamHandler.class);
     private static final String      DETECTING_FAILED_MESSAGE = "pid:%s canal elapsed %s seconds no data";
@@ -57,7 +55,6 @@ public class OtterDownStreamHandler extends AbstractCanalLifeCycle implements Ca
     private ScheduledExecutorService scheduler                = null;
     private ScheduledFuture          future                   = null;
     private AtomicBoolean            working                  = new AtomicBoolean(false);
-    private Boolean                  detectingEnable;
     private Integer                  detectingIntervalInSeconds;                                                      // 心跳包发送时间
     private volatile Long            lastEventExecuteTime     = 0L;
     // detecting临时数据
@@ -75,21 +72,24 @@ public class OtterDownStreamHandler extends AbstractCanalLifeCycle implements Ca
 
     }
 
-    public void before(List<Event> events) {
+    public List<Event> before(List<Event> events) {
         lastEventExecuteTime = System.currentTimeMillis();// 记录最后一条数据时间
 
         if (working.compareAndSet(false, true)) {// 第一次有数据时
             startDetecting();
         }
 
+        return super.before(events);
     }
 
-    public void retry(List<Event> events) {
+    public List<Event> retry(List<Event> events) {
         lastEventExecuteTime = System.currentTimeMillis();// 记录最后一条数据时间
+        return super.retry(events);
     }
 
-    public void after(List<Event> events) {
+    public List<Event> after(List<Event> events) {
         // do nothing
+        return super.after(events);
     }
 
     private void startDetecting() {
@@ -132,29 +132,28 @@ public class OtterDownStreamHandler extends AbstractCanalLifeCycle implements Ca
     private void notifyFailed() {
         detectingSuccessedCount.set(0);
         long failedCount = detectingFailedCount.incrementAndGet();
-        if (detectingEnable) { // 如果存在心跳包，需要处理notifyFailed情况，发送Taking
-            if (failedCount == 1) {
-                detectingExpCount = 1;// 系数重置
+        if (failedCount == 1) {
+            detectingExpCount = 1;// 系数重置
 
-                notifyMainstemStatus(MainStemEventData.Status.TAKEING);
-            }
+            notifyMainstemStatus(MainStemEventData.Status.TAKEING);
+        }
 
-            if (failedCount >= detectingThresoldCount * detectingExpCount * detectingExpCount) {
-                notifyMainstemStatus(MainStemEventData.Status.TAKEING);
-                detectingExpCount++; // 系数增大一次
+        if (failedCount >= detectingThresoldCount * detectingExpCount * detectingExpCount) {
+            notifyMainstemStatus(MainStemEventData.Status.TAKEING);
+            detectingExpCount++; // 系数增大一次
 
-                // 并且发送一次报警信息，系统不太正常了，超过一定时间一次都没有拿到对应的数据
-                // 可能出现的情况：
-                // 1. 主备发生切换，定位position花费了过久的时间
-                // 2. MysqlEventParser工作不正常，一直拿不到数据，比如数据库挂了，但是又没通知其进行主备切换
-                TerminEventData errorEventData = new TerminEventData();
-                errorEventData.setPipelineId(pipelineId);
-                errorEventData.setType(TerminType.WARNING);
-                errorEventData.setCode("mainstem");
-                errorEventData.setDesc(String.format(DETECTING_FAILED_MESSAGE, pipelineId,
-                                                     String.valueOf(detectingIntervalInSeconds * failedCount)));
-                arbitrateEventService.terminEvent().single(errorEventData);
-            }
+            // 并且发送一次报警信息，系统不太正常了，超过一定时间一次都没有拿到对应的数据
+            // 可能出现的情况：
+            // 1. 主备发生切换，定位position花费了过久的时间
+            // 2. MysqlEventParser工作不正常，一直拿不到数据，比如数据库挂了，但是又没通知其进行主备切换
+            TerminEventData errorEventData = new TerminEventData();
+            errorEventData.setPipelineId(pipelineId);
+            errorEventData.setType(TerminType.WARNING);
+            errorEventData.setCode("mainstem");
+            errorEventData.setDesc(String.format(DETECTING_FAILED_MESSAGE,
+                pipelineId,
+                String.valueOf(detectingIntervalInSeconds * failedCount)));
+            arbitrateEventService.terminEvent().single(errorEventData);
         }
     }
 
@@ -187,10 +186,6 @@ public class OtterDownStreamHandler extends AbstractCanalLifeCycle implements Ca
 
     public void setPipelineId(Long pipelineId) {
         this.pipelineId = pipelineId;
-    }
-
-    public void setDetectingEnable(Boolean detectingEnable) {
-        this.detectingEnable = detectingEnable;
     }
 
     public void setDetectingIntervalInSeconds(Integer detectingIntervalInSeconds) {
