@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.alibaba.otter</groupId>
@@ -11,7 +12,7 @@
 	<packaging>jar</packaging>
 	<name>common module for otter</name>
 	<url>http://github.com/alibaba/otter</url>
-	
+
 	<dependencies>
 		<!-- log -->
 		<dependency>
@@ -23,12 +24,12 @@
 			<artifactId>logback-classic</artifactId>
 		</dependency>
 		<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>jcl-over-slf4j</artifactId>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
 		</dependency>
 		<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
 		</dependency>
 		<!-- external -->
 		<dependency>
@@ -59,40 +60,40 @@
 			<groupId>oro</groupId>
 			<artifactId>oro</artifactId>
 		</dependency>
-			
+
 		<!-- spring -->
-			<dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-aop</artifactId>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context-support</artifactId>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-tx</artifactId>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-jdbc</artifactId>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-            </dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
@@ -101,7 +102,7 @@
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 		</dependency>
-		
+
 		<!-- zk -->
 		<dependency>
 			<groupId>org.apache.zookeeper</groupId>
@@ -111,7 +112,7 @@
 			<groupId>com.github.sgroschupf</groupId>
 			<artifactId>zkclient</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.ddlutils</groupId>
 			<artifactId>ddlutils</artifactId>
@@ -127,25 +128,64 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	
-	<build>
-		<plugins>
-			<plugin>
-			  <artifactId>exec-maven-plugin</artifactId>
-			  <groupId>org.codehaus.mojo</groupId>
-			  <executions>
-				<execution><!-- Run our version calculation script -->
-				  <id>Version Calculation</id>
-				  <phase>generate-sources</phase>
-				  <goals>
-					<goal>exec</goal>
-				  </goals>
-				  <configuration>
-					<executable>${basedir}/src/saveVersion.sh</executable>
-				  </configuration>
-				</execution>
-			  </executions>
-			</plugin>
-		</plugins>
-	</build>
+
+	<profiles>
+		<profile>
+			<activation>
+				<os>
+					<name>Linux</name>
+					<family>Linux</family>
+				</os>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>exec-maven-plugin</artifactId>
+						<groupId>org.codehaus.mojo</groupId>
+						<executions>
+							<execution><!-- Run our version calculation script -->
+								<id>Version Calculation</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>${basedir}/src/saveVersion.sh</executable>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<profile>
+			<activation>
+				<os>
+					<name>Unix</name>
+					<family>Unix</family>
+				</os>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>exec-maven-plugin</artifactId>
+						<groupId>org.codehaus.mojo</groupId>
+						<executions>
+							<execution><!-- Run our version calculation script -->
+								<id>Version Calculation</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>${basedir}/src/saveVersion.sh</executable>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

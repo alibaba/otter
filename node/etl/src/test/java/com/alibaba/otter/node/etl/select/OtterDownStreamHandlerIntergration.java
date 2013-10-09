@@ -60,12 +60,11 @@ public class OtterDownStreamHandlerIntergration extends BaseOtterTest {
     public void testSimple() {
         final OtterDownStreamHandler handler = new OtterDownStreamHandler();
         handler.setPipelineId(388L);
-        handler.setDetectingEnable(true);
         handler.setDetectingIntervalInSeconds(1);
 
         ((AutowireCapableBeanFactory) TestedObject.getSpringBeanFactory()).autowireBeanProperties(handler,
-                                                                                                  AutowireCapableBeanFactory.AUTOWIRE_BY_NAME,
-                                                                                                  false);
+            AutowireCapableBeanFactory.AUTOWIRE_BY_NAME,
+            false);
 
         final CountDownLatch count = new CountDownLatch(1);
         ExecutorService executor = Executors.newFixedThreadPool(1);
