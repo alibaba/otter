@@ -131,6 +131,7 @@
 
 	<profiles>
 		<profile>
+			<id>Linux</id>
 			<activation>
 				<os>
 					<name>Linux</name>
@@ -160,6 +161,7 @@
 		</profile>
 		
 		<profile>
+			<id>Unix</id>
 			<activation>
 				<os>
 					<name>Unix</name>
