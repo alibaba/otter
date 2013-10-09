@@ -29,6 +29,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.alibaba.otter.canal.instance.manager.model.CanalParameter.DataSourcing;
 import com.alibaba.otter.canal.instance.manager.model.CanalParameter.SourcingType;
+import com.alibaba.otter.shared.common.utils.version.VersionInfo;
 
 /**
  * 格式化一下页面输出的数字内容
@@ -221,5 +222,9 @@ public class NumberFormatUtil {
         } else {
             return originalContent;
         }
+    }
+
+    public String getManagerVersionInfo() {
+        return VersionInfo.getVersion() + " [ r" + VersionInfo.getRevision() + " ] @ " + VersionInfo.getDate();
     }
 }
