@@ -13,3 +13,4 @@ antx.properties
 *.iml
 htdocs
 download
+package-info.java

@@ -127,4 +127,25 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+			  <artifactId>exec-maven-plugin</artifactId>
+			  <groupId>org.codehaus.mojo</groupId>
+			  <executions>
+				<execution><!-- Run our version calculation script -->
+				  <id>Version Calculation</id>
+				  <phase>generate-sources</phase>
+				  <goals>
+					<goal>exec</goal>
+				  </goals>
+				  <configuration>
+					<executable>${basedir}/src/saveVersion.sh</executable>
+				  </configuration>
+				</execution>
+			  </executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
