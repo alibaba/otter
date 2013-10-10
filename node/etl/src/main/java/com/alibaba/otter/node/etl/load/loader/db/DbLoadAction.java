@@ -760,8 +760,19 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
                                 // 解决mysql的0000-00-00 00:00:00问题，直接依赖mysql
                                 // driver进行处理，如果转化为Timestamp会出错
                                 ps.setObject(paramIndex, column.getColumnValue());
-                                break;
+                            } else {
+                                StatementCreatorUtils.setParameterValue(ps, paramIndex, sqlType, null, param);
                             }
+                            break;
+                        case Types.BIT:
+                            // 只处理mysql的bit类型，bit最多存储64位，所以需要使用BigInteger进行处理才能不丢精度
+                            // mysql driver将bit按照setInt进行处理，会导致数据越界
+                            if (dbDialect instanceof MysqlDialect) {
+                                StatementCreatorUtils.setParameterValue(ps, paramIndex, Types.DECIMAL, null, param);
+                            } else {
+                                StatementCreatorUtils.setParameterValue(ps, paramIndex, sqlType, null, param);
+                            }
+                            break;
                         default:
                             StatementCreatorUtils.setParameterValue(ps, paramIndex, sqlType, null, param);
                             break;

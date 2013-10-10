@@ -11,7 +11,6 @@ date=`date`
 current_path=`pwd`
 bin_abs_path=$(readlink -f $(dirname $0))
 project_path=$(readlink -f $(dirname $bin_abs_path/../../../../))
-echo $project_path
 echo "run saveVerion.sh script"
 echo "cd to $bin_abs_path for workaround relative path"
 cd $bin_abs_path

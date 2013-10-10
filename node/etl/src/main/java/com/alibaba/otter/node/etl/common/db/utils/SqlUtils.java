@@ -18,6 +18,7 @@ package com.alibaba.otter.node.etl.common.db.utils;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.ResultSet;
@@ -55,11 +56,12 @@ public class SqlUtils {
         // int
         sqlTypeToJavaTypeMap.put(Types.TINYINT, Integer.class);
         sqlTypeToJavaTypeMap.put(Types.SMALLINT, Integer.class);
-        sqlTypeToJavaTypeMap.put(Types.BIT, Integer.class);
         sqlTypeToJavaTypeMap.put(Types.INTEGER, Integer.class);
 
         // long
         sqlTypeToJavaTypeMap.put(Types.BIGINT, Long.class);
+        // mysql bit最多64位，无符号
+        sqlTypeToJavaTypeMap.put(Types.BIT, BigInteger.class);
 
         // decimal
         sqlTypeToJavaTypeMap.put(Types.REAL, Float.class);
