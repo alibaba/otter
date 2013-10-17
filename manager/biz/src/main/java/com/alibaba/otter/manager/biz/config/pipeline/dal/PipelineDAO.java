@@ -27,4 +27,6 @@ import com.alibaba.otter.manager.biz.config.pipeline.dal.dataobject.PipelineDO;
 public interface PipelineDAO extends GenericDAO<PipelineDO> {
 
     public List<PipelineDO> listByChannelIds(Long... channelId);
+
+    public List<PipelineDO> listByDestinationCondition(String destination);
 }

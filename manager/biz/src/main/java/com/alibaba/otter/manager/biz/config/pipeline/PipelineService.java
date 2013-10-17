@@ -35,4 +35,6 @@ public interface PipelineService extends GenericService<Pipeline> {
     public List<Pipeline> listByNodeId(Long nodeId);
 
     public boolean hasRelation(Long nodeId);
+
+    public List<Pipeline> listByDestinationWithoutOther(String destination);
 }

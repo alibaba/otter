@@ -16,7 +16,12 @@
 
 package com.alibaba.otter.manager.web.common.model;
 
+import java.util.List;
+
 import com.alibaba.otter.canal.instance.manager.model.Canal;
+import com.alibaba.otter.canal.instance.manager.model.CanalParameter;
+import com.alibaba.otter.canal.instance.manager.model.CanalParameter.DataSourcing;
+import com.alibaba.otter.shared.common.model.config.pipeline.Pipeline;
 
 /**
  * @author sarah.lij 2012-7-24 下午01:31:06
@@ -25,6 +30,7 @@ public class SeniorCanal extends Canal {
 
     private static final long serialVersionUID = -4121314684324595191L;
     private boolean           used;
+    private List<Pipeline>    pipelines;
 
     public boolean isUsed() {
         return used;
@@ -34,4 +40,37 @@ public class SeniorCanal extends Canal {
         this.used = used;
     }
 
+    public List<Pipeline> getPipelines() {
+        return pipelines;
+    }
+
+    public void setPipelines(List<Pipeline> pipelines) {
+        this.pipelines = pipelines;
+    }
+
+    public String getUrl() {
+        CanalParameter parameter = getCanalParameter();
+        if (parameter.getHaMode().isMedia()) {
+            return "media://" + parameter.getMediaGroup();
+        } else {
+            StringBuilder address = new StringBuilder("jdbc://");
+            for (List<DataSourcing> groupAddress : parameter.getGroupDbAddresses()) {
+                int i = 0;
+                for (DataSourcing dbAddress : groupAddress) {
+                    ++i;
+                    address.append(dbAddress.getDbAddress().getAddress().getHostAddress())
+                        .append(":")
+                        .append(dbAddress.getDbAddress().getPort());
+
+                    if (i < groupAddress.size()) {
+                        address.append(',');
+                    }
+                }
+
+                address.append(';');
+            }
+
+            return address.toString();
+        }
+    }
 }

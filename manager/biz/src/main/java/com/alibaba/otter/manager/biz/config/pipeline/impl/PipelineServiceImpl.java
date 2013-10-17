@@ -362,6 +362,24 @@ public class PipelineServiceImpl implements PipelineService {
         }
     }
 
+    public List<Pipeline> listByDestinationWithoutOther(String destination) {
+        Assert.assertNotNull(destination);
+        List<Pipeline> pipelines = new ArrayList<Pipeline>();
+        try {
+
+            List<PipelineDO> pipelineDos = pipelineDao.listByDestinationCondition(destination);
+            if (pipelineDos.isEmpty()) {
+                logger.debug("DEBUG ## query pipeline by destination:" + destination + " return null.");
+                return pipelines;
+            }
+            pipelines = doToModelWithoutOther(pipelineDos);
+        } catch (Exception e) {
+            logger.error("ERROR ## query pipelines by destination:" + destination + " has an exception!");
+            throw new ManagerException(e);
+        }
+        return pipelines;
+    }
+
     /**
      * 用于DO对象转化为Model对象
      * 

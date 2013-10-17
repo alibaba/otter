@@ -16,14 +16,15 @@
 
 package com.alibaba.otter.manager.biz.config.pipeline.dal.ibatis;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.orm.ibatis.support.SqlMapClientDaoSupport;
 
-import com.alibaba.otter.shared.common.utils.Assert;
 import com.alibaba.otter.manager.biz.config.pipeline.dal.PipelineDAO;
 import com.alibaba.otter.manager.biz.config.pipeline.dal.dataobject.PipelineDO;
+import com.alibaba.otter.shared.common.utils.Assert;
 
 /**
  * Pipeline的DAO层，ibatis的实现，主要是CRUD操作。
@@ -86,6 +87,13 @@ public class IbatisPipelineDAO extends SqlMapClientDaoSupport implements Pipelin
     public int getCount(Map condition) {
         Integer count = (Integer) getSqlMapClientTemplate().queryForObject("getPipelineCount", condition);
         return count.intValue();
+    }
+
+    public List<PipelineDO> listByDestinationCondition(String canalName) {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("searchKey", canalName);
+        List<PipelineDO> pipelineDos = getSqlMapClientTemplate().queryForList("listByDestinationCondition", map);
+        return pipelineDos;
     }
 
 }

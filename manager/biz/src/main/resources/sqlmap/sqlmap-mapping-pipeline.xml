@@ -115,4 +115,23 @@
     	delete from PIPELINE where ID = #value#
     ]]></delete>
 
+
+	<select id="listByDestinationCondition" resultMap="pipelineResult">
+		select
+		<include refid="allPipelineColumns" />
+		from PIPELINE 
+		<dynamic prepend="where">
+			<isNotEmpty property="searchKey">
+			PARAMETERS like concat('%"destinationName":"',replace(#searchKey#,'_','\_'),'"%') 
+			</isNotEmpty>
+		</dynamic>
+		ORDER BY ID DESC
+		<dynamic>
+			<isNotEmpty property="offset" >
+				<isNotEmpty property="length">
+					limit #offset#, #length#
+				</isNotEmpty>
+			</isNotEmpty>
+		</dynamic>
+	</select>
 </sqlMap>  

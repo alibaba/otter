@@ -148,4 +148,32 @@ $control.setTemplate("home:navigation.vm")
   </tr>
  </table>
  </div>
+ 
+ <table border="0" cellspacing="0" cellpadding="0" class="list changecolor_w" width="60%">
+    <tr>
+      <th>channel名字</th>
+      <th>pipeline名字</th>
+	  <th>消费端ID</th>
+	  <th>消费批次大小</th>
+	  <th>获取数据超时时间</th>
+	  <th>操作</th>
+    </tr>
+    
+    #foreach ($pipeline in $pipelines)
+		<tr>
+		  #set($channel = $channelMap.get($pipeline.channelId))
+		  #set ($channelURL = $homeModule.setTarget("channelList.vm").addQueryData("channelId", $pipeline.channelId))
+		  <td width="16%"><a href="$channelURL">$channel.name</a></td>
+		  #set ($pipelineURL = $homeModule.setTarget("pipelineList.vm").addQueryData("pipelineId", $pipeline.id).addQueryData("channelId", $pipeline.channelId))
+    	  <td width="16%"><a href="$pipelineURL">$pipeline.name</a></td>
+          <td width="12%">$!pipeline.parameters.mainstemClientId</td>
+		  <td width="12%">$!pipeline.parameters.mainstemBatchsize</td>
+		  <td width="12%">$!pipeline.parameters.batchTimeout</td>
+		  <td>
+			#set ($pipelineInfoURL = $homeModule.setTarget("pipelineInfo.vm").addQueryData("pipelineId", $pipeline.id))
+    		<a href="$pipelineInfoURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">查看</span></a>
+		  </td>
+	    </tr>
+	#end
+  </table>
 </div>

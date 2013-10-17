@@ -94,6 +94,7 @@
         <java_source_version>1.6</java_source_version>
         <java_target_version>1.6</java_target_version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<file_encoding>UTF-8</file_encoding>
 		<spring-version>3.1.2.RELEASE</spring-version>
 		<jetty_verion>8.1.7.v20120910</jetty_verion>
 		<otter_canal_version>1.0.13-SNAPSHOT</otter_canal_version>
@@ -300,6 +301,21 @@
 					<target>${java_target_version}</target>
 					<encoding>${file_encoding}</encoding>
 				</configuration>
+			</plugin>
+			<plugin>
+			   <groupId>org.apache.maven.plugins</groupId>  
+			   <artifactId>maven-eclipse-plugin</artifactId>  
+			   <version>2.5.1</version>  
+			   <configuration>  
+				  <additionalConfig>  
+					 <file>  
+						<name>.settings/org.eclipse.core.resources.prefs</name>  
+						<content>  
+						   <![CDATA[eclipse.preferences.version=1${line.separator}encoding/<project>=${file_encoding}${line.separator}]]>  
+						</content>  
+					 </file>  
+				  </additionalConfig>  
+			   </configuration>  
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

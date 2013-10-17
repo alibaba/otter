@@ -49,7 +49,7 @@ $control.setTemplate("home:navigation.vm")
 			<br />
             <span>4-15个字符</span>
 			<br />
-			<span class="red">#addPipelineMessage ($pipelineGroup.name)#addPipelineMessage ($pipelineGroup.formPipelineError)</span>
+			<span class="red">#addPipelineMessage ($pipelineGroup.name) #addPipelineMessage ($pipelineGroup.formPipelineError)</span>
 		</td>
       </tr>
       <tr> 

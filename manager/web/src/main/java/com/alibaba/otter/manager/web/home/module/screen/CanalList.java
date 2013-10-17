@@ -30,6 +30,7 @@ import com.alibaba.otter.canal.instance.manager.model.Canal;
 import com.alibaba.otter.manager.biz.config.canal.CanalService;
 import com.alibaba.otter.manager.biz.config.pipeline.PipelineService;
 import com.alibaba.otter.manager.web.common.model.SeniorCanal;
+import com.alibaba.otter.shared.common.model.config.pipeline.Pipeline;
 
 /**
  * @author sarah.lij 2012-7-26 下午04:25:52
@@ -70,9 +71,12 @@ public class CanalList {
             seniorCanal.setStatus(canal.getStatus());
             seniorCanal.setDesc(canal.getDesc());
             seniorCanal.setCanalParameter(canal.getCanalParameter());
-            seniorCanal.setUsed(false);
             seniorCanal.setGmtCreate(canal.getGmtCreate());
             seniorCanal.setGmtModified(canal.getGmtModified());
+
+            List<Pipeline> pipelines = pipelineService.listByDestinationWithoutOther(canal.getName());
+            seniorCanal.setPipelines(pipelines);
+            seniorCanal.setUsed(!pipelines.isEmpty());
             seniorCanals.add(seniorCanal);
         }
         context.put("seniorCanals", seniorCanals);

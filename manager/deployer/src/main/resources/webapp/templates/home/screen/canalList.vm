@@ -38,12 +38,11 @@ $control.setTemplate("home:navigation.vm")
  
       <table border="0" cellspacing="0" cellpadding="0" class="list changecolor_g">
          <tr> 
-            <th width="8%">序号</th>
-            <th width="8%">Canal名字</th>
+            <th width="5%">序号</th>
+            <th width="12%">Canal名字</th>
 			<th width="8%">数据源类型</th>
-			<th width="10%">存储模式</th>
-			<th width="12%">Meta模式</th>
-			<th width="14%">索引模式</th>
+			<th width="10%">编码</th>
+			<th width="12%">链接配置</th>
         	<th width="24%">操作</th> 
          </tr>
            
@@ -52,9 +51,8 @@ $control.setTemplate("home:navigation.vm")
 				<td width="5%">$!seniorCanal.id</td>
 				<td width="5%">$!seniorCanal.name</td>
 				<td width="5%">$!seniorCanal.canalParameter.sourcingType</td>
-				<td width="5%">$!seniorCanal.canalParameter.storageMode</td>
-				<td width="5%">$!seniorCanal.canalParameter.metaMode</td>
-				<td width="5%">$!seniorCanal.canalParameter.indexMode</td>
+				<td width="5%">$!seniorCanal.canalParameter.connectionCharset</td>
+				<td width="5%">$!seniorCanal.getUrl()</td>
 				<td>
 					#set ($canalInfoURL = $homeModule.setTarget("canalInfo.vm").addQueryData("canalId", $seniorCanal.id))
 					<a href="$canalInfoURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">查看</span></a>
@@ -62,7 +60,7 @@ $control.setTemplate("home:navigation.vm")
 						#set ($editURL = $homeModule.setTarget("editCanal.vm").addQueryData("canalId", $seniorCanal.id))
 						<span class="ico_line">|</span><a href="$editURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">编辑</span></a>
 						#if($seniorCanal.isUsed())
-							<span class="ico_line">|</span><img src="images/ico_del.png" width="9" height="9" /><span class="ico_font" title="canal必须取消与Pipeline关联才能删除">删除</span></td>
+							<span class="ico_line">|</span><img src="images/ico_del.png" width="9" height="9" /><span class="ico_font" title="已被pipeline#foreach($pipeline in $seniorCanal.pipelines)[$pipeline.id]#end使用，清空关联才能删除">删除</span></td>
 						#else
 							#set ($removeURL = $homeModule.setAction("canalAction").addQueryData("canalId", $seniorCanal.id).addQueryData("eventSubmitDoDelete", "true"))
 							<span class="ico_line">|</span><a href="javascript:if(confirm('确实要删除吗?'))location='$removeURL'" class="link del"><img src="images/ico_del.png" width="9" height="9" /><span class="ico_font">删除</span></a></td>

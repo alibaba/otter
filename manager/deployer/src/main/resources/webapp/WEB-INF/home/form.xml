@@ -90,6 +90,9 @@
 				<fm-validators:custom-error id="invalidPipelineName">
 					<message>插入的Pipeline在该Channel节点下有重名</message>
 				</fm-validators:custom-error>
+				<fm-validators:custom-error id="invalidDestinationName">
+					<message>canal已经被其他pipeline所关联</message>
+				</fm-validators:custom-error>
 			</field>
 			<field name="id" displayName="pipeline的id" />
 			<field name="channelId" displayName="关联的ChannelId" />
