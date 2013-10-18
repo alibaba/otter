@@ -319,7 +319,7 @@ $control.setTemplate("home:navigation.vm")
         <td width="329">
             <textarea class="service" name="$canalParameterGroup.detectingSQL.key" cols="45" rows="5">$!canal.canalParameter.detectingSQL</textarea><span class="red">*</span>
 			<br />
-			<span class="red">#editCanalMessage ($canalParameterGroup.detectingSQL) #editCanalMessage ($canalGroup.formHeartBeatError)</span>
+			<span class="red">#editCanalMessage ($canalParameterGroup.detectingSQL) #editCanalMessage ($canalParameterGroup.formHeartBeatError)</span>
 		</td>
       </tr>
 	  

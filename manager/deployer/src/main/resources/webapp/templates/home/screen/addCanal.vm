@@ -312,7 +312,7 @@ $control.setTemplate("home:navigation.vm")
         <td width="329">
 			<textarea class="service" name="$canalParameterGroup.detectingSQL.key" cols="45" rows="5" >insert into retl.xdual values(1,now()) on duplicate key update x=now()</textarea><span class="red">*</span>
 			<br />
-			<span class="red">#addCanalMessage ($canalParameterGroup.detectingSQL) #addCanalMessage ($canalGroup.formHeartBeatError)</span>
+			<span class="red">#addCanalMessage ($canalParameterGroup.detectingSQL) #addCanalMessage ($canalParameterGroup.formHeartBeatError)</span>
 		</td>
       </tr>
 	  
