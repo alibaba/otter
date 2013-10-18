@@ -54,8 +54,9 @@ public class CanalAction extends AbstractAction {
      */
     public void doAdd(@FormGroup("canalInfo") Group canalInfo,
                       @FormGroup("canalParameterInfo") Group canalParameterInfo,
-                      @FormField(name = "formCanalError", group = "canalInfo") CustomErrors err, Navigator nav)
-                                                                                                               throws Exception {
+                      @FormField(name = "formCanalError", group = "canalInfo") CustomErrors err,
+                      @FormField(name = "formHeartBeatError", group = "canalParameterInfo") CustomErrors heartBeatErr,
+                      Navigator nav) throws Exception {
         Canal canal = new Canal();
         CanalParameter parameter = new CanalParameter();
         canalInfo.setProperties(canal);
@@ -100,6 +101,11 @@ public class CanalAction extends AbstractAction {
             parameter.setPositions(Arrays.asList(positions));
         }
 
+        if (parameter.getDetectingEnable() && StringUtils.startsWithIgnoreCase(parameter.getDetectingSQL(), "select")) {
+            heartBeatErr.setMessage("invaliedHeartBeat");
+            return;
+        }
+
         try {
             canalService.create(canal);
         } catch (RepeatConfigureException rce) {
@@ -126,8 +132,9 @@ public class CanalAction extends AbstractAction {
      */
     public void doEdit(@FormGroup("canalInfo") Group canalInfo,
                        @FormGroup("canalParameterInfo") Group canalParameterInfo,
-                       @FormField(name = "formCanalError", group = "canalInfo") CustomErrors err, Navigator nav)
-                                                                                                                throws Exception {
+                       @FormField(name = "formCanalError", group = "canalInfo") CustomErrors err,
+                       @FormField(name = "formHeartBeatError", group = "canalParameterInfo") CustomErrors heartBeatErr,
+                       Navigator nav) throws Exception {
         Canal canal = new Canal();
         CanalParameter parameter = new CanalParameter();
         canalInfo.setProperties(canal);
@@ -166,6 +173,11 @@ public class CanalAction extends AbstractAction {
         if (StringUtils.isNotEmpty(positionsString)) {
             String positions[] = StringUtils.split(positionsString, ";");
             parameter.setPositions(Arrays.asList(positions));
+        }
+
+        if (parameter.getDetectingEnable() && StringUtils.startsWithIgnoreCase(parameter.getDetectingSQL(), "select")) {
+            heartBeatErr.setMessage("invaliedHeartBeat");
+            return;
         }
 
         canal.setCanalParameter(parameter);

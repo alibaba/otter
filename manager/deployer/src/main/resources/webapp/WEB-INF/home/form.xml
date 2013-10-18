@@ -640,6 +640,11 @@
 
 		<!-- - ======== - canalParameter info - ======== -->
 		<group name="canalParameterInfo" extends="csrfCheck">
+			<field name="formHeartBeatError">
+				<fm-validators:custom-error id="invaliedHeartBeat">
+					<message>心跳测试语句不允许使用select语句,建议为insert/update,定时产生binlog数据</message>
+				</fm-validators:custom-error>
+			</field>
 			<field name="id" displayName="canal ID" />
 			<field name="runMode" displayName="运行模式" />
 			<field name="clusterMode" displayName="集群模式" />

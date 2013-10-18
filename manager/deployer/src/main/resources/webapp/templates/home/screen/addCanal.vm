@@ -58,7 +58,7 @@ $control.setTemplate("home:navigation.vm")
         <td width="329">
             <input type="text" name="$canalGroup.name.key" value="$!canal.name.value" class="setting_input"/><span class="red">* (注意:保存后不可修改)</span>
 			<br />
-			<span class="red">#addCanalMessage ($canalGroup.name)</span>
+			<span class="red">#addCanalMessage ($canalGroup.name) #addCanalMessage ($canalGroup.formCanalError)</span>
 		</td>
       </tr>
 	  
@@ -312,7 +312,7 @@ $control.setTemplate("home:navigation.vm")
         <td width="329">
 			<textarea class="service" name="$canalParameterGroup.detectingSQL.key" cols="45" rows="5" >insert into retl.xdual values(1,now()) on duplicate key update x=now()</textarea><span class="red">*</span>
 			<br />
-			<span class="red">#addCanalMessage ($canalParameterGroup.detectingSQL)</span>
+			<span class="red">#addCanalMessage ($canalParameterGroup.detectingSQL) #addCanalMessage ($canalGroup.formHeartBeatError)</span>
 		</td>
       </tr>
 	  
