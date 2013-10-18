@@ -60,6 +60,8 @@ public class PositionTimeoutRuleMonitor extends AbstractRuleMonitor {
         if (data != null && data.getModifiedTime() != null) {
             Date modifiedDate = data.getModifiedTime();
             latestSyncTime = modifiedDate.getTime();
+        } else {
+            return;
         }
 
         long now = System.currentTimeMillis();
