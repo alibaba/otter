@@ -53,8 +53,8 @@
 	
 	<repositories>
 		<repository>
-			<id>center</id>
-			<url>repo1.maven.org/maven2</url>
+			<id>central</id>
+			<url>http://repo1.maven.org/maven2</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -118,7 +118,7 @@
 		<file_encoding>UTF-8</file_encoding>
 		<spring-version>3.1.2.RELEASE</spring-version>
 		<jetty_verion>8.1.7.v20120910</jetty_verion>
-		<otter_canal_version>1.0.13</otter_canal_version>
+		<otter_canal_version>1.0.14-SNAPSHOT</otter_canal_version>
 	</properties>
 	
 	<modules>
