@@ -235,10 +235,19 @@ public class SqlUtils {
             value = new Double(rs.getDouble(index));
             wasNullCheck = true;
         } else if (java.sql.Time.class.equals(requiredType)) {
-            value = rs.getTime(index);
+            // try {
+            // value = rs.getTime(index);
+            // } catch (SQLException e) {
+            value = rs.getString(index);// 尝试拿为string对象，0000无法用Time表示
+            // }
         } else if (java.sql.Timestamp.class.equals(requiredType) || java.sql.Date.class.equals(requiredType)
                    || java.sql.Time.class.equals(requiredType) || java.util.Date.class.equals(requiredType)) {
-            value = convertTimestamp(rs.getTimestamp(index));
+            // try {
+            // value = convertTimestamp(rs.getTimestamp(index));
+            // } catch (SQLException e) {
+            // 尝试拿为string对象，0000-00-00 00:00:00无法用Timestamp 表示
+            value = rs.getString(index);
+            // }
         } else if (BigDecimal.class.equals(requiredType)) {
             value = rs.getBigDecimal(index);
         } else if (Blob.class.equals(requiredType)) {
@@ -248,7 +257,6 @@ public class SqlUtils {
         } else if (byte[].class.equals(requiredType)) {
             value = ArrayUtils.toString(rs.getBytes(index), "");
         } else {
-
             // Some unknown type desired -> rely on getObject.
             value = getResultSetValue(rs, index);
         }
