@@ -406,26 +406,29 @@ public class MessageParser {
         eventData.setSchemaName(entry.getHeader().getSchemaName());
         eventData.setEventType(EventType.valueOf(rowChange.getEventType().name()));
         eventData.setExecuteTime(entry.getHeader().getExecuteTime());
-
-        boolean useTableTransform = pipeline.getParameters().getUseTableTransform();
         EventType eventType = eventData.getEventType();
-        Table table = null;
         TableInfoHolder tableHolder = null;
-        DataMedia dataMedia = ConfigHelper.findSourceDataMedia(pipeline,
-            eventData.getSchemaName(),
-            eventData.getTableName());
-        eventData.setTableId(dataMedia.getId());
-        if (useTableTransform || dataMedia.getSource().getType().isOracle()) {// oracle需要反查一次meta
-            // 如果设置了需要进行table meta转化，则反查一下table信息
-            // 比如oracle erosa解析时可能使用了非物理主键，需要直接使用，信任erosa的信息
-            DbDialect dbDialect = dbDialectFactory.getDbDialect(pipeline.getId(), (DbMediaSource) dataMedia.getSource());
-            table = dbDialect.findTable(eventData.getSchemaName(), eventData.getTableName());// 查询一下meta信息
-            if (table == null) {
-                logger.warn("find table[{}.{}] is null , may be drop table.",
-                    eventData.getSchemaName(),
-                    eventData.getTableName());
+
+        if (!StringUtils.equalsIgnoreCase(pipeline.getParameters().getSystemSchema(), eventData.getSchemaName())) {
+            boolean useTableTransform = pipeline.getParameters().getUseTableTransform();
+            Table table = null;
+            DataMedia dataMedia = ConfigHelper.findSourceDataMedia(pipeline,
+                eventData.getSchemaName(),
+                eventData.getTableName());
+            eventData.setTableId(dataMedia.getId());
+            if (useTableTransform || dataMedia.getSource().getType().isOracle()) {// oracle需要反查一次meta
+                // 如果设置了需要进行table meta转化，则反查一下table信息
+                // 比如oracle erosa解析时可能使用了非物理主键，需要直接使用，信任erosa的信息
+                DbDialect dbDialect = dbDialectFactory.getDbDialect(pipeline.getId(),
+                    (DbMediaSource) dataMedia.getSource());
+                table = dbDialect.findTable(eventData.getSchemaName(), eventData.getTableName());// 查询一下meta信息
+                if (table == null) {
+                    logger.warn("find table[{}.{}] is null , may be drop table.",
+                        eventData.getSchemaName(),
+                        eventData.getTableName());
+                }
+                tableHolder = new TableInfoHolder(dbDialect, table, useTableTransform);
             }
-            tableHolder = new TableInfoHolder(dbDialect, table, useTableTransform);
         }
 
         List<Column> beforeColumns = rowData.getBeforeColumnsList();
