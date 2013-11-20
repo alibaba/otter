@@ -117,9 +117,12 @@ public class DBDataSourceService implements DataSourceService, DisposableBean {
                             return customDataSource;
                         }
 
-                        return createDataSource(dbMediaSource.getUrl(), dbMediaSource.getUsername(),
-                                                dbMediaSource.getPassword(), dbMediaSource.getDriver(),
-                                                dbMediaSource.getType(), dbMediaSource.getEncode());
+                        return createDataSource(dbMediaSource.getUrl(),
+                            dbMediaSource.getUsername(),
+                            dbMediaSource.getPassword(),
+                            dbMediaSource.getDriver(),
+                            dbMediaSource.getType(),
+                            dbMediaSource.getEncode());
                     }
 
                 });
@@ -211,6 +214,8 @@ public class DBDataSourceService implements DataSourceService, DisposableBean {
             // open the batch mode for mysql since 5.1.8
             dbcpDs.addConnectionProperty("useServerPrepStmts", "false");
             dbcpDs.addConnectionProperty("rewriteBatchedStatements", "true");
+            dbcpDs.addConnectionProperty("zeroDateTimeBehavior", "convertToNull");// 将0000-00-00的时间类型返回null
+            dbcpDs.addConnectionProperty("yearIsDateType", "false");// 直接返回字符串，不做year转换date处理
             if (StringUtils.isNotEmpty(encoding)) {
                 dbcpDs.addConnectionProperty("characterEncoding", encoding);
             }

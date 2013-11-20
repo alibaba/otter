@@ -220,9 +220,13 @@ public class DatabaseExtractor extends AbstractExtractor<DbBatch> implements Ini
     }
 
     public void afterPropertiesSet() throws Exception {
-        executor = new ThreadPoolExecutor(poolSize, poolSize, 0L, TimeUnit.MILLISECONDS,
-                                          new ArrayBlockingQueue(poolSize * 4), new NamedThreadFactory(WORKER_NAME),
-                                          new ThreadPoolExecutor.CallerRunsPolicy());
+        executor = new ThreadPoolExecutor(poolSize,
+            poolSize,
+            0L,
+            TimeUnit.MILLISECONDS,
+            new ArrayBlockingQueue(poolSize * 4),
+            new NamedThreadFactory(WORKER_NAME),
+            new ThreadPoolExecutor.CallerRunsPolicy());
     }
 
     public void destroy() throws Exception {
@@ -297,7 +301,7 @@ public class DatabaseExtractor extends AbstractExtractor<DbBatch> implements Ini
                 // 获取数据表信息
                 DataMedia dataMedia = ConfigHelper.findDataMedia(pipeline, eventData.getTableId());
                 DbDialect dbDialect = dbDialectFactory.getDbDialect(pipeline.getId(),
-                                                                    (DbMediaSource) dataMedia.getSource());
+                    (DbMediaSource) dataMedia.getSource());
                 Table table = dbDialect.findTable(eventData.getSchemaName(), eventData.getTableName());
                 TableData keyTableData = buildTableData(table, eventData.getKeys());
 
@@ -318,7 +322,8 @@ public class DatabaseExtractor extends AbstractExtractor<DbBatch> implements Ini
 
                 // TODO 后续版本测试下
                 // if (needAll) {
-                // boolean needDb = checkNeedDbForRowMode(table, viewColumnNames, eventData);
+                // boolean needDb = checkNeedDbForRowMode(table,
+                // viewColumnNames, eventData);
                 // if (needAll && !needDb) {// 不需要进行反查
                 // item.setFilter(false);
                 // return;
@@ -327,18 +332,24 @@ public class DatabaseExtractor extends AbstractExtractor<DbBatch> implements Ini
 
                 // modified by ljh at 2012-11-04
                 // 反查数据时只反查带update=true标识的数据，因为update=false的记录可能只是进行filter需要用到的数据，不需要反查
-                TableData columnTableData = buildTableData(table, eventData.getUpdatedColumns(), needAll,
-                                                           viewColumnNames);
+                TableData columnTableData = buildTableData(table,
+                    eventData.getUpdatedColumns(),
+                    needAll,
+                    viewColumnNames);
 
                 if (columnTableData.columnNames.length == 0) {
                     // 全主键，不需要进行反查
                 } else {
-                    List<String> newColumnValues = select(dbDialect, eventData.getSchemaName(),
-                                                          eventData.getTableName(), keyTableData, columnTableData);
+                    List<String> newColumnValues = select(dbDialect,
+                        eventData.getSchemaName(),
+                        eventData.getTableName(),
+                        keyTableData,
+                        columnTableData);
 
                     if (newColumnValues == null) {
                         // miss from db
-                        // 设置为filter=true，可能存在丢数据的风险. 比如针对源库发生主备切换，otter反查的是备库，查询不到对应的记录
+                        // 设置为filter=true，可能存在丢数据的风险.
+                        // 比如针对源库发生主备切换，otter反查的是备库，查询不到对应的记录
                         // item.setFilter(true);
 
                         // 针对需要自定义反查数据库的，允许忽略
@@ -412,7 +423,8 @@ public class DatabaseExtractor extends AbstractExtractor<DbBatch> implements Ini
                 if (CollectionUtils.isEmpty(columnPairs) || mediaPair.getColumnPairMode().isExclude()) {
                     // 1. 如果有一个没有视图定义，说明需要所有字段
                     // 2. 如果有一个表存在exclude模式，简单处理，直接反查所有字段，到后面进行过滤
-                    return new ArrayList<String>(); // 返回空集合，代表没有view filter，需要所有字段
+                    return new ArrayList<String>(); // 返回空集合，代表没有view
+                                                    // filter，需要所有字段
                 } else {
                     for (ColumnPair columnPair : columnPairs) {
                         String columnName = columnPair.getSourceColumn().getName();
@@ -428,8 +440,11 @@ public class DatabaseExtractor extends AbstractExtractor<DbBatch> implements Ini
 
         private List<String> select(DbDialect dbDialect, String schemaName, String tableName, TableData keyTableData,
                                     TableData columnTableData) throws InterruptedException {
-            String selectSql = dbDialect.getSqlTemplate().getSelectSql(schemaName, tableName, keyTableData.columnNames,
-                                                                       columnTableData.columnNames);
+            String selectSql = dbDialect.getSqlTemplate().getSelectSql(schemaName,
+                tableName,
+                keyTableData.columnNames,
+                columnTableData.columnNames);
+            Exception exception = null;
             for (int i = 0; i < retryTimes; i++) {
                 if (Thread.currentThread().isInterrupted()) {
                     throw new InterruptedException(); // 退出
@@ -437,10 +452,9 @@ public class DatabaseExtractor extends AbstractExtractor<DbBatch> implements Ini
 
                 try {
                     List<List<String>> result = dbDialect.getJdbcTemplate().query(selectSql,
-                                                                                  keyTableData.columnValues,
-                                                                                  keyTableData.columnTypes,
-                                                                                  new RowDataMapper(
-                                                                                                    columnTableData.columnTypes));
+                        keyTableData.columnValues,
+                        keyTableData.columnTypes,
+                        new RowDataMapper(columnTableData.columnTypes));
                     if (CollectionUtils.isEmpty(result)) {
                         logger.warn("the mediaName = {}.{} not has rowdate in db \n {}", new Object[] { schemaName,
                                 tableName, dumpEventData(eventData, selectSql) });
@@ -450,11 +464,12 @@ public class DatabaseExtractor extends AbstractExtractor<DbBatch> implements Ini
                     }
 
                 } catch (Exception e) {
+                    exception = e;
                     logger.warn("retry [" + (i + 1) + "] failed", e);
                 }
             }
 
-            throw new RuntimeException("db extract failed , data:\n " + dumpEventData(eventData, selectSql));
+            throw new RuntimeException("db extract failed , data:\n " + dumpEventData(eventData, selectSql), exception);
         }
 
         /**
@@ -522,8 +537,9 @@ public class DatabaseExtractor extends AbstractExtractor<DbBatch> implements Ini
                         data.columnNames[i] = tableColumn.getName();
                         data.columnTypes[i] = tableColumn.getTypeCode();
                         data.columnValues[i] = SqlUtils.stringToSqlValue(keyColumn.getColumnValue(),
-                                                                         tableColumn.getTypeCode(),
-                                                                         tableColumn.isRequired(), false);
+                            tableColumn.getTypeCode(),
+                            tableColumn.isRequired(),
+                            false);
 
                         i++;
                         break;
@@ -614,8 +630,11 @@ public class DatabaseExtractor extends AbstractExtractor<DbBatch> implements Ini
         }
 
         private String dumpEventData(EventData eventData, String selectSql) {
-            return MessageFormat.format(eventData_format, eventData.getPairId(), eventData.getTableId(),
-                                        dumpEventColumn(eventData.getKeys()), "\t" + selectSql);
+            return MessageFormat.format(eventData_format,
+                eventData.getPairId(),
+                eventData.getTableId(),
+                dumpEventColumn(eventData.getKeys()),
+                "\t" + selectSql);
         }
 
         private String dumpEventColumn(List<EventColumn> columns) {

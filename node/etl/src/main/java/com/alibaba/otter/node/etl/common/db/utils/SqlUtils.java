@@ -23,13 +23,11 @@ import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.beanutils.ConvertUtilsBean;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -239,14 +237,19 @@ public class SqlUtils {
             // value = rs.getTime(index);
             // } catch (SQLException e) {
             value = rs.getString(index);// 尝试拿为string对象，0000无法用Time表示
+            if (value == null) {
+                value = "00:00:00"; // mysql设置了zeroDateTimeBehavior=convertToNull，出现0值时返回为null
+            }
             // }
-        } else if (java.sql.Timestamp.class.equals(requiredType) || java.sql.Date.class.equals(requiredType)
-                   || java.sql.Time.class.equals(requiredType) || java.util.Date.class.equals(requiredType)) {
+        } else if (java.sql.Timestamp.class.equals(requiredType) || java.sql.Date.class.equals(requiredType)) {
             // try {
             // value = convertTimestamp(rs.getTimestamp(index));
             // } catch (SQLException e) {
             // 尝试拿为string对象，0000-00-00 00:00:00无法用Timestamp 表示
             value = rs.getString(index);
+            if (value == null) {
+                value = "0000:00:00 00:00:00"; // mysql设置了zeroDateTimeBehavior=convertToNull，出现0值时返回为null
+            }
             // }
         } else if (BigDecimal.class.equals(requiredType)) {
             value = rs.getBigDecimal(index);
@@ -255,7 +258,16 @@ public class SqlUtils {
         } else if (Clob.class.equals(requiredType)) {
             value = rs.getClob(index);
         } else if (byte[].class.equals(requiredType)) {
-            value = ArrayUtils.toString(rs.getBytes(index), "");
+            try {
+                byte[] bytes = rs.getBytes(index);
+                if (bytes == null) {
+                    value = null;
+                } else {
+                    value = new String(bytes, "ISO-8859-1");// 将binary转化为iso-8859-1的字符串
+                }
+            } catch (UnsupportedEncodingException e) {
+                throw new SQLException(e);
+            }
         } else {
             // Some unknown type desired -> rely on getObject.
             value = getResultSetValue(rs, index);
@@ -296,9 +308,9 @@ public class SqlUtils {
         return (obj == null) ? null : convertUtilsBean.convert(obj);
     }
 
-    private static Object convertTimestamp(Timestamp timestamp) {
-        return (timestamp == null) ? null : timestamp.getTime();
-    }
+    // private static Object convertTimestamp(Timestamp timestamp) {
+    // return (timestamp == null) ? null : timestamp.getTime();
+    // }
 
     /**
      * Check whether the given SQL type is numeric.

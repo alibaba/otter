@@ -739,10 +739,19 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
                         table.toString()));
                 }
 
-                Object param = SqlUtils.stringToSqlValue(column.getColumnValue(),
-                    sqlType,
-                    isRequired,
-                    dbDialect.isEmptyStringNulled());
+                Object param = null;
+                if (dbDialect instanceof MysqlDialect
+                    && (sqlType == Types.TIME || sqlType == Types.TIMESTAMP || sqlType == Types.DATE)) {
+                    // 解决mysql的0000-00-00 00:00:00问题，直接依赖mysql
+                    // driver进行处理，如果转化为Timestamp会出错
+                    param = column.getColumnValue();
+                } else {
+                    param = SqlUtils.stringToSqlValue(column.getColumnValue(),
+                        sqlType,
+                        isRequired,
+                        dbDialect.isEmptyStringNulled());
+                }
+
                 try {
                     switch (sqlType) {
                         case Types.CLOB:
@@ -759,7 +768,7 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
                             if (dbDialect instanceof MysqlDialect) {
                                 // 解决mysql的0000-00-00 00:00:00问题，直接依赖mysql
                                 // driver进行处理，如果转化为Timestamp会出错
-                                ps.setObject(paramIndex, column.getColumnValue());
+                                ps.setObject(paramIndex, param);
                             } else {
                                 StatementCreatorUtils.setParameterValue(ps, paramIndex, sqlType, null, param);
                             }
