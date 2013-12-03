@@ -70,7 +70,7 @@ $control.setTemplate("home:navigation.vm")
 	  <tr> 
         <th>下载端口：</th>
         <td>
-			<input type="text" name="$nodeParameterGroup.downloadPort.key" value="$!node.parameters.downloadPort" class="setting_input"/><span class="red">*</span>
+			<input type="text" name="$nodeParameterGroup.downloadPort.key" value="$!node.parameters.downloadPort" class="setting_input"/>
 			<br />
 			<span>可为空，不填写默认即为：机器端口 + 1</span>
 		    <br />
@@ -80,7 +80,7 @@ $control.setTemplate("home:navigation.vm")
 	  <tr> 
         <th>Mbean端口：</th>
         <td>
-			<input type="text" name="$nodeParameterGroup.mbeanPort.key" value="$!node.parameters.mbeanPort" class="setting_input"/><span class="red">*</span>
+			<input type="text" name="$nodeParameterGroup.mbeanPort.key" value="$!node.parameters.mbeanPort" class="setting_input"/>
 			<br />
 			<span>可为空，不填写默认即为：机器端口 + 2</span>
 		    <br />
@@ -114,7 +114,7 @@ $control.setTemplate("home:navigation.vm")
       <tr>
        <th>描述：</th>
        <td>
-    		<textarea cols="45" rows="5" name="$nodeGroup.description.key">$!node.description</textarea><span class="red">*</span>
+    		<textarea cols="45" rows="5" name="$nodeGroup.description.key">$!node.description</textarea>
     		<br />
     		<span class="red">#editNodeMessage ($nodeGroup.description)</span>
 	   </td>

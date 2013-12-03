@@ -104,13 +104,13 @@ $control.setTemplate("home:navigation.vm")
 			#foreach($zkCluster in $zkClusters)
             <option value="$zkCluster.id" #if($velocityCount == 0)selected#end>$zkCluster.clusterName</option>
 			#end
-			</select><span class="red">*</span>
+			</select>
         </td>
       </tr>
       <tr>
        <th>描述：</th>
        <td>
-    		<textarea cols="45" rows="5" name="$nodeGroup.description.key">$!nodeGroup.description.value</textarea><span class="red">*</span>
+    		<textarea cols="45" rows="5" name="$nodeGroup.description.key">$!nodeGroup.description.value</textarea>
     		<br />
     		<span class="red">#addNodeMessage ($nodeGroup.description)</span>
 	   </td>
