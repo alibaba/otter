@@ -706,8 +706,6 @@
 					</fm-validators:required-validator>
 				</fm-validators:if>
 			</field>
-			<field name="defaultDatabaseName"
-				displayName="默认链接的数据库schmea" />
 			<field name="slaveId" displayName="链接到mysql的slaveId">
 				<!-- <fm-validators:if test="sourcingType.value == 'MYSQL'"> <required-validator> <message>数据源为MYSQL时必须填写${displayName}</message> 
 					</required-validator> </fm-validators:if> -->

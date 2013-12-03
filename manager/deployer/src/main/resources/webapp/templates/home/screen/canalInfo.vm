@@ -37,9 +37,6 @@ $control.setTemplate("home:navigation.vm")
   <th>数据库帐号：</th><td>$!canal.canalParameter.dbUsername</td>
   </tr>
   <tr>
-  <th>默认数据库schmea：</th><td>$!canal.canalParameter.defaultDatabaseName</td>
-  </tr>
-  <tr>
   <th>connectionCharset：</th><td>$!canal.canalParameter.connectionCharset</td>
   </tr>
   #**

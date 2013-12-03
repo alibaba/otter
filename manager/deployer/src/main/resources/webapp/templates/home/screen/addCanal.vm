@@ -138,15 +138,6 @@ $control.setTemplate("home:navigation.vm")
 		</td>
       </tr>
 	  <tr> 
-        <th width="300">默认数据库schmea：</th>
-        <td width="329">
-            <input type="text" name="$canalParameterGroup.defaultDatabaseName.key" value="$!canal.canalParameter.defaultDatabaseName.value" class="setting_input"/>
-			<br />
-			<span class="red">#addCanalMessage ($canalParameterGroup.defaultDatabaseName)</span>
-		</td>
-      </tr>
-	  
-	  <tr> 
         <th width="300">connectionCharset：</th>
         <td width="329">
             <input type="text" name="$canalParameterGroup.connectionCharset.key" value="UTF-8" class="setting_input"/><span class="red">*</span>
