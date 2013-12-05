@@ -68,104 +68,115 @@ public class MemoryStageController extends ArbitrateLifeCycle {
     }
 
     public Long waitForProcess(StageType stage) throws InterruptedException {
-        if (stage.isSelect() && !replys.containsKey(stage)) {
-            initSelect();
-        }
+        synchronized (progress) {// 针对progress操作加同步，避免和termin流程并发
+            if (stage.isSelect() && !replys.containsKey(stage)) {
+                initSelect();
+            }
 
-        Long processId = replys.get(stage).take();
-        if (stage.isSelect()) {// select一旦分出processId，就需要在progress中记录一笔，用于判断谁是最小的一个processId
-            progress.put(processId, nullProgress);
-        }
+            Long processId = replys.get(stage).take();
+            if (stage.isSelect()) {// select一旦分出processId，就需要在progress中记录一笔，用于判断谁是最小的一个processId
+                progress.put(processId, nullProgress);
+            }
 
-        return processId;
+            return processId;
+        }
     }
 
     public EtlEventData getLastData(Long processId) {
         return progress.get(processId).getData();
     }
 
-    public synchronized void destory() {
-        replys.clear();
-        progress.clear();
+    public void destory() {
+        synchronized (progress) {
+            replys.clear();
+            progress.clear();
+        }
     }
 
-    public synchronized void clearProgress(Long processId) {
-        progress.remove(processId);
+    public void clearProgress(Long processId) {
+        synchronized (progress) {
+            progress.remove(processId);
+        }
     }
 
     /**
      * 处理异常termin结束
      */
-    public synchronized void termin(TerminType type) {
-        // 构建termin信号
-        List<Long> processIds = new ArrayList<Long>(progress.keySet());
-        for (Long processId : processIds) {
-            EtlEventData eventData = progress.get(processId).getData();
+    public void termin(TerminType type) {
+        synchronized (progress) {
+            // 构建termin信号
+            List<Long> processIds = new ArrayList<Long>(progress.keySet());
+            Collections.sort(processIds);// 做一下排序
+            for (Long processId : processIds) {
+                EtlEventData eventData = progress.get(processId).getData();
 
-            TerminEventData data = new TerminEventData();
-            data.setPipelineId(getPipelineId());
-            data.setType(type);
-            data.setCode("channel");
-            data.setDesc(type.toString());
-            data.setProcessId(processId);
-            if (eventData != null) {
-                data.setBatchId(eventData.getBatchId());
-                data.setCurrNid(eventData.getCurrNid());
-                data.setStartTime(eventData.getStartTime());
-                data.setEndTime(eventData.getEndTime());
-                data.setFirstTime(eventData.getFirstTime());
-                data.setNumber(eventData.getNumber());
-                data.setSize(eventData.getSize());
-                data.setExts(eventData.getExts());
+                TerminEventData data = new TerminEventData();
+                data.setPipelineId(getPipelineId());
+                data.setType(type);
+                data.setCode("channel");
+                data.setDesc(type.toString());
+                data.setProcessId(processId);
+                if (eventData != null) {
+                    data.setBatchId(eventData.getBatchId());
+                    data.setCurrNid(eventData.getCurrNid());
+                    data.setStartTime(eventData.getStartTime());
+                    data.setEndTime(eventData.getEndTime());
+                    data.setFirstTime(eventData.getFirstTime());
+                    data.setNumber(eventData.getNumber());
+                    data.setSize(eventData.getSize());
+                    data.setExts(eventData.getExts());
+                }
+                offerTermin(data);
+                progress.remove(processId);
             }
-            offerTermin(data);
-            progress.remove(processId);
-        }
 
-        // 重新初始化一下select调度
-        initSelect();
+            // 重新初始化一下select调度
+            initSelect();
+        }
     }
 
-    public synchronized boolean single(StageType stage, EtlEventData etlEventData) {
-        boolean result = false;
-        switch (stage) {
-            case SELECT:
-                if (progress.containsKey(etlEventData.getProcessId())) {// 可能发生了rollback，对应的progress已经被废弃
-                    progress.put(etlEventData.getProcessId(), new StageProgress(stage, etlEventData));
-                    replys.get(StageType.EXTRACT).offer(etlEventData.getProcessId());
-                    result = true;
-                }
-                break;
-            case EXTRACT:
-                if (progress.containsKey(etlEventData.getProcessId())) {
-                    progress.put(etlEventData.getProcessId(), new StageProgress(stage, etlEventData));
-                    replys.get(StageType.TRANSFORM).offer(etlEventData.getProcessId());
-                    result = true;
-                }
-                break;
-            case TRANSFORM:
-                if (progress.containsKey(etlEventData.getProcessId())) {
-                    progress.put(etlEventData.getProcessId(), new StageProgress(stage, etlEventData));
-                    result = true;
-                }
-                // 并不是立即触发，通知最小的一个process启动
-                computeNextLoad();
-                break;
-            case LOAD:
-                Object removed = progress.remove(etlEventData.getProcessId());
-                // 并不是立即触发，通知下一个最小的一个process启动
-                computeNextLoad();
-                // 一个process完成了，自动添加下一个process
-                if (removed != null) {
-                    replys.get(StageType.SELECT).offer(atomicMaxProcessId.incrementAndGet());
-                    result = true;
-                }
-                break;
-            default:
-                break;
-        }
+    public boolean single(StageType stage, EtlEventData etlEventData) {
+        synchronized (progress) {
+            boolean result = false;
+            switch (stage) {
+                case SELECT:
+                    if (progress.containsKey(etlEventData.getProcessId())) {// 可能发生了rollback，对应的progress已经被废弃
+                        progress.put(etlEventData.getProcessId(), new StageProgress(stage, etlEventData));
+                        replys.get(StageType.EXTRACT).offer(etlEventData.getProcessId());
+                        result = true;
+                    }
+                    break;
+                case EXTRACT:
+                    if (progress.containsKey(etlEventData.getProcessId())) {
+                        progress.put(etlEventData.getProcessId(), new StageProgress(stage, etlEventData));
+                        replys.get(StageType.TRANSFORM).offer(etlEventData.getProcessId());
+                        result = true;
+                    }
+                    break;
+                case TRANSFORM:
+                    if (progress.containsKey(etlEventData.getProcessId())) {
+                        progress.put(etlEventData.getProcessId(), new StageProgress(stage, etlEventData));
+                        result = true;
+                    }
+                    // 并不是立即触发，通知最小的一个process启动
+                    computeNextLoad();
+                    break;
+                case LOAD:
+                    Object removed = progress.remove(etlEventData.getProcessId());
+                    // 并不是立即触发，通知下一个最小的一个process启动
+                    computeNextLoad();
+                    // 一个process完成了，自动添加下一个process
+                    if (removed != null) {
+                        replys.get(StageType.SELECT).offer(atomicMaxProcessId.incrementAndGet());
+                        result = true;
+                    }
+                    break;
+                default:
+                    break;
+            }
 
-        return result;
+            return result;
+        }
     }
 
     public void offerTermin(TerminEventData data) {
@@ -188,13 +199,16 @@ public class MemoryStageController extends ArbitrateLifeCycle {
         return termins.take();
     }
 
-    private synchronized void initSelect() {
-        // 第一次/出现ROLLBACK/RESTART事件，删除了所有调度信号后，重新初始化一下select stage的数据，初始大小为并行度大小
-        // 后续的select的reply队列变化，由load single时直接添加
-        ReplyProcessQueue queue = replys.get(StageType.SELECT);
-        int parallelism = ArbitrateConfigUtils.getParallelism(getPipelineId());
-        while (parallelism-- > 0 && queue.size() <= parallelism) {
-            queue.offer(atomicMaxProcessId.incrementAndGet());
+    private void initSelect() {
+        synchronized (progress) {
+            // 第一次/出现ROLLBACK/RESTART事件，删除了所有调度信号后，重新初始化一下select
+            // stage的数据，初始大小为并行度大小
+            // 后续的select的reply队列变化，由load single时直接添加
+            ReplyProcessQueue queue = replys.get(StageType.SELECT);
+            int parallelism = ArbitrateConfigUtils.getParallelism(getPipelineId());
+            while (parallelism-- > 0 && queue.size() <= parallelism) {
+                queue.offer(atomicMaxProcessId.incrementAndGet());
+            }
         }
     }
 
@@ -212,16 +226,18 @@ public class MemoryStageController extends ArbitrateLifeCycle {
      * 获取最小一个符合条件的processId
      */
     private Long getMinTransformedProcessId() {
-        if (!CollectionUtils.isEmpty(progress)) {
-            Long processId = Collections.min(progress.keySet());
-            StageProgress stage = progress.get(processId);
-            // stage可能为空，针对select未完成时，对应的值就为null
-            if (stage != null && stage != nullProgress && stage.getStage().isTransform()) {
-                return processId;
+        synchronized (progress) {
+            if (!CollectionUtils.isEmpty(progress)) {
+                Long processId = Collections.min(progress.keySet());
+                StageProgress stage = progress.get(processId);
+                // stage可能为空，针对select未完成时，对应的值就为null
+                if (stage != null && stage != nullProgress && stage.getStage().isTransform()) {
+                    return processId;
+                }
             }
-        }
 
-        return null;
+            return null;
+        }
     }
 
 }
