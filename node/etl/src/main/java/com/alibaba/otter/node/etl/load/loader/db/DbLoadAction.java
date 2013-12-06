@@ -418,12 +418,17 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
         }
 
         if (true == partFailed) {
-            if (CollectionUtils.isEmpty(context.getFailedDatas())) {
-                logger.error("##load phase one failed but failedDatas is empty!");
-                return;
+            // if (CollectionUtils.isEmpty(context.getFailedDatas())) {
+            // logger.error("##load phase one failed but failedDatas is empty!");
+            // return;
+            // }
+
+            // 尝试的内容换成phase one跑的所有数据，避免因failed datas计算错误而导致丢数据
+            List<EventData> retryEventDatas = new ArrayList<EventData>();
+            for (List<EventData> rows : totalRows) {
+                retryEventDatas.addAll(rows);
             }
 
-            List<EventData> retryEventDatas = new ArrayList<EventData>(context.getFailedDatas());
             context.getFailedDatas().clear(); // 清理failed data数据
 
             // 可能为null，manager老版本数据序列化传输时，因为数据库中没有skipLoadException变量配置
