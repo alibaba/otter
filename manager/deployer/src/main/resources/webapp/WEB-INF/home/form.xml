@@ -313,10 +313,17 @@
 				<fm-validators:required-validator>
 					<message>必须填写${displayName}</message>
 				</fm-validators:required-validator>
-				<fm-validators:regexp-validator
-					pattern="^((((?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\:\d+\,?)+)\;)+$">
-					<message>${displayName} 不符合格式（1.1.1.1:80;）</message>
-				</fm-validators:regexp-validator>
+				<fm-validators:any-of>
+					<fm-validators:regexp-validator pattern="^((((?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\:\d+\,?)+)\;)+$">
+						<message>${displayName} 不符合格式（1.1.1.1:80;）</message>
+					</fm-validators:regexp-validator>
+					<fm-validators:regexp-validator pattern="^((((([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])\:\d+\,?)+)\;)+$">
+						<message>${displayName} 不是一个合法的(hostname:80;)</message>
+					</fm-validators:regexp-validator>
+					<fm-validators:regexp-validator pattern="^((((([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])\:\d+\,?)+)\;)+$">
+						<message>${displayName} 不是一个合法的(hostname:80;)</message>
+					</fm-validators:regexp-validator>
+				</fm-validators:any-of>
 			</field>
 			<field name="description" displayName="描述信息" />
 		</group>
@@ -403,10 +410,18 @@
 				<fm-validators:required-validator>
 					<message>必须填写${displayName}</message>
 				</fm-validators:required-validator>
-				<fm-validators:regexp-validator
-					pattern="((?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d))">
-					<message>${displayName} 不符合格式（1.1.1.1）</message>
-				</fm-validators:regexp-validator>
+				
+				<fm-validators:any-of>
+					<fm-validators:regexp-validator pattern="((?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d))">
+						<message>${displayName} 不符合格式（1.1.1.1）</message>
+					</fm-validators:regexp-validator>
+					<fm-validators:regexp-validator pattern="^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$">
+						<message>${displayName} 不是一个合法的(hostname)</message>
+					</fm-validators:regexp-validator>
+					<fm-validators:regexp-validator pattern="^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$">
+						<message>${displayName} 不是一个合法的(hostname)</message>
+					</fm-validators:regexp-validator>
+				</fm-validators:any-of>
 			</field>
 			<field name="port" displayName="服务器的端口">
 				<fm-validators:required-validator>
@@ -650,10 +665,17 @@
 			<field name="clusterMode" displayName="集群模式" />
 			<field name="autoKeeperClusterId" displayName="zookeeper集群" />
 			<field name="zkClusters" displayName="ZK集群">
-				<fm-validators:regexp-validator
-					pattern="^((((?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\:\d+\,?)+)\;)+$">
-					<message>${displayName} 不符合格式（1.1.1.1:80;）</message>
-				</fm-validators:regexp-validator>
+				<fm-validators:any-of>
+					<fm-validators:regexp-validator pattern="^((((?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\:\d+\,?)+)\;)+$">
+						<message>${displayName} 不符合格式（1.1.1.1:80;）</message>
+					</fm-validators:regexp-validator>
+					<fm-validators:regexp-validator pattern="^((((([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])\:\d+\,?)+)\;)+$">
+						<message>${displayName} 不是一个合法的(hostname:80;)</message>
+					</fm-validators:regexp-validator>
+					<fm-validators:regexp-validator pattern="^((((([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])\:\d+\,?)+)\;)+$">
+						<message>${displayName} 不是一个合法的(hostname:80;)</message>
+					</fm-validators:regexp-validator>
+				</fm-validators:any-of>
 			</field>
 			<field name="metaMode" displayName="meta机制">
 				<fm-validators:required-validator>
@@ -686,10 +708,17 @@
 					<fm-validators:required-validator>
 						<message>必须填写${displayName}</message>
 					</fm-validators:required-validator>
-					<fm-validators:regexp-validator
-						pattern="^((((?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\:\d+(\:\w+)?\,?)+)\;)+$">
-						<message>${displayName} 不符合格式（127.0.0.1:3306;）</message>
-					</fm-validators:regexp-validator>
+					<fm-validators:any-of>
+						<fm-validators:regexp-validator pattern="^((((?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\:\d+\,?)+)\;)+$">
+							<message>${displayName} 不符合格式（127.0.0.1:3306;）</message>
+						</fm-validators:regexp-validator>
+						<fm-validators:regexp-validator pattern="^((((([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])\:\d+\,?)+)\;)+$">
+							<message>${displayName} 不是一个合法的(hostname:3306;)</message>
+						</fm-validators:regexp-validator>
+						<fm-validators:regexp-validator pattern="^((((([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])\:\d+\,?)+)\;)+$">
+							<message>${displayName} 不是一个合法的(hostname:3306;)</message>
+						</fm-validators:regexp-validator>
+					</fm-validators:any-of>
 				</fm-validators:if>
 			</field>
 			<field name="dbUsername" displayName="数据库帐号">
