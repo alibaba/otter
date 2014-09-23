@@ -1,0 +1,77 @@
+$control.setTemplate("home:navigation.vm")
+<script language="javascript">
+<!--
+	changeNav("user");
+//-->
+</script>
+#macro (editUserMessage $field)
+    #if (!$field.valid) $field.message #end
+#end	
+<div class="main">
+  <div class="title"> 
+    <h2>编辑用户信息</h2>
+  </div>
+ <div class="crumbs"><a href="userManager.htm">权限管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="editUser.htm?userId=$user.id">编辑用户信息</a></div>
+ <form name="editUserForm" method="post" enctype="multipart/form-data">
+	$csrfToken.hiddenField
+	<input type="hidden" name="action" value="user_action"/>
+	<input type="hidden" name="event_submit_do_edit" value="1" />
+	<input type="hidden" id="pageIndex" name="pageIndex" value="$!pageIndex"/>
+	<input type="hidden" id="searchKey" name="searchKey" value="$!searchKey"/>
+ <div class="setting_box">
+	
+	#set ($userGroup = $form.editUserInfo.defaultInstance)
+	<input type="hidden" name="$userGroup.id.key" value="$user.id" />
+	<input type="hidden" name="userId" value="$user.id" />
+    <table cellpadding="0" cellspacing="0" class="setting_otter">
+      <tr> 
+        <th width="300">用户名：</th>
+        <td width="329">
+			<input value="$user.name" type="text" class="setting_input" disabled />
+		</td>
+      </tr>
+      <tr> 
+        <th>密码：</th>
+        <td>
+			<input name="$userGroup.password.key" type="password" class="setting_input"/><span>如不修改，请留空</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>重复密码：</th>
+        <td>
+			<input name="$userGroup.rePassword.key" type="password" class="setting_input"/>
+			<br />
+			<span class="red">#editUserMessage ($userGroup.rePassword)</span>
+		</td>
+      </tr>
+      <tr> 
+        <th>部门：</th>
+        <td>
+			<input name="$userGroup.department.key" value="$user.department"  type="text" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editUserMessage ($userGroup.department)</span>
+		</td>
+      </tr>
+      <tr> 
+        <th>真实姓名：</th>
+        <td>
+			<input name="$userGroup.realName.key" value="$user.realName"  type="text" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editUserMessage ($userGroup.realName)</span>
+		</td>
+      </tr>
+      <tr> 
+        <th>权限选择：</th>
+        <td><input name="$userGroup.authorizeType.key" type="radio" value="ADMIN" class="radio" #if ($user.authorizeType.isAdmin()) checked="checked" #end />
+          超级管理员 &nbsp;&nbsp;&nbsp;&nbsp;
+            <input name="$userGroup.authorizeType.key" type="radio" value="OPERATOR" class="radio" #if ($user.authorizeType.isOperator()) checked="checked" #end />
+          普通用户</td>
+      </tr>
+	  <tr>
+		<span class="red">#editUserMessage ($userGroup.formUserError)</span>
+      </tr>
+    </table>
+ </div>
+ </form>
+  <div class="btn"><a href="javascript:document.editUserForm.submit();">保存</a></div>
+</div>

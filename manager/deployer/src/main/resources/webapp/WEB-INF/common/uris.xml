@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:p="http://www.springframework.org/schema/p"
+             xmlns:services="http://www.alibaba.com/schema/services"
+             xmlns:uris="http://www.alibaba.com/schema/services/uris"
+             xmlns:uri-interceptors="http://www.alibaba.com/schema/services/uris/interceptors"
+             xsi:schemaLocation="
+                 http://www.alibaba.com/schema/services http://localhost:8080/schema/services.xsd
+                 http://www.alibaba.com/schema/services/uris http://localhost:8080/schema/services-uris.xsd
+                 http://www.alibaba.com/schema/services/uris/interceptors http://localhost:8080/schema/services-uris-interceptors.xsd
+                 http://www.springframework.org/schema/beans http://localhost:8080/schema/www.springframework.org/schema/beans/spring-beans.xsd
+             ">
+
+	<services:uris>
+		<uris:uri id="server">
+            <serverURI>http://${otter.domainName}:${otter.port}/</serverURI>
+		</uris:uri>
+		<uris:turbine-uri id="homeModule" exposed="true" extends="server">
+			<componentPath>/</componentPath>
+		</uris:turbine-uri>
+
+		<uris:turbine-content-uri id="homeContent" exposed="true"
+			extends="homeModule" />
+		<!-- ================================================================ -->
+		<!-- Link Level： 继承前述各类links。 -->
+		<!-- -->
+		<!-- 使用方法： link -->
+		<!-- ================================================================ -->
+		<uris:turbine-uri id="channelListLink" exposed="true" extends="homeModule">
+			<target>channelList.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="selectDataMediaSourceLink" exposed="true"
+			extends="homeModule">
+			<target>selectDataSource.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="channelAddLink" exposed="true" extends="homeModule">
+			<target>addChannel.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="dataMediaListLink" exposed="true"
+			extends="homeModule">
+			<target>dataMediaList.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="dataMediaSourceListLink" exposed="true"
+			extends="homeModule">
+			<target>dataSourceList.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="userListLink" exposed="true" extends="homeModule">
+			<target>userManager.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="systemReductionLink" exposed="true"
+			extends="homeModule">
+			<target>systemReduction.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="nodeListLink" exposed="true" extends="homeModule">
+			<target>nodeList.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="otterLoginLink" exposed="true" extends="homeModule">
+			<target>login.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="errorForbiddenLink" exposed="true" extends="homeModule">
+			<target>forbidden.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="userAddLink" exposed="true" extends="homeModule">
+			<target>addUser.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="nodeAddLink" exposed="true" extends="homeModule">
+			<target>addNode.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="analysisDelayStatLink" exposed="true"
+			extends="homeModule">
+			<target>analysisDelayStat.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="analysisThroughputHistoryLink" exposed="true"
+			extends="homeModule">
+			<target>analysisThroughputHistory.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="systemParameterLink" exposed="true"
+			extends="homeModule">
+			<target>systemParameter.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="conflictStatListLink" exposed="true"
+			extends="homeModule">
+			<target>conflictStatList.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="conflictDetailStatListLink" exposed="true"
+			extends="homeModule">
+			<target>conflictDetailStatList.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="logRecordLink" exposed="true" extends="homeModule">
+			<target>logRecordList.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="behaviorHistoryCurveLink" exposed="true"
+			extends="homeModule">
+			<target>behaviorHistoryCurve.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="canalListLink" exposed="true" extends="homeModule">
+			<target>canalList.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="dataMatrixListLink" exposed="true"
+			extends="homeModule">
+			<target>dataMatrixList.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="canalAddLink" exposed="true" extends="homeModule">
+			<target>addCanal.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="alarmRuleListLink" exposed="true"
+			extends="homeModule">
+			<target>alarmRuleList.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="alarmLogLink" exposed="true" extends="homeModule">
+			<target>alarmSystemList.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="analysisTopStatLink" exposed="true"
+			extends="homeModule">
+			<target>analysisTopStat.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="autoKeeperClustersListLink" exposed="true"
+			extends="homeModule">
+			<target>autoKeeperClustersList.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="autoKeeperClustersDetailLink" exposed="true"
+			extends="homeModule">
+			<target>autoKeeperClustersDetail.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="autoKeeperClientPathLink" exposed="true"
+			extends="homeModule">
+			<target>autoKeeperClientPath.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="zookeeperAddLink" exposed="true" extends="homeModule">
+			<target>addZookeeper.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="sqlInitLink" exposed="true" extends="homeModule">
+			<target>initSql.vm</target>
+		</uris:turbine-uri>
+		<uris:turbine-uri id="wikiLink" exposed="true" extends="homeModule">
+			<target>wikiGuide.vm</target>
+		</uris:turbine-uri>
+	</services:uris>
+</beans:beans>

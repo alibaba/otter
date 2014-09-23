@@ -1,0 +1,59 @@
+$control.setTemplate("home:navigation.vm")
+<script language="javascript">
+<!--
+	changeNav("node");
+//-->
+</script>
+
+#macro (editAutoKeeperClusterMessage $field)
+    #if (!$field.valid) $field.message #end
+#end	
+
+<div class="main">
+  <div class="title"> 
+    <h2>修改集群配置</h2>
+  </div>
+ 
+<form name="editZkClusterForm" method="post" enctype="multipart/form-data">
+	$csrfToken.hiddenField
+	<input type="hidden" name="action" value="auto_keeper_cluster_action"/>
+	<input type="hidden" name="event_submit_do_edit" value="1" />
+	
+ <div class="setting_box">
+ 
+   #set ($autoKeeperClusterGroup = $form.autokeeperClusterInfo.defaultInstance)
+   <input type="hidden" name="$autoKeeperClusterGroup.id.key" value="$!autoKeeperCluster.id" />
+    <table cellpadding="0" cellspacing="0" class="setting_otter">
+		<span class="red">#editAutoKeeperClusterMessage ($autoKeeperClusterGroup.formAutokeeperClusterError)</span>
+      <tr> 
+        <th width="300">集群名字：</th>
+        <td width="329">
+            <input type="text" name="$autoKeeperClusterGroup.clusterName.key" value="$!autoKeeperCluster.clusterName" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editAutoKeeperClusterMessage ($autoKeeperClusterGroup.clusterName)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>ZooKeeper集群：</th>
+        <td>
+			<textarea class="service" name="$autoKeeperClusterGroup.zookeeperClusters.key" cols="45" rows="5" >#foreach($address in $!autoKeeperCluster.serverList)$address;#end</textarea><span class="red">*</span>
+			  <br />
+			  <span>格式如 10.20.10.20:8080;（必须以分号结束，可添多个）</span>
+			  <br />
+			<span class="red">#editAutoKeeperClusterMessage ($autoKeeperClusterGroup.zookeeperClusters)</span>
+		</td>
+      </tr>
+      <tr>
+       <th>描述：</th>
+       <td>
+    		<textarea cols="45" rows="5" name="$autoKeeperClusterGroup.description.key">$!autoKeeperCluster.description</textarea>
+    		<br />
+    		<span class="red">#editAutoKeeperClusterMessage ($autoKeeperClusterGroup.description)</span>
+	   </td>
+      </tr>
+    </table>
+ </div>
+   <div class="btn"><a href="javascript:document.editZkClusterForm.submit();">保存</a></div> 
+  
+  </form>
+</div>

@@ -1,0 +1,79 @@
+$control.setTemplate("home:navigation.vm")
+<script language="javascript">
+<!--
+	changeNav("datamedia");
+//-->
+</script>
+#macro (editDataMatrixMessage $field)
+    #if (!$field.valid) $field.message #end
+#end	
+
+<div class="main">
+  <div class="title"> 
+    <h2>添加主备配置</h2>
+  </div>
+  <div class="crumbs"><a href="dataMatrixList.htm">主备配置</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="addDataMatrix.htm">添加主备配置</a></div>
+
+ <form id="editDataMatrixForm" name="editDataMatrixForm" method="post" enctype="multipart/form-data">
+	$csrfToken.hiddenField
+	<input type="hidden" name="action" value="data_matrix_action"/>
+	<input type="hidden" name="event_submit_do_edit" value="1" />
+ <div class="setting_box">
+	#set ($dataMatrixGroup = $form.dataMatrixInfo.defaultInstance)
+    <table cellpadding="0" cellspacing="0" class="setting_otter">
+		<tr>
+        	<th width="300"></th>
+        	<td width="329">
+        		#foreach($f in ${dataMatrixGroup.getFields()})
+        			#if (!$f.valid) 
+        				<span class="red">$!f.message</span><br/>
+        			#end
+        		#end
+        	</td>
+        </tr>
+		
+	<input type="hidden" name="$dataMatrixGroup.id.key" value="$!dataMatrix.id" />
+	<input type="hidden" name="matrixId" value="$!dataMatrix.id" />
+	
+      <tr> 
+        <th width="300">group Key：</th>
+        <td width="329">
+			<input id="groupKey" name="$dataMatrixGroup.groupKey.key" value="$!dataMatrix.groupKey" type="text" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editDataMatrixMessage ($dataMatrixGroup.groupKey)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th width="300">master：</th>
+        <td width="329">
+			<input id="master" name="$dataMatrixGroup.master.key" value="$!dataMatrix.master" type="text" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editDataMatrixMessage ($dataMatrixGroup.master)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th width="300">slaves：</th>
+        <td width="329">
+			<input id="slaves" name="$dataMatrixGroup.slave.key" value="$!dataMatrix.slave" type="text" class="setting_input" />
+			<br />
+			<span class="red">#editDataMatrixMessage ($dataMatrixGroup.slave)</span>
+		</td>
+      </tr>
+	   <tr>
+       <th>描述信息：</th>
+       <td>
+    		<textarea cols="45" rows="5" name="$dataMatrixGroup.description.key">$!dataMatrix.description</textarea><span class="red">*</span>
+    		<br />
+    		<span class="red">#editDataMatrixMessage ($dataMatrixGroup.description)</span>
+	   </td>
+      </tr>   
+    </table>
+ </div>
+  <div class="btn"><a href="javascript:document.editDataMatrixForm.submit();">保存</a></div>
+  #set ($switchRL = $homeModule.setAction("dataMatrixAction").addQueryData("matrixId", $dataMatrix.id).addQueryData("eventSubmitDoSwitch", "true"))
+  <div class="btn"><a href="javascript:if(confirm('确实要执行主备IP切换吗?'))location='$switchRL'">切换</a></div>
+  </form>
+  <br />
+  <br />
+  <br />
+</div>

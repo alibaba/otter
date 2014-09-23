@@ -1,0 +1,89 @@
+$control.setTemplate("home:navigation.vm")
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
+<script type="text/javascript"> 
+	changeNav("sync");
+    /* 添加选择的项 */ 
+    function AddDown() { 
+		var selected = $("select#dltSource").find("option:selected");
+        if(selected ==null) return;    // 如果没有选择则退出函数，无这句话的话IE6会报错 
+        selected.each(function(i, n) {    // 循环原列表中选中的值，依次添加到目标列表中 
+            var html = "<option value='" + $(n).attr('value') + "' selected='selected'>" + $(n).html() + "</option>"; 
+            $('#dltTarget').append(html); 
+        }); 
+        selected.remove(); // 原列表中选中的值删除 
+    }
+	
+	function AddUp() { 
+		var selected = $("select#dltTarget").find("option:selected");
+        if(selected ==null) return;    // 如果没有选择则退出函数，无这句话的话IE6会报错 
+        selected.each(function(i, n) {    // 循环原列表中选中的值，依次添加到目标列表中 
+            var html = "<option value='" + $(n).attr('value') + "' selected='selected'>" + $(n).html() + "</option>"; 
+            $('#dltSource').append(html); 
+        }); 
+        selected.remove(); // 原列表中选中的值删除 
+    }
+    /* 添加全部 */ 
+    function AddAll(ObjSource, ObjTarget) { 
+        ObjTarget.append(ObjSource.html()); // 目标列表的HTML加上原列表的所有HTML 
+        ObjSource.empty(); // 原列表清空 
+    } 
+	
+	
+	jQuery(document).ready(function($){
+		$('#submit').click(function(){
+			$('select#dltTarget option').each(function(index, el){
+				$(el).attr('selected','selected');
+			});
+			return true;
+		});
+	});
+	
+	
+</script>
+#macro (addColumnPairGroupMessage $field)
+    #if (!$field.valid) $field.message #end
+#end
+<div class="main">
+  <div class="title"> 
+    <h2>Table详细</h2>
+  </div> <div class="crumbs"><a href="channelList.htm?channelId=$channelId">Channel管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="pipelineList.htm?channelId=$channelId">Pipeline管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="dataMediaPairList.htm?pipelineId=$pipelineId">映射关系管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="addColumnPairGroup.htm?dataMediaPairId=$dataMediaPairId&channelId=$channelId&pipelineId=$pipelineId">编辑组合同步</a> </div>
+ 
+  <form name="addColumnPairForm" method="post" enctype="multipart/form-data">
+	$csrfToken.hiddenField
+	<input type="hidden" name="action" value="column_pair_group_action"/>
+	<input type="hidden" name="event_submit_do_save" value="1" />
+	<input type="hidden" name="dataMediaPairId" value="$dataMediaPairId" />
+	<input type="hidden" name="sourceMediaId" value="$sourceMediaId" />
+	<input type="hidden" name="targetMediaId" value="$targetMediaId" />
+	<input type="hidden" name="pipelineId" value="$pipelineId" />
+	#set ($columnGroup = $form.columnPairGroupInfo.defaultInstance)
+	<input type="hidden" name="$columnGroup.id.key" value="1"/>
+	
+  <div class="sel_l">
+  <div class="box1"> 
+        <select id="dltSource" name="dltSource"  multiple="multiple"> 
+			#foreach ($columnPair in $preColumnPairs)
+				<option value="$!columnPair.sourceColumn.name:$!columnPair.targetColumn.name">[$!columnPair.sourceColumn.name] - [$!columnPair.targetColumn.name]</option> 
+            #end
+        </select> 
+  </div> 
+  <div class="box2"> 
+        <input type="button" class="btn_down1" onclick="AddDown()" /> 
+        <input type="button" class="btn_down2" onclick="AddAll($('#dltSource'),$('#dltTarget'))" /> 
+        <input type="button" class="btn_up1" onclick="AddUp()" /> 
+        <input type="button" class="btn_up2" onclick="AddAll($('#dltTarget'),$('#dltSource'))" /> 
+  </div> 
+  <div class="box3"> 
+        <select id="dltTarget" name="$columnGroup.groupResult.key" multiple="multiple"> 
+			#foreach ($columnPair in $columnPairs)
+				<option value="$!columnPair.sourceColumn.name:$!columnPair.targetColumn.name">[$!columnPair.sourceColumn.name] - [$!columnPair.targetColumn.name]</option> 
+            #end
+        </select> 
+  </div> 
+  
+  <input  id="submit" type="submit" name="submitKey" value="保存" class="button"></input>
+  <span class="red">#addColumnPairGroupMessage ($columnGroup.formColumnPairGroupError)</span>
+  </div>
+  
+  </form>  
+</div>

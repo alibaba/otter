@@ -1,0 +1,61 @@
+$control.setTemplate("home:navigation.vm")
+<script language="javascript">
+<!--
+	changeNav("record");
+//-->
+</script>
+#macro (addAutoKeeperClusterMessage $field)
+    #if (!$field.valid) $field.message #end
+#end
+
+
+<div class="main">
+  <div class="title"> 
+    <h2>添加Zookeeper集群</h2>
+  </div>
+
+#if($message == "init")
+	<span class="red">ZooKeeper集群为空，无法添加Node或Canal，请先至少添加一个ZooKeeper集群</span>
+#end
+ 
+<form name="addZkClusterForm" method="post" enctype="multipart/form-data">
+	$csrfToken.hiddenField
+	<input type="hidden" name="action" value="auto_keeper_cluster_action"/>
+	<input type="hidden" name="event_submit_do_add" value="1" />
+ <div class="setting_box">
+ 
+   #set ($autoKeeperClusterGroup = $form.autokeeperClusterInfo.defaultInstance)
+    <table cellpadding="0" cellspacing="0" class="setting_otter">
+		<span class="red">#addAutoKeeperClusterMessage ($autoKeeperClusterGroup.formAutokeeperClusterError)</span>
+      <tr> 
+        <th width="300">集群名字：</th>
+        <td width="329">
+            <input type="text" name="$autoKeeperClusterGroup.clusterName.key" value="$!autoKeeperClusterGroup.clusterName.value" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#addAutoKeeperClusterMessage ($autoKeeperClusterGroup.clusterName)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>ZooKeeper集群：</th>
+        <td>
+			<textarea class="service" name="$autoKeeperClusterGroup.zookeeperClusters.key" cols="45" rows="5" >$!autoKeeperClusterGroup.zookeeperClusters.value</textarea><span class="red">*</span>
+			  <br />
+			  <span>格式如 10.20.10.20:8080;（必须以分号结束，可添多个）</span>
+			  <br />
+			<span class="red">#addAutoKeeperClusterMessage ($autoKeeperClusterGroup.zookeeperClusters)</span>
+		</td>
+      </tr>
+      <tr>
+       <th>描述：</th>
+       <td>
+    		<textarea cols="45" rows="5" name="$autoKeeperClusterGroup.description.key">$!autoKeeperClusterGroup.description.value</textarea>
+    		<br />
+    		<span class="red">#addAutoKeeperClusterMessage ($autoKeeperClusterGroup.description)</span>
+	   </td>
+      </tr>
+    </table>
+ </div>
+   <div class="btn"><a href="javascript:document.addZkClusterForm.submit();">保存</a></div> 
+  
+  </form>
+</div>

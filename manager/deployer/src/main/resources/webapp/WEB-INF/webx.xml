@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:services="http://www.alibaba.com/schema/services"
+	xmlns:ml-adapters="http://www.alibaba.com/schema/services/module-loader/adapters"
+	xmlns:ml-factories="http://www.alibaba.com/schema/services/module-loader/factories"
+	xmlns:pull-factories="http://www.alibaba.com/schema/services/pull/factories"
+	xmlns:request-contexts="http://www.alibaba.com/schema/services/request-contexts"
+	xmlns:basic-interceptors="http://www.alibaba.com/schema/services/request-contexts/basic/interceptors"
+	xmlns:parser-filters="http://www.alibaba.com/schema/services/request-contexts/parser/filters"
+	xmlns:session-encoders="http://www.alibaba.com/schema/services/request-contexts/session/encoders"
+	xmlns:session-idgens="http://www.alibaba.com/schema/services/request-contexts/session/idgens"
+	xmlns:session-interceptors="http://www.alibaba.com/schema/services/request-contexts/session/interceptors"
+	xmlns:model-encoders="http://www.alibaba.com/schema/services/request-contexts/session/model-encoders"
+	xmlns:session-stores="http://www.alibaba.com/schema/services/request-contexts/session/stores"
+	xsi:schemaLocation="
+                 http://www.alibaba.com/schema/services http://localhost:8080/schema/services.xsd
+                 http://www.alibaba.com/schema/services/module-loader/adapters http://localhost:8080/schema/services-module-loader-adapters.xsd
+                 http://www.alibaba.com/schema/services/module-loader/factories http://localhost:8080/schema/services-module-loader-factories.xsd
+                 http://www.alibaba.com/schema/services/pull/factories http://localhost:8080/schema/services-pull-factories.xsd
+                 http://www.alibaba.com/schema/services/request-contexts http://localhost:8080/schema/services-request-contexts.xsd
+                 http://www.alibaba.com/schema/services/request-contexts/basic/interceptors http://localhost:8080/schema/services-request-contexts-basic-interceptors.xsd
+                 http://www.alibaba.com/schema/services/request-contexts/parser/filters http://localhost:8080/schema/services-request-contexts-parser-filters.xsd
+                 http://www.alibaba.com/schema/services/request-contexts/session/encoders http://localhost:8080/schema/services-request-contexts-session-encoders.xsd
+                 http://www.alibaba.com/schema/services/request-contexts/session/idgens http://localhost:8080/schema/services-request-contexts-session-idgens.xsd
+                 http://www.alibaba.com/schema/services/request-contexts/session/interceptors http://localhost:8080/schema/services-request-contexts-session-interceptors.xsd
+                 http://www.alibaba.com/schema/services/request-contexts/session/model-encoders http://localhost:8080/schema/services-request-contexts-session-model-encoders.xsd
+                 http://www.alibaba.com/schema/services/request-contexts/session/stores http://localhost:8080/schema/services-request-contexts-session-stores.xsd
+                 http://www.springframework.org/schema/beans http://localhost:8080/schema/www.springframework.org/schema/beans/spring-beans.xsd
+             ">
+             
+	<beans:description>父容器所在的配置</beans:description>
+
+	<!-- 支持${xxx}替换。 -->
+	<services:property-placeholder location="classpath:otter.properties">
+		<property key="component">common</property>
+	</services:property-placeholder>
+
+	<!-- 共享配置。 -->
+	<beans:import resource="common/webx-component-and-root.xml" />
+
+	<!-- 异常管道。 -->
+	<beans:import resource="common/pipeline-exception.xml" />
+
+	<!-- 资源装载。 -->
+	<beans:import resource="common/resources.xml" />
+
+	<!-- URI生成。 -->
+	<beans:import resource="common/uris.xml" />
+
+	<!-- 引入相关资源 -->
+	<beans:import resource="applicationContext.xml" />
+
+	<!-- 综合设置。 -->
+    <services:webx-configuration>
+        <!-- 默认将productionMode设为true，建议在jetty插件中设置-DproductionMode=false。 -->
+        <productionMode>${otter.manager.productionMode:true}</productionMode>
+        <components defaultComponent="home" />
+    </services:webx-configuration>
+
+	<!-- 设置request/response/session。 -->
+	 <services:request-contexts>
+		<request-contexts:basic />
+        <request-contexts:buffered />
+        <request-contexts:lazy-commit />
+        <request-contexts:parser>
+         	<filters>
+                <parser-filters:uploaded-file-whitelist extensions="jpg, gif, png" />
+            </filters>
+        </request-contexts:parser>
+		<request-contexts:set-locale defaultLocale="zh_CN" defaultCharset="UTF-8" />
+		<request-contexts:session forceExpirationPeriod="14400">
+			<stores>
+                <session-stores:cookie-store id="temporaryCookie">
+                    <cookie name="OTTER_WEBX_JSESSIONID" />
+                </session-stores:cookie-store>
+            </stores>
+            <store-mappings>
+                <match name="*" store="temporaryCookie" />
+            </store-mappings>
+            <interceptors>
+                <session-interceptors:lifecycle-logger />
+                <session-interceptors:attribute-whitelist>
+                    <attribute name="_csrf_token" />
+                    <attribute name="_lang" />
+                    <attribute name="managerUser" />
+                </session-interceptors:attribute-whitelist>
+            </interceptors>
+		</request-contexts:session>
+	</services:request-contexts>
+
+	<!-- 支持上传文件。 -->
+	<services:upload sizeMax="5M" />
+
+	<!-- 将beans暴露给模板。这里定义的tools可被所有components之间共享。 -->
+	<services:pull>
+		<pull-factories:utils />
+		<pull-factories:page-tool />
+		<pull-factories:control-tool detailLevel="throwException" />
+		<pull-factories:uris-tool />
+		<pull-factories:bean-tool scope="global" id="numberFormat"
+			class="com.alibaba.otter.manager.web.common.NumberFormatUtil" />
+	</services:pull>
+
+	<!-- 装载模块。 -->
+	 <services:module-loader>
+        <ml-factories:class-modules>
+            <search-packages type="$1" packages="com.alibaba.otter.manager.web.home.module.*" />
+        </ml-factories:class-modules>
+    </services:module-loader>
+    
+	<!-- 权限配置 -->
+	<beans:bean id="urlAnalyze"
+		class="com.alibaba.otter.manager.web.webx.valve.auth.RegExpURLAnalyze">
+		<beans:property name="anonymous">
+			<beans:bean
+				class="com.alibaba.otter.manager.web.webx.valve.auth.AuthorizeProtected">
+				<beans:property name="urlProtected">
+					<beans:value>
+						/
+						/dwr/.*
+						/js/.*
+						/css/.*
+						/images/.*
+						/monitor/.*
+						/.*\.css
+						/.*\.png
+						/.*\.js
+						/.*login\.htm
+						/.*error\.htm
+						/.*Error\.htm
+						/.*\_error\.htm
+						/.*forbidden\.htm
+						/.*check.*\.htm
+						/.*conflictStatList\.htm
+						/.*conflict_stat_list\.htm
+						/.*behaviorHistoryCurve\.htm
+						/.*behavior_history_curve\.htm
+						/.*List\.htm
+						/.*Info\.htm
+						/.*\_list\.htm
+						/.*\_info\.htm
+						/.*\_detail\.htm
+						/.*\_path\.htm
+						/.*search.*\.htm
+						/.*analysis.*\.htm
+						/.*record.*\.htm
+						/.*Record.*\.htm
+						/.*alarmRuleList.*\.htm
+						/.*alarm_rule_list.*\.htm
+						/.*init_sql.*\.htm
+						/.*wiki_guide.*\.htm
+					</beans:value>
+				</beans:property>
+				<beans:property name="actionProtected">
+					<beans:value>
+						userAction|login
+						userAction|logout
+						.*Action|search
+					</beans:value>
+				</beans:property>
+			</beans:bean>
+		</beans:property>
+		<beans:property name="operator">
+			<beans:bean
+				class="com.alibaba.otter.manager.web.webx.valve.auth.AuthorizeProtected">
+				<beans:property name="urlProtected">
+					<beans:value>
+
+					</beans:value>
+				</beans:property>
+				<beans:property name="actionProtected">
+					<beans:value>
+
+					</beans:value>
+				</beans:property>
+			</beans:bean>
+		</beans:property>
+		<beans:property name="admin">
+			<beans:bean
+				class="com.alibaba.otter.manager.web.webx.valve.auth.AuthorizeProtected">
+				<beans:property name="urlProtected">
+					<beans:value>
+						/.*add.*\.htm
+						/.*edit.*\.htm
+						/.*select.*\.htm
+						/.*userManager\.htm
+						/.*user_manager\.htm
+						/.*system_reduction\.htm
+						/.*system_parameter\.htm
+						/.*systemParameter\.htm
+					</beans:value>
+				</beans:property>
+				<beans:property name="actionProtected">
+					<beans:value>
+						.*Action|add
+						.*Action|edit
+						.*Action|delete
+						.*Action|status
+						.*Action|restart
+						.*Action|all_status
+						DataMatrixAction|switch
+						SwitchWarmupAction|switch
+						SwitchWarmupAction|restart
+					</beans:value>
+				</beans:property>
+			</beans:bean>
+		</beans:property>
+	</beans:bean>
+	<beans:bean id="apiAuthService" class="com.alibaba.otter.manager.web.common.api.DefaultApiAuthService" />
+	
+	<beans:bean class="org.springframework.beans.factory.config.CustomEditorConfigurer" depends-on="arbitrateConfigImpl">  
+	   <beans:property name="customEditors">  
+		    <beans:map>  
+		       <beans:entry key="com.alibaba.otter.manager.web.webx.valve.auth.url.URLProtected" value="com.alibaba.otter.manager.web.webx.valve.auth.url.URLProtectedEditor" /> 
+		       <beans:entry key="com.alibaba.otter.manager.web.webx.valve.auth.action.ActionProtected" value="com.alibaba.otter.manager.web.webx.valve.auth.action.ActionProtectedEditor" /> 
+		    </beans:map>
+	   </beans:property>
+	</beans:bean>
+</beans:beans>

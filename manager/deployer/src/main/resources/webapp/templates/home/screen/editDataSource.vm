@@ -1,0 +1,114 @@
+$control.setTemplate("home:navigation.vm")
+<script type='text/javascript' src='dwr/interface/Hello.js'></script>  
+<script type='text/javascript' src='dwr/engine.js'></script>  
+<script type='text/javascript' src='dwr/util.js'></script>  
+<script type='text/javascript' src='js/dbCheck.js'></script>
+<script language="javascript">
+<!--
+	changeNav("datamedia");
+//-->
+</script>
+#macro (editDataSourceMessage $field)
+    #if (!$field.valid) $field.message #end
+#end
+
+<div class="main">
+  <div class="title"> 
+    <h2>编辑数据源</h2>
+  </div>
+  <div class="crumbs"><a href="dataSourceList.htm">数据源配置</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="editDataSource.htm?dataMediaSourceId=$source.id">编辑数据源</a></div>
+ 
+ <form name="editSourceForm" method="post" enctype="multipart/form-data">
+ $csrfToken.hiddenField
+	<input type="hidden" name="action" value="data_media_source_action"/>
+	<input type="hidden" name="event_submit_do_edit" value="1" />
+	<input type="hidden" id="pageIndex" name="pageIndex" value="$!pageIndex"/>
+	<input type="hidden" id="searchKey" name="searchKey" value="$!searchKey"/>
+ <div class="setting_box">
+	#set ($dataMediaSourceGroup = $form.dataMediaSourceInfo.defaultInstance)
+	<input type="hidden" name="$dataMediaSourceGroup.id.key" value="$source.id" />
+    <input type="hidden" name="dataMediaSourceId" value="$source.id" />
+	<table cellpadding="0" cellspacing="0" class="setting_otter">
+        <span class="red">#editDataSourceMessage ($dataMediaSourceGroup.formDataMediaSourceError)</span>
+      <tr> 
+        <th width="300">数据源名字：</th>
+        <td width="329">
+			<input name="$dataMediaSourceGroup.name.key" type="text" value="$source.name" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editDataSourceMessage ($dataMediaSourceGroup.name)</span>
+		</td>
+      </tr>
+      
+      <tr> 
+        <th>类型：</th>
+        <td>
+            <select id="sourceType" name="$dataMediaSourceGroup.type.key">			
+				<option value="MYSQL" #if($source.type.isMysql()) selected="selected" #end>MySQL</option>
+				<option value="ORACLE" #if($source.type.isOracle()) selected="selected" #end>Oracle</option>
+			</select><span class="red">*</span>
+        </td>
+	  </tr>
+      <tr> 
+        <th>用户名：</th>
+        <td>
+			<input id="sourceUserName" name="$dataMediaSourceGroup.username.key" value="$!source.username" type="text" class="setting_input"/>
+			<br />
+			<span class="red">#editDataSourceMessage ($dataMediaSourceGroup.username)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>密码：</th>
+        <td>
+			<input id="sourcePassword" name="$dataMediaSourceGroup.password.key" value="$!source.password" type="password" class="setting_input"/>
+			<br />
+			<span class="red">#editDataSourceMessage ($dataMediaSourceGroup.password)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>URL：</th>
+        <td>
+			<input id="sourceUrl" name="$dataMediaSourceGroup.url.key" value="$source.url" type="text" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editDataSourceMessage ($dataMediaSourceGroup.url)</span>
+		</td>
+      </tr>
+	  #**
+	   <tr> 
+        <th>StorePath：</th>
+        <td>
+			<input id="sourceStorePath" name="$dataMediaSourceGroup.storePath.key" value="$!source.storePath" type="text" class="setting_input"/><span class="red">Napoli</span>
+			<br />
+			<span class="red">#editDataSourceMessage ($dataMediaSourceGroup.storePath)</span>
+		</td>
+      </tr>
+	  *#
+	  <tr> 
+        <th>编码：</th>
+        <td>
+			<select id="sourceEncode" name="$dataMediaSourceGroup.encode.key"  style="width:200px;" > 
+				<option value="GBK" #if($!source.encode == 'GBK') selected  #end>GBK</option>
+				<option value="UTF8" #if($!source.encode == 'UTF8') selected  #end>UTF8</option>
+				<option value="ISO-8859-1" #if($!source.encode == 'ISO-8859-1') selected  #end>ISO-8859-1</option>
+            </select><span class="red">*</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th><input type='button' value='验证连接数据源' onclick='check();' /></th>
+        <td>
+			<span class="red" id="result"></span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>url示例说明</th>
+        <td>
+			mysql例子: jdbc:mysql://10.20.144.15:3306<br/>
+			oracle例子 : jdbc:oracle:thin:@10.20.144.29:1521:OINTEST<br/>
+			media例子 : jdbc:mysql://groupKey=key (更改 key)
+		</td> 
+      </tr>
+      
+    </table>
+ </div>
+  <div class="btn"><a href="javascript:document.editSourceForm.submit();">保存</a></div>
+ </form>
+</div>

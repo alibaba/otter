@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName">
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${otter.database.driver.class.name}" />
+        <property name="url" value="${otter.database.driver.url}" />
+		<property name="username" value="${otter.database.driver.username}" />
+		<property name="password" value="${otter.database.driver.password}" />
+        <property name="maxActive"><value>20</value></property>
+        <property name="initialSize"><value>1</value></property>
+        <property name="maxWait"><value>60000</value></property>
+        <property name="maxIdle"><value>20</value></property> <!-- 可以和maxActive保持一致 -->
+        <property name="minIdle"><value>1</value></property>  <!-- 可以和initialSize保持一致 -->
+        <property name="removeAbandoned"><value>true</value></property>
+        <property name="removeAbandonedTimeout"><value>180</value></property>
+        <property name="timeBetweenEvictionRunsMillis"><value>60000</value></property>
+        <property name="minEvictableIdleTimeMillis"><value>180000</value></property>
+        <property name="connectionProperties"><value>useUnicode=true;characterEncoding=utf-8</value></property>
+        <!-- sql检查配置,在idle空闲线程检查时,检查链接有效性，丢弃无效的链接,实现自动重连-->
+        <!-- 注意使用cobar时,因为走了F5进行负载,F5默认5分钟会关闭空闲链接,所以需要通过心跳SQL保证数据库链接不被异常关闭 -->
+        <property name="testWhileIdle"><value>true</value></property>
+        <property name="testOnBorrow"><value>false</value></property>
+        <property name="testOnReturn"><value>false</value></property>
+        <property name="validationQuery"><value>SELECT @@version</value></property>
+        <property name="numTestsPerEvictionRun"><value>-1</value></property>
+	</bean>
+	
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate"> 
+		<property name="transactionManager" ref="transactionManager" />
+	</bean>
+	
+	<bean id="dataSourceCreator" class="com.alibaba.otter.manager.biz.common.DataSourceCreator" >
+		<property name="dataSourceHandlers">
+			<list>
+				<ref bean="mediaPushDataSourceHandler" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="mediaPushDataSourceHandler" class="com.alibaba.otter.common.push.datasource.media.MediaPushDataSourceHandler" scope="singleton" />
+</beans>

@@ -1,0 +1,39 @@
+<assembly
+	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd"
+	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<id>mvn</id>
+	<formats>
+		<format>tar.gz</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<fileSets>
+		<fileSet>
+			<directory>./src/main/bin</directory>
+			<outputDirectory>bin</outputDirectory>
+			<includes>
+				<include>**/*</include>
+			</includes>
+			<fileMode>0755</fileMode>
+		</fileSet>
+	</fileSets>
+	<files>
+		<file>
+			<source>./src/main/resources/logback.xml</source>
+			<outputDirectory>conf</outputDirectory>
+		</file>
+		<file>
+			<source>./src/main/resources/otter.properties</source>
+			<outputDirectory>conf</outputDirectory>
+		</file>
+		<file>
+			<source>../../lib/ojdbc14-10.2.0.3.0.jar</source>
+			<outputDirectory>lib</outputDirectory>
+		</file>
+	</files>
+	<dependencySets>
+		<dependencySet>
+			<outputDirectory>lib</outputDirectory>
+		</dependencySet>
+	</dependencySets>
+</assembly>

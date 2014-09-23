@@ -1,0 +1,45 @@
+$rundata.setLayoutEnabled(false)
+#macro (loginMessage $field)
+    #if (!$field.valid) $field.message #end
+#end
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Otter Manager</title>
+<link type="text/css" href="css/commons.css" rel="stylesheet"/>
+<link type="text/css" href="css/skin.css" rel="stylesheet"/>
+<link type="text/css" href="css/otter.css" rel="stylesheet"/>
+</head>
+<body class="login">
+   <div class="login_container">
+      <div class="login_box">
+         <div class="logo"></div>
+         <div class="user">
+		 <form method="post" name="login">
+              <input type="hidden" name="action" value="user_action"/>
+              <input type="hidden" name="event_submit_do_login" value="1" />
+			  
+			<table border="0" cellspacing="0" cellpadding="0">
+				#set ($userGroup = $form.login.defaultInstance)
+                <tr>
+                   <td align="right">用户名：</td>
+                   <td><input name="$userGroup.name.key" value="$!userGroup.name.value" type="text" class="login_input"/></td>
+                </tr>
+                <tr>
+                   <td align="right">密码：</td>
+                  <td><input name="$userGroup.password.key" type="password" class="login_input"/></td>
+                </tr>
+				<br />
+                <span class="red">#loginMessage ($userGroup.loginError)</span>
+					
+                <tr>
+                    <td>&nbsp;</td>
+                    <td><div class="login_btn right"><a href="javascript:document.login.submit();">登&nbsp;&nbsp;&nbsp;录</a></div></td>
+                </tr>
+			</table>
+         </form>
+         </div></div>
+   </div>
+</body>
+</html>

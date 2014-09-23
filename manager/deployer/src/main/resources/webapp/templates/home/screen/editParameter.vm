@@ -1,0 +1,39 @@
+$control.setTemplate("home:navigation.vm")
+
+<div class="main">
+  <div class="title"> 
+    <h2>系统配置</h2>
+  </div>
+  <div class="crumbs"><a href="tableList.htm">配置管理</a>&nbsp;&nbsp;</div>
+ <div class="setting_box">
+    <table cellpadding="0" cellspacing="0" class="setting_otter">
+      <tr> 
+        <th width="300">DownLoad_Local_Dir:</th>
+        <td width="329"><input name="Input2" type="text" class="setting_input"/></td>
+      </tr>
+      <tr> 
+        <th>DownLoad_Remote_Root_Inner_Uri</th>
+        <td><input name="Input32" type="text" class="setting_input" value="1688/download"/></td>
+      </tr>
+      <tr> 
+        <th>Max_Process_Size</th>
+        <td><input name="Input3" type="text" class="setting_input" value="2"/></td>
+      </tr>
+      <tr> 
+        <th>Img_Root_Path</th>
+        <td><input name="Input3" type="text" class="setting_input" value="mnt/ets"/></td>
+      </tr>
+      <tr> 
+        <th>文件同步模式</th>
+        <td>
+            <select name="select" id="select">
+            <option value="1">Tmp</option>
+            <option value="2">Async</option>
+            <option value="3">Sync</option>
+            </select>
+       </td>
+      </tr>
+    </table>
+ </div>
+  <div class="btn"><a href="#">保存</a></div>
+</div>

@@ -1,0 +1,112 @@
+$control.setTemplate("home:navigation.vm")
+#set($user = $rundata.request.session.getAttribute("managerUser"))
+<script type="text/javascript" src="js/trcolor.js"></script>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
+<script type="text/javascript" src="js/jquery.simplemodal-1.4.js"></script> 
+<script language="javascript">
+	changeNav("node");
+</script>
+
+
+
+<!--页面主体-->
+<div class="main">
+   
+  <div class="title"> 
+    <h2>Zookeeper管理</h2>
+  </div>
+   <div class="crumbs"><a href="auto_keeper_clusters_list.htm">Zookeeper管理</a> </div> 
+   <!--分页表单-->
+   <form id="pageform" name="pageform" action="$homeModule.setTarget('autoKeeperClustersList.vm')" method="post">
+    	<input type="hidden" id="pageIndex" name="pageIndex" value=""/>
+		<input type="hidden" id="searchKey" name="searchKey" value="$!searchKey"/>
+   </form>
+   <!--Node搜索-->
+   <div class="search_o"> 
+		<form name="search_zookeeper" action="auto_keeper_clusters_list.htm"  method="post">
+			##$csrfToken.hiddenField
+			<div class="search_input">
+				<input name="searchKey" type="text" value="请输入关键字(目前支持Zookeeper的地址搜索)"  onfocus="if(this.value == '请输入关键字(目前支持Zookeeper的地址搜索)') {this.value='';}" onblur="if(this.value == '') {this.value = '请输入关键字(目前支持Zookeeper的地址搜索)';}" />
+			</div>
+			<div class="search_btn"><a href="javascript:document.search_zookeeper.submit();"><img src="images/search_btn.png" width="39" height="31" /></a></div>
+        </form>
+   </div>
+   
+   <!--列表-->
+     
+  <table border="0" cellspacing="0" cellpadding="0" class="list changecolor_w">
+    <tr> 
+      <th>序号</th>
+      <th>集群名字</th>
+      <th>集群地址</th>
+	  <th>描述</th>
+      <th>操作</th>
+	  
+    </tr>
+	#foreach($autoKeeperCluster in $autoKeeperClusters)
+        <tr> 
+          <td width="4%">$autoKeeperCluster.id</td>
+		  #set ($detailUrl = $homeModule.setTarget("autoKeeperClustersDetail.vm").addQueryData("clusterId", $autoKeeperCluster.id).render())
+          <td width="10%"><a href="$detailUrl">$!autoKeeperCluster.clusterName</a></td>
+          <td width="40%">$!autoKeeperCluster.serverList</td>
+		  <td width="15%">$!autoKeeperCluster.description</td>
+          <td>
+			<a href="$detailUrl"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">查看</span></a>
+			#if($user.authorizeType.isAdmin())
+				#set ($editURL = $homeModule.setTarget("editAutoKeeper.vm").addQueryData("clusterId", $autoKeeperCluster.id))
+				<span class="ico_line">|</span><a href="$editURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">编辑</span></a>
+    			#set ($refreshURL = $homeModule.setAction("AutoKeeperClusterAction").addQueryData("clusterId", $autoKeeperCluster.id).addQueryData("eventSubmitDoRefresh", "true"))
+        		<span class="ico_line">|</span><a href="$refreshURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">刷新</span></a>
+    			#set ($removeURL = $homeModule.setAction("AutoKeeperClusterAction").addQueryData("clusterId", $autoKeeperCluster.id).addQueryData("eventSubmitDoDelete", "true"))
+    			<span class="ico_line">|</span><a href="$removeURL"><img src="images/ico_del.png" width="9" height="9"  />删除</a>
+			#end
+		  </td>
+        </tr>
+	#end
+    
+  </table>
+  <!--常规按钮-->
+  #if($user.authorizeType.isAdmin())
+	<div class="btn"><a href="$zookeeperAddLink">添加</a></div>
+  #end
+  <!--分页-->
+     <div class="page">共$paginator.items条数据&nbsp;&nbsp;第$paginator.page页/共$paginator.pages页&nbsp;&nbsp; 
+       
+	   #if($paginator.page == 1)
+            <font color="999999">首页</font>
+	   #else
+			<a href="#" class="prev" onclick="pageNavigation(this,1)">首页</a>
+	   #end
+	   
+	   #if($paginator.page > 1)
+			#set($pre_page = $paginator.page - 1)
+				<a href="#" class="prev" onclick="pageNavigation(this,$pre_page)">上一页</a>
+	   #else
+            <font color="999999">上一页</font>
+	   #end
+	   ##分页下标
+	   #set($counts_keys = $paginator.getSlider(7))
+	   #foreach( $thisPage in $counts_keys)
+			#if( $thisPage == $paginator.page)
+                <b>$thisPage</b>
+			#else
+				#if($thisPage != 0)
+					<a href="#" class="num" onclick="pageNavigation(this,$thisPage)">$thisPage</a> 
+				#end
+			#end
+	   #end
+	   
+	   #if($paginator.page < $paginator.pages)
+			#set($next_page = $paginator.page + 1)
+				<a href="#" class="prev" onclick="pageNavigation(this,$next_page)">下一页</a>
+	   #else
+            <font color="999999">下一页</font>
+	   #end
+	   
+	   #if($paginator.page == $paginator.pages)
+            <font color="999999">末页</font>
+	   #else
+			<a href="#" class="prev" onclick="pageNavigation(this,$paginator.pages)">末页</a>
+	   #end
+     </div>     
+</div>

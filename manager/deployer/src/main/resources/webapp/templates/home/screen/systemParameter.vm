@@ -1,0 +1,103 @@
+$control.setTemplate("home:navigation.vm")
+<script language="javascript">
+<!--
+	changeNav("user");
+//-->
+</script>
+#macro (systemParameterMessage $field)
+    #if (!$field.valid) $!field.message #end
+#end	
+
+<div class="main">
+  <div class="title"> 
+    <h2>系统参数设置</h2>
+  </div>
+ <div class="crumbs"><a href="systemParameter.htm">系统参数设置</a></div>
+<form name="systemParameterForm" method="post" enctype="multipart/form-data">
+	$csrfToken.hiddenField
+	<input type="hidden" name="action" value="systemParameter_action"/>
+	<input type="hidden" name="event_submit_do_edit" value="1" />
+ <div class="setting_box">
+   #set ($systemParameterGroup = $form.systemParameterInfo.defaultInstance)
+   #set ($systemParameterDetailGroup = $form.systemParameterDetailInfo.defaultInstance)
+    <table cellpadding="0" cellspacing="0" class="setting_otter">
+      <tr> 
+        <th>系统schema：</th>
+        <td>
+			<input type="text" name="$systemParameterDetailGroup.systemSchema.key" value="$!systemParameter.systemSchema" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#systemParameterMessage ($systemParameterDetailGroup.systemSchema)</span>
+		</td>
+      </tr>
+      <tr> 
+        <th>双向同步标记表：</th>
+        <td>
+			<input type="text" name="$systemParameterDetailGroup.systemMarkTable.key" value="$!systemParameter.systemMarkTable" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#systemParameterMessage ($systemParameterDetailGroup.systemMarkTable)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>双向同步标记id列名：</th>
+		<td>
+        <input type="text" name="$systemParameterDetailGroup.systemMarkTableColumn.key" value="$!systemParameter.systemMarkTableColumn" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#systemParameterMessage ($systemParameterDetailGroup.systemMarkTableColumn)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>双向同步标记info列名：</th>
+		<td>
+        <input type="text" name="$systemParameterDetailGroup.systemMarkTableInfo.key" value="$!systemParameter.systemMarkTableInfo" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#systemParameterMessage ($systemParameterDetailGroup.systemMarkTableInfo)</span>
+		</td>
+      </tr>
+      <tr> 
+        <th>同步系统buffer表：</th>
+		<td>
+        <input type="text" name="$systemParameterDetailGroup.systemBufferTable.key" value="$!systemParameter.systemBufferTable" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#systemParameterMessage ($systemParameterDetailGroup.systemBufferTable)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>同步系统dual表：</th>
+		<td>
+        <input type="text" name="$systemParameterDetailGroup.systemDualTable.key" value="$!systemParameter.systemDualTable" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#systemParameterMessage ($systemParameterDetailGroup.systemDualTable)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>下载方式：</th>
+        <td>
+            <select id="downloadType" name="$systemParameterDetailGroup.retriever.key">
+            <option value="ARIA2C" #if($!systemParameter.retriever.name() == 'ARIA2C') selected  #end >ARIA2C</option>
+            ##<option value="MR4J" #if($!systemParameter.retriever.name() == 'MR4J') selected  #end >MR4J</option>
+			</select><span class="red">*</span>
+        </td>
+      </tr>
+	  <tr> 
+        <th>默认报警联系人：</th>
+		<td>
+        <input type="text" name="$systemParameterDetailGroup.defaultAlarmReceiver.key" value="$!systemParameter.getDefaultAlarmReceiverFormat()" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#systemParameterMessage ($systemParameterDetailGroup.systemDualTable)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>自定义报警联系人：</th>
+		<td>
+		<textarea name="$systemParameterDetailGroup.alarmReceiver.key" cols="45" rows="5">$!systemParameter.getAlarmReceiverFormat()</textarea><span class="red">*</span>
+			<br />
+			<span>格式: otter1=xxx@gmail.com;otter2=xxx@gmail.com，多用户请用逗号分隔，分组请用分号分隔.</span>
+			<br />
+			<span class="red">#systemParameterMessage ($systemParameterDetailGroup.systemDualTable)</span>
+		</td>
+      </tr>
+    </table> 
+   </div>
+   <div class="btn"><a href="javascript:document.systemParameterForm.submit();">保存</a></div>  #if($edit) <font color="red">保存成功！ </font> #end 
+  </form>
+</div>

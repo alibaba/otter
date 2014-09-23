@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+    <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"  
+       "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="com.alibaba.otter.manager.biz.statistics.throughput.dal.dataobject.ThroughputStatDO">
+	<typeAlias alias="throughputStat"
+		type="com.alibaba.otter.manager.biz.statistics.throughput.dal.dataobject.ThroughputStatDO" />
+	<typeAlias alias="throughputCondition"
+		type="com.alibaba.otter.manager.biz.statistics.throughput.param.ThroughputCondition" />
+	<typeAlias alias="realtimeThroughputCondition"
+		type="com.alibaba.otter.manager.biz.statistics.throughput.param.RealtimeThroughputCondition" />
+	<typeAlias alias="timelineThroughputCondition"
+		type="com.alibaba.otter.manager.biz.statistics.throughput.param.TimelineThroughputCondition" />
+
+	<resultMap id="throughputStatResult" class="throughputStat">
+		<result property="id" column="ID" />
+		<result property="pipelineId" column="PIPELINE_ID" />
+		<result property="startTime" column="START_TIME" />
+		<result property="endTime" column="END_TIME" />
+		<result property="type" column="TYPE" />
+		<result property="number" column="NUMBER" />
+		<result property="size" column="SIZE" />
+		<result property="gmtCreate" column="GMT_CREATE" />
+		<result property="gmtModified" column="GMT_MODIFIED" />
+	</resultMap>
+	
+	<resultMap id="throughputStatSimpleResult" class="throughputStat">
+		<result property="pipelineId" column="PIPELINE_ID" />
+		<result property="type" column="TYPE" />
+		<result property="number" column="NUMBER" />
+		<result property="size" column="SIZE" />
+	</resultMap>
+
+	<!-- all throughputStat columns -->
+	<sql id="allThroughputStatColumns">ID,PIPELINE_ID,START_TIME,END_TIME,TYPE,NUMBER,SIZE,GMT_CREATE,GMT_MODIFIED</sql>
+
+	<!-- findThroughputStatById -->
+	<select id="findThroughputStatById" resultMap="throughputStatResult" parameterClass="long">
+		select
+		<include refid="allThroughputStatColumns" />
+		from THROUGHPUT_STAT where ID = #value#
+	</select>		
+	
+	<!-- listRealtimeThroughputStat -->
+	<select id="listRealtimeThroughputStat" resultMap="throughputStatResult" parameterClass="realtimeThroughputCondition">
+		select
+		<include refid="allThroughputStatColumns" />
+		from THROUGHPUT_STAT 
+		where PIPELINE_ID=#pipelineId# and TYPE=#type# and <![CDATA[ END_TIME >= now() - INTERVAL #max# MINUTE ]]>
+		ORDER BY END_TIME DESC,ID DESC
+	</select>
+
+	<!-- listTimelineThroughputStat -->
+	<select id="listTimelineThroughputStat" resultMap="throughputStatResult" parameterClass="timelineThroughputCondition">
+		select
+		<include refid="allThroughputStatColumns" />
+		from THROUGHPUT_STAT 
+		where PIPELINE_ID=#pipelineId# and TYPE=#type# and <![CDATA[ END_TIME>= #start# and END_TIME <= #end#]]>
+		ORDER BY END_TIME DESC,ID DESC
+	</select>
+	
+	<!-- listAllThroughputStat -->
+	<select id="listAllThroughputStat" resultMap="throughputStatResult">
+		select
+		<include refid="allThroughputStatColumns" />
+		from THROUGHPUT_STAT ORDER BY END_TIME DESC,ID DESC
+	</select>
+	
+	<!-- findRealtimeThroughputStat -->
+	<select id="findRealtimeThroughputStat" resultMap="throughputStatResult" parameterClass="throughputCondition">
+		select
+		<include refid="allThroughputStatColumns" />
+		from THROUGHPUT_STAT 
+		where PIPELINE_ID=#pipelineId# and TYPE=#type#
+		ORDER BY END_TIME DESC,ID DESC limit 1
+	</select>
+	
+	<!-- listThroughputStatByPipelineId -->
+	<select id="listThroughputStatByPipelineId" resultMap="throughputStatResult" parameterClass="long">
+		select
+		<include refid="allThroughputStatColumns" />
+		from THROUGHPUT_STAT 
+		where PIPELINE_ID=#pipelineId#
+		ORDER BY END_TIME DESC,ID DESC
+	</select>
+
+	<update id="modifyThroughputStat" parameterClass="throughputStat"><![CDATA[
+		update THROUGHPUT_STAT
+		set
+		PIPELINE_ID=#pipelineId#,
+		START_TIME=#startTime#,
+		END_TIME=#endTime#,
+		TYPE=#type#,
+		NUMBER=#number#,
+		SIZE=#size#,
+		GMT_MODIFIED=now()
+		WHERE ID = #id#
+	]]></update>
+
+	<insert id="insertThroughputStat" parameterClass="throughputStat">
+		insert into THROUGHPUT_STAT
+		(PIPELINE_ID,START_TIME,END_TIME,TYPE,NUMBER,SIZE,GMT_CREATE,GMT_MODIFIED)
+		values
+		(#pipelineId#,#startTime#,#endTime#,#type#,#number#,#size#,now(),now())
+		<selectKey keyProperty="id" resultClass="long">
+			select last_insert_id()
+		</selectKey>
+	</insert>
+
+	<delete id="deleteThroughputStat" parameterClass="long"><![CDATA[
+    	delete from THROUGHPUT_STAT where ID = #value#
+    ]]></delete>
+
+
+	<!-- listThroughputStatByPipelineId -->
+	<select id="listRealtimeThroughputStatByPipelineIds" resultMap="throughputStatSimpleResult">
+		select PIPELINE_ID, type , sum(NUMBER) as number , sum(SIZE) as size 
+		from THROUGHPUT_STAT 
+		where PIPELINE_ID in
+		<iterate property="pipelineIds" open="(" close=")" conjunction=",">
+			#pipelineIds[]#
+		</iterate>
+		and TYPE in ('ROW','FILE') and END_TIME >= (now() - INTERVAL #minute# MINUTE)
+	 	group by PIPELINE_ID , TYPE;
+	</select>
+</sqlMap>  

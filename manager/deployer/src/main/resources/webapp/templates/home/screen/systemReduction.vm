@@ -1,0 +1,29 @@
+$control.setTemplate("home:navigation.vm")
+<script language="javascript">
+<!--
+	changeNav("user");
+//-->
+</script>
+<!--页面主体-->
+<div class="main">
+   <div class="title">
+    <h2>系统初始化</h2>
+  </div>
+   <div class="crumbs"><a href="userManager.htm">zookeeper节点补全</a></div> 
+<br/>   
+<br/>  
+<br/>  
+<br/>  
+<br/>
+解决：zookeeper节点因为人为操作，误删除了channel/pipeline的相关节点，导致manager不可用，可点击进行一键补全
+<br/>  
+<br/>
+  #set ($redoZkLink = $homeModule.setTarget("systemReduction.vm").addQueryData("command", "true"))
+  <div class="btn"><a href="$redoZkLink">一键补全</a></div>
+  
+<br/>   
+<br/>  
+
+  <span class="red">$!resultStr</span>
+  
+</div>

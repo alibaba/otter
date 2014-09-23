@@ -1,0 +1,65 @@
+$control.setTemplate("home:navigation.vm")
+
+<div class="main">
+ <div class="title"><h2>数据表信息</h2></div>
+ <div class="crumbs">数据表信息</div>
+ <div class="setting_box">
+ <table cellpadding="0" cellspacing="0" class="setting">
+  <tr>
+  <th>数据表序号：</th><td>$!dataMedia.id</td>
+  </tr>
+  <tr>
+  <th>schema name：</th><td>$!dataMedia.namespace</td>
+  </tr>
+  <tr>
+  <th>table name：</th><td>$!dataMedia.name</td>
+  </tr>
+  <tr>
+  <th>数据源名称：</th><td><a href="dataSourceInfo.htm?dataMediaSourceId=$dataMedia.source.id">$!dataMedia.source.name</a></td>
+  </tr>
+  <tr>
+  <th>数据源类型：</th><td>$!dataMedia.source.type</td>
+  </tr>
+ </table>
+ </div>
+ 
+ <table border="0" cellspacing="0" cellpadding="0" class="list changecolor_w">
+    <tr> 
+      <th>源端</th>
+      <th>目标</th>
+	  <th>所属Pipeline</th>
+	  <th>所属Channel</th>
+    </tr>
+    
+    #foreach ($seniorDataMediapair in $seniorDataMediapairs)
+		<tr> 
+	      <td width="16%">
+			#if($seniorDataMediapair.dataMediaPair.source.id == $!dataMedia.id)
+                <font color="red">$seniorDataMediapair.dataMediaPair.source.namespace.$seniorDataMediapair.dataMediaPair.source.name</font>
+			#else
+                <a href="dataMediaInfo.htm?dataMediaId=$seniorDataMediapair.dataMediaPair.source.id">$seniorDataMediapair.dataMediaPair.source.namespace.$seniorDataMediapair.dataMediaPair.source.name</a>
+			#end
+		  </td>
+          <td>
+			#if($seniorDataMediapair.dataMediaPair.target.id == $!dataMedia.id)
+                <font color="red">$seniorDataMediapair.dataMediaPair.target.namespace.$seniorDataMediapair.dataMediaPair.target.name</font>
+			#else
+                <a href="dataMediaInfo.htm?dataMediaId=$seniorDataMediapair.dataMediaPair.target.id">$seniorDataMediapair.dataMediaPair.target.namespace.$seniorDataMediapair.dataMediaPair.target.name</a>
+			#end
+		  </td>
+	      #foreach($pipeline in $seniorDataMediapair.channel.pipelines)
+			#if($pipeline.id == $seniorDataMediapair.dataMediaPair.pipelineId)
+				<td>
+					#set ($pipelineInfoURL = $homeModule.setTarget("pipelineList.vm").addQueryData("pipelineId", $seniorDataMediapair.dataMediaPair.pipelineId).addQueryData("channelId", $seniorDataMediapair.channel.id))
+                    <a href="$pipelineInfoURL">$pipeline.name</a>
+				</td>
+			#end
+		  #end
+		  <td>
+			#set ($channelInfoURL = $homeModule.setTarget("channelList.vm").addQueryData("channelId", $seniorDataMediapair.channel.id))
+            <a href="$channelInfoURL">$seniorDataMediapair.channel.name</a>
+		  </td>
+	    </tr>
+	#end
+  </table>
+</div>

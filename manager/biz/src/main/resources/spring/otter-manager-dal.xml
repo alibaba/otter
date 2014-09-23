@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+	default-autowire="byName">
+
+
+	<bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation">
+			<value>classpath:sqlmap/sqlmap.xml</value>
+		</property>
+	</bean>
+
+	<bean id="baseSeoDAO" abstract="true">
+		<property name="sqlMapClient" ref="SqlMapClient" />
+	</bean>
+
+	<bean id="throughputDao"
+		class="com.alibaba.otter.manager.biz.statistics.throughput.dal.ibatis.IbatisThroughputDAO" />
+	<bean id="tableStatDao"
+		class="com.alibaba.otter.manager.biz.statistics.table.dal.ibatis.IbatisTableStatDAO" />
+	<bean id="tableHistoryStatDao"
+		class="com.alibaba.otter.manager.biz.statistics.table.dal.ibatis.IbatisTableHistoryStatDAO" />
+	<bean id="delayStatDao"
+		class="com.alibaba.otter.manager.biz.statistics.delay.dal.ibatis.IbatisDelayStatDAO" />
+	<bean id="userDao"
+		class="com.alibaba.otter.manager.biz.user.dal.ibatis.IbatisUserDAO" />
+	<bean id="channelDao"
+		class="com.alibaba.otter.manager.biz.config.channel.dal.ibatis.IbatisChannelDAO" />
+	<bean id="nodeDao"
+		class="com.alibaba.otter.manager.biz.config.node.dal.ibatis.IbatisNodeDAO" />
+	<bean id="canalDao"
+		class="com.alibaba.otter.manager.biz.config.canal.dal.ibatis.IbatisCanalDAO" />
+	<bean id="dataMatrixDao"
+		class="com.alibaba.otter.manager.biz.config.datamatrix.dal.ibatis.IbatisDataMatrixDAO" />
+	<bean id="dataMediaDao"
+		class="com.alibaba.otter.manager.biz.config.datamedia.dal.ibatis.IbatisDataMediaDAO" />
+	<bean id="dataMediaSourceDao"
+		class="com.alibaba.otter.manager.biz.config.datamediasource.dal.ibatis.IbatisDataMediaSourceDAO" />
+	<bean id="dataMediaPairDao"
+		class="com.alibaba.otter.manager.biz.config.datamediapair.dal.ibatis.IbatisDataMediaPairDAO" />
+	<bean id="pipelineDao"
+		class="com.alibaba.otter.manager.biz.config.pipeline.dal.ibatis.IbatisPipelineDAO" />
+	<bean id="pipelineNodeRelationDao"
+		class="com.alibaba.otter.manager.biz.config.pipeline.dal.ibatis.IbatisPipelineNodeRelationDAO" />
+	<bean id="dataColumnPairDao"
+		class="com.alibaba.otter.manager.biz.config.datacolumnpair.dal.ibatis.IbatisDataColumnPairDAO" />
+	<bean id="dataColumnPairGroupDao"
+		class="com.alibaba.otter.manager.biz.config.datacolumnpair.dal.ibatis.IbatisDataColumnPairGroupDAO" />
+	<bean id="systemParameterDao"
+		class="com.alibaba.otter.manager.biz.config.parameter.dal.ibatis.IbatisSystemParameterDAO" />
+	<bean id="logRecordDao"
+		class=" com.alibaba.otter.manager.biz.config.record.dal.ibatis.IbatisLogRecordDAO" />
+	<bean id="alarmRuleDao"
+		class="com.alibaba.otter.manager.biz.config.alarm.dal.ibatis.IbatisAlarmRuleDAO" />
+	<bean id="autoKeeperClusterDao"
+		class="com.alibaba.otter.manager.biz.config.autokeeper.dal.ibatis.IbatisAutoKeeperClusterDAO" />
+</beans>

@@ -1,0 +1,5 @@
+$control.setTemplate("home:navigation.vm")
+
+<div class="main">
+<div class="error_forbidden"></div>
+</div>

@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Otter Manager</title>
+<link type="text/css" href="css/commons.css" rel="stylesheet"/>
+<link type="text/css" href="css/skin.css" rel="stylesheet"/>
+<link type="text/css" href="css/otter.css" rel="stylesheet"/>
+</head>
+<body>
+
+$screen_placeholder
+
+<!--页脚-->
+<div class="footer">
+ <span>Copyright&nbsp;@&nbsp;2012-2018&nbsp;&nbsp;alibaba.com&nbsp;&nbsp;版权所有</span>
+ <div align="center">
+     <font color="#ffffff">$!{systemUtil.HostInfo.Name} - $!{numberFormat.getManagerVersionInfo()}</font>
+ </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<script type="text/javascript" src="js/trcolor.js"></script>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
+
+$control.setTemplate("home:navigation.vm")
+#set($user = $rundata.request.session.getAttribute("managerUser"))
+<script language="javascript">
+<!--
+	changeNav("sync");
+	
+	function setTab(name,cursel,n){
+ 		for(i=1;i<=n;i++){
+  			var menu=document.getElementById(name+i);
+  			var con=document.getElementById("con_"+name+"_"+i);
+  			menu.className=i==cursel?"tab_active":"";
+  			con.style.display=i==cursel?"block":"none";
+ 		}
+	}	
+//-->
+</script>
+<div class="main">
+  <div class="title"> 
+    <h2>映射关系列表</h2>
+  </div>   
+  <div class="crumbs"><a href="channelList.htm?channelId=$channel.id">Channel管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="pipelineList.htm?channelId=$channel.id">Pipeline管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="dataMediaPairList.htm?pipelineId=$pipelineId">映射关系列表</a></div>
+  <div class="crumbs"></div>   
+  <div class="tab" id="Tab2">
+        <div class="menubox">
+        <ul>
+		
+        <li id="two1" class="tab_active"><a href="dataMediaPairList.htm?pipelineId=$pipelineId">映射关系列表</a></li>
+           
+        <li id="two2"><a href="analysisThroughputStat.htm?pipelineId=$pipelineId">吞吐量</a></li>
+        
+        <li id="two3"><a href="analysisDelayStat.htm?pipelineId=$pipelineId">延迟时间</a></li>
+           
+        <li id="two4"><a href="analysisStageStat.htm?pipelineId=$pipelineId">同步进度</a></li>  
+		
+		<li id="two5"><a href="analysisThroughputHistory.htm?pipelineId=$pipelineId">历史吞吐量</a></li>
+		
+		<li id="two6"><a href="alarmRuleList.htm?pipelineId=$pipelineId">监控管理</a></li>
+        
+		<li id="two7"><a href="logRecordTab.htm?pipelineId=$pipelineId">日志记录</a></li>
+
+        </ul>
+        </div>
+         <div class="contentbox_tab box_tab">  
+           <div id="con_two_1">
+        
+        <table border="0" cellspacing="0" cellpadding="0" class="list2 changecolor_g">
+          <tr> 
+            <th width="3%">序号</th>
+            <th width="10%">源表</th>
+            <th width="10%">目标表</th>
+            <th width="5%">权重</th>
+			<th width="7%">FileSize</th>
+			<th width="7%">FileCount</th>
+			<th width="7%">DeleteCount</th>
+			<th width="7%">UpdateCount</th>
+			<th width="7%">InsertCount</th>
+            <th width="10%">最后同步时间</th>
+			<th width="16%">操作</th>
+            
+          </tr>
+		  #foreach ($dataMediaPair in $dataMediaPairs)
+          <tr> 
+            <td width="5%">$!dataMediaPair.id</td>
+            <td width="8%"><a href="dataMediaInfo.htm?dataMediaId=$dataMediaPair.source.id">$!dataMediaPair.source.namespace.$!dataMediaPair.source.name</a></td>
+			<td><a href="dataMediaInfo.htm?dataMediaId=$dataMediaPair.target.id">$!dataMediaPair.target.namespace.$!dataMediaPair.target.name</a></td>
+            <td>$!dataMediaPair.pushWeight</td>
+			<td>$!numberFormat.formatFileSize($tableStatMap.get($dataMediaPair.id).fileSize)</td>
+			<td>$!numberFormat.format($tableStatMap.get($dataMediaPair.id).fileCount)</td>
+			<td>$!numberFormat.format($tableStatMap.get($dataMediaPair.id).deleteCount)</td>
+			<td>$!numberFormat.format($tableStatMap.get($dataMediaPair.id).updateCount)</td>
+			<td>$!numberFormat.format($tableStatMap.get($dataMediaPair.id).insertCount)</td>
+            <td>$!numberFormat.format($!tableStatMap.get($dataMediaPair.id).gmtModified)</td>
+			<td>
+				#set ($dataMediaPairInfoURL = $homeModule.setTarget("dataMediaPairInfo.vm").addQueryData("dataMediaPairId", $dataMediaPair.id))
+				<a href="$dataMediaPairInfoURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">查看</span></a>
+				
+    			#if($user.authorizeType.isAdmin() && $channel.status.isStop())
+    				#set ($editURL = $homeModule.setTarget("editDataMediaPair.vm").addQueryData("pipelineId", $dataMediaPair.pipelineId).addQueryData("dataMediaPairId", $dataMediaPair.id))
+    				<a href="$editURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">编辑</span></a>
+    				#set ($removeURL = $homeModule.setAction("dataMediaPairAction").addQueryData("dataMediaPairId", $dataMediaPair.id).addQueryData("pipelineId", $dataMediaPair.pipelineId).addQueryData("eventSubmitDoDelete", "true"))
+    				<a href="javascript:if(confirm('确实要删除吗?'))location='$removeURL'" class="link del"><img src="images/ico_del.png" alt="" width="9" height="9" /><span class="ico_font">删除</span></a>
+				#end
+				
+				#set ($behaviorHistoryCurveURL = $homeModule.setTarget("behaviorHistoryCurve.vm").addQueryData("dataMediaPairId", $dataMediaPair.id))
+				<a href="$behaviorHistoryCurveURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">行为曲线</span></a>
+				
+			</td>
+          </tr>
+          #end
+        </table>
+		
+			#if($user.authorizeType.isAdmin() && $channel.status.isStop())
+    				<div class="btn">
+    					#set ($addURL = $homeModule.setTarget("addDataMediaPair.vm").addQueryData("pipelineId", $pipelineId))
+    					<a href="$addURL">添加</a>
+    				</div>
+					
+					<div class="btn">
+    					#set ($addURL = $homeModule.setTarget("addBatchDataMediaPair.vm").addQueryData("pipelineId", $pipelineId))
+    					<a href="$addURL">批量添加</a>
+    				</div>
+			#end
+
+       <!--</div>-->
+    </div>
+	</div>
+  </div>
+</div>

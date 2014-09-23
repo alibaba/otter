@@ -1,0 +1,179 @@
+$control.setTemplate("home:navigation.vm")
+<script language="javascript">
+<script language="javascript">
+<!--
+	changeNav("datamedia");
+//-->
+		
+</script>
+
+<div class="main">
+ <div class="title"><h2>Canal信息</h2></div>
+ <div class="crumbs">Canal信息</div>
+ <div class="setting_box">
+ <table cellpadding="0" cellspacing="0" class="setting">
+  <tr>
+  <th>canal序号：</th><td>$!canal.id</td>
+  </tr>
+  <tr>
+  <th>canal名称：</th><td>$!canal.name</td>
+  </tr>
+  <tr>
+  <th>运行状态：</th><td>$!canal.status</td>
+  </tr>
+  <tr>
+  <th>运行模式：</th><td>$!canal.canalParameter.runMode</td>
+  </tr>
+  <tr>
+  <th>Zookeeper集群：</th><td>$zkCluster.clusterName [ $stringUtil.join($zkCluster.serverList,",") ]</td>
+  </tr>
+  <tr>
+  <th>数据源类型：</th><td>$!canal.canalParameter.sourcingType</td>
+  </tr>
+  <tr>
+  <th>数据库地址：</th><td>$!numberFormat.formatGroupDbAddress($canal.canalParameter.sourcingType,$canal.canalParameter.groupDbAddresses)</td>
+  </tr>
+  <tr>
+  <th>数据库帐号：</th><td>$!canal.canalParameter.dbUsername</td>
+  </tr>
+  <tr>
+  <th>connectionCharset：</th><td>$!canal.canalParameter.connectionCharset</td>
+  </tr>
+  #**
+  #if($!canal.canalParameter.sourcingType.isMysql())
+  <tr>
+  <th>链接到mysql的slaveId：</th><td>$!canal.canalParameter.slaveId</td>
+  </tr>
+  #end
+  *#
+  
+  #if($!canal.canalParameter.sourcingType.isLocalBinlog())
+  <tr>
+  <th>本地localBinlog目录：</th><td>$!canal.canalParameter.localBinlogDirectory</td>
+  </tr>
+  #end
+  
+  <tr>
+  <th>位点信息：</th><td>#foreach($position in $!canal.canalParameter.positions)$position;#end</td>
+  </tr>
+  
+  <tr>
+  <th>存储机制：</th><td>$!canal.canalParameter.storageMode</td>
+  </tr>
+  
+  #if($!canal.canalParameter.storageMode.isMemory())
+  <tr>
+  <th>内存存储batch获取模式：</th><td>$!canal.canalParameter.storageBatchMode</td>
+  </tr>
+  <tr>
+  <th>内存存储buffer记录数：</th><td>$!canal.canalParameter.memoryStorageBufferSize</td>
+  </tr>
+  <tr>
+  <th>内存存储buffer记录单元大小：</th><td>$!canal.canalParameter.memoryStorageBufferMemUnit</td>
+  </tr>
+  #end
+  
+  #if($!canal.canalParameter.storageMode.isFile())
+  <tr>
+  <th>文件存储的目录位置：</th><td>$!canal.canalParameter.fileStorageDirectory</td>
+  </tr>
+  <tr>
+  <th>文件存储store记录数：</th><td>$!canal.canalParameter.fileStorageStoreCount</td>
+  </tr>
+  <tr>
+  <th>store文件个数：</th><td>$!canal.canalParameter.fileStorageRollverCount</td>
+  </tr>
+  <tr>
+  <th>store存储占disk百分比：</th><td>$!canal.canalParameter.fileStoragePercentThresold</td>
+  </tr>
+  #end
+  
+  <tr>
+  <th>HA机制：</th><td>$!canal.canalParameter.haMode</td>
+  </tr>
+  
+  #if($!canal.canalParameter.haMode.isMedia())
+  <tr>
+  <th>media group key：</th><td>$!canal.canalParameter.mediaGroup</td>
+  </tr>
+  #end
+  
+  <tr>
+  <th>是否开启心跳：</th><td>$!canal.canalParameter.detectingEnable</td>
+  </tr>
+  #if($!canal.canalParameter.detectingEnable)
+  <tr>
+  <th>心跳sql：</th><td>$!canal.canalParameter.detectingSQL</td>
+  </tr>
+  <tr>
+  <th>心跳检测频率：</th><td>$!canal.canalParameter.detectingIntervalInSeconds</td>
+  </tr>
+  <tr>
+  <th>心跳超时时间：</th><td>$!canal.canalParameter.detectingTimeoutThresholdInSeconds</td>
+  </tr>
+  <tr>
+  <th>心跳检查重试次数：</th><td>$!canal.canalParameter.detectingRetryTimes</td>
+  </tr>
+  <tr>
+  <th>是否启用心跳HA：</th><td>$!canal.canalParameter.heartbeatHaEnable</td>
+  </tr>
+  #end
+  
+  <tr>
+  <th>meta机制：</th><td>$!canal.canalParameter.metaMode</td>
+  </tr>
+  <tr>
+  <th>索引机制：</th><td>$!canal.canalParameter.indexMode</td>
+  </tr>
+  <tr>
+  <th>服务端口：</th><td>$!canal.canalParameter.port</td>
+  </tr>
+  <tr>
+  <th>默认连接超时：</th><td>$!canal.canalParameter.defaultConnectionTimeout</td>
+  </tr>
+  <tr>
+  <th>接收BufferSize：</th><td>$!canal.canalParameter.receiveBufferSize</td>
+  </tr>
+  <tr>
+  <th>发送BufferSize：</th><td>$!canal.canalParameter.sendBufferSize</td>
+  </tr>
+  <tr>
+  <th>切换回退时间：</th><td>$!canal.canalParameter.fallbackIntervalInSeconds</td>
+  </tr>
+  <tr>
+  <th>过滤表达式：</th><td>$!canal.canalParameter.blackFilter</td>
+  </tr>
+  <tr>
+  <th>描述信息：</th><td>$!canal.desc</td>
+  </tr>
+ </table>
+ </div>
+ 
+ <table border="0" cellspacing="0" cellpadding="0" class="list changecolor_w" width="60%">
+    <tr>
+      <th>channel名字</th>
+      <th>pipeline名字</th>
+	  <th>消费端ID</th>
+	  <th>消费批次大小</th>
+	  <th>获取数据超时时间</th>
+	  <th>操作</th>
+    </tr>
+    
+    #foreach ($pipeline in $pipelines)
+		<tr>
+		  #set($channel = $channelMap.get($pipeline.channelId))
+		  #set ($channelURL = $homeModule.setTarget("channelList.vm").addQueryData("channelId", $pipeline.channelId))
+		  <td width="16%"><a href="$channelURL">$channel.name</a></td>
+		  #set ($pipelineURL = $homeModule.setTarget("pipelineList.vm").addQueryData("pipelineId", $pipeline.id).addQueryData("channelId", $pipeline.channelId))
+    	  <td width="16%"><a href="$pipelineURL">$pipeline.name</a></td>
+          <td width="12%">$!pipeline.parameters.mainstemClientId</td>
+		  <td width="12%">$!pipeline.parameters.mainstemBatchsize</td>
+		  <td width="12%">$!pipeline.parameters.batchTimeout</td>
+		  <td>
+			#set ($pipelineInfoURL = $homeModule.setTarget("pipelineInfo.vm").addQueryData("pipelineId", $pipeline.id))
+    		<a href="$pipelineInfoURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">查看</span></a>
+		  </td>
+	    </tr>
+	#end
+  </table>
+</div>

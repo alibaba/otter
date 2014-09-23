@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:lang="http://www.springframework.org/schema/lang" xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+    default-autowire="byName">
+     
+     <bean id="globalMonitor" class="com.alibaba.otter.manager.biz.monitor.impl.GlobalMonitor">
+     	<property name="nThreads" value="8" />
+     	<property name="needConcurrent" value="true" />
+     </bean>
+     
+     <bean id="selfMonitor" class="com.alibaba.otter.manager.biz.monitor.impl.SelfMonitor">
+     	<property name="enable" value="${otter.manager.self.monitor.enable:true}" />
+     	<property name="interval" value="${otter.manager.self.monitor.interval:120}" />
+     	<property name="monitor" ref="globalMonitor" />
+     </bean>
+     
+     <bean id="pipelineMonitor" class="com.alibaba.otter.manager.biz.monitor.impl.PipelineMonitor" />
+     
+     <bean id="delayStatRuleMonitor" class="com.alibaba.otter.manager.biz.monitor.impl.DelayStatRuleMonitor" />
+     <bean id="exceptionRuleMonitor" class="com.alibaba.otter.manager.biz.monitor.impl.ExceptionRuleMonitor" />
+     <bean id="pipelineTimeoutRuleMonitor" class="com.alibaba.otter.manager.biz.monitor.impl.PipelineTimeoutRuleMonitor" />
+     <bean id="processTimeoutRuleMonitor" class="com.alibaba.otter.manager.biz.monitor.impl.ProcessTimeoutRuleMonitor" />
+     <bean id="positionTimeoutRuleMonitor" class="com.alibaba.otter.manager.biz.monitor.impl.PositionTimeoutRuleMonitor" />
+     
+     <bean id="alarmController" class="com.alibaba.otter.manager.biz.monitor.impl.DefaultAlarmController" />
+     <bean id="restartAlarmRecovery"  class="com.alibaba.otter.manager.biz.monitor.impl.RestartAlarmRecovery" />
+</beans>

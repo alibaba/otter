@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+    <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"  
+       "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="com.alibaba.otter.manager.biz.config.pipeline.dal.dataobject.PipelineDO">
+	<typeAlias alias="pipeline"
+		type="com.alibaba.otter.manager.biz.config.pipeline.dal.dataobject.PipelineDO" />
+
+	<resultMap id="pipelineResult" class="pipeline">
+		<result property="id" column="ID" />
+		<result property="name" column="NAME" />
+		<result property="parameters" column="PARAMETERS" />
+		<result property="description" column="DESCRIPTION" />
+		<result property="channelId" column="CHANNEL_ID" />
+		<result property="gmtCreate" column="GMT_CREATE" />
+		<result property="gmtModified" column="GMT_MODIFIED" />
+	</resultMap>
+
+	<!-- all pipeline columns -->
+	<sql id="allPipelineColumns">ID,NAME,PARAMETERS,DESCRIPTION,CHANNEL_ID,GMT_CREATE,GMT_MODIFIED
+	</sql>
+
+
+	<select id="findPipelineById" resultMap="pipelineResult"
+		parameterClass="long">
+		select
+		<include refid="allPipelineColumns" />
+		from PIPELINE where ID = #value#
+	</select>
+
+	<select id="getPipelineCount" resultClass="Integer">
+		select count(*) from PIPELINE 
+		<dynamic prepend="where">
+			<isNotEmpty property="searchKey">
+			NAME like concat('%',replace(#searchKey#,'_','\_'),'%') 
+			or ID like concat('%',replace(#searchKey#,'_','\_'),'%')
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="listPipelinesByChannelIds" resultMap="pipelineResult">
+		select
+		<include refid="allPipelineColumns" />
+		from PIPELINE where CHANNEL_ID in
+		<iterate open="(" close=")" conjunction=",">
+			#[]# 
+		</iterate>
+		ORDER BY ID DESC
+	</select>
+	
+	<select id="listPipelines" resultMap="pipelineResult" parameterClass="long">
+		select
+		<include refid="allPipelineColumns" />
+		from PIPELINE 
+		<dynamic prepend="where">
+			<isNotEmpty property="searchKey">
+			NAME like concat('%',replace(#searchKey#,'_','\_'),'%') 
+			or ID like concat('%',replace(#searchKey#,'_','\_'),'%')
+			</isNotEmpty>
+		</dynamic>
+	
+		ORDER BY ID DESC
+		
+		<dynamic>
+			<isNotEmpty property="offset" >
+				<isNotEmpty property="length">
+					limit #offset#, #length#
+				</isNotEmpty>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="listPipelineByIds" resultMap="pipelineResult" >
+		select
+		<include refid="allPipelineColumns" />
+		from PIPELINE where ID in
+		<iterate open="(" close=")" conjunction=",">
+			#[]#
+		</iterate>
+		ORDER BY ID DESC
+	</select>
+
+	<update id="updatePipeline" parameterClass="pipeline"><![CDATA[
+		update PIPELINE
+		set
+		NAME=#name#,
+		PARAMETERS=#parameters#,
+		DESCRIPTION=#description#,
+		CHANNEL_ID=#channelId#,
+		GMT_MODIFIED = now() 
+		WHERE ID = #id#  
+	]]></update>
+	
+	<select id="checkPipelineUnique" resultClass="Integer"
+		parameterClass="pipeline">
+		select count(*) from PIPELINE
+		where PIPELINE.ID != #id#
+		and PIPELINE.CHANNEL_ID = #channelId# 
+		and PIPELINE.NAME = #name#
+	</select>
+	
+	<insert id="insertPipeline" parameterClass="pipeline">
+		insert into PIPELINE
+		(NAME, PARAMETERS,DESCRIPTION,CHANNEL_ID,GMT_CREATE, GMT_MODIFIED)
+		SELECT #name#,#parameters#,#description#,#channelId#,now(),now()
+		from dual
+		WHERE not exists (select * from PIPELINE
+		where PIPELINE.CHANNEL_ID = #channelId# and PIPELINE.NAME = #name#); 
+		<selectKey keyProperty="id" resultClass="long">
+			select last_insert_id()
+		</selectKey>
+	</insert>
+	
+	<delete id="deletePipelineById" parameterClass="long"><![CDATA[
+    	delete from PIPELINE where ID = #value#
+    ]]></delete>
+
+
+	<select id="listByDestinationCondition" resultMap="pipelineResult">
+		select
+		<include refid="allPipelineColumns" />
+		from PIPELINE 
+		<dynamic prepend="where">
+			<isNotEmpty property="searchKey">
+			PARAMETERS like concat('%"destinationName":"',replace(#searchKey#,'_','\_'),'"%') 
+			</isNotEmpty>
+		</dynamic>
+		ORDER BY ID DESC
+		<dynamic>
+			<isNotEmpty property="offset" >
+				<isNotEmpty property="length">
+					limit #offset#, #length#
+				</isNotEmpty>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+</sqlMap>  

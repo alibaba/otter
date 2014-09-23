@@ -1,0 +1,101 @@
+$control.setTemplate("home:navigation.vm")
+#set($user = $rundata.request.session.getAttribute("managerUser"))
+<script type="text/javascript" src="js/trcolor.js"></script>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
+<script language="javascript">
+    <!--
+	changeNav("record");
+    //-->
+</script>
+<style type="text/css">
+<!--
+
+a { text-decoration: none; }
+
+.showtext { cursor: hand; cursor:pointer;}
+.contentid { margin-top: 10px; margin-bottom: 10px; width: 400px; border: 1px solid #CCC; background: #F1F1F1; padding: 15px; display: none; }
+-->
+</style>
+
+<!--页面主体-->
+<div class="main">
+  <div class="title"> 
+    <h2>同步TOPN</h2>
+  </div>
+   
+   <!--Node搜索-->
+   <div class="search_o"> 
+		<form name="search_node" action="analysis_top_stat.htm"  method="post">
+			##$csrfToken.hiddenField
+			<div class="search_input">
+				<input name="searchKey" type="text" value="请输入关键字(目前channel名字搜索)"  onfocus="if(this.value == '请输入关键字(目前channel名字搜索)') {this.value='';}" onblur="if(this.value == '') {this.value = '请输入关键字(目前channel名字搜索)';}" />
+			</div>
+			<div class="search_btn"><a href="javascript:document.search_node.submit();"><img src="images/search_btn.png" width="39" height="31" /></a></div>
+        </form>
+   </div>
+      
+   <!--列表-->
+  <table border="0" cellspacing="0" cellpadding="0" class="list changecolor_w">
+          <tr> 
+            <th width="5%">TOP</th>
+            <th width="12%">Channel名字</th>
+			<th width="10%">Pipeline信息</th>
+			<th width="9%">延迟时间</th>
+			<th width="9%">最后采集间隔</th>
+			<th width="9%">DB数量(${statTime}分种)</th>
+			<th width="9%">DB大小(${statTime}分种)</th>
+			<th width="9%">文件数量(${statTime}分种)</th>
+			<th width="9%">文件大小(${statTime}分种)</th>
+			<th width="9%">channel状态</th>
+			<th width="9%">pipeline状态</th>
+          </tr>
+		  #foreach ($top in $tops)
+		   <tr> 
+             <td width="3%">$velocityCount</td>
+			 <td width="10%">
+				#set ($channelURL = $homeModule.setTarget("channelList.vm").addQueryData("channelId", $top.channelId))
+				<a href="$channelURL">$!top.channelName</a>
+			 </td>
+			 <td width="8%">
+				#set ($pipelineURL = $homeModule.setTarget("pipelineList.vm").addQueryData("channelId", $top.channelId).addQueryData("pipelineId", $top.pipelineId))
+				<a href="$pipelineURL">$!top.pipelineName</a>
+			 </td>
+			 <td width="10%">$!numberFormat.formatDelay($!top.delayTime)</td>
+			 <td width="10%">
+				#if($!top.lastUpdateDelay)
+    				#if($!top.lastUpdateDelay > 1800)
+    					<font color="#FF0000">$!top.lastUpdateDelay s</font>
+    				#else
+    					$!top.lastUpdateDelay s
+					#end
+				#else
+					无信息
+				#end
+			 </td>
+			 <td width="9%">$!numberFormat.format($!top.dbStat.number)</td>
+			 <td width="9%">$!numberFormat.formatFileSize($!top.dbStat.size)</td>
+			 <td width="9%">$!numberFormat.format($!top.fileStat.number)</td>
+			 <td width="9%">$!numberFormat.formatFileSize($!top.fileStat.size)</td>
+			 <td width="9%">
+				#set($channelStatus = $!channelStatuses.get($top.channelId))
+				#if($!channelStatus.isStart())  <font style="color:green">运行</font>
+                #elseif($!channelStatus.isPause())  <font style="color:red">挂起</font>
+				#else <font style="color:gray">停止</font>
+				#end
+			 </td>
+			 <td width="9%">
+				#set($mainstemStatus = $!mainstemStatuses.get($top.pipelineId))
+        		#if(!$mainstemStatus)
+        			<font color="#FF0000">未工作</font>
+        		#else
+            		#if($!mainstemStatus.status.isTaking())
+            			<font color="#FF0000">定位中</font>
+            		#else
+            			工作中
+            		#end
+        		#end
+			 </td>
+		   </tr>
+		  #end
+        </table>	
+</div>

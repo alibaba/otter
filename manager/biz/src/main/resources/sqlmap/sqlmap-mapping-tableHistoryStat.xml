@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+    <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"  
+       "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="com.alibaba.otter.manager.biz.statistics.table.dal.dataobject.TableHistoryStatDO">
+	<typeAlias alias="tableHistoryStat"
+		type="com.alibaba.otter.manager.biz.statistics.table.dal.dataobject.TableHistoryStatDO" />
+	<typeAlias alias="timelineBehaviorHistoryCondition"
+		type="com.alibaba.otter.manager.biz.statistics.table.param.TimelineBehaviorHistoryCondition" />
+
+
+	
+	<resultMap id="tableHistoryStatResult" class="tableHistoryStat">
+		<result property="id" column="ID" />
+		<result property="pipelineId" column="PIPELINE_ID" />
+		<result property="dataMediaPairId" column="DATA_MEDIA_PAIR_ID" />
+		<result property="startTime" column="START_TIME" />
+		<result property="endTime" column="END_TIME" />
+		<result property="fileSize" column="FILE_SIZE" />
+		<result property="fileCount" column="FILE_COUNT" />
+		<result property="deleteCount" column="DELETE_COUNT" />
+		<result property="updateCount" column="UPDATE_COUNT" />
+		<result property="insertCount" column="INSERT_COUNT" />
+		<result property="gmtCreate" column="GMT_CREATE" />
+		<result property="gmtModified" column="GMT_MODIFIED" />
+	</resultMap>
+
+	<!-- all tableHistoryStat columns -->
+	<sql id="allTableHistoryStatColumns">ID,PIPELINE_ID,DATA_MEDIA_PAIR_ID,START_TIME,END_TIME,FILE_SIZE,FILE_COUNT,DELETE_COUNT,UPDATE_COUNT,INSERT_COUNT,GMT_CREATE,GMT_MODIFIED</sql>
+	
+    <insert id="insertTableHistoryStat" parameterClass="tableHistoryStat">
+		insert into TABLE_HISTORY_STAT
+		(PIPELINE_ID,DATA_MEDIA_PAIR_ID,FILE_SIZE,FILE_COUNT,DELETE_COUNT,UPDATE_COUNT,INSERT_COUNT,START_TIME,END_TIME,GMT_CREATE,GMT_MODIFIED)
+		values
+		(#pipelineId#,#dataMediaPairId#,#fileSize#,#fileCount#,#deleteCount#,#updateCount#,#insertCount#,#startTime#,#endTime#,now(),now())
+		<selectKey keyProperty="id" resultClass="long">
+			select last_insert_id()
+		</selectKey>
+	</insert>
+    
+    <!-- listTimelineTableStat -->
+	<select id="listTimelineTableStat" resultMap="tableHistoryStatResult" parameterClass="timelineBehaviorHistoryCondition">
+		select
+		<include refid="allTableHistoryStatColumns" />
+		from TABLE_HISTORY_STAT 
+		where DATA_MEDIA_PAIR_ID=#pairId# and <![CDATA[ END_TIME>= #start# and END_TIME <= #end#]]>
+		ORDER BY END_TIME DESC,ID DESC
+	</select>
+
+</sqlMap>  

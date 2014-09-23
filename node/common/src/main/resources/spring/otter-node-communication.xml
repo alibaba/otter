@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd"
+	default-autowire="byName" default-dependency-check="none" >
+
+	<!--  communication tool -->
+	<!-- 
+	<bean id="endpoint" class="com.alibaba.otter.shared.communication.core.impl.rmi.RmiCommunicationEndpoint" />
+	<bean id="communicationClient" class="com.alibaba.otter.shared.communication.core.impl.DefaultCommunicationClientImpl" init-method="initial" destroy-method="destory">
+		<property name="factory">
+			<bean class="com.alibaba.otter.shared.communication.core.impl.connection.CommunicationConnectionPoolFactory" init-method="initial" destroy-method="destory" >
+				<property name="factory">
+					<bean class="com.alibaba.otter.shared.communication.core.impl.rmi.RmiCommunicationConnectionFactory" />
+				</property>
+				<property name="maxActive" value="${otter.communication.pool.size}" />
+			</bean>
+		</property>
+		<property name="discard" value="true" />
+	</bean>
+	 -->
+	<bean id="endpoint" class="com.alibaba.otter.shared.communication.core.impl.dubbo.DubboCommunicationEndpoint" />
+	<bean id="communicationClient" class="com.alibaba.otter.shared.communication.core.impl.DefaultCommunicationClientImpl" init-method="initial" destroy-method="destory">
+		<property name="poolSize" value="${otter.communication.pool.size:10}" />
+		<property name="factory">
+			<bean class="com.alibaba.otter.shared.communication.core.impl.dubbo.DubboCommunicationConnectionFactory" />
+		</property>
+		<property name="discard" value="true" />
+	</bean>
+	
+	<!-- Node communication -->
+	<bean id="nodeCommmunicationClient" class="com.alibaba.otter.node.common.communication.NodeCommmunicationClient" >
+		<property name="delegate" ref="communicationClient" />
+		<property name="managerAddress" value="${otter.manager.address:127.0.0.1:1099}" />
+		<property name="configClientService" ref="configClientService" />
+	</bean>
+	<bean id="nodeCommunicationEndpoint" class="com.alibaba.otter.node.common.communication.NodeCommunicationEndpoint" >
+		<property name="endpoint" ref="endpoint" />
+		<property name="configClientService" ref="configClientService" />
+	</bean>
+</beans>

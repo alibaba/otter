@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:lang="http://www.springframework.org/schema/lang" xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.directwebremoting.org/schema/spring-dwr http://www.directwebremoting.org/schema/spring-dwr-2.0.xsd"
+    default-autowire="byName">
+    
+	<bean id="channelService" class="com.alibaba.otter.manager.biz.config.channel.impl.ChannelServiceImpl" depends-on="arbitrateConfigImpl">
+		<property name="pipelineService">
+			<ref bean="pipelineService" />
+		</property>
+		<property name="channelDao">
+			<ref bean="channelDao" />
+		</property>
+		<property name="transactionTemplate">
+			<ref bean="transactionTemplate" />
+		</property>
+	</bean>
+
+	<bean id="pipelineService" class="com.alibaba.otter.manager.biz.config.pipeline.impl.PipelineServiceImpl">
+		<property name="pipelineDao">
+			<ref bean="pipelineDao" />
+		</property>
+		<property name="pipelineNodeRelationDao">
+			<ref bean="pipelineNodeRelationDao" />
+		</property>
+		<property name="dataMediaPairService">
+			<ref bean="dataMediaPairService" />
+		</property>
+		<property name="transactionTemplate">
+			<ref bean="transactionTemplate" />
+		</property>
+	</bean>
+
+	<bean id="dataMediaService" class="com.alibaba.otter.manager.biz.config.datamedia.impl.DataMediaServiceImpl">
+		<property name="dataMediaDao">
+			<ref bean="dataMediaDao" />
+		</property>
+		<property name="dataMediaSourceService">
+			<ref bean="dataMediaSourceService" />
+		</property>
+	</bean>
+
+	<bean id="dataMediaPairService" class="com.alibaba.otter.manager.biz.config.datamediapair.impl.DataMediaPairServiceImpl">
+		<property name="dataMediaPairDao">
+			<ref bean="dataMediaPairDao" />
+		</property>
+		<property name="dataMediaService">
+			<ref bean="dataMediaService" />
+		</property>
+		<property name="dataColumnPairService">
+			<ref bean="dataColumnPairService" />
+		</property>
+		<property name="dataColumnPairGroupService">
+			<ref bean="dataColumnPairGroupService" />
+		</property>
+	</bean>
+
+	<bean id="dataMediaSourceService" class="com.alibaba.otter.manager.biz.config.datamediasource.impl.DataMediaSourceServiceImpl">
+		<property name="dataMediaSourceDao">
+			<ref bean="dataMediaSourceDao" />
+		</property>
+	</bean>
+	
+	<bean id="nodeService" class="com.alibaba.otter.manager.biz.config.node.impl.NodeServiceImpl">
+		<property name="nodeDao">
+			<ref bean="nodeDao" />
+		</property>
+		<property name="transactionTemplate">
+			<ref bean="transactionTemplate" />
+		</property>
+	</bean>
+	
+	<bean id="canalService" class="com.alibaba.otter.manager.biz.config.canal.impl.CanalServiceImpl">
+		<property name="canalDao">
+			<ref bean="canalDao" />
+		</property>
+		<property name="transactionTemplate">
+			<ref bean="transactionTemplate" />
+		</property>
+	</bean>
+	
+	<bean id="dataMatrixService" class="com.alibaba.otter.manager.biz.config.datamatrix.impl.DataMatrixServiceImpl">
+		<property name="dataMatrixDao">
+			<ref bean="dataMatrixDao" />
+		</property>
+		<property name="transactionTemplate">
+			<ref bean="transactionTemplate" />
+		</property>
+	</bean>
+	
+	<bean id="userService" class="com.alibaba.otter.manager.biz.user.impl.UserServiceImpl">
+		<property name="userDao">
+			<ref bean="userDao" />
+		</property>
+	</bean>
+	
+	<bean id="delayStatService"
+		class="com.alibaba.otter.manager.biz.statistics.delay.impl.DelayStatServiceImpl">
+		<property name="delayStatDao">
+			<ref bean="delayStatDao" />
+		</property>
+	</bean>
+	
+	<bean id="processStatService"
+		class="com.alibaba.otter.manager.biz.statistics.stage.impl.ProcessStatServiceImpl">
+	</bean>
+	
+	<bean id="tableStatService"
+		class="com.alibaba.otter.manager.biz.statistics.table.impl.TableStatServiceImpl">
+		<property name="tableStatDao">
+			<ref bean="tableStatDao" />
+		</property>
+	</bean>
+	
+ 	<bean id="throughputStatService"
+		class="com.alibaba.otter.manager.biz.statistics.throughput.impl.ThroughputStatServiceImpl">
+		<property name="throughputDao">
+			<ref bean="throughputDao" />
+		</property>
+	</bean>
+	
+	<bean id="dataColumnPairService"
+		class="com.alibaba.otter.manager.biz.config.datacolumnpair.impl.DataColumnPairServiceImpl">
+		<property name="dataColumnPairDao">
+			<ref bean="dataColumnPairDao" />
+		</property>
+	</bean>
+	
+	<bean id="dataColumnPairGroupService"
+		class="com.alibaba.otter.manager.biz.config.datacolumnpair.impl.DataColumnPairGroupServiceImpl">
+		<property name="dataColumnPairGroupDao">
+			<ref bean="dataColumnPairGroupDao" />
+		</property>
+		
+		<property name="dataColumnPairService">
+			<ref bean="dataColumnPairService" />
+		</property>
+	</bean>
+	
+	<bean id="logRecordService"
+		class="com.alibaba.otter.manager.biz.config.record.impl.LogRecordServiceImpl">
+		<property name="channelService">
+			<ref bean="channelService" />
+		</property>
+		
+		<property name="logRecordDao">
+			<ref bean="logRecordDao" />
+		</property>
+	</bean>
+	
+	<bean id="alarmRuleService"
+		class="com.alibaba.otter.manager.biz.config.alarm.impl.AlarmRuleServiceImpl">
+		
+		<property name="alarmRuleDao">
+			<ref bean="alarmRuleDao" />
+		</property>
+	</bean>
+	
+	<bean id="autoKeeperClusterService"
+		class="com.alibaba.otter.manager.biz.config.autokeeper.impl.AutoKeeperClusterServiceImpl">
+		<property name="autoKeeperClusterDao">
+			<ref bean="autoKeeperClusterDao" />
+		</property>
+	</bean>
+	
+	<bean id="dataSourceChecker" class="com.alibaba.otter.manager.biz.utils.DataSourceChecker">
+		<property name="dataMediaSourceService">
+			<ref bean="dataMediaSourceService" />
+		</property>
+		<property name="dataSourceCreator">
+			<ref bean="dataSourceCreator" />
+		</property>
+		<dwr:remote javascript="Hello">
+			<dwr:include method="check" />
+			<dwr:include method="checkMap" />
+			<dwr:include method="checkNamespaceTables" />
+		</dwr:remote>
+	</bean>
+	
+	<bean id="systemParameterService"
+		class="com.alibaba.otter.manager.biz.config.parameter.impl.SystemParameterServiceImpl">
+		<property name="systemParameterDao">
+			<ref bean="systemParameterDao" />
+		</property>
+	</bean>	
+	<bean id="autoKeeperStatService"
+		class="com.alibaba.otter.manager.biz.autokeeper.impl.AutoKeeperStatServiceImpl">
+	</bean>	
+</beans>

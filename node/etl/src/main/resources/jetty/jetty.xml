@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">
+
+<!-- =============================================================== -->
+<!-- Configure the Jetty Server                                      -->
+<!--                                                                 -->
+<!-- Documentation of this file format can be found at:              -->
+<!-- http://wiki.eclipse.org/Jetty/Reference/jetty.xml_syntax        -->
+<!--                                                                 -->
+<!-- Additional configuration files are available in $JETTY_HOME/etc -->
+<!-- and can be mixed in.  For example:                              -->
+<!--   java -jar start.jar etc/jetty.xml etc/jetty-ssl.xml           -->
+<!--                                                                 -->
+<!-- See start.ini file for the default configuraton files           -->
+<!-- =============================================================== -->
+
+
+<Configure id="Server" class="org.eclipse.jetty.server.Server">
+
+    <!-- =========================================================== -->
+    <!-- Server Thread Pool                                          -->
+    <!-- =========================================================== -->
+    <Set name="ThreadPool">
+      <!-- Default queued blocking threadpool -->
+      <New class="org.eclipse.jetty.util.thread.QueuedThreadPool">
+        <Set name="minThreads">1</Set>
+        <Set name="maxThreads">250</Set>
+      </New>
+    </Set>
+
+    <!-- =========================================================== -->
+    <!-- Set connectors                                              -->
+    <!-- =========================================================== -->
+    <!-- -->
+    <Call name="addConnector">
+      <Arg>
+          <New class="org.eclipse.jetty.server.bio.SocketConnector">
+            <Set name="port"><Property name="jetty.port" default="8080" /></Set>
+            <Set name="forwarded">true</Set>
+            <Set name="forwardedHostHeader">ignore</Set>
+            <Set name="forwardedServerHeader">ignore</Set>
+            <Set name="acceptQueueSize">256</Set>
+            <Set name="statsOn">false</Set>
+            <Set name="maxIdleTime">600000</Set>
+            <Set name="lowResourcesMaxIdleTime">5000</Set>
+            <Set name="requestHeaderSize">8192</Set>
+			<Set name="responseHeaderSize">8192</Set>
+          </New>
+      </Arg>
+    </Call>
+    <!-- 
+    <Call name="addConnector">
+      <Arg>
+          <New class="org.eclipse.jetty.server.nio.SelectChannelConnector">
+            <Set name="host"><Property name="jetty.host" /></Set>
+            <Set name="port"><Property name="jetty.port" default="${otter_download_port}"/></Set>
+            <Set name="forwarded">true</Set>
+            <Set name="forwardedHostHeader">ignore</Set>
+            <Set name="forwardedServerHeader">ignore</Set>
+            <Set name="maxIdleTime">600000</Set>
+            <Set name="Acceptors">2</Set>
+            <Set name="acceptQueueSize">256</Set>
+            <Set name="statsOn">false</Set>
+            <Set name="confidentialPort">8443</Set>
+            <Set name="lowResourcesConnections">2000</Set>
+            <Set name="lowResourcesMaxIdleTime">5000</Set>
+            <Set name="requestHeaderSize">8192</Set>
+			<Set name="responseHeaderSize">8192</Set>
+          </New>
+      </Arg>
+    </Call>
+     -->
+    <!-- =========================================================== -->
+    <!-- Set handler Collection Structure                            -->
+    <!-- =========================================================== -->
+    <Set name="handler">
+		<New id="ServletHandler" class="org.eclipse.jetty.servlet.ServletContextHandler">
+		   	<Set name="contextPath">/</Set>
+		   	<Call name="addServlet">
+		   		<Arg>org.eclipse.jetty.servlet.DefaultServlet</Arg>
+		   		<Arg>/download/*</Arg>
+		   	</Call>
+		   	<Get name="initParams">
+		   		<Put name="org.eclipse.jetty.servlet.Default.resourceBase"><Property name="jetty.htdocs" default="/tmp"/></Put>
+		   		<Put name="org.eclipse.jetty.servlet.Default.pathInfoOnly">true</Put>
+		   		<Put name="org.eclipse.jetty.servlet.Default.gzip">false</Put>
+		   		<!-- 
+		   		<Put name="org.eclipse.jetty.servlet.Default.relativeResourceBase">/tmp/</Put>
+		   		 -->
+		   	</Get>
+		</New>
+	</Set>
+
+    <!-- =========================================================== -->
+    <!-- extra options                                               -->
+    <!-- =========================================================== -->
+    <Set name="stopAtShutdown">true</Set>
+    <Set name="sendServerVersion">false</Set>
+    <Set name="sendDateHeader">true</Set>
+    <Set name="gracefulShutdown">1000</Set>
+</Configure>

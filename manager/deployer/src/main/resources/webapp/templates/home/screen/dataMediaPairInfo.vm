@@ -1,0 +1,97 @@
+$control.setTemplate("home:navigation.vm")
+<script language="javascript">
+<!--
+	function showdiv(targetid,objN){
+      var target=document.getElementById(targetid);
+      var clicktext=document.getElementById(objN)
+
+            if (target.style.display=="block"){
+                target.style.display="none";
+                clicktext.innerText="查看";
+  
+
+            } else {
+                target.style.display="block";
+                clicktext.innerText='关闭';
+            }
+   
+	}
+//-->
+</script>
+
+<div class="main">
+ <div class="title"><h2>映射关系信息</h2></div>
+ <div class="crumbs"><a href="channelList.htm?channelId=$channelId">Channel管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="pipelineList.htm?channelId=$channelId">Pipeline管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="dataMediaPairList.htm?pipelineId=$dataMediaPair.pipelineId">映射关系管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="dataMediaPairInfo.htm?dataMediaPairId=$dataMediaPair.id">映射关系信息</a> </div>
+ <div class="setting_box">
+ <table cellpadding="0" cellspacing="0" class="setting">
+  <tr>
+  <th>映射关系序号：</th><td>$!dataMediaPair.id</td>
+  </tr>
+  <tr>
+  <th>源端数据表：</th><td><span class="red">Schema Name:</span>$!dataMediaPair.source.namespace<span class="red">Table Name:</span><a href="dataMediaInfo.htm?dataMediaId=$dataMediaPair.source.id">$!dataMediaPair.source.name</a><span class="red">Source Name:</span><a href="dataSourceInfo.htm?dataMediaSourceId=$dataMediaPair.source.source.id">$!dataMediaPair.source.source.name</a> </td>
+  </tr>
+  <tr>
+  <th>目标数据表：</th><td><span class="red">Schema Name:</span>$!dataMediaPair.target.namespace<span class="red">Table Name:</span><a href="dataMediaInfo.htm?dataMediaId=$dataMediaPair.target.id">$!dataMediaPair.target.name</a><span class="red">Source Name:</span><a href="dataSourceInfo.htm?dataMediaSourceId=$dataMediaPair.target.source.id">$!dataMediaPair.target.source.name</a></td>
+  </tr>
+  <tr>
+  <th>权重：</th><td>$!dataMediaPair.pushWeight</td>
+  </tr>
+  <tr>
+  <th>视图模式：</th><td>$!dataMediaPair.columnPairMode</td>
+  </tr>
+  <tr>
+  <tr>
+	<th>Event Processor：</th>
+	<td>
+		#if(!$stringUtil.isEmpty($!dataMediaPair.filterData.clazzPath)) 
+			[$!dataMediaPair.filterData.extensionDataType : $!dataMediaPair.filterData.clazzPath] 
+		#elseif(!$stringUtil.isEmpty($!dataMediaPair.filterData.sourceText))
+			[$!dataMediaPair.filterData.extensionDataType : <a id="showtext-position2" onClick="showdiv('contentid-position2','showtext-position2')"><span class="ico_font">查看</span></a>] 
+		#end
+	</td>
+  </tr>
+  <tr>
+	<td class="message" colspan="2">
+		<div id="contentid-position2" class="contentid" style="display:none">
+			<textarea cols="90" rows="10">#noescape() $!dataMediaPair.filterData.sourceText #end</textarea>
+		</div>
+	</td>
+  </tr>
+  <th>File Resolver：</th>
+	<td>
+		#if(!$stringUtil.isEmpty($!dataMediaPair.resolverData.clazzPath))
+			[$!dataMediaPair.resolverData.extensionDataType : $!dataMediaPair.resolverData.clazzPath] 
+		#elseif(!$stringUtil.isEmpty($!dataMediaPair.resolverData.sourceText))
+			[$!dataMediaPair.resolverData.extensionDataType : <a id="showtext-position1" onClick="showdiv('contentid-position1','showtext-position1')"><span class="ico_font">查看</span></a>] 
+		#end
+	</td>
+  </tr>
+  <tr>
+	<td class="message" colspan="2">
+		<div id="contentid-position1" class="contentid" style="display:none">
+			<textarea cols="90" rows="10">#noescape() $!dataMediaPair.resolverData.sourceText #end</textarea>
+		</div>
+	</td>
+  </tr>
+  <tr>
+	<th>字段同步：</th>
+		<td>
+			#foreach($columnPair in $columnPairs)
+                <span class="red">[</span> $columnPair.sourceColumn.name - $columnPair.targetColumn.name  <span class="red">]</span>
+			#end
+		</td>
+  </tr>
+  
+  
+  <tr>
+	<th>组合同步：</th>
+		<td>
+			#foreach($columnPair in $columnGroup.columnPairs)
+				 <span class="red">[</span> $columnPair.sourceColumn.name - $columnPair.targetColumn.name  <span class="red">]</span>
+			#end
+		</td>
+  </tr>
+ </table>
+ </div>
+</div>
+

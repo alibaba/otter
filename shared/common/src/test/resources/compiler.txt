@@ -1,0 +1,23 @@
+package com.alibaba.otter.node.extend.fileresolver;
+
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.alibaba.otter.shared.etl.extend.fileresolver.FileInfo;
+
+public class TestFileResolver extends AbstractFileResolver {
+
+    public FileInfo[] getFileInfo(Map<String, String> rowMap) {
+        
+        String path = rowMap.get("FIELD"); 
+        FileInfo fileInfo = null;
+        if (StringUtils.isNotEmpty(path)) {
+            fileInfo = new FileInfo(path);
+            return new FileInfo[] { fileInfo };
+        } else {
+            return null;
+        }
+    }
+
+}

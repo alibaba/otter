@@ -1,0 +1,222 @@
+<script type="text/javascript" src="js/trcolor.js"></script>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
+
+$control.setTemplate("home:navigation.vm")
+#set($user = $rundata.request.session.getAttribute("managerUser"))
+<script language="javascript">
+<!--
+	changeNav("sync");
+	
+	function setTab(name,cursel,n){
+ 		for(i=1;i<=n;i++){
+  			var menu=document.getElementById(name+i);
+  			var con=document.getElementById("con_"+name+"_"+i);
+  			menu.className=i==cursel?"tab_active":"";
+  			con.style.display=i==cursel?"block":"none";
+ 		}
+	}	
+	
+	function NeatDialog(sHTML, sTitle, bCancel)
+    {
+      window.neatDialog = null;
+      this.elt = null;
+      if (document.createElement  &&  document.getElementById)
+      {
+        var dg = document.createElement("div");
+        dg.className = "neat-dialog";
+        if (sTitle)
+          sHTML = '<div class="neat-dialog-title">'+sTitle+
+                  ((bCancel)?
+                    '<img src="x.gif" alt="Cancel" class="nd-cancel" />':'')+
+                    '</div>\n' + sHTML;
+        dg.innerHTML = sHTML;
+        var dbg = document.createElement("div");
+        dbg.id = "nd-bdg";
+        dbg.className = "neat-dialog-bg";
+        var dgc = document.createElement("div");
+        dgc.className = "neat-dialog-cont";
+        dgc.appendChild(dbg);
+        dgc.appendChild(dg);
+        if (document.body.offsetLeft > 0)
+        	dgc.style.marginLeft = document.body.offsetLeft + "px";
+        document.body.appendChild(dgc);
+        if (bCancel) document.getElementById("nd-cancel").onclick = function()
+        {
+          window.neatDialog.close();
+        };
+        this.elt = dgc;
+        window.neatDialog = this;
+      }
+    }
+    NeatDialog.prototype.close = function()
+    {
+      if (this.elt)
+      {
+        this.elt.style.display = "none";
+        this.elt.parentNode.removeChild(this.elt);
+      }
+      window.neatDialog = null;
+    }
+
+	function openDialog( content )
+  	{
+   		var sHTML = '<p><button onclick="window.neatDialog.close()">关闭</button></p>' + content + '<p><button onclick="window.neatDialog.close()">关闭</button></p>';
+        new NeatDialog(sHTML, "<b>详情</b>", false);
+      
+    }
+
+</script>
+<style type="text/css">
+<!--
+a { text-decoration: none; }
+
+.showtext { cursor: hand; cursor:pointer;}
+.contentid { margin-top: 10px; margin-bottom: 10px; width: 400px; border: 1px solid #CCC; background: #F1F1F1; padding: 15px; display: none; }
+-->
+</style>
+<div class="main">
+  <div class="title"> 
+    <h2>日志记录</h2>
+  </div>   
+  <div class="crumbs"><a href="channelList.htm?channelId=$channel.id">Channel管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="pipelineList.htm?channelId=$channel.id">Pipeline管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="logRecordTab.htm?pipelineId=$pipelineId">日志记录</a></div>
+  <div class="crumbs"></div> 
+  <div class="tab" id="Tab2">
+        <div class="menubox">
+        <ul>
+		
+        <li id="two1"><a href="dataMediaPairList.htm?pipelineId=$pipelineId">映射关系列表</a></li>
+           
+        <li id="two2"><a href="analysisThroughputStat.htm?pipelineId=$pipelineId">吞吐量</a></li>
+        
+        <li id="two3"><a href="analysisDelayStat.htm?pipelineId=$pipelineId">延迟时间</a></li>
+           
+        <li id="two4"><a href="analysisStageStat.htm?pipelineId=$pipelineId">同步进度</a></li>  
+		
+		<li id="two5"><a href="analysisThroughputHistory.htm?pipelineId=$pipelineId">历史吞吐量</a></li>
+		
+		<li id="two6"><a href="alarmRuleList.htm?pipelineId=$pipelineId">监控管理</a></li>
+        
+		<li id="two7" class="tab_active"><a href="logRecordTab.htm?pipelineId=$pipelineId">日志记录</a></li>
+    
+        </ul>
+        </div>
+        <div class="contentbox_tab box_tab">  
+           <div id="con_two_1">
+        
+			
+	  <!--分页表单-->
+		<form id="pageform" name="pageform" action="$homeModule.setTarget('logRecordTab.vm').addQueryData("pipelineId", $pipelineId)" method="post">
+			<input type="hidden" id="pageIndex" name="pageIndex" value=""/>
+			<input type="hidden" id="pipelineId" name="pipelineId" value="$!pipelineId"/>
+			<input type="hidden" id="searchKey" name="searchKey" value="$!searchKey"/>
+		</form>
+		
+	  <!--日志搜索-->
+	    <div class="search_o"> 
+			<form name="search_log" action="logRecordTab.htm"  method="post">
+				##$csrfToken.hiddenField
+				<div class="search_input">
+					<input name="searchKey" type="text" value="请输入关键字(目前支持log内容关键字搜索)"  onfocus="if(this.value == '请输入关键字(目前支持log内容关键字搜索)') {this.value='';}" onblur="if(this.value == '') {this.value = '请输入关键字(目前支持log内容关键字搜索)';}" />
+					<input type="hidden" id="pipelineId" name="pipelineId" value="$!pipelineId"/>
+				</div>
+				<div class="search_btn"><a href="javascript:document.search_log.submit();"><img src="images/search_btn.png" width="39" height="31" /></a></div>
+			</form>
+	    </div>
+       
+        <table border="0" cellspacing="0" cellpadding="0" class="list2 changecolor_g">
+          <tr> 
+            <th width="5%">序号</th>
+            <th width="10%">Channel信息</th>
+            <th width="10%">Pipline信息</th>
+			<th width="7%">Node信息</th>
+            <th width="10%">日志标题</th>
+			<th width="40%">日志内容</th>
+			<th width="20%">发生时间</th>
+            
+          </tr>
+		  #foreach ($logRecord in $logRecords)
+		   <tr> 
+             <td width="5%">$logRecord.id</td>
+			 <td width="10%">
+				#if($logRecord.channel.id > 0)
+					#set ($channelURL = $homeModule.setTarget("channelList.vm").addQueryData("channelId", $logRecord.channel.id))
+					<a href="$channelURL">$logRecord.channel.name</a>
+				#elseif($logRecord.channel.id == 0)
+					<a href="#">UnKnow</a>
+				#else
+					<a href="#">manager</a>
+				#end
+			 </td>
+			 <td width="10%">
+				#if($logRecord.pipeline.id > 0)
+					#set ($pipelineURL = $homeModule.setTarget("pipelineList.vm").addQueryData("channelId", $logRecord.channel.id).addQueryData("pipelineId", $logRecord.pipeline.id))
+					<a href="$pipelineURL">$logRecord.pipeline.name</a>
+				#elseif($logRecord.pipeline.id == 0)
+					<a href="#">UnKnow</a>
+				#else
+					<a href="#">manager</a>
+				#end
+			 </td>
+			 <td width="7%">
+				#if($logRecord.nid && $logRecord.nid > 0)
+					#set ($nodeInfoURL = $homeModule.setTarget("nodeInfo.vm").addQueryData("nodeId", $logRecord.nid))
+					<a href="$nodeInfoURL">$logRecord.nid</a>
+				#else 
+					<a href="#">manager</a>
+				#end
+			 </td>
+			 <td width="10%">$logRecord.title</td> 
+			 <td width="40%" class="message">
+				<a onclick="openDialog('$numberFormat.getHtmlOriginalContent($!logRecord.message)')">点击查看详细信息</a>
+			 </td>
+			  <td width="20%">$!numberFormat.format($logRecord.gmtCreate)</td>
+		   </tr>
+		  #end
+		 
+        </table>
+		
+		 <div class="page">共$paginator.items条数据&nbsp;&nbsp;第$paginator.page页/共$paginator.pages页&nbsp;&nbsp; 
+       
+			#if($paginator.page == 1)
+				<font color="999999">首页</font>
+			#else
+					<a href="#" class="prev" onclick="pageNavigation(this,1)">首页</a>
+			#end
+	   
+			#if($paginator.page > 1)
+				#set($pre_page = $paginator.page - 1)
+					<a href="#" class="prev" onclick="pageNavigation(this,$pre_page)">上一页</a>
+			#else
+            <font color="999999">上一页</font>
+			#end
+			##分页下标
+			#set($counts_keys = $paginator.getSlider(7))
+			#foreach( $thisPage in $counts_keys)
+				#if( $thisPage == $paginator.page)
+					<b>$thisPage</b>
+				#else
+					#if($thisPage != 0)
+						<a href="#" class="num" onclick="pageNavigation(this,$thisPage)">$thisPage</a> 
+					#end
+				#end
+			#end
+	   
+			#if($paginator.page < $paginator.pages)
+				#set($next_page = $paginator.page + 1)
+					<a href="#" class="prev" onclick="pageNavigation(this,$next_page)">下一页</a>
+			#else
+				<font color="999999">下一页</font>
+			#end
+	   
+			#if($paginator.page == $paginator.pages)
+				<font color="999999">末页</font>
+			#else
+				<a href="#" class="prev" onclick="pageNavigation(this,$paginator.pages)">末页</a>
+			#end
+    	 </div>    
+		
+       <!--</div>-->
+    </div>
+	</div>
+  </div>
+</div>

@@ -1,0 +1,16 @@
+table#conflict-table ul li {
+  margin: 0px 0 0; 
+  padding: 0; 
+  line-height: 20px;
+}
+table#conflict-table ul li b {
+    color: black;
+    font-style: normal; }
+ table#conflict-table ul {
+    margin: 8px 0 8px 0;
+    padding: 5px 0; }
+ table#conflict-table li {
+    padding: 0 0 0px;
+    list-style-type: none;
+    margin: 0;
+    color: #666666; }

@@ -1,0 +1,361 @@
+$control.setTemplate("home:navigation.vm")
+<script language="javascript">
+<!--
+	changeNav("sync");
+	function changeSuperConfig() {
+		var obj = document.getElementById('superConfig');
+		if(obj.checked) {
+			changeDisplay('super','table-row');
+		}else {
+			changeDisplay('super','none');
+		}
+	}
+	
+	function changeKeyword(id, name) {
+    	if( document.getElementById("destinationName")){
+        	document.getElementById('destinationName').value = name;
+    	}
+	}
+
+//-->
+</script>
+#macro (addPipelineMessage $field)
+    #if (!$field.valid) $field.message #end
+#end
+
+<div class="main">
+  <div class="title"> 
+    <h2>添加Pipeline</h2>
+  </div>
+ <div class="crumbs"><a href="channelList.htm?channelId=$channelId">Channel管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="pipelineList.htm?channelId=$channelId">Pipeline管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="addPipeline.htm?channelId=$channelId">添加Pipeline</a></div>   
+ 
+ <form name="addPipelineForm" method="post" enctype="multipart/form-data">
+	$csrfToken.hiddenField
+	<input type="hidden" name="action" value="pipeline_action"/>
+	<input type="hidden" name="event_submit_do_add" value="1" />
+	
+ <div class="setting_box">
+	#set ($pipelineGroup = $form.pipelineInfo.defaultInstance)
+    #set ($pipelineParameterGroup = $form.pipelineParameterInfo.defaultInstance)
+   
+	<input type="hidden" name="$pipelineGroup.id.key" value="$pipeline.id" />
+	<input type="hidden" name="$pipelineGroup.channelId.key" value="$channelId"/>
+	<input type="hidden" name="channelId" value="$channelId"/>
+    <table cellpadding="0" cellspacing="0" class="setting_otter">
+      <tr> 
+        <th width="300">Pipeline名字：</th>
+        <td width="329">
+			<input name="$pipelineGroup.name.key" value="$!pipelineGroup.name.value" type="text" class="setting_input"/><span class="red">*</span>
+			<br />
+            <span>4-15个字符</span>
+			<br />
+			<span class="red">#addPipelineMessage ($pipelineGroup.name) #addPipelineMessage ($pipelineGroup.formPipelineError)</span>
+		</td>
+      </tr>
+      <tr> 
+        <th width="300">Select机器：</th>
+        <td width="329" class="textarea_b">
+			<select name="$pipelineGroup.selectNodeIds.key" multiple="multiple" style="height:100px;width:200px">
+                <optgroup label="Select">
+					#foreach ($node in $nodes)
+    				<option value="$node.id" #if($!pipelineGroup.selectNodeIds.value == $node.id) selected #end>$node.name</option>
+					#end
+				</optgroup>
+            </select><span class="red">*</span>
+			<br />
+			<span class="red">#addPipelineMessage ($pipelineGroup.selectNodeIds)</span>
+		</td>
+      </tr>
+	  #**
+	  <tr> 
+        <th width="300">Extract机器：</th>
+        <td width="329" class="textarea">
+			<select name="$pipelineGroup.extractNodeIds.key" multiple="multiple" style="height:100px;width:200px">
+                <optgroup label="Extract">
+					#foreach ($node in $nodes)
+    				<option value="$node.id" #if($!pipelineGroup.extractNodeIds.value == $node.id) selected #end>$node.name</option>
+					#end
+				</optgroup>
+            </select><span class="red">*</span>
+			<br />
+			<span class="red">#addPipelineMessage ($pipelineGroup.extractNodeIds)</span>
+		</td>
+      </tr>
+	  *#
+      <tr> 
+        <th width="300">Load机器：</th>
+        <td width="329" class="textarea_b">
+			<select name="$pipelineGroup.loadNodeIds.key" multiple="multiple" style="height:100px;width:200px">
+                <optgroup label="Load">
+    				#foreach ($node in $nodes)
+    				<option value="$node.id" #if($!pipelineGroup.loadNodeIds.value == $node.id) selected #end>$node.name</option>
+					#end
+				</optgroup>
+            </select><span class="red">*</span>
+			<br />
+			<span class="red">#addPipelineMessage ($pipelineGroup.loadNodeIds)</span>
+		</td>
+      </tr>
+      <tr> 
+        <th width="300">并行度：</th>
+        <td width="329">
+			<input name="$pipelineParameterGroup.parallelism.key" value="5" type="text" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#addPipelineMessage ($pipelineParameterGroup.parallelism)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th width="300">数据反查线程数：</th>
+        <td width="329">
+			<input name="$pipelineParameterGroup.extractPoolSize.key" value="10" type="text" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#addPipelineMessage ($pipelineParameterGroup.extractPoolSize)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th width="300">数据载入线程数：</th>
+        <td width="329">
+			<input name="$pipelineParameterGroup.loadPoolSize.key" value="15" type="text" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#addPipelineMessage ($pipelineParameterGroup.loadPoolSize)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th width="300">文件载入线程数：</th>
+        <td width="329">
+			<input name="$pipelineParameterGroup.fileLoadPoolSize.key" value="15" type="text" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#addPipelineMessage ($pipelineParameterGroup.fileLoadPoolSize)</span>
+		</td>
+      </tr>
+      <tr> 
+        <th width="300">主站点：</th>
+        <td width="329">
+              <input type="radio" name="$pipelineParameterGroup.home.key" value="true" id="RadioGroup1_0" class="radio"/>是
+              <input type="radio" name="$pipelineParameterGroup.home.key" value="false" id="RadioGroup1_1" checked="checked"  class="radio"/>否 
+        </td>
+      </tr>
+	  <tr> 
+        <th width="300">同步数据来源：</th>
+        <td width="329">
+			<input type="radio" name="$pipelineParameterGroup.selectorMode.key" value="Canal" onclick="changeDisplay('eromanga','none');changeDisplay('canal','table-row');" checked="checked" class="radio"/>Canal
+            <span class="red">*</span>
+        </td>
+      </tr>
+	  <tr> 
+        <th width="300">Canal名字：</th>
+        <td width="329">
+			  <input id="destinationName" name="$pipelineParameterGroup.destinationName.key" value="$!pipelineParameterGroup.destinationName.value" class="setting_input" />
+			  <input type="button" value="查找Canal" onclick="window.open('selectCanal.htm', 'selectCanal')"><span class="red">*</span>
+			  <br />
+			  <span class="red">#addPipelineMessage ($pipelineParameterGroup.destinationName)</span>
+        </td>
+      </tr>
+	  #**
+	  <tr> 
+        <th width="300">消费端ID：</th>
+        <td width="329">
+              <input name="$pipelineParameterGroup.mainstemClientId.key" value="1001" type="text" class="setting_input"/><span class="red">*</span>
+			  <br />
+			  <span class="red">#addPipelineMessage ($pipelineParameterGroup.mainstemClientId)</span>
+        </td>
+      </tr>
+	  *#
+	  <tr> 
+        <th width="300">消费批次大小：</th>
+        <td width="329">
+              <input name="$pipelineParameterGroup.mainstemBatchsize.key" value="6000" type="text" class="setting_input"/><span class="red">*</span>
+			  <br />
+			  <span class="red">#addPipelineMessage ($pipelineParameterGroup.mainstemBatchsize)</span>
+        </td>
+      </tr>
+	  <tr class="canal"> 
+        <th width="300">获取批次数据超时时间(毫秒): </th>
+        <td width="329">
+              <input name="$pipelineParameterGroup.batchTimeout.key" value="-1" type="text" class="setting_input"/><span class="red">*</span>
+			  <br />
+			  <span>格式: -1不进行控制，0代表永久，>0则按照指定时间控制</span>
+			  <br />
+			  <span class="red">#addPipelineMessage ($pipelineParameterGroup.batchTimeout)</span>
+        </td>
+      </tr>
+	  <tr>
+       <th>描述：</th>
+       <td>
+			<textarea name="$pipelineGroup.description.key" cols="45" rows="5">$!pipelineGroup.description.value</textarea><span class="red">*</span>
+			<br />
+			<span class="red">#addPipelineMessage ($!pipelineGroup.description)</span>
+	   </td>
+      </tr>
+	  <tr>
+		<th width="300">高级设置：</th>
+        <td width="329">
+              <input id="superConfig" type='checkbox' name='super' value=1  class="setting_input" onclick="changeSuperConfig()" />
+			  <br />
+        </td>
+      </tr>
+	  <tr class="super"> 
+        <th width="300">使用batch：</th>
+        <td width="329">
+              <input type="radio" name="$pipelineParameterGroup.useBatch.key" value="true" id="RadioGroup2_0" checked="checked" class="radio"/>是
+              <input type="radio" name="$pipelineParameterGroup.useBatch.key" value="false" id="RadioGroup2_1" class="radio"/>否 
+        </td>
+      </tr>
+	  <tr class="super"> 
+        <th width="300">是否跳过Select异常：</th>
+        <td width="329">
+              <input type="radio" name="$pipelineParameterGroup.skipSelectException.key" value="true" id="RadioGroup2_0" class="radio"/>是
+              <input type="radio" name="$pipelineParameterGroup.skipSelectException.key" value="false" id="RadioGroup2_1" checked="checked" class="radio"/>否 
+        </td>
+      </tr>
+	  <tr class="super"> 
+        <th width="300">是否跳过Load异常：</th>
+        <td width="329">
+              <input type="radio" name="$pipelineParameterGroup.skipLoadException.key" value="true" id="RadioGroup2_0" class="radio"/>是
+              <input type="radio" name="$pipelineParameterGroup.skipLoadException.key" value="false" id="RadioGroup2_1" checked="checked" class="radio"/>否 
+        </td>
+      </tr>
+	  <tr class="super"> 
+        <th width="300">仲裁器调度模式：</th>
+        <td width="329">
+            <select name="$pipelineParameterGroup.arbitrateMode.key" id="select">
+				<option value="AUTOMATIC" selected="selected">自动选择</option>
+                <option value="RPC">RPC</option>
+				<option value="ZOOKEEPER" >ZOOKEEPER</option>
+            	<option value="MEMORY">MEMORY</option>
+            </select><span class="red">*</span>
+			
+        </td>
+      </tr>
+      <tr class="super"> 
+        <th width="300">负载均衡算法：</th>
+        <td width="329">
+            <select name="$pipelineParameterGroup.lbAlgorithm.key" id="select">
+				<option value="Stick" selected="selected">Stick</option>
+                <option value="RoundRbin">RoundRbin</option>
+            	<option value="Random">Random</option>
+            </select><span class="red">*</span>
+			
+        </td>
+      </tr>
+	 <tr class="super"> 
+        <th width="300">传输模式：</th>
+        <td width="329">
+            <select name="$pipelineParameterGroup.pipeChooseType.key" id="select">
+            	<option value="AUTOMATIC" selected="selected">自动选择</option>
+                <option value="RPC">RPC</option>
+				<option value="HTTP">HTTP</option>
+            </select><span class="red">*</span>
+        </td>
+      </tr>
+	  <tr class="super"> 
+        <th width="300">记录selector日志：</th>
+        <td width="329">
+              <input type="radio" name="$pipelineParameterGroup.dumpSelector.key" value="true" id="RadioGroup1_2" checked="checked" class="radio"/>是
+              <input type="radio" name="$pipelineParameterGroup.dumpSelector.key" value="false" id="RadioGroup1_3" class="radio"/>否 
+        </td>
+      </tr>
+	  <tr class="super"> 
+        <th width="300">记录selector详细日志：</th>
+        <td width="329">
+              <input type="radio" name="$pipelineParameterGroup.dumpSelectorDetail.key" value="true" id="RadioGroup1_2"  class="radio"/>是
+              <input type="radio" name="$pipelineParameterGroup.dumpSelectorDetail.key" value="false" id="RadioGroup1_3" checked="checked" class="radio"/>否 
+        </td>
+      </tr>
+	  <tr class="super"> 
+        <th width="300">记录load日志：</th>
+        <td width="329">
+              <input type="radio" name="$pipelineParameterGroup.dumpEvent.key" value="true" id="RadioGroup1_2" class="radio"/>是
+              <input type="radio" name="$pipelineParameterGroup.dumpEvent.key" value="false" id="RadioGroup1_3" checked="checked" class="radio"/>否 
+        </td>
+      </tr>
+	  <tr class="super"> 
+        <th width="300">dryRun模式：</th>
+        <td width="329">
+              <input type="radio" name="$pipelineParameterGroup.dryRun.key" value="true" id="RadioGroup1_2" class="radio"/>是
+              <input type="radio" name="$pipelineParameterGroup.dryRun.key" value="false" id="RadioGroup1_3" checked="checked" class="radio"/>否 
+        </td>
+      </tr>
+	  <tr class="super"> 
+        <th width="300">支持ddl同步：</th>
+        <td width="329">
+              <input type="radio" name="$pipelineParameterGroup.ddlSync.key" value="true" id="RadioGroup1_2" checked="checked" class="radio"/>是
+              <input type="radio" name="$pipelineParameterGroup.ddlSync.key" value="false" id="RadioGroup1_3" class="radio"/>否 
+        </td>
+      </tr>
+	  <tr class="super"> 
+        <th width="300">跳过ddl异常：</th>
+        <td width="329">
+              <input type="radio" name="$pipelineParameterGroup.skipDdlException.key" value="true" id="RadioGroup2_0" class="radio"/>是
+              <input type="radio" name="$pipelineParameterGroup.skipDdlException.key" value="false" id="RadioGroup2_1" checked="checked" class="radio"/>否 
+        </td>
+      </tr>
+	  <tr class="super"> 
+        <th width="300">文件重复同步对比：</th>
+        <td width="329">
+              <input type="radio" name="$pipelineParameterGroup.fileDetect.key" value="true" id="RadioGroup1_2" class="radio"/>是
+              <input type="radio" name="$pipelineParameterGroup.fileDetect.key" value="false" id="RadioGroup1_3" checked="checked" class="radio"/>否 
+        </td>
+      </tr>
+	  <tr class="super"> 
+        <th width="300">文件传输加密：</th>
+        <td width="329">
+              <input type="radio" name="$pipelineParameterGroup.useFileEncrypt.key" value="true" id="RadioGroup1_2" class="radio"/>是
+              <input type="radio" name="$pipelineParameterGroup.useFileEncrypt.key" value="false" id="RadioGroup1_3" checked="checked" class="radio"/>否 
+        </td>
+      </tr>
+	  <tr class="super"> 
+        <th width="300">启用公网同步：</th>
+        <td width="329">
+              <input type="radio" name="$pipelineParameterGroup.useExternalIp.key" value="true" id="RadioGroup1_2" class="radio"/>是
+              <input type="radio" name="$pipelineParameterGroup.useExternalIp.key" value="false" id="RadioGroup1_3" checked="checked" class="radio"/>否 
+        </td>
+      </tr>
+	  <tr class="super"> 
+        <th width="300">跳过自由门数据：</th>
+        <td width="329">
+              <input type="radio" name="$pipelineParameterGroup.skipFreedom.key" value="true" id="RadioGroup1_2" class="radio"/>是
+              <input type="radio" name="$pipelineParameterGroup.skipFreedom.key" value="false" id="RadioGroup1_3" checked="checked" class="radio"/>否 
+        </td>
+      </tr>
+	  <tr class="super"> 
+        <th width="300">跳过反查无记录数据：</th>
+        <td width="329">
+              <input type="radio" name="$pipelineParameterGroup.skipNoRow.key" value="true" id="RadioGroup1_2" class="radio"/>是
+              <input type="radio" name="$pipelineParameterGroup.skipNoRow.key" value="false" id="RadioGroup1_3" checked="checked" class="radio"/>否 
+        </td>
+      </tr>
+	  <tr class="super"> 
+        <th width="300">启用数据表类型转化：</th>
+        <td width="329">
+              <input type="radio" name="$pipelineParameterGroup.useTableTransform.key" value="true" id="RadioGroup1_2" checked="checked" class="radio"/>是
+              <input type="radio" name="$pipelineParameterGroup.useTableTransform.key" value="false" id="RadioGroup1_3" class="radio"/>否 
+        </td>
+      </tr>
+	  <tr class="super"> 
+        <th width="300">兼容字段新增同步：</th>
+        <td width="329">
+              <input type="radio" name="$pipelineParameterGroup.enableCompatibleMissColumn.key" value="true" id="RadioGroup1_2" checked="checked" class="radio"/>是
+              <input type="radio" name="$pipelineParameterGroup.enableCompatibleMissColumn.key" value="false" id="RadioGroup1_3" class="radio"/>否 
+        </td>
+      </tr>
+	 <tr class="super"> 
+        <th width="300">自定义同步标记：</th>
+        <td width="329">
+              <input name="$pipelineParameterGroup.channelInfo.key" type="text" class="setting_input"/>
+			  <br />
+			  <span class="red">#addPipelineMessage ($pipelineParameterGroup.channelInfo)</span>
+        </td>
+      </tr>
+    </table>
+ </div>
+  <div class="btn"><a href="javascript:document.addPipelineForm.submit();">保存</a></div>
+ </form>
+</div>
+
+<script language="javascript">
+<!--
+	changeDisplay('canal','table-row')
+	changeSuperConfig();
+//-->
+</script>

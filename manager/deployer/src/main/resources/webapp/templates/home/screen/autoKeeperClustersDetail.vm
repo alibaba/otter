@@ -1,0 +1,112 @@
+$control.setTemplate("home:navigation.vm")
+#set($user = $rundata.request.session.getAttribute("managerUser"))
+<script type="text/javascript" src="js/trcolor.js"></script>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
+<script type="text/javascript" src="js/jquery.simplemodal-1.4.js"></script> 
+<script language="javascript">
+	changeNav("node");
+	
+	function NeatDialog(sHTML, sTitle, bCancel)
+    {
+      window.neatDialog = null;
+      this.elt = null;
+      if (document.createElement  &&  document.getElementById)
+      {
+        var dg = document.createElement("div");
+        dg.className = "neat-dialog";
+        if (sTitle)
+          sHTML = '<div class="neat-dialog-title">'+sTitle+
+                  ((bCancel)?
+                    '<img src="x.gif" alt="Cancel" class="nd-cancel" />':'')+
+                    '</div>\n' + sHTML;
+        dg.innerHTML = sHTML;
+        var dbg = document.createElement("div");
+        dbg.id = "nd-bdg";
+        dbg.className = "neat-dialog-bg";
+        var dgc = document.createElement("div");
+        dgc.className = "neat-dialog-cont";
+        dgc.appendChild(dbg);
+        dgc.appendChild(dg);
+        if (document.body.offsetLeft > 0)
+        dgc.style.marginLeft = document.body.offsetLeft + "px";
+        document.body.appendChild(dgc);
+        if (bCancel) document.getElementById("nd-cancel").onclick = function()
+        {
+          window.neatDialog.close();
+        };
+        this.elt = dgc;
+        window.neatDialog = this;
+      }
+    }
+    NeatDialog.prototype.close = function()
+    {
+      if (this.elt)
+      {
+        this.elt.style.display = "none";
+        this.elt.parentNode.removeChild(this.elt);
+      }
+      window.neatDialog = null;
+    }
+
+	function openDialog( content )
+  	{
+   		var sHTML = '<p><button onclick="window.neatDialog.close()">关闭</button></p>' + content + '<p><button onclick="window.neatDialog.close()">关闭</button></p>';
+        new NeatDialog(sHTML, "<b>详情</b>", false);
+      
+    }
+
+</script>
+
+
+
+<!--页面主体-->
+<div class="main">
+   
+  <div class="title"> 
+    <h2>Zookeeper Server连接信息</h2>
+  </div>
+   <!--分页表单-->
+   <form id="pageform" name="pageform" action="$homeModule.setTarget('nodeList.vm')" method="post">
+    	<input type="hidden" id="pageIndex" name="pageIndex" value=""/>
+		<input type="hidden" id="searchKey" name="searchKey" value="$!searchKey"/>
+   </form>
+
+   <!--列表-->
+     
+  <table border="0" cellspacing="0" cellpadding="0" class="list changecolor_w">
+    <tr> 
+      <th>序号</th>
+      <th>地址</th>
+	  <th>角色</th>
+	  <th>MaxLatency</th>
+	  <th>AvgLatency</th>
+	  <th>MinLatency</th>
+	  <th>Queued</th>
+	  <th>Recved</th>
+	  <th>Sent</th>
+      <th>NodeCount</th>
+	  <th>Client</th>
+    </tr>
+	#set($num = 0)
+	#foreach($statMapEntry in $statMap.entrySet())
+		#set($num = $num+1)
+		#set ($pathUrl = $homeModule.setTarget("autoKeeperClientPath.vm").addQueryData("address", $!statMapEntry.getKey()).addQueryData("clusterId", $clusterId))
+        <tr> 
+          <td>$num</td>
+		  #set($content=$!statMapEntry.getValue().getHtmlOriginalContent())
+          <td>$!statMapEntry.getKey() <img style="cursor:pointer;" src="/images/seeDetail.png" onclick="openDialog('$!content')" /> </td>
+		  <td>$!statMapEntry.getValue().getQuorumType().toString()</td>
+		  <td>$!statMapEntry.getValue().getMaxLatency()</td>
+		  <td>$!statMapEntry.getValue().getAvgLatency()</td>
+		  <td>$!statMapEntry.getValue().getMinLatency()</td>
+		  <td>$!statMapEntry.getValue().getQueued()</td>
+		  <td>$!statMapEntry.getValue().getRecved()</td>
+		  <td>$!statMapEntry.getValue().getSent()</td>
+		  <td>$!statMapEntry.getValue().getNodeCount()</td>
+          <td><a href="$pathUrl">查看</a></td>
+        </tr>
+	#end
+    
+  </table>
+  <!--常规按钮-->
+</div>

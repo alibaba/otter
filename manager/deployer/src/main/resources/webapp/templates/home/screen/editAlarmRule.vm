@@ -1,0 +1,96 @@
+$control.setTemplate("home:navigation.vm")
+<script language="javascript">
+<!--
+	changeNav("sync");
+//-->
+</script>
+
+#macro (editAlarmRuleMessage $field)
+    #if (!$field.valid) $field.message #end
+#end	
+
+<div class="main">
+  <div class="title"> 
+    <h2>添加监控</h2>
+  </div>
+ <div class="crumbs"><a href="channelList.htm?channelId=$channelId">channel管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="pipelineList.htm?channelId=$channelId">Pipeline管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="alarmRuleList.htm?pipelineId=$alarmRule.pipelineId">监控管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;修改监控</div>
+ 
+ 
+<form name="editAlarmRuleForm" method="post" enctype="multipart/form-data">
+	$csrfToken.hiddenField
+	<input type="hidden" name="action" value="alarm_rule_action"/>
+	<input type="hidden" name="event_submit_do_edit" value="1" />
+ <div class="setting_box">
+ 
+   #set ($alarmRuleGroup = $form.alarmRuleInfo.defaultInstance)
+   <input type="hidden" name="$alarmRuleGroup.id.key" value="$alarmRule.id" />
+   <input type="hidden" name="$alarmRuleGroup.pipelineId.key" value="$alarmRule.pipelineId"/>
+   <input type="hidden" name="$alarmRuleGroup.status.key" value="$alarmRule.status"/>
+   
+    <table cellpadding="0" cellspacing="0" class="setting_otter">
+		<span class="red">#editAlarmRuleMessage ($alarmRuleGroup.formAlarmRuleError)</span>
+      <tr> 
+        <th width="300">监控项目：</th>
+        <td width="329">
+			<select name="$alarmRuleGroup.monitorName.key" id="select">
+                <option value="DELAYTIME" #if($alarmRule.monitorName.isDelayTime()) selected="selected" #end>延迟</option>
+				<option value="PIPELINETIMEOUT" #if($alarmRule.monitorName.isPipelineTimeout()) selected="selected" #end>Pipeline超时</option>
+				<option value="PROCESSTIMEOUT" #if($alarmRule.monitorName.isProcessTimeout()) selected="selected" #end>Process超时</option>
+				<option value="POSITIONTIMEOUT" #if($alarmRule.monitorName.isPositionTimeout()) selected="selected" #end>Position超时</option>
+				<option value="EXCEPTION" #if($alarmRule.monitorName.isException()) selected="selected" #end>异常</option>
+            </select><span class="red">*</span>
+		</td>
+      </tr>
+      <tr> 
+        <th>阈值：</th>
+        <td>
+			<input type="text" name="$alarmRuleGroup.matchValue.key" value="$alarmRule.matchValue" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editAlarmRuleMessage ($alarmRuleGroup.matchValue)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>报警间隔时间(秒)：</th>
+        <td>
+			<input type="text" name="$alarmRuleGroup.intervalTime.key" value="$!alarmRule.intervalTime" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editAlarmRuleMessage ($alarmRuleGroup.intervalTime)</span>
+		</td>
+      </tr>
+      <tr> 
+        <th>发送人KEY：</th>
+        <td>
+			<input type="text" name="$alarmRuleGroup.receiverKey.key" value="$alarmRule.receiverKey" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editAlarmRuleMessage ($alarmRuleGroup.receiverKey)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>开始自动恢复：</th>
+        <td>
+			<input type="radio" name="$alarmRuleGroup.autoRecovery.key" value="true" id="RadioGroup2_0"  #if ($!alarmRule.autoRecovery) checked="checked" #end class="radio"/>是
+            <input type="radio" name="$alarmRuleGroup.autoRecovery.key" value="false" id="RadioGroup2_1" #if (!$!alarmRule.autoRecovery) checked="checked" #end class="radio"/>否 
+			<br />
+			<span class="red">#editAlarmRuleMessage ($alarmRuleGroup.autoRecovery)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>触发自动恢复阀值：</th>
+        <td>
+			<input type="text" name="$alarmRuleGroup.recoveryThresold.key" value="$alarmRule.recoveryThresold" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editAlarmRuleMessage ($alarmRuleGroup.recoveryThresold)</span>
+		</td>
+      </tr>
+      <tr>
+       <th>描述：</th>
+       <td>
+    		<textarea cols="45" rows="5" name="$alarmRuleGroup.description.key">$!alarmRule.description</textarea>
+	   </td>
+      </tr>
+    </table>
+ </div>
+   <div class="btn"><a href="javascript:document.editAlarmRuleForm.submit();">保存</a></div> 
+  
+  </form>
+</div>

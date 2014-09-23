@@ -1,0 +1,101 @@
+package com.alibaba.otter.node.etl.model.protobuf;
+
+option java_outer_classname = "BatchProto";
+option optimize_for = SPEED;
+
+/**同步数据表示对象**/
+message Identity {
+    /**通道标示**/
+    optional int64   		channelId  				= 1;
+    optional int64   		pipelineId				= 2;
+    optional int64   		processId 				= 3;
+}
+
+/**数据包**/
+message RowBatch {
+    optional Identity   	identity 				= 1;
+    /**每个batch里面的所有变更数据**/
+    repeated RowData 		rows	  				= 2;
+}
+
+message FileBatch {
+    optional Identity   	identity 				= 1;
+    /**每个batch里面变更数据所关联的文件信息**/
+    repeated FileData 		files	 				= 2;
+}
+
+/**数据**/
+message RowData {
+	optional int64 			tableId					= 1;
+	
+	optional string			schemaName				= 2;
+	
+	optional string			tableName				= 3;
+	
+	/**变更数据的操作类型(I/U/D)**/
+    optional string		 	eventType				= 4;
+    
+    /**变更前的主键，可能是复合主键**/
+    repeated Column 		oldKeys					= 5;
+    
+    /**变更后的主键，可能是复合主键**/
+    repeated Column	 		keys	   				= 6;
+    
+    /**变更数据的每列变更信息,不包含主键**/
+    repeated Column	 		columns   				= 7;
+    
+    /**变更数据的业务时间**/
+    optional int64        	executeTime				= 8;
+    /**映射规则id**/
+    optional int64 			pairId					= 9;
+    /**同步模式(R/F)**/
+    optional string			syncMode				= 10;
+    /**同步一致性(B/S/M) **/
+    optional string			syncConsistency			= 11;
+    /** eventsize **/
+    optional int64			size					= 12;
+    /** isRemedy **/
+    optional bool			remedy					= 13;
+    /** dml/ddl sql **/
+    optional string			sql						= 14;
+    /** current ddl schemaName **/
+    optional string			ddlSchemaName			= 15;
+    /** dml/ddl sql **/
+    optional string			hint					= 16;
+    /** without schema **/
+    optional bool			withoutSchema			= 17;
+}
+
+message Column {
+	/**列下标**/
+	optional int32          index					= 1;
+	/**列名**/
+	optional string			name					= 2;
+	/**列值,timestamp,Datetime是一个long型的数字**/
+	optional string			value					= 3;
+	/**当前列是否是主键**/
+	optional bool			isPrimaryKey			= 4;
+	/**当前列是否可以为空**/
+	optional bool			isNull					= 5;
+	/**当前列的数据类型**/
+	optional int32			type					= 6;
+	/**当前列是否发生真实变更**/
+	optional bool			isUpdate				= 7;
+}
+/**文件对象**/
+message FileData {
+    /**变更数据的操作类型(I/U/D/C/A/E)**/
+    optional string		 	eventType				= 1;
+    /**Aranda中特有的**/
+    optional string   		namespace  				= 2;
+    /**文件的路径**/
+    optional string   		path	  				= 3;
+    /**文件最后一次修改时间**/
+    optional int64   		lastModifiedTime		= 4;
+    /**文件的大小**/
+    optional int64   		size					= 5;
+    
+    optional int64			tableId					= 6;
+    /**映射规则id**/
+    optional int64 			pairId					= 9;
+}

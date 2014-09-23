@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="	   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd	   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd	   http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd"
+	default-dependency-check="none">
+
+	<!-- jmx -->
+	<!--
+		<bean id="mbeanServer"
+		class="org.springframework.jmx.support.MBeanServerFactoryBean"/>
+	-->
+	
+	<bean id="assembler"
+		class="org.springframework.jmx.export.assembler.InterfaceBasedMBeanInfoAssembler">
+		<property name="interfaceMappings">
+			<value>
+				bean\:name\=otterControllor=com.alibaba.otter.node.etl.OtterControllerMBean
+			</value>
+		</property>
+	</bean>
+	
+	<bean id="mbeanServerConnector" class="com.alibaba.otter.node.etl.common.jmx.JmxConnectorServerFactoryBean">
+		<property name="configClientService" ref="configClientService" />
+	</bean>
+	
+	<bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
+		<property name="beans">
+			<map>
+				<entry key="bean:name=otterControllor" value-ref="otterController" />
+				<entry key="connectors:protocol=rmi" value-ref="mbeanServerConnector" />
+			</map>
+		</property>
+		<property name="assembler" ref="assembler" />
+	</bean>
+</beans>

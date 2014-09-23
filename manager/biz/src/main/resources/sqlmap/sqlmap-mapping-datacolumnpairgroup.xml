@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+    <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"  
+       "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="com.alibaba.otter.manager.biz.config.datacolumnpair.dal.dataobject.DataColumnPairGroupDO">
+	<typeAlias alias="dataColumnPairGroup"
+		type="com.alibaba.otter.manager.biz.config.datacolumnpair.dal.dataobject.DataColumnPairGroupDO"/>
+
+	<resultMap id="dataColumnPairGroupResult" class="dataColumnPairGroup">
+		<result property="id" column="ID" />
+		<result property="columnPairContent" column="COLUMN_PAIR_CONTENT" />
+		<result property="dataMediaPairId" column="DATA_MEDIA_PAIR_ID" />
+		<result property="gmtCreate" column="GMT_CREATE" />
+		<result property="gmtModified" column="GMT_MODIFIED" />
+	</resultMap>
+
+	<!-- all dataMediaPair columns -->
+	<sql id="allDataColumnPairGroupColumns">ID,COLUMN_PAIR_CONTENT,DATA_MEDIA_PAIR_ID,GMT_CREATE,GMT_MODIFIED</sql>
+
+	<select id="findDataColumnPairGroupById" resultMap="dataColumnPairGroupResult" parameterClass="long">
+		select
+		<include refid="allDataColumnPairGroupColumns" />
+		from COLUMN_PAIR_GROUP where ID = #value#
+	</select>
+	
+	<select id="listDataColumnPairGroupByDataMediaPairId" resultMap="dataColumnPairGroupResult" parameterClass="long">
+		select
+		<include refid="allDataColumnPairGroupColumns" />
+		from COLUMN_PAIR_GROUP where DATA_MEDIA_PAIR_ID = #value#
+	</select>
+	
+	<select id="listDataColumnPairGroupByDataMediaPairIds" resultMap="dataColumnPairGroupResult">
+		select
+		<include refid="allDataColumnPairGroupColumns" />
+		from COLUMN_PAIR_GROUP where DATA_MEDIA_PAIR_ID in
+		<iterate open="(" close=")" conjunction=",">
+			#[]#
+		</iterate>
+	</select>
+
+	<update id="updateDataColumnPairGroup" parameterClass="dataColumnPairGroup">
+		update COLUMN_PAIR_GROUP
+		set
+		COLUMN_PAIR_CONTENT = #columnPairContent#,
+		DATA_MEDIA_PAIR_ID = #dataMediaPairId#,
+		GMT_MODIFIED=now()
+		WHERE ID = #id#
+	</update>
+	
+	
+	<insert id="insertDataColumnPairGroup" parameterClass="dataColumnPairGroup">
+		insert into COLUMN_PAIR_GROUP
+		(COLUMN_PAIR_CONTENT,DATA_MEDIA_PAIR_ID,GMT_CREATE, GMT_MODIFIED)
+		SELECT #columnPairContent#,#dataMediaPairId#,now(),now() 
+		from dual 
+		WHERE not exists (select * from COLUMN_PAIR_GROUP 
+		where COLUMN_PAIR_GROUP.COLUMN_PAIR_CONTENT = #columnPairContent# 
+		and COLUMN_PAIR_GROUP.DATA_MEDIA_PAIR_ID = #dataMediaPairId#); 
+		<selectKey keyProperty="id" resultClass="long">
+			select last_insert_id()
+		</selectKey>
+	</insert>
+
+	<delete id="deleteDataColumnPairGroupById" parameterClass="long">
+    	delete from COLUMN_PAIR_GROUP where ID = #value#
+    </delete>
+    
+    <delete id="deleteDataColumnPairGroupByDataMediaPairId" parameterClass="long">
+    	delete from COLUMN_PAIR_GROUP where DATA_MEDIA_PAIR_ID = #value#
+    </delete>
+
+</sqlMap>  

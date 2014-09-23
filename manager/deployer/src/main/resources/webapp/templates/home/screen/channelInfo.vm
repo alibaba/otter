@@ -1,0 +1,45 @@
+$control.setTemplate("home:navigation.vm")
+
+<div class="main">
+ <div class="title"><h2>Channel信息</h2></div>
+ <div class="crumbs">Channel信息</div>
+ <div class="setting_box">
+ <table cellpadding="0" cellspacing="0" class="setting">
+  <tr>
+  <th>Channel序号：</th><td>$!channel.id</td>
+  </tr>
+  <tr>
+  <th>Channel名字：</th><td>$!channel.name</td>
+  </tr>
+  <tr>
+  <th>同步方向：</th><td>#if($channel.pipelines.size() == 0) 无 
+				#elseif($channel.pipelines.size() == 1) 单向
+				#elseif($channel.pipelines.size() == 2) 双向
+				#end</td>
+  </tr>
+  <tr>
+  <th>运行状态：</th><td>#if($channel.status.isStart()) 运行 #elseif($channel.status.isPause()) 挂起 #elseif($channel.status.isStop()) 停止 #end</td>
+  </tr>
+  <tr>
+  <th>同步一致性：</th><td>#if ($channel.parameters.SyncConsistency.isMedia()) 基于数据库反查 #elseif($channel.parameters.SyncConsistency.isBase()) 基于当前日志变更 #end</td>
+  </tr>
+  <tr>
+  <th>同步模式：</th><td>#if($channel.parameters.syncMode.isRow()) 行记录同步 #else 列记录同步 #end</td>
+  </tr>
+  <tr>
+  <th>是否开启数据一致性：</th><td>#if($channel.parameters.isEnableRemedy()) 开启 #else 关闭 #end</td>
+  </tr>
+  #if($channel.parameters.isEnableRemedy())
+  <tr>
+  <th>一致性算法：</th><td>#if($channel.parameters.remedyAlgorithm.isLoopback()) 单向回环补救 #else 时间交集补救 #end</td>
+  </tr>
+  <tr>
+  <th>一致性反查数据库延迟阀值：</th><td>$!numberFormat.format($channel.parameters.remedyDelayThresoldForMedia) 秒</td>
+  </tr
+  #end
+  <tr>
+  <th>描述信息：</th><td>$!channel.description</td>
+  </tr>
+ </table>
+ </div>
+</div>

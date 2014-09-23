@@ -1,0 +1,150 @@
+$control.setTemplate("home:navigation.vm")
+<script language="javascript">
+<!--
+	function changeSuperConfig() {
+		var obj = document.getElementById('superConfig');
+		if(obj.checked) {
+			changeDisplay('super','table-row');
+		}else {
+			changeDisplay('super','none');
+		}
+	}
+//-->
+</script>
+
+<div class="main">
+ <div class="title"><h2>Pipeline信息</h2></div>
+ <div class="crumbs">Pipeline信息</div>
+ <div class="setting_box">
+ <table cellpadding="0" cellspacing="0" class="setting">
+  <tr>
+  <th>Pipeline序号：</th><td>$!pipeline.id</td>
+  </tr>
+  <tr>
+  <th>Pipeline名字：</th><td>$!pipeline.name</td>
+  </tr>
+  <tr>
+  <th>Select机器：</th><td>#foreach($node in $pipeline.selectNodes) <a href="nodeInfo.htm?nodeId=$node.id">$node.name</a>; #end</td>
+  </tr>
+  #*
+  <tr>
+  <th>Extract机器：</th><td>#foreach($node in $pipeline.extractNodes) <a href="nodeInfo.htm?nodeId=$node.id">$node.name</a>; #end</td>
+  </tr>
+  *#
+  <tr>
+  <th>Load机器：</th><td>#foreach($node in $pipeline.loadNodes) <a href="nodeInfo.htm?nodeId=$node.id">$node.name</a>; #end</td>
+  </tr>
+  <tr>
+  <th>并行度：</th><td>$!pipeline.parameters.parallelism</td>
+  </tr>
+  <tr>
+  <th>数据反查线程数：</th><td>$!pipeline.parameters.extractPoolSize</td>
+  </tr>
+  <tr>
+  <th>数据载入线程数：</th><td>$!pipeline.parameters.loadPoolSize</td>
+  </tr>
+  <tr>
+  <th>文件载入线程数：</th><td>$!pipeline.parameters.fileLoadPoolSize</td>
+  </tr>
+  <tr>
+  <th>主站点：</th><td>$!pipeline.parameters.home</td>
+  </tr>
+  <tr>
+  <th>同步数据来源：</th><td>$!pipeline.parameters.selectorMode</td>
+  </tr>
+  <tr>
+  #set ($canalInfoURL = $homeModule.setTarget("canalList.vm").addQueryData("searchKey", $!pipeline.parameters.destinationName))
+  <th>Canal名字：</th><td><a href="$canalInfoURL">$!pipeline.parameters.destinationName</a></td>
+  </tr>
+  #**
+  <tr>
+  <th>主道消费端ID：</th><td>$!pipeline.parameters.mainstemClientId</td>
+  </tr>
+  *#
+  <tr>
+  <th>主道消费批次大小：</th><td>$!pipeline.parameters.mainstemBatchsize</td>
+  </tr>
+  #if($pipeline.parameters.selectorMode.isCanal())
+	<tr>
+		<th>获取批次数据超时时间：</th><td>$!pipeline.parameters.batchTimeout</td>
+	</tr>
+  #end
+  <tr>
+  <th>描述信息：</th><td>$!pipeline.description</td>
+  </tr>
+  
+  <tr>
+  <th>是否显示高级设置：</th>
+	<td>
+		<input id="superConfig" type='checkbox' name='super' value=1  class="setting_input" onclick="changeSuperConfig()" />
+	</td>
+  </tr>
+  <tr class="super"> 
+  <th>使用batch：</th><td>$!pipeline.parameters.useBatch</td>
+  </tr>
+  <tr class="super"> 
+  <th>跳过Select异常：</th><td>#if($!pipeline.parameters.skipSelectException) 开启 #else 关闭 #end</td>
+  </tr>
+  <tr class="super"> 
+  <th>跳过Load异常：</th><td>#if($!pipeline.parameters.skipLoadException) 开启 #else 关闭 #end</td>
+  </tr>
+  <tr class="super"> 
+  <th>仲裁器调度模式：</th><td>#if($!pipeline.parameters.arbitrateMode.isAutomatic()) 自动选择 #else $!pipeline.parameters.arbitrateMode #end</td>
+  </tr>
+  <tr class="super"> 
+  <th>负载均衡算法：</th><td>$!pipeline.parameters.lbAlgorithm</td>
+  </tr>
+  <tr class="super"> 
+  <th>传输模式：</th><td>#if($!pipeline.parameters.pipeChooseType.isAutomatic()) 自动选择 #else $!pipeline.parameters.pipeChooseType #end</td>
+  </tr>
+  <tr class="super"> 
+  <th>记录selector日志：</th><td>#if($!pipeline.parameters.dumpSelector) 开启 #else 关闭 #end</td>
+  </tr>
+  <tr class="super"> 
+  <th>记录selector详细日志：</th><td>#if($!pipeline.parameters.dumpSelectorDetail) 开启 #else 关闭 #end</td>
+  </tr>
+  <tr class="super"> 
+  <th>记录load日志：</th><td>#if($!pipeline.parameters.isDumpEvent()) 开启 #else 关闭 #end</td>
+  </tr>
+  <tr class="super"> 
+  <th>dryRun模式：</th><td>#if($!pipeline.parameters.isDryRun()) 开启 #else 关闭 #end</td>
+  </tr>
+  <tr class="super"> 
+  <th>支持ddl同步：</th><td>#if($!pipeline.parameters.ddlSync) 开启 #else 关闭 #end</td>
+  </tr>
+  <tr class="super"> 
+  <th>跳过ddl异常：</th><td>#if($!pipeline.parameters.skipDdlException) 开启 #else 关闭 #end</td>
+  </tr>
+  <tr class="super"> 
+  <th>文件重复同步对比：</th><td>#if($!pipeline.parameters.fileDetect) 开启 #else 关闭 #end</td>
+  </tr>
+  <tr class="super"> 
+  <th>文件传输加密：</th><td>#if($!pipeline.parameters.useFileEncrypt) 开启 #else 关闭 #end</td>
+  </tr>
+  <tr class="super"> 
+  <th>启用公网同步：</th><td>#if($!pipeline.parameters.useExternalIp) 开启 #else 关闭 #end</td>
+  </tr>
+  <tr class="super"> 
+  <th>跳过自由门数据：</th><td>#if($!pipeline.parameters.skipFreedom) 开启 #else 关闭 #end</td>
+  </tr>
+  <tr class="super"> 
+  <th>跳过反查无记录数据：</th><td>#if($!pipeline.parameters.skipNoRow) 开启 #else 关闭 #end</td>
+  </tr>
+  <tr class="super"> 
+  <th>启用数据表类型转化：</th><td>#if($!pipeline.parameters.useTableTransform) 开启 #else 关闭 #end</td>
+  </tr>
+  <tr class="super"> 
+  <th>兼容字段新增同步：</th><td>#if($!pipeline.parameters.enableCompatibleMissColumn) 开启 #else 关闭 #end</td>
+  </tr>
+  <tr class="super"> 
+  <th>自定义同步标记：</th><td>$!pipeline.parameters.channelInfo</td>
+  </tr>
+ </table>
+ </div>
+</div>
+	
+<script language="javascript">
+<!--
+	changeSuperConfig();
+//-->
+</script>

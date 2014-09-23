@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd"
+	default-autowire="byName" default-dependency-check="none">
+
+	<bean id="arbitrateCommunicationClient" class="com.alibaba.otter.shared.communication.core.impl.DefaultCommunicationClientImpl" init-method="initial" destroy-method="destory">
+		<property name="poolSize" value="${otter.communication.pool.size:10}" />
+		<property name="factory">
+			<bean class="com.alibaba.otter.shared.communication.core.impl.dubbo.DubboCommunicationConnectionFactory" />
+		</property>
+	</bean>
+	
+	<!-- Node communication -->
+	<bean id="arbitrateCommmunicationClient" class="com.alibaba.otter.shared.arbitrate.impl.communication.ArbitrateCommmunicationClient" scope="singleton" >
+		<property name="delegate" ref="arbitrateCommunicationClient" />
+		<property name="managerAddress" value="${otter.manager.address:127.0.0.1:1099}" />
+	</bean>
+</beans>

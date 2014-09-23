@@ -1,0 +1,127 @@
+$control.setTemplate("home:navigation.vm")
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
+<script type="text/javascript"> 
+	changeNav("sync");
+    /* 添加选择的项 */ 
+    function Add(ObjSource, ObjTarget) { 
+       if(ObjSource.val() ==null) return;    // 如果没有选择则退出函数，无这句话的话IE6会报错 
+        jQuery.each(ObjSource.val(), function(i, n) {    // 循环原列表中选中的值，依次添加到目标列表中 
+            var html = "<option value='" + n + "' selected='selected'>" + n + "</option>"; 
+            ObjTarget.append(html); 
+        }); 
+        ObjSource.find("option:selected").remove(); // 原列表中选中的值删除 
+    } 
+    /* 添加全部 */ 
+    function AddAll(ObjSource, ObjTarget) { 
+        ObjTarget.append(ObjSource.html()); // 目标列表的HTML加上原列表的所有HTML 
+        ObjSource.empty(); // 原列表清空 
+    }
+	
+	jQuery(document).ready(function($){
+		$('#submit').click(function(){
+			$('select#dltTarget_l option').each(function(index, el){
+				$(el).attr('selected','selected');
+			});
+			return true;
+		});
+	});
+	
+	
+	jQuery(document).ready(function($){
+		$('#submit').click(function(){
+			$('select#dltTarget_r option').each(function(index, el){
+				$(el).attr('selected','selected');
+			});
+			return true;
+		});
+	});
+	
+	jQuery(document).ready(function($){
+		$('#submitnext').click(function(){
+			$('select#dltTarget_l option').each(function(index, el){
+				$(el).attr('selected','selected');
+			});
+			return true;
+		});
+	});
+	
+	
+	jQuery(document).ready(function($){
+		$('#submitnext').click(function(){
+			$('select#dltTarget_r option').each(function(index, el){
+				$(el).attr('selected','selected');
+			});
+			return true;
+		});
+	});
+</script>
+#macro (addColumnPairMessage $field)
+    #if (!$field.valid) $field.message #end
+#end
+<div class="main">
+  <div class="title"> 
+    <h2>Table详细</h2>
+  </div> 
+<div class="crumbs"><a href="channelList.htm?channelId=$channelId">Channel管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="pipelineList.htm?channelId=$channelId">Pipeline管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="dataMediaPairList.htm?pipelineId=$pipelineId">映射关系管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="addColumnPair.htm?pipelineId=$pipelineId&channelId=$channelId&dataMediaPairId=$dataMediaPairId&sourceMediaId=$sourceMediaId&targetMediaId=$targetMediaId">编辑视图同步</a> </div>
+  <form name="addColumnPairForm" method="post" enctype="multipart/form-data">
+	$csrfToken.hiddenField
+	<input type="hidden" name="action" value="column_pair_action"/>
+	<input type="hidden" name="event_submit_do_save" value="1" />
+	<input type="hidden" name="dataMediaPairId" value="$dataMediaPairId" />
+	<input type="hidden" name="sourceMediaId" value="$sourceMediaId" />
+	<input type="hidden" name="targetMediaId" value="$targetMediaId" />
+	<input type="hidden" name="pipelineId" value="$pipelineId" />
+	<input type="hidden" name="channelId" value="$channelId" />
+	#set ($columnPair = $form.columnPairInfo.defaultInstance)
+	<input type="hidden" name="$columnPair.id.key" value="1"/>
+  <div class="sel_l">
+  <div class="box1"> 
+        <select id="dltSource_l" name="dltSource_l"  multiple="multiple"> 
+			#foreach ($sourceColumn in $sourceColumns)
+				<option value="$!sourceColumn">$!sourceColumn</option> 
+            #end
+        </select> 
+  </div> 
+  <div class="box2"> 
+        <input type="button" class="btn_down1" onclick="Add($('#dltSource_l'),$('#dltTarget_l'))" /> 
+        <input type="button" class="btn_down2" onclick="AddAll($('#dltSource_l'),$('#dltTarget_l'))" /> 
+        <input type="button" class="btn_up1" onclick="Add($('#dltTarget_l'),$('#dltSource_l'))" /> 
+        <input type="button" class="btn_up2" onclick="AddAll($('#dltTarget_l'),$('#dltSource_l'))" /> 
+  </div> 
+  <div class="box3"> 
+        <select id="dltTarget_l" name="$columnPair.dltTarget_l.key" multiple="multiple"> 
+			#foreach ($underSourceColumn in $underSourceColumns)
+				<option value="$!underSourceColumn" selected="selected">$!underSourceColumn</option> 
+            #end
+        </select> 
+  </div> 
+  
+  <input type="submit" id="submit" name="submitKey" value="保存" class="button"></input>
+  <input type="submit" id="submitnext" name="submitKey" value="下一步" class="button"></input>
+  <span class="red">#addColumnPairMessage ($columnPair.formColumnPairError)</span>
+  </div>
+  
+  <div class="sel_r">
+  <div class="box1"> 
+        <select id="dltSource_r" name="dltSource_r" multiple="multiple"> 
+            #foreach ($targetColumn in $targetColumns)
+				<option value="$!targetColumn">$!targetColumn</option> 
+            #end
+        </select> 
+  </div> 
+  <div class="box2"> 
+        <input type="button" class="btn_down1" onclick="Add($('#dltSource_r'),$('#dltTarget_r'))" /> 
+        <input type="button" class="btn_down2" onclick="AddAll($('#dltSource_r'),$('#dltTarget_r'))" /> 
+        <input type="button" class="btn_up1" onclick="Add($('#dltTarget_r'),$('#dltSource_r'))" /> 
+        <input type="button" class="btn_up2" onclick="AddAll($('#dltTarget_r'),$('#dltSource_r'))" /> 
+  </div> 
+  <div class="box3"> 
+        <select id="dltTarget_r" name="$columnPair.dltTarget_r.key" multiple="multiple"> 
+			#foreach ($underTargetColumn in $underTargetColumns)
+				<option value="$!underTargetColumn" selected="selected">$!underTargetColumn</option> 
+            #end
+        </select> 
+  </div> 
+  </div>
+  </form>  
+</div>

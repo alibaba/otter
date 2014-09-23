@@ -1,0 +1,120 @@
+$control.setTemplate("home:navigation.vm")
+#set($user = $rundata.request.session.getAttribute("managerUser"))
+<script type="text/javascript" src="js/trcolor.js"></script>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
+<script type="text/javascript" src="js/jquery.simplemodal-1.4.js"></script> 
+<script language="javascript">
+	changeNav("datamedia");
+</script>
+
+<!--页面主体-->
+<div class="main">
+   
+  <div class="title"> 
+    <h2>数据表管理</h2>
+  </div>
+   <div class="crumbs"><a href="dataMediaList.htm">数据表管理</a> </div> 
+   <!--分页表单-->
+   <form id="pageform" name="pageform" action="$homeModule.setTarget('dataMediaList.vm')" method="post">
+    	<input type="hidden" id="pageIndex" name="pageIndex" value=""/>
+		<input type="hidden" id="searchKey" name="searchKey" value="$!searchKey"/>
+   </form>
+   <!--DataMedia搜索-->
+   <div class="search_o"> 
+		<form name="search_data_media" action="dataMediaList.htm" method="post">
+			##$csrfToken.hiddenField
+			<div class="search_input">
+				<input name="searchKey" type="text" value="请输入关键字(目前支持DataMedia的ID、名字搜索)"  onfocus="if(this.value == '请输入关键字(目前支持DataMedia的ID、名字搜索)') {this.value='';}" onblur="if(this.value == '') {this.value = '请输入关键字(目前支持DataMedia的ID、名字搜索)';}" />
+			</div>
+			<div class="search_btn"><a href="javascript:document.search_data_media.submit();"><img src="images/search_btn.png" width="39" height="31" /></a></div>
+        </form>
+   </div>
+   
+   <!--列表-->
+     
+  <table border="0" cellspacing="0" cellpadding="0" class="list changecolor_w" >
+    <tr> 
+      <th>序号</th>
+	  <th>Schema Name</th>
+	  <th>Table Name</th>
+	  <th>数据源</th>
+	  <th>源类型</th>
+	  <th>操作</th>
+    </tr>
+	#foreach ($dataMedia in $dataMedias)
+	
+    <tr> 
+      <td width="9%">$!dataMedia.id</td>
+	  <td>$!dataMedia.namespace</td>
+      <td width="16%">$!dataMedia.name</td>
+      <td>
+		#set ($dataSourceInfoURL = $homeModule.setTarget("dataSourceInfo.vm").addQueryData("dataMediaSourceId", $!dataMedia.source.id))
+		<a href="$dataSourceInfoURL">$!dataMedia.source.name</a>
+	  </td>
+	  <td>$!dataMedia.source.type</td>
+	  <td>
+		#set ($dataMediaInfoURL = $homeModule.setTarget("dataMediaInfo.vm").addQueryData("dataMediaId", $dataMedia.id))
+		<a href="$dataMediaInfoURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">查看</span></a>
+		#if($user.authorizeType.isAdmin())
+			
+    		#set ($editURL = $homeModule.setTarget("editDataMedia.vm").addQueryData("dataMediaId", $dataMedia.id).addQueryData("pageIndex", $!paginator.page).addQueryData("searchKey", $!searchKey))
+    		<span class="ico_line">|</span><a href="$editURL"><img src="images/ico_edit.png" alt="" width="13" height="13" /><span class="ico_font">编辑</span></a>
+			
+			#if($!dataMedia.isUsed())
+				<span class="ico_line">|</span><img src="images/ico_del.png" width="9" height="9" /><span class="ico_font" title="已经被Pipeline#foreach($pair in $!dataMedia.pairs)[$pair.pipelineId]#end使用，不能删除">删除</span></td>
+			#else
+				#set ($removeURL = $homeModule.setAction("dataMediaAction").addQueryData("dataMediaId", $dataMedia.id).addQueryData("pageIndex", $!paginator.page).addQueryData("searchKey", $!searchKey).addQueryData("eventSubmitDoDelete", "true"))
+				<span class="ico_line">|</span><a href="javascript:if(confirm('确实要删除吗?'))location='$removeURL'" class="link del"><img src="images/ico_del.png" width="9" height="9" /><span class="ico_font">删除</span></a></td>
+			#end
+    		
+		#end
+    </tr>
+    #end
+  </table>
+     <!--常规按钮-->
+     #if($user.authorizeType.isAdmin())
+			<div class="btn"><a href="addDataMedia.htm">添加</a></div>
+	 #end
+  
+     
+     <!--分页-->
+     <div class="page">共$paginator.items条数据&nbsp;&nbsp;第$paginator.page页/共$paginator.pages页&nbsp;&nbsp; 
+       
+	   #if($paginator.page == 1)
+            <font color="999999">首页</font>
+	   #else
+			<a href="#" class="prev" onclick="pageNavigation(this,1)">首页</a>
+	   #end
+	   
+	   #if($paginator.page > 1)
+			#set($pre_page = $paginator.page - 1)
+				<a href="#" class="prev" onclick="pageNavigation(this,$pre_page)">上一页</a>
+	   #else
+            <font color="999999">上一页</font>
+	   #end
+	   ##分页下标
+	   #set($counts_keys = $paginator.getSlider(7))
+	   #foreach( $thisPage in $counts_keys)
+			#if( $thisPage == $paginator.page)
+                <b>$thisPage</b>
+			#else
+				#if($thisPage != 0)
+					<a href="#" class="num" onclick="pageNavigation(this,$thisPage)">$thisPage</a> 
+				#end
+			#end
+	   #end
+	   
+	   #if($paginator.page < $paginator.pages)
+			#set($next_page = $paginator.page + 1)
+				<a href="#" class="prev" onclick="pageNavigation(this,$next_page)">下一页</a>
+	   #else
+            <font color="999999">下一页</font>
+	   #end
+	   
+	   #if($paginator.page == $paginator.pages)
+            <font color="999999">末页</font>
+	   #else
+			<a href="#" class="prev" onclick="pageNavigation(this,$paginator.pages)">末页</a>
+	   #end
+     </div>     
+</div>

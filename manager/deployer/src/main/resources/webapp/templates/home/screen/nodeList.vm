@@ -1,0 +1,134 @@
+$control.setTemplate("home:navigation.vm")
+#set($user = $rundata.request.session.getAttribute("managerUser"))
+<script type="text/javascript" src="js/trcolor.js"></script>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
+<script type="text/javascript" src="js/jquery.simplemodal-1.4.js"></script> 
+<script language="javascript">
+	changeNav("node");
+</script>
+
+
+
+<!--页面主体-->
+<div class="main">
+   
+  <div class="title"> 
+    <h2>机器管理</h2>
+  </div>
+   <div class="crumbs"><a href="nodeList.htm">机器管理</a> </div> 
+   <!--分页表单-->
+   <form id="pageform" name="pageform" action="$homeModule.setTarget('nodeList.vm')" method="post">
+    	<input type="hidden" id="pageIndex" name="pageIndex" value=""/>
+		<input type="hidden" id="searchKey" name="searchKey" value="$!searchKey"/>
+   </form>
+   <!--Node搜索-->
+   <div class="search_o"> 
+		<form name="search_node" action="nodeList.htm"  method="post">
+			##$csrfToken.hiddenField
+			<div class="search_input">
+				<input name="searchKey" type="text" value="请输入关键字(目前支持Node的ID、名字搜索)"  onfocus="if(this.value == '请输入关键字(目前支持Node的ID、名字搜索)') {this.value='';}" onblur="if(this.value == '') {this.value = '请输入关键字(目前支持Node的ID、名字搜索)';}" />
+			</div>
+			<div class="search_btn"><a href="javascript:document.search_node.submit();"><img src="images/search_btn.png" width="39" height="31" /></a></div>
+        </form>
+   </div>
+   
+   <!--列表-->
+     
+  <table border="0" cellspacing="0" cellpadding="0" class="list changecolor_w">
+    <tr> 
+      <th>序号</th>
+      <th>机器名字</th>
+      <th>IP</th>
+      <th>端口</th>
+      <th>状态</th>
+      <th>操作</th>
+	  
+    </tr>
+	#foreach($seniorNode in $seniorNodes)
+		#set ($nodeInfoURL = $homeModule.setTarget("nodeInfo.vm").addQueryData("nodeId", $seniorNode.id).render())
+        <tr> 
+          <td width="4%">$seniorNode.id</td>
+          <td>
+          <div class="bubbleInfo">
+			 <a href="$nodeInfoURL" id="download" class="trigger">$seniorNode.name</a>
+             <div class="popup">
+             <div class="pop_tips_top"></div>
+             <div class="pop_tips_mid">
+              <div class="pop_tips_font">$seniorNode.description
+              </div>
+             </div>
+             <div class="pop_tips_bottom"></div>
+             </div>
+          </div>      
+          </td>
+          <td>#if($seniorNode.parameters.useExternalIp) $seniorNode.parameters.externalIp (外) #else $seniorNode.ip #end</td>
+          <td>$seniorNode.port</td>
+          <td>#if($seniorNode.status.isStart()) 已启动 #else <font color="#FF0000">未启动</font> #end</td>
+          <td>
+			<a href="$nodeInfoURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">查看</span></a>
+			#if($user.authorizeType.isAdmin())
+    			#if($seniorNode.status.isStart())
+    				<span class="ico_line">|</span><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font" title="node必须在未启动状态才能编辑">编辑</span>
+    			#else
+    				#set ($editURL = $homeModule.setTarget("editNode.vm").addQueryData("nodeId", $seniorNode.id).addQueryData("pageIndex", $!paginator.page).addQueryData("searchKey", $!searchKey))
+    				<span class="ico_line">|</span><a href="$editURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">编辑</span></a>
+    			#end
+    			
+    			#if($seniorNode.isUsed())
+    				<span class="ico_line">|</span><img src="images/ico_del.png" width="9" height="9" /><span class="ico_font" title="node必须取消与Pipeline关联才能删除">删除</span>
+    			#else
+    				#set ($removeURL = $homeModule.setAction("nodeAction").addQueryData("nodeId", $seniorNode.id).addQueryData("pageIndex", $!paginator.page).addQueryData("searchKey", $!searchKey).addQueryData("eventSubmitDoDelete", "true"))
+    				<span class="ico_line">|</span><a href="javascript:if(confirm('确实要删除吗?'))location='$removeURL'" class="link del" ><img src="images/ico_del.png" width="9" height="9" /><span class="ico_font">删除</span></a>
+    			#end
+			#end
+								
+		  </td>
+        </tr>
+	#end
+    
+  </table>
+  <!--常规按钮-->
+  #if($user.authorizeType.isAdmin())
+	<div class="btn"><a href="$nodeAddLink">添加</a></div>
+  #end
+  <!--分页-->
+     <div class="page">共$paginator.items条数据&nbsp;&nbsp;第$paginator.page页/共$paginator.pages页&nbsp;&nbsp; 
+       
+	   #if($paginator.page == 1)
+            <font color="999999">首页</font>
+	   #else
+			<a href="#" class="prev" onclick="pageNavigation(this,1)">首页</a>
+	   #end
+	   
+	   #if($paginator.page > 1)
+			#set($pre_page = $paginator.page - 1)
+				<a href="#" class="prev" onclick="pageNavigation(this,$pre_page)">上一页</a>
+	   #else
+            <font color="999999">上一页</font>
+	   #end
+	   ##分页下标
+	   #set($counts_keys = $paginator.getSlider(7))
+	   #foreach( $thisPage in $counts_keys)
+			#if( $thisPage == $paginator.page)
+                <b>$thisPage</b>
+			#else
+				#if($thisPage != 0)
+					<a href="#" class="num" onclick="pageNavigation(this,$thisPage)">$thisPage</a> 
+				#end
+			#end
+	   #end
+	   
+	   #if($paginator.page < $paginator.pages)
+			#set($next_page = $paginator.page + 1)
+				<a href="#" class="prev" onclick="pageNavigation(this,$next_page)">下一页</a>
+	   #else
+            <font color="999999">下一页</font>
+	   #end
+	   
+	   #if($paginator.page == $paginator.pages)
+            <font color="999999">末页</font>
+	   #else
+			<a href="#" class="prev" onclick="pageNavigation(this,$paginator.pages)">末页</a>
+	   #end
+     </div>     
+</div>

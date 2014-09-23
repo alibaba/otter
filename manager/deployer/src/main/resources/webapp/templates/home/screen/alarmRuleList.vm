@@ -1,0 +1,177 @@
+$control.setTemplate("home:navigation.vm")
+#set($user = $rundata.request.session.getAttribute("managerUser"))
+<script type="text/javascript" src="js/trcolor.js"></script>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
+<script language="javascript" type="text/javascript" src="js/My97DatePicker/WdatePicker.js" ></script>
+
+<script language="javascript">
+    <!--
+	changeNav("sync");
+    $(function () {
+        $('.bubbleInfo').each(function () {
+            var distance = 10;
+            var time = 250;
+            var hideDelay = 200;
+
+            var hideDelayTimer = null;
+
+            var beingShown = false;
+            var shown = false;
+            var trigger = $('.trigger', this);
+            var info = $('.popup', this).css('opacity', 0);
+
+
+            $([trigger.get(0), info.get(0)]).mouseover(function () {
+                if (hideDelayTimer) clearTimeout(hideDelayTimer);
+                if (beingShown || shown) {
+                    // don't trigger the animation again
+                    return;
+                } else {
+                    // reset position of info box
+                    beingShown = true;
+
+                    info.css({
+                        top: 10,
+                        left: 10,
+                        display: 'block'
+                    }).animate({
+                        top: '+=' + distance + 'px',
+                        opacity: 1
+                    }, time, 'swing', function() {
+                        beingShown = false;
+                        shown = true;
+                    });
+                }
+
+                return false;
+            }).mouseout(function () {
+                if (hideDelayTimer) clearTimeout(hideDelayTimer);
+                hideDelayTimer = setTimeout(function () {
+                    hideDelayTimer = null;
+                    info.animate({
+                        top: '-=' + distance + 'px',
+                        opacity: 0
+                    }, time, 'swing', function () {
+                        shown = false;
+                        info.css('display', 'none');
+                    });
+
+                }, hideDelay);
+
+                return false;
+            });
+        });
+    });
+    
+	 function(dp){
+			 $('pauseTime')
+	 }
+    //-->
+</script>
+
+
+<div class="main">
+  <div class="title"> 
+    <h2>监控规则管理</h2>
+  </div>
+  <div class="crumbs"><a href="channelList.htm?channelId=$channelId">channel管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="pipelineList.htm?channelId=$channelId">Pipeline管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;监控管理</div>
+  <div class="crumbs"></div>
+  <div class="tab" id="Tab2">
+        <div class="menubox">
+        <ul>
+        <li id="two1"><a href="dataMediaPairList.htm?pipelineId=$pipelineId">映射关系列表</a></li>
+           
+        <li id="two2"><a href="analysisThroughputStat.htm?pipelineId=$pipelineId">吞吐量</a></li>
+        
+        <li id="two3"><a href="analysisDelayStat.htm?pipelineId=$pipelineId">延迟时间</a></li>
+           
+        <li id="two4"><a href="analysisStageStat.htm?pipelineId=$pipelineId">同步进度</a></li>   
+		
+		<li id="two5"><a href="analysisThroughputHistory.htm?pipelineId=$pipelineId">历史吞吐量</a></li>
+		
+		<li id="two6" class="tab_active"><a href="alarmRuleList.htm?pipelineId=$pipelineId">监控管理</a></li>
+        
+		<li id="two7"><a href="logRecordTab.htm?pipelineId=$pipelineId">日志记录</a></li>
+		
+		</ul>
+        </div>
+         <div class="contentbox_tab box_tab">  
+           <div id="con_two_1">
+<!--列表-->
+ 
+        <table border="0" cellspacing="0" cellpadding="0" class="list2 changecolor_g">
+          <tr> 
+            <th width="8%">序号</th>
+            <th width="8%">监控项目</th>
+			<th width="8%">阈值</th>
+			<th width="8%">状态</th>
+			<th width="8%">发送对象</th>
+			<th width="12%">暂停时间</th>
+        	<th width="24%">操作</th>
+          </tr>
+			#set($flag = false)
+			#foreach ($alarmRule in $alarmRules)
+				#set($flag = true)
+			<tr> 
+				<td width="8%">$alarmRule.id</td>
+				<td width="8%">#if($alarmRule.monitorName.isQueueSize()) 堆积 #elseif($alarmRule.monitorName.isDelayTime()) 延迟 #elseif($alarmRule.monitorName.isPipelineTimeout()) Pipeline超时 #elseif($alarmRule.monitorName.isProcessTimeout()) Process超时 #elseif($alarmRule.monitorName.isException()) 异常 #elseif($alarmRule.monitorName.isPaused()) 挂起 #elseif($alarmRule.monitorName.isPositionTimeout()) Position超时 #end</td>
+				<td width="8%">$alarmRule.matchValue</td>
+				<td width="8%">#if($alarmRule.status.isEnable() && !$alarmRule.isPaused()) <img src="images/alarm.png" title="开启" width="22" height="22" /> #else <img src="images/alarm_on.png" title="暂停" width="22" height="22" /> #end</td>
+				<td width="8%">$alarmRule.receiverKey</td>
+				<td width="12%">#if($alarmRule.isPaused())$!numberFormat.format($alarmRule.pauseTime)#end</td>
+				<td width="24%">
+					<img src="images/ico_edit.png" width="13" height="13" /><span title="$alarmRule.description" class="ico_font">描述</span>
+					<span class="ico_line">|</span><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font"><a href="logRecordList.htm?pipelineId=$alarmRule.pipelineId&monitorName=$alarmRule.monitorName">历史</a></span>
+					
+					#if($user.authorizeType.isAdmin())
+						#if($alarmRule.status.isEnable())
+    						#if($alarmRule.isPaused())
+								#set ($reEnableURL = $homeModule.setAction("AlarmRuleAction").addQueryData("alarmRuleId", $alarmRule.id).addQueryData("status", "enable").addQueryData("pipelineId",$pipelineId).addQueryData("eventSubmitDoStatus", "true").render())
+								<span class="ico_line">|</span><a href="$reEnableURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">恢复</span></a>
+							#else
+        						#set ($disableURL = $homeModule.setAction("AlarmRuleAction").addQueryData("alarmRuleId", $alarmRule.id).addQueryData("status", "disable").addQueryData("pipelineId",$pipelineId).addQueryData("eventSubmitDoStatus", "true").render())
+								<span class="ico_line">|</span><a href="#" onclick="WdatePicker({el:'rule_${alarmRule.id}',dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'%y-%M-%d %H:%m:%s',qsEnabled:true,quickSel:['%y-%M-%d #{%H+2}:%m:%s','%y-%M-%d #{%H+6}:%m:%s','%y-%M-%d #{%H+12}:%m:%s','%y-%M-#{%d+1} %H:%m:%s}','%y-%M-#{%d+2} %H:%m:%s}'], onpicked:function(){url='${disableURL}&pauseTime=' + $dp.cal.getDateStr();window.location.href=url;}});return false;"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">暂停</span><span id="rule_${alarmRule.id}" style="display:none;" /></a>
+							#end
+    					#else
+    						#set ($enableURL = $homeModule.setAction("AlarmRuleAction").addQueryData("alarmRuleId", $alarmRule.id).addQueryData("status", "enable").addQueryData("pipelineId",$pipelineId).addQueryData("eventSubmitDoStatus", "true").render())
+    						<span class="ico_line">|</span><a href="$enableURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">开启</span></a>
+						#end
+    					#set ($editURL = $homeModule.setTarget("editAlarmRule.vm").addQueryData("alarmRuleId", $alarmRule.id).render())
+						<span class="ico_line">|</span><a href="$editURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">编辑</span></a>
+						#if($alarmRule.status.isEnable() && !$alarmRule.isPaused())
+    						<span class="ico_line">|</span><img src="images/ico_del.png" width="9" height="9" /><span title="暂停监控后才可以删除" class="ico_font">删除</span>
+						#else
+        					#set ($removeURL = $homeModule.setAction("AlarmRuleAction").addQueryData("alarmRuleId", $alarmRule.id).addQueryData("pipelineId",$pipelineId).addQueryData("eventSubmitDoDelete", "true").render())
+							<span class="ico_line">|</span><a href="$removeURL"><img src="images/ico_del.png" width="9" height="9" /><span class="ico_font">删除</span></a>
+						#end
+					#end
+				</td>
+			</tr>
+			#end
+		 
+		  
+        </table>
+		#if($user.authorizeType.isAdmin())
+        		<div class="btn">
+        			#set ($addURL = $homeModule.setTarget("addAlarmRule.vm").addQueryData("pipelineId", $pipelineId).render())
+        			<a href="$addURL">添加</a>
+        		</div>
+				<div class="btn">
+					#set ($onekeyMonitorURL = $homeModule.setAction("AlarmRuleAction").addQueryData("pipelineId", $pipelineId).addQueryData("eventSubmitDoOnekeyAddMonitor", "true"))
+        			<a href="$onekeyMonitorURL">一键添加</a>
+        		</div>
+				#if($flag)
+				<div class="btn">
+					#set ($enableAllURL = $homeModule.setAction("AlarmRuleAction").addQueryData("pipelineId", $pipelineId).addQueryData("status", "enable").addQueryData("eventSubmitDoStatusByPipeline", "true").render())
+        			<a href="$enableAllURL">全部开启</a>
+				</div>
+				<div class="btn">
+					#set ($disableAllURL = $homeModule.setAction("AlarmRuleAction").addQueryData("pipelineId", $pipelineId).addQueryData("status", "disable").addQueryData("eventSubmitDoStatusByPipeline", "true").render())
+					<a href="#" onclick="WdatePicker({el:'rule_all',dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'%y-%M-%d %H:%m:%s',qsEnabled:true,quickSel:['%y-%M-%d #{%H+2}:%m:%s','%y-%M-%d #{%H+6}:%m:%s','%y-%M-%d #{%H+12}:%m:%s','%y-%M-#{%d+1} %H:%m:%s','%y-%M-#{%d+2} %H:%m:%s'], onpicked:function(){url='${disableAllURL}&pauseTime=' + $dp.cal.getDateStr();window.location.href=url;}});return false;">全部暂停<span id="rule_all" style="display:none;" /></a>
+				</div>
+				#end
+		#end		
+		   </div>
+		 </div>
+  </div>
+</div>

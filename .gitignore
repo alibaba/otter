@@ -1,0 +1,16 @@
+.svn/
+target/
+test-output/
+*.class
+.classpath
+.project
+.settings/
+tmp
+temp
+*.log
+antx.properties
+.idea/
+*.iml
+htdocs
+download
+package-info.java

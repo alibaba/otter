@@ -1,0 +1,221 @@
+$control.setTemplate("home:navigation.vm")
+	<!--Load the AJAX API-->
+	<script type='text/javascript' src='dwr/interface/Node.js'></script>  
+    <script type='text/javascript' src='dwr/engine.js'></script>  
+    <script type='text/javascript' src='dwr/util.js'></script>  
+    <script type='text/javascript' src='js/nodeCheck.js'></script>
+    <script type="text/javascript" src="js/gchartapi.js"></script>
+    <script type="text/javascript">
+      google.load('visualization', '1.0', {'packages':['corechart']});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+		var obj = eval(#noescape()$!heapMemoryUsage#end);
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Topping');
+        data.addColumn('number', 'Slices');
+        data.addRows([
+          ['unused', obj.committed/1000/1000-obj.used/1000/1000],
+          ['used', obj.used/1000/1000],
+        ]);
+
+        var options = {'title':"The mem total is "+obj.committed/1000/1000+" MB",
+					   'backgroundColor':"#f0f2f4",
+                       'width':400,
+                       'height':300};
+
+        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+		chart.draw(data, options);
+      }
+    </script>
+	
+<div class="main">
+ <div class="title"><h2>机器信息</h2></div>
+ <div class="crumbs">机器信息</div>
+ <div class="setting_box">
+ <table cellpadding="0" cellspacing="0" class="setting">
+  <tr>
+  <th>机器序号：</th><td>$!node.id</td>
+  </tr>
+  <tr>
+  <th>机器名：</th><td>$!node.name</td>
+  </tr>
+  <tr>
+  <th>地址端口：</th><td>$!node.ip:$!node.port</td>
+  </tr>
+  <tr>
+  <th>下载端口：</th><td>$!node.parameters.downloadPort</td>
+  </tr>
+  <tr>
+  <th>MBean端口：</th><td>$!node.parameters.mbeanPort</td>
+  </tr>
+  <tr>
+  <th>外部IP：</th><td>$!node.parameters.externalIp</td>
+  </tr>
+  <tr>
+  <th>启用外部IP：</th><td>#if($!node.parameters.useExternalIp) 是 #else 否 #end</td>
+  </tr>
+  <tr>
+  <th>Zookeeper集群：</th><td>$node.parameters.zkCluster.clusterName [ $stringUtil.join($node.parameters.zkCluster.serverList,",") ]</td>
+  </tr>
+  <tr>
+  <th>运行状态：</th><td>$!node.status</td>
+  </tr>
+  <tr>
+  <th>使用内存：</th><td><div id="chart_div"></div></td>
+  </tr>
+  <tr>
+  <th>线程使用状况：</th><td>$!threadActiveSize/$!threadPoolSize</td>
+  </tr>
+  <tr>
+  <th>实际运行的Pipeline数统计：</th><td>$!runningPipelines</td>
+  </tr>
+  <tr>
+  <th>node版本信息：</th><td>$!versionInfo</td>
+  </tr>
+  <tr>
+  <th>操作系统信息：</th><td>$!systemInfo</td>
+  </tr>
+  <tr>
+  <th>描述信息：</th><td>$!node.description</td>
+  </tr>
+ </table>
+ </div>
+ <table border="0" cellspacing="0" cellpadding="0" class="list changecolor_w">
+    <tr> 
+      <th>node</th>
+      <th>阶段</th>
+	  <th>所属Pipeline</th>
+	  <th>所属Channel</th>
+	  <th>状态信息</th>
+	  <th>pengding</th>
+	  <th>统计信息</th>
+    </tr>
+    
+    #foreach ($channel in $channels)
+		#foreach($pipeline in $channel.pipelines)
+			#foreach($selectNode in $pipeline.selectNodes)
+				#if($selectNode.id == $!node.id)
+					<tr> 
+    				<td width="16%">$!node.ip:$!node.port</td>
+    				<td>selectNode</td>
+    				<td>
+						#set ($pipelineInfoURL = $homeModule.setTarget("pipelineList.vm").addQueryData("channelId", $channel.id).addQueryData("pipelineId", $pipeline.id))
+    					<a href="$pipelineInfoURL">$pipeline.name</a>
+					</td>
+    				<td>
+    					#set ($channelInfoURL = $homeModule.setTarget("channelList.vm").addQueryData("channelId", $channel.id))
+    					<a href="$channelInfoURL">$channel.name</a>
+    				</td>
+					<td>
+    					#if($channel.status.isStart())  <font color="green">运行</font>
+							#elseif($channel.status.isPause())  <font color="red">挂起</font>
+								#else 停止
+						#end
+						<a href="#" onclick="isRunning('$!node.id',$!pipeline.id,'SELECT');return false;">(状态查询)</a>
+    				</td>
+					<td>
+    					<a href="#" onclick="pending('$!node.id',$!pipeline.id,'SELECT');return false;">(pending查询)</a>
+    				</td>
+					<td>
+    					<a href="#" onclick="aggregation('$!node.id',$!pipeline.id,'SELECT');return false;">(统计查询)</a>
+    				</td>
+    			</tr>
+				#end
+			#end
+			
+    		#foreach($extractNode in $pipeline.extractNodes)
+    			#if($extractNode.id == $!node.id)
+        			<tr> 
+        				<td width="16%">$!node.ip:$!node.port</td>
+        				<td>extractNode</td>
+        				<td>
+							#set ($pipelineInfoURL = $homeModule.setTarget("pipelineList.vm").addQueryData("channelId", $channel.id).addQueryData("pipelineId", $pipeline.id))
+							<a href="$pipelineInfoURL">$pipeline.name</a>
+						</td>
+        				<td>
+        					#set ($channelInfoURL = $homeModule.setTarget("channelList.vm").addQueryData("channelId", $channel.id))
+        					<a href="$channelInfoURL">$channel.name</a>
+        				</td>
+						<td>
+							#if($channel.status.isStart())  <font color="green">运行</font>
+								#elseif($channel.status.isPause())  <font color="red">挂起</font>
+									#else 停止
+							#end
+						<a href="#" onclick="isRunning('$!node.id',$!pipeline.id,'EXTRACT');return false;">(状态查询)</a>
+						</td>
+    				</td>
+					<td>
+    					<a href="#" onclick="pending('$!node.id',$!pipeline.id,'EXTRACT');return false;">(pending查询)</a>
+    				</td>
+					<td>
+    					<a href="#" onclick="aggregation('$!node.id',$!pipeline.id,'EXTRACT');return false;">(统计查询)</a>
+    				</td>
+        			</tr>
+    			#end
+    		#end
+		
+    		#foreach($loadNode in $pipeline.loadNodes)
+    			#if($loadNode.id == $!node.id)
+        			<tr> 
+        				<td width="16%">$!node.ip:$!node.port</td>
+        				<td>transformNode</td>
+        				<td>
+							#set ($pipelineInfoURL = $homeModule.setTarget("pipelineList.vm").addQueryData("channelId", $channel.id).addQueryData("pipelineId", $pipeline.id))
+							<a href="$pipelineInfoURL">$pipeline.name</a>
+						</td>
+        				<td>
+        					#set ($channelInfoURL = $homeModule.setTarget("channelList.vm").addQueryData("channelId", $channel.id))
+        					<a href="$channelInfoURL">$channel.name</a>
+        				</td>
+						<td>
+							#if($channel.status.isStart())  <font color="green">运行</font>
+								#elseif($channel.status.isPause())  <font color="red">挂起</font>
+									#else 停止
+							#end
+						<a href="#" onclick="isRunning('$!node.id',$!pipeline.id,'TRANSFORM');return false;">(状态查询)</a>
+						</td>
+    				</td>
+					<td>
+    					<a href="#" onclick="pending('$!node.id',$!pipeline.id,'TRANSFORM');return false;">(pending查询)</a>
+    				</td>
+					<td>
+    					<a href="#" onclick="aggregation('$!node.id',$!pipeline.id,'TRANSFORM');return false;">(统计查询)</a>
+    				</td>
+        			</tr>
+    			#end
+			#end
+			
+			#foreach($loadNode in $pipeline.loadNodes)
+    			#if($loadNode.id == $!node.id)
+        			<tr> 
+        				<td width="16%">$!node.ip:$!node.port</td>
+        				<td>loadNode</td>
+        				<td>
+							#set ($pipelineInfoURL = $homeModule.setTarget("pipelineList.vm").addQueryData("channelId", $channel.id).addQueryData("pipelineId", $pipeline.id))
+							<a href="$pipelineInfoURL">$pipeline.name</a>
+						</td>
+        				<td>
+        					#set ($channelInfoURL = $homeModule.setTarget("channelList.vm").addQueryData("channelId", $channel.id))
+        					<a href="$channelInfoURL">$channel.name</a>
+        				</td>
+						<td>
+							#if($channel.status.isStart())  <font color="green">运行</font>
+								#elseif($channel.status.isPause())  <font color="red">挂起</font>
+									#else 停止
+							#end
+						<a href="#" onclick="isRunning('$!node.id',$!pipeline.id,'LOAD');return false;">(状态查询)</a>
+						</td>
+    				</td>
+					<td>
+    					<a href="#" onclick="pending('$!node.id',$!pipeline.id,'LOAD');return false;">(pending查询)</a>
+    				</td>
+					<td>
+    					<a href="#" onclick="aggregation('$!node.id',$!pipeline.id,'LOAD');return false;">(统计查询)</a>
+    				</td>
+        			</tr>
+    			#end
+    		#end
+		#end
+	#end
+  </table>
+</div>

@@ -1,0 +1,59 @@
+
+$control.setTemplate("home:navigation.vm")
+<script language="javascript">
+<!--
+	changeNav("sync");
+//-->
+function changeKeyword(id, name, local) {
+	if(local == 'source'){
+    	if( document.getElementById("sourceDataMediaId") && document.getElementById("sourceDataMediaName")){
+    		document.getElementById('sourceDataMediaId').value = id;
+        	document.getElementById('sourceDataMediaName').value = name;
+    	}
+	}else{
+		if( document.getElementById("targetDataMediaId") && document.getElementById("targetDataMediaName")){
+    		document.getElementById('targetDataMediaId').value = id;
+        	document.getElementById('targetDataMediaName').value = name;
+    	}
+	}
+	
+}
+</script>
+#macro (addBatchDataMediaPairMessage $field)
+    #if (!$field.valid) $field.message #end
+#end	
+
+<div class="main">
+  <div class="title"> 
+    <h2>添加映射关系</h2>
+  </div> <div class="crumbs"><a href="channelList.htm?channelId=$channelId">Channel管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="pipelineList.htm?channelId=$channelId">Pipeline管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="dataMediaPairList.htm?pipelineId=$pipelineId">映射关系管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="addDataMediaPair.htm?pipelineId=$pipelineId">批量添加映射关系</a> </div> 
+
+ <form name="addPairForm" method="post" enctype="multipart/form-data">
+	$csrfToken.hiddenField
+	<input type="hidden" name="action" value="data_media_pair_action"/>
+	<input type="hidden" name="event_submit_do_batch_add" value="1" />
+	<div class="setting_box">
+		#set ($batchDataMediaPairGroup = $form.batchDataMediaPairInfo.defaultInstance)
+		<input type="hidden" name="$batchDataMediaPairGroup.pipelineId.key" value="$pipelineId"/>
+		<input type="hidden" name="pipelineId" value="$pipelineId"/>
+		<input type="hidden" name="channelId" value="$channelId"/>
+		<table cellpadding="0" cellspacing="0" class="setting setting_otter">
+			<span class="red">#addBatchDataMediaPairMessage ($batchDataMediaPairGroup.formBatchDataMediaPairError)</span>
+			<tr> 
+				<td>
+					格式<span class="red">(红色为必填)</span>：<br/>
+					1. 最简配置 <span class="red">schema,table,sourceId1,sourceId2,</span>loadWeight<br/>
+					2. 表名不一致 <span class="red">schema1,table1,sourceId1,schema2,table2,sourceId2,</span>loadWeight<br/>
+				</td>
+			</tr>
+			<tr> 
+				<td>
+					<textarea cols=100 rows=10 name="$batchDataMediaPairGroup.batchPairContent.key" ></textarea>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<input type="submit" name="submitKey" value="保存" class="button"></input>
+ </form>
+</div>
+

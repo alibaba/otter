@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+    <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"  
+       "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="com.alibaba.otter.manager.biz.config.record.dal.dataobject.LogRecordDO">
+	<typeAlias alias="logRecord"
+		type="com.alibaba.otter.manager.biz.config.record.dal.dataobject.LogRecordDO" />
+
+	<resultMap id="logRecordResult" class="logRecord">
+		<result property="id" column="ID" />
+		<result property="channelId" column="CHANNEL_ID" />
+		<result property="pipelineId" column="PIPELINE_ID" />
+		<result property="nid" column="NID" />
+		<result property="title" column="TITLE" />
+		<result property="message" column="MESSAGE" />
+		<result property="gmtCreate" column="GMT_CREATE" />
+		<result property="gmtModified" column="GMT_MODIFIED" />
+	</resultMap>
+	
+	<resultMap id="logRecordWithoutMessageResult" class="logRecord">
+		<result property="id" column="ID" />
+		<result property="channelId" column="CHANNEL_ID" />
+		<result property="pipelineId" column="PIPELINE_ID" />
+		<result property="nid" column="NID" />
+		<result property="title" column="TITLE" />
+		<result property="gmtCreate" column="GMT_CREATE" />
+		<result property="gmtModified" column="GMT_MODIFIED" />
+	</resultMap>
+
+	<!-- all columns -->
+	<sql id="allLogRecordColumns">ID,CHANNEL_ID,PIPELINE_ID,NID,TITLE,MESSAGE,GMT_CREATE,GMT_MODIFIED</sql>
+	
+	<!-- all columns -->
+	<sql id="allLogRecordColumnsWithoutMessage">ID,CHANNEL_ID,PIPELINE_ID,NID,TITLE,GMT_CREATE,GMT_MODIFIED</sql>
+	
+	<select id="findLogRecordById" resultMap="logRecordResult"
+		parameterClass="long">
+		select
+		<include refid="allLogRecordColumns" />
+		from LOG_RECORD where ID = #value#
+	</select>
+	
+	<select id="getLogRecordCount" resultClass="Integer">
+		select count(*) from LOG_RECORD 
+		<dynamic prepend="where">
+			<isNotEmpty property="searchKey">
+			CHANNEL_ID like concat('%',replace(#searchKey#,'_','\_'),'%') 
+			or PIPELINE_ID like concat('%',replace(#searchKey#,'_','\_'),'%')
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="getLogRecordCountWithPIdAndSearchKey" resultClass="Integer">
+		select count(*) from LOG_RECORD where 1 = 1 
+		<dynamic>
+			<isNotEmpty property="pipelineId" prepend="and">
+				PIPELINE_ID = #pipelineId#
+			</isNotEmpty>
+			<isNotEmpty property="monitorName" prepend="and">
+				TITLE = #monitorName# 
+			</isNotEmpty>
+			<isNotEmpty property="searchKey" prepend="and">
+				MESSAGE like concat('%',replace(#searchKey#,'_','\_'),'%')
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="listLogRecordsByPipelineId" resultMap="logRecordResult" >
+		select
+		<include refid="allLogRecordColumns" />
+		from LOG_RECORD where PIPELINE_ID = #value# 
+		ORDER BY ID DESC
+	</select>	
+	
+	<select id="listLogRecordsByPipelineIdWithoutContent" resultMap="logRecordWithoutMessageResult" >
+		select
+		<include refid="allLogRecordColumnsWithoutMessage" />
+		from LOG_RECORD where PIPELINE_ID = #value# 
+		ORDER BY ID DESC
+	</select>	
+	
+	<select id="listLogRecords" resultMap="logRecordResult">
+		select
+		<include refid="allLogRecordColumns" />
+		from LOG_RECORD 
+		<dynamic prepend="where">
+			<isNotEmpty property="searchKey">
+			CHANNEL_ID like concat('%',replace(#searchKey#,'_','\_'),'%') 
+			or PIPELINE_ID like concat('%',replace(#searchKey#,'_','\_'),'%')
+			</isNotEmpty>
+		</dynamic>
+	
+		ORDER BY ID DESC
+		
+		<dynamic>
+			<isNotEmpty property="offset" >
+				<isNotEmpty property="length">
+					limit #offset#, #length#
+				</isNotEmpty>
+			</isNotEmpty>
+		</dynamic>
+	</select>	
+	
+	<select id="listLogRecordsWithCondition" resultMap="logRecordResult">
+		select
+		<include refid="allLogRecordColumns" />
+		from LOG_RECORD where 1 = 1 
+		<dynamic>
+			<isNotEmpty property="pipelineId" prepend="and">
+				PIPELINE_ID = #pipelineId#
+			</isNotEmpty>
+			<isNotEmpty property="monitorName" prepend="and">
+				TITLE = #monitorName# 
+			</isNotEmpty>
+			<isNotEmpty property="searchKey" prepend="and">
+				MESSAGE like concat('%',replace(#searchKey#,'_','\_'),'%')
+			</isNotEmpty>
+		</dynamic>
+		ORDER BY ID DESC
+		<dynamic>
+			<isNotEmpty property="offset" >
+				<isNotEmpty property="length">
+					limit #offset#, #length#
+				</isNotEmpty>
+			</isNotEmpty>
+		</dynamic>
+	</select>	
+
+
+	<update id="updateLogRecord" parameterClass="logRecord">
+		update LOG_RECORD
+		set
+		CHANNEL_ID=#channelId#,
+		PIPELINE_ID=#pipelineId#,
+		NID=#nid#,
+		TITLE=#title#,
+		MESSAGE=#message#,
+		GMT_MODIFIED=now()
+		WHERE ID = #id#  
+	</update>
+	
+	
+	<insert id="insertLogRecord" parameterClass="logRecord">
+		insert into LOG_RECORD
+		(CHANNEL_ID,PIPELINE_ID,NID,TITLE,MESSAGE,GMT_CREATE,GMT_MODIFIED)
+		values (#channelId#,#pipelineId#,#nid#,#title#,#message#,now(),now())
+	</insert>
+ 
+	<delete id="deleteLogRecordById" parameterClass="long">
+    	delete from LOG_RECORD where ID = #value#
+    </delete>
+
+</sqlMap>  

@@ -1,0 +1,219 @@
+$control.setTemplate("home:navigation.vm")
+<script language="javascript" type="text/javascript" src="js/jquery-1.4.2.min.js" > </script>
+<script language="javascript" type="text/javascript" src="js/jquery.simplemodal-1.4.js" ></script>
+<script language="javascript" type="text/javascript" src="js/My97DatePicker/WdatePicker.js" ></script>
+<script language="javascript" type="text/javascript" src="js/analysisStatus.js" ></script>
+
+<script language="javascript" type="text/javascript" src="js/flot/jquery.colorhelpers.js" > </script>
+<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.js" ></script>
+<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.crosshair.js"></script>
+<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.fillbetween.js"></script>
+<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.image.js" > </script>
+<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.navigate.js" ></script>
+<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.pie.js"></script>
+<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.selection.js"></script>
+<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.stack.js" > </script>
+<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.symbol.js" ></script>
+<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.threshold.js"></script>
+<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.resize.js"></script>
+<!--[if IE]><script language="javascript" type="text/javascript" src="js/flot/excanvas.min.js"></script><![endif]-->
+<script type="text/javascript">
+
+//****************0.create JVM Flash*********************************
+$(function () { 
+
+	var historyNumber1;
+	var historyNumber2;
+	var historyNumber3;
+	var historyNumber4;
+	var historyNumber5;
+	var time;
+	var flotNumber1=[];
+	var flotNumber2=[];
+	var flotNumber3=[];
+	var flotNumber4=[];
+	var flotNumber5=[];
+	#foreach ($key in $behaviourHistoryInfos.keySet())
+		time=$key;
+		historyNumber1=$behaviourHistoryInfos.get($key).insertNumber;
+		historyNumber2=$behaviourHistoryInfos.get($key).updateNumber;
+		historyNumber3=$behaviourHistoryInfos.get($key).deleteNumber;
+		historyNumber4=$behaviourHistoryInfos.get($key).fileNumber;
+		historyNumber5=$behaviourHistoryInfos.get($key).fileSize / 1024;
+		flotNumber1.push([time,historyNumber1]);
+		flotNumber2.push([time,historyNumber2]);
+		flotNumber3.push([time,historyNumber3]);
+		flotNumber4.push([time,historyNumber4]);
+		flotNumber5.push([time,historyNumber5]);
+	#end
+					
+	createBehaviorFlash(flotNumber1,flotNumber2,flotNumber3,flotNumber4,flotNumber5);
+				
+	function showTooltip(x, y, contents) {
+        $('<div id="tooltip">' + contents + '</div>').css( {
+            position: 'absolute',
+            display: 'none',
+            top: y + 5,
+            left: x + 5,
+            border: '1px solid #fdd',
+            padding: '2px',
+            'background-color': '#fee',
+            opacity: 0.80
+        }).appendTo("body").fadeIn(200);
+    };
+ 
+    var previousPoint = null;
+
+function showTip(id) {	
+    $(id).bind("plothover", function (event, pos, item) {
+            if (item) {
+                if (previousPoint != item.dataIndex) {
+                    previousPoint = item.dataIndex;
+                    
+                    $("#tooltip").remove();
+                    var x = item.datapoint[0],
+                        y = strFormat(item.datapoint[1].toFixed(0));                  
+                    var dateTime = new Date();  
+                    dateTime.setTime(x);      
+                    var dateTimeStr = dateTime.toLocaleString();  
+                    dateTimeStr = dateTimeStr.replace(' ',''); 
+					var context ="(" + dateTimeStr + " , " + y+  ")";
+                    showTooltip(item.pageX, item.pageY,context);
+                }
+            }
+            else {
+                $("#tooltip").remove();
+                previousPoint = null;            
+            }
+    })
+};
+
+    showTip("#insertNumber");
+	showTip("#updateNumber");
+	showTip("#deleteNumber");
+	showTip("#fileNumber");
+	showTip("#fileSize");
+
+	
+	$("#tabid1").show();
+	$("#tabid2").hide();
+	$("#tabid3").hide();
+	$("#tabid4").hide();
+	$("#tabid5").hide();
+});
+
+  var lastTabId = 1;
+  function changeTab(n){
+      var tabnav = "tab"+ n;
+      var tabid = "tabid"+ n;
+      if(lastTabId != n){
+		document.getElementById("tabid" + lastTabId).style.display = "none";
+		var element = document.getElementById("tab"+ lastTabId);
+		element.removeAttribute("class"); //for firefox
+		element.removeAttribute("className"); //for IE
+	  
+        lastTabId = n;
+    }
+	
+	document.getElementById(tabid).style.display="block";
+	
+	var element = document.getElementById(tabnav);
+	element.setAttribute("class","tab_active"); //for firefox
+	element.setAttribute("className","tab_active"); //for IE
+  };
+</script>
+
+<div class="main">
+  <div class="title"> 
+    <h2>行为曲线</h2>
+  </div>
+  <div class="crumbs"><a href="channelList.htm?channelId=$channel.id">channel管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="pipeline_list.htm?channelId=$channel.id">Pipeline</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="behaviorHistoryCurve.htm?dataMediaPairId=$dataMediaPair.id">行为曲线</a></div>  
+     <!--Channel搜索-->
+  <div class="crumbs"></div>     
+     <div class="tab" id="Tab2" >
+        
+		<div class="menubox" style="margin:15px 0 0 0;">
+        <ul>
+        <li id="tab1" onclick="changeTab(1)">insert类型</li>
+           
+        <li id="tab2" onclick="changeTab(2)">update类型</li>
+		
+		<li id="tab3" onclick="changeTab(3)">delete类型</li>
+        
+		<li id="tab4" onclick="changeTab(4)">文件数量</li>
+		
+		<li id="tab5" onclick="changeTab(5)">文件大小</li>
+        </ul>
+        </div>
+		<div class="contentbox_tab box_tab">
+		  <div class="search_o" style="margin:5px 0 15px 15px;" > 
+		<form name="search_behaviorHistory" method="post">
+			<input type="hidden" name="pairId" value="$dataMediaPair.id"/>
+			<div class="divInPut">
+				<table border="0" cellspacing="0" cellpadding="0" style="margin-bottom:6px;">
+					<tr>
+					<td><img src="images/search_global_l.png" width="78" height="32" /></td>
+					<td background="images/search_global_m.png">
+                                                时间：<input name="d5221" id="d5221" class="Wdate" type="text" value="$!start" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm',maxDate:'#F{$dp.$D(\'d5222\')}'})"/>
+                </td>                       
+				<td background="images/search_global_m.png"> 至：
+                  <input name="d5222" id="d5222" class="Wdate" type="text" value="$!end" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm',minDate:'#F{$dp.$D(\'d5221\')}'})"/>
+                </td>
+				<td><div ><a class="search_btn2" href="javascript:document.search_behaviorHistory.submit();"></a></div>
+				</td>
+				<td><img src="images/search_global_r2.png"/></td>
+			   </tr>			
+              </table>
+             </div>	
+			</form>
+		   </div>
+			<div id="tabid1" style="clear:both;">
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	总记录数: <span style="font-weight: bold;">$!numberFormat.format($totalInsert)</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <br/><br/>
+			<fieldset id="Number1" style="border:1px #ccc solid; margin:0 0 20px 15px;width:730px;padding:25px 10px 20px 15px;"><legend><b>insert(条)</b></legend>
+			    <div id="insertNumber" style="width:700px;height:250px"></div>
+			</fieldset>
+			</div>
+			
+			<div id="tabid2" style="clear:both;">
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	总记录数: <span style="font-weight: bold;">$!numberFormat.format($totalUpdate)</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <br/><br/>
+			<fieldset id="Number2" style="border:1px #ccc solid; margin:0 0 20px 15px;width:730px;padding:25px 10px 20px 15px;"><legend><b>update(条)</b></legend>
+			    <div id="updateNumber" style="width:700px;height:250px"></div>
+			</fieldset>
+			</div>
+			
+			<div id="tabid3" style="clear:both;">
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	总记录数: <span style="font-weight: bold;">$!numberFormat.format($totalDelete)</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <br/><br/>
+			<fieldset id="Number3" style="border:1px #ccc solid; margin:0 0 20px 15px;width:730px;padding:25px 10px 20px 15px;"><legend><b>delete(条)</b></legend>
+			    <div id="deleteNumber" style="width:700px;height:250px"></div>
+			</fieldset>
+			</div>
+			
+			<div id="tabid4" style="clear:both;">
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	总文件数: <span style="font-weight: bold;">$!numberFormat.format($totalFileCount)</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <br/><br/>
+			<fieldset id="Number4" style="border:1px #ccc solid; margin:0 0 20px 15px;width:730px;padding:25px 10px 20px 15px;"><legend><b>文件数量(条)</b></legend>
+			    <div id="fileNumber" style="width:700px;height:250px"></div>
+			</fieldset>
+			</div>
+			
+			<div id="tabid5" style="clear:both;">
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	总大小: <span style="font-weight: bold;">$!numberFormat.formatFileSize($totalFileSize)</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <br/><br/>
+			<fieldset id="Number5" style="border:1px #ccc solid; margin:0 0 20px 15px;width:730px;padding:25px 10px 20px 15px;"><legend><b>文件大小(KB)</b></legend>
+			    <div id="fileSize" style="width:700px;height:250px"></div>
+			</fieldset>
+			</div>
+  </div>
+</div>
+</div>
+<script type="text/javascript">
+  changeTab(1);
+</script>

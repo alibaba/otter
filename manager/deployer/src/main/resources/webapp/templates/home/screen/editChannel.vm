@@ -1,0 +1,102 @@
+$control.setTemplate("home:navigation.vm")
+<script language="javascript">
+<!--
+	changeNav("sync");
+//-->
+</script>
+#macro (editChannelMessage $field)
+    #if (!$field.valid) $field.message #end
+#end
+<div class="main">
+  <div class="title"> 
+    <h2>编辑Channel</h2>
+  </div>
+ <div class="crumbs"><a href="channelList.htm?channelId=$channel.id">Channel管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="editChannel.htm?channelId=$channel.id">编辑Channel</a></div>
+ 
+ <form name="editChannelForm" method="post" enctype="multipart/form-data">
+	$csrfToken.hiddenField
+	<input type="hidden" name="action" value="channel_action"/>
+	<input type="hidden" name="event_submit_do_edit" value="1" />
+	<input type="hidden" id="pageIndex" name="pageIndex" value="$!pageIndex"/>
+	<input type="hidden" id="searchKey" name="searchKey" value="$!searchKey"/>
+ <div class="setting_box">
+	
+	#set ($channelGroup = $form.channelInfo.defaultInstance)
+	#set ($channelParameterGroup = $form.channelParameterInfo.defaultInstance)
+	
+	<input type="hidden" name="$channelGroup.id.key" value="$channel.id" />
+	<input type="hidden" name="channelId" value="$channel.id" />
+    <table cellpadding="0" cellspacing="0" class="setting_otter">
+      <tr> 
+        <th width="300">Channel Name：</th>
+        <td width="329">
+			<input type="text" name="$channelGroup.name.key" value="$channel.name" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editChannelMessage ($channelGroup.name) #editChannelMessage ($channelGroup.formChannelError)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>同步一致性：</th>
+        <td>
+			<input name="$channelParameterGroup.SyncConsistency.key" type="radio" value="MEDIA" #if ($channel.parameters.SyncConsistency.isMedia()) checked='checked' #end class="radio"/>
+			基于数据库反查&nbsp;&nbsp;&nbsp;&nbsp; 
+			<input name="$channelParameterGroup.SyncConsistency.key" type="radio" value="BASE" #if ($channel.parameters.SyncConsistency.isBase()) checked='checked' #end class="radio"/>
+			基于当前日志变更
+		</td>
+      </tr>
+       <tr> 
+        <th>同步模式：</th>
+        <td>
+			<input name="$channelParameterGroup.syncMode.key" type="radio" value="ROW" #if ($channel.parameters.SyncMode.isRow()) checked='checked' #end class="radio"/>行记录模式
+			<input name="$channelParameterGroup.syncMode.key" type="radio" value="FIELD" #if ($channel.parameters.SyncMode.isField()) checked='checked' #end class="radio"/>列记录模式
+		</td>
+      </tr>
+	  <tr> 
+        <th>是否开启数据一致性：</th>
+        <td>
+			<input type="radio" name="$channelParameterGroup.enableRemedy.key" value="true" onclick="changeDisplay('enableRemedy','table-row')" #if ($channel.parameters.isEnableRemedy()) checked='checked' #end class="radio"/>是
+            <input type="radio" name="$channelParameterGroup.enableRemedy.key" value="false" onclick="changeDisplay('enableRemedy','none')" #if (!$channel.parameters.isEnableRemedy()) checked='checked' #end class="radio"/>否 
+		</td>
+      </tr>
+	  <tr class="enableRemedy"> 
+        <th>一致性算法：</th>
+        <td>
+			<input name="$channelParameterGroup.remedyAlgorithm.key" type="radio" value="LOOPBACK" #if ($channel.parameters.remedyAlgorithm.isLoopback()) checked='checked' #end class="radio"/>
+			单向回环补救&nbsp;&nbsp;&nbsp;&nbsp; 
+			<input name="$channelParameterGroup.remedyAlgorithm.key" type="radio" value="INTERSECTION" #if ($channel.parameters.remedyAlgorithm.isIntersection()) checked='checked' #else disabled #end class="radio"/>
+			时间交集补救&nbsp;&nbsp;&nbsp;
+		</td>
+      </tr>
+	  <tr class="enableRemedy"> 
+        <th>一致性反查数据库延迟阀值(s)：</th>
+        <td>
+              <input name="$channelParameterGroup.remedyDelayThresoldForMedia.key" value="$!channel.parameters.remedyDelayThresoldForMedia" type="text" class="setting_input"/><span class="red">*</span>
+			  <br />
+			  <span class="red">#editChannelMessage ($channelParameterGroup.remedyDelayThresoldForMedia)</span>
+        </td>
+      </tr>
+      <tr>
+       <th>描述：</th>
+       <td>
+			<textarea cols="45" rows="5" name="$channelGroup.description.key">$!channel.description</textarea><span class="red">*</span>
+			<br />
+			<span class="red">#editChannelMessage ($!channelGroup.description)</span>
+	   </td>
+      </tr>
+    </table>
+ </div>
+   <div class="btn"><a href="javascript:document.editChannelForm.submit();">保存</a></div> 
+  </form>
+</div>
+	
+<script language="javascript">
+<!--
+	#if(!$channel.parameters.isEnableDetect())
+		changeDisplay('enableDetect','none')
+	#end
+
+	#if(!$channel.parameters.isEnableRemedy())
+		changeDisplay('enableRemedy','none')
+	#end
+//-->
+</script>

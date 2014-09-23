@@ -1,0 +1,127 @@
+$control.setTemplate("home:navigation.vm")
+<script language="javascript">
+<!--
+	changeNav("node");
+//-->
+</script>
+#macro (editNodeMessage $field)
+    #if (!$field.valid) $field.message #end
+#end	
+
+<div class="main">
+  <div class="title"> 
+    <h2>编辑机器</h2>
+  </div>
+ <div class="crumbs"><a href="nodeList.htm">机器管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="addNode.htm">编辑机器</a></div>
+ 
+ 
+<form name="editNodeForm" method="post" enctype="multipart/form-data">
+	$csrfToken.hiddenField
+	<input type="hidden" name="action" value="node_action"/>
+	<input type="hidden" name="event_submit_do_edit" value="1" />
+	<input type="hidden" id="pageIndex" name="pageIndex" value="$!pageIndex"/>
+	<input type="hidden" id="searchKey" name="searchKey" value="$!searchKey"/>
+ <div class="setting_box">
+ 
+   #set ($nodeGroup = $form.nodeInfo.defaultInstance)
+   #set ($nodeParameterGroup = $form.nodeParameterInfo.defaultInstance)
+   
+	<input type="hidden" name="$nodeGroup.id.key" value="$node.id" />
+	<input type="hidden" name="nodeId" value="$node.id" />
+	<input type="hidden" name="channelId" value="$channel.id" />
+    <table cellpadding="0" cellspacing="0" class="setting_otter">
+		<span class="red">#editNodeMessage ($nodeGroup.formNodeError)</span>
+      <tr> 
+        <th width="300">机器名称：</th>
+        <td width="329">
+            <input type="text" name="$nodeGroup.name.key" value="$!node.name" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editNodeMessage ($nodeGroup.name)</span>
+		</td>
+      </tr>
+      <tr> 
+        <th>机器IP：</th>
+        <td>
+			<input type="text" name="$nodeGroup.ip.key" value="$!node.ip" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editNodeMessage ($nodeGroup.ip)</span>
+		</td>
+      </tr>
+      <tr> 
+        <th>机器端口：</th>
+        <td>
+			<input type="text" name="$nodeGroup.port.key" value="$!node.port" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editNodeMessage ($nodeGroup.port)</span>
+		</td>
+      </tr>
+	  #**
+	  <tr> 
+        <th>ZooKeeper集群：</th>
+        <td>
+			<textarea class="service" name="$nodeParameterGroup.zkClusters.key" cols="45" rows="5" >#foreach($storeAddress in $!node.parameters.zkClusters)$storeAddress;#end</textarea><span class="red">*</span>
+			  <br />
+			  <span>格式如 10.20.10.20:8080;（必须以分号结束，可添多个）</span>
+			  <br />
+			<span class="red">#editNodeMessage ($nodeParameterGroup.zkClusters)</span>
+		</td>
+      </tr>
+	  *#
+	  <tr> 
+        <th>下载端口：</th>
+        <td>
+			<input type="text" name="$nodeParameterGroup.downloadPort.key" value="$!node.parameters.downloadPort" class="setting_input"/>
+			<br />
+			<span>可为空，不填写默认即为：机器端口 + 1</span>
+		    <br />
+			<span class="red">#editNodeMessage ($nodeParameterGroup.downloadPort)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>Mbean端口：</th>
+        <td>
+			<input type="text" name="$nodeParameterGroup.mbeanPort.key" value="$!node.parameters.mbeanPort" class="setting_input"/>
+			<br />
+			<span>可为空，不填写默认即为：机器端口 + 2</span>
+		    <br />
+			<span class="red">#editNodeMessage ($nodeParameterGroup.mbeanPort)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>外部IP：</th>
+        <td>
+			<input type="text" name="$nodeParameterGroup.externalIp.key" value="$!node.parameters.externalIp" class="setting_input" />
+			<br />
+			<span class="red">#editNodeMessage ($nodeParameterGroup.externalIp)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>启用外部IP：</th>
+        <td width="329">
+              <input type="radio" name="$nodeParameterGroup.useExternalIp.key" value="true" #if($!node.parameters.useExternalIp) checked="checked" #end id="RadioGroup2_0" class="radio"/>是
+              <input type="radio" name="$nodeParameterGroup.useExternalIp.key" value="false" #if(!$!node.parameters.useExternalIp) checked="checked" #end id="RadioGroup2_1" class="radio"/>否 
+        </td>
+      </tr>
+	  <tr> 
+        <th>zookeeper集群：</th>
+        <td>
+            <select id="zkCluster" name="$nodeParameterGroup.autoKeeperClusterId.key">
+			#foreach($zkCluster in $zkClusters)
+            <option value="$zkCluster.id" #if($!node.parameters.zkCluster.id == $zkCluster.id)selected#end>$zkCluster.clusterName</option>
+			#end
+        </td>
+      </tr>
+      <tr>
+       <th>描述：</th>
+       <td>
+    		<textarea cols="45" rows="5" name="$nodeGroup.description.key">$!node.description</textarea>
+    		<br />
+    		<span class="red">#editNodeMessage ($nodeGroup.description)</span>
+	   </td>
+      </tr>
+    </table>
+ </div>
+   <div class="btn"><a href="javascript:document.editNodeForm.submit();">保存</a></div> 
+  
+  </form>
+</div>

@@ -1,0 +1,318 @@
+$control.setTemplate("home:navigation.vm")
+#set($user = $rundata.request.session.getAttribute("managerUser"))
+<script type="text/javascript" src="js/trcolor.js"></script>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
+<script type="text/javascript" src="js/jquery.simplemodal-1.4.js"></script> 
+<script language="javascript">
+<!--
+	changeNav("sync");
+    $(function () {
+        $('.bubbleInfo').each(function () {
+            var distance = 10;
+            var time = 250;
+            var hideDelay = 200;
+
+            var hideDelayTimer = null;
+
+            var beingShown = false;
+            var shown = false;
+            var trigger = $('.trigger', this);
+            var info = $('.popup', this).css('opacity', 0);
+
+
+            $([trigger.get(0), info.get(0)]).mouseover(function () {
+                if (hideDelayTimer) clearTimeout(hideDelayTimer);
+                if (beingShown || shown) {
+                    // don't trigger the animation again
+                    return;
+                } else {
+                    // reset position of info box
+                    beingShown = true;
+
+                    info.css({
+                        top: 10,
+                        left: 10,
+                        display: 'block'
+                    }).animate({
+                        top: '+=' + distance + 'px',
+                        opacity: 1
+                    }, time, 'swing', function() {
+                        beingShown = false;
+                        shown = true;
+                    });
+                }
+
+                return false;
+            }).mouseout(function () {
+                if (hideDelayTimer) clearTimeout(hideDelayTimer);
+                hideDelayTimer = setTimeout(function () {
+                    hideDelayTimer = null;
+                    info.animate({
+                        top: '-=' + distance + 'px',
+                        opacity: 0
+                    }, time, 'swing', function () {
+                        shown = false;
+                        info.css('display', 'none');
+                    });
+
+                }, hideDelay);
+
+                return false;
+            });
+        });
+    });
+    
+    //-->
+		
+</script>
+
+<!--页面主体-->
+<div class="main">
+   <div class="title">
+    <h2>Channel管理</h2>
+  </div>
+   <div class="crumbs"><a href="channelList.htm">Channel管理</a></div> 
+   
+   <!--分页表单-->
+   <form id="pageform" name="pageform" action="$homeModule.setTarget('channelList.vm')" method="post">
+    	<input type="hidden" id="pageIndex" name="pageIndex" value=""/>
+		<input type="hidden" id="searchKey" name="searchKey" value="$!searchKey"/>
+   </form>
+   
+   <!--Channel搜索-->
+   <div class="search_o"> 
+		<form name="search_channel" action="channelList.htm" method="post">
+			##$csrfToken.hiddenField
+			<div class="search_input">
+				<input name="searchKey" type="text" value="请输入关键字(目前支持Channel的ID、名字搜索)"  onfocus="if(this.value == '请输入关键字(目前支持Channel的ID、名字搜索)') {this.value='';}" onblur="if(this.value == '') {this.value = '请输入关键字(目前支持Channel的ID、名字搜索)';}" />
+			</div>
+			<div class="search_btn"><a href="javascript:document.search_channel.submit();"><img src="images/search_btn.png" width="39" height="31" /></a></div>
+        </form>
+   </div>
+   <!--列表-->
+    
+  <table border="0" cellspacing="0" cellpadding="0" class="list changecolor_w">
+    <tr> 
+      <th>序号</th>
+      <th>Channel名字</th>
+      <th>运行状态</th>
+	  <th>同步方向</th>
+	  <th>操作</th>
+    </tr>
+    
+    #foreach ($channel in $channels)
+		<tr> 
+	      <td width="5%">$channel.id</td>
+	      <td width="16%">
+			#set ($pipelineURL = $homeModule.setTarget("pipelineList.vm").addQueryData("channelId", $channel.id))
+			<a href="$pipelineURL" id="download" class="trigger">$channel.name</a>
+	      </td>
+	      
+	      	<td>
+                #if($channel.status.isStart())  <a href="" style="color:green">运行</a>
+                #elseif($channel.status.isPause())  <a href="" style="color:red">挂起</a>
+				#else <a href="" style="color:gray">停止</a>
+				#end
+			</td>
+	      <td>
+				#if($channel.pipelines.size() == 0) 无 
+				#elseif($channel.pipelines.size() == 1) 单向
+				#elseif($channel.pipelines.size() == 2) 双向
+				#end
+			</td>
+	     
+		  
+		  <td><p>
+        				#set ($channelInfoURL = $homeModule.setTarget("channelInfo.vm").addQueryData("channelId", $channel.id))
+						<a href="$channelInfoURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">查看</span></a>
+						
+						#set ($notifyURL = $homeModule.setAction("channelAction").addQueryData("channelId", $channel.id).addQueryData("pageIndex", $paginator.page).addQueryData("searchKey", $!searchKey).addQueryData("eventSubmitDoNotify", "true").render())
+    					#if($user.authorizeType.isAdmin())
+							#if($channel.status.isStart() || $channel.status.isPause())
+								#set ($stopURL = $homeModule.setTarget("channelList.vm").setAction("channelAction").addQueryData("channelId", $channel.id).addQueryData("status", "stop").addQueryData("pageIndex", $paginator.page).addQueryData("searchKey", $!searchKey).addQueryData("eventSubmitDoStatus", "true"))
+								<span class="ico_line">|</span><a href="javascript:if(confirm('确实关闭Channel吗?'))location='$stopURL'"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">停用</span></a>
+								<span class="ico_line">|</span><a href="javascript:if(confirm('确实推送Channel吗?'))location='$notifyURL'"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">推送</span></a>
+							#end
+							#if($channel.status.isStop() || $channel.status.isPause())
+								#set($flag_go = false)
+								#set($flag_back = false)
+								#set($delFlag = false)
+								#set($num = 1)
+								#foreach($pipeline in $channel.pipelines)
+									#set($delFlag = true)
+									#foreach($pair in $pipeline.pairs)
+										#if($num == 1)
+											#set($flag_go = true)
+										#elseif($num == 2)
+											#set($flag_back = true)
+										#end
+										
+									#end
+									#set($num = 2)
+								#end
+								<!-- 判断Pipeline的S.E.L模块关联的NODE节点启动状态 -->
+									#set($sflag_go = false)
+									#set($eflag_go = false)
+									#set($lflag_go = false)
+									
+									#set($sflag_back = false)
+									#set($eflag_back = false)
+									#set($lflag_back = false)
+									
+									#set($num = 1)
+									#foreach($pipeline in $channel.pipelines)
+										#foreach($selectNode in $pipeline.selectNodes)
+											#if($selectNode.status.isStart())
+												#if($num == 1)
+													#set($sflag_go = true)
+												#elseif($num == 2)
+													#set($sflag_back = true)
+												#end
+											#end
+										#end
+										#foreach($extractNode in $pipeline.extractNodes)
+											#if($extractNode.status.isStart())
+												#if($num == 1)
+													#set($eflag_go = true)
+												#elseif($num == 2)
+													#set($eflag_back = true)
+												#end
+											#end
+										#end
+										#foreach($loadNode in $pipeline.loadNodes)
+											#if($loadNode.status.isStart())
+												#if($num == 1)
+													#set($lflag_go = true)
+												#elseif($num == 2)
+													#set($lflag_back = true)
+												#end
+											#end
+										#end
+										#set($num = 2)
+									#end
+									
+									#if($channel.pipelines.size() == 1)
+										#set($flag = $flag_go)
+										#set($sflag = $sflag_go)
+										#set($eflag = $eflag_go)
+										#set($lflag = $lflag_go)
+									#elseif($channel.pipelines.size() == 2)
+										#set($flag = $flag_go && $flag_back)
+										#set($sflag = $sflag_go && $sflag_back)
+										#set($eflag = $eflag_go && $eflag_back)
+										#set($lflag = $lflag_go && $lflag_back)
+									#end
+									
+								#if($channel.status.isStop())
+									#if($flag)
+										#if($sflag && $eflag && $lflag)
+											#if($channel.processEmpty)
+        										#set ($startURL = $homeModule.setAction("channelAction").addQueryData("channelId", $channel.id).addQueryData("status", "start").addQueryData("pageIndex", $paginator.page).addQueryData("searchKey", $!searchKey).addQueryData("eventSubmitDoStatus", "true"))
+        										<span class="ico_line">|</span><a href="javascript:if(confirm('确实开启Channel吗?'))location='$startURL'"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">启用</span></a>
+    										#else
+    											<span class="ico_line">|</span><img src="images/ico_edit.png" width="13" height="13" /><span title="process里面还有同步数据，不用启用channel" class="ico_font">启用</span>
+    										#end
+    									#else
+    										<span class="ico_line">|</span><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font" title="#if(!$sflag)S.#end #if(!$eflag)E.#end #if(!$lflag)L#end 节点未启动">启用</span>
+    									#end
+									#else
+										#if(!$delFlag)
+											<span class="ico_line">|</span><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font" title="pipeline没有配置，不能启动">启用</span>
+										#else
+											<span class="ico_line">|</span><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font" title="映射关系没有配置，不能启动">启用</span>
+										#end
+										
+									#end
+									
+								#end
+								
+								#if($flag && $channel.status.isPause())
+									#if($sflag && $eflag && $lflag)
+										#if($channel.processEmpty)
+											#set ($startURL = $homeModule.setAction("channelAction").addQueryData("channelId", $channel.id).addQueryData("status", "start").addQueryData("pageIndex", $paginator.page).addQueryData("searchKey", $!searchKey).addQueryData("eventSubmitDoStatus", "true"))
+											<span class="ico_line">|</span><a href="javascript:if(confirm('确实恢复Channel吗?'))location='$startURL'"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">解挂</span></a>
+										#else
+											<span class="ico_line">|</span><img src="images/ico_edit.png" width="13" height="13" /><span title="process里面还有同步数据，请直接停止channel" class="ico_font">解挂</span>
+										#end
+									#else
+										<span class="ico_line">|</span><img src="images/ico_edit.png" width="13" height="13" /><span title="#if(!$sflag)S.#end #if(!$eflag)E.#end #if(!$lflag)L#end 节点未启动" class="ico_font">解挂</span>
+									#end
+								#end
+								#if($channel.status.isPause())
+    								<span class="ico_line">|</span><img src="images/ico_edit.png" width="13" height="13" /><span title="Channel在挂起的时候不能编辑" class="ico_font">编辑</span>
+								#else
+									#set ($editURL = $homeModule.setTarget("editChannel.vm").addQueryData("channelId", $channel.id).addQueryData("pageIndex", $!paginator.page).addQueryData("searchKey", $!searchKey))
+    								<span class="ico_line">|</span><a href="$editURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">编辑</span></a>
+								#end
+								
+								<span class="ico_line">|</span><a href="javascript:if(confirm('确实推送Channel吗?'))location='$notifyURL'"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">推送</span></a>
+								
+								#if($delFlag)
+    								<span class="ico_line">|</span><img src="images/ico_del.png" width="9" height="9"  /><span class="ico_font" title="channel必须不包含pipeline才能执行删除">删除</span>
+								#else
+									#set ($removeURL = $homeModule.setAction("channelAction").addQueryData("channelId", $channel.id).addQueryData("pageIndex", $!paginator.page).addQueryData("searchKey", $!searchKey).addQueryData("eventSubmitDoDelete", "true"))
+    								<span class="ico_line">|</span><a href="javascript:if(confirm('确实要删除吗?'))location='$removeURL'" class="link del" ><img src="images/ico_del.png" width="9" height="9" /><span class="ico_font">删除</span></a>
+								#end
+							#end
+						#end
+    	  </p></td>
+	    </tr>
+	#end
+  
+    
+    
+  </table>
+  <!--常规按钮-->
+	  #if($user.authorizeType.isAdmin())
+		<div class="btn"><a href="$channelAddLink">添加</a></div>
+	  #end
+      
+     <!--分页-->
+     <div class="page">共$paginator.items条数据&nbsp;&nbsp;第$paginator.page页/共$paginator.pages页&nbsp;&nbsp; 
+       
+	   #if($paginator.page == 1)
+            <font color="999999">首页</font>
+	   #else
+			<a href="#" class="prev" onclick="pageNavigation(this,1)">首页</a>
+	   #end
+	   
+	   #if($paginator.page > 1)
+			#set($pre_page = $paginator.page - 1)
+				<a href="#" class="prev" onclick="pageNavigation(this,$pre_page)">上一页</a>
+	   #else
+            <font color="999999">上一页</font>
+	   #end
+	   ##分页下标
+	   #set($counts_keys = $paginator.getSlider(7))
+	   #foreach( $thisPage in $counts_keys)
+			#if( $thisPage == $paginator.page)
+                <b>$thisPage</b>
+			#else
+				#if($thisPage != 0)
+					<a href="#" class="num" onclick="pageNavigation(this,$thisPage)">$thisPage</a> 
+				#end
+			#end
+	   #end
+	   
+	   #if($paginator.page < $paginator.pages)
+			#set($next_page = $paginator.page + 1)
+				<a href="#" class="prev" onclick="pageNavigation(this,$next_page)">下一页</a>
+	   #else
+            <font color="999999">下一页</font>
+	   #end
+	   
+	   #if($paginator.page == $paginator.pages)
+            <font color="999999">末页</font>
+	   #else
+			<a href="#" class="prev" onclick="pageNavigation(this,$paginator.pages)">末页</a>
+	   #end
+     </div>    
+</div>
+
+<script language="javascript">
+#if($!errorType == "DDL")
+	alert("一个channel中只允许开启单向ddl同步!");
+#elseif($!errorType == "HOME")
+	alert("一个channel中只允许单向开启为主站点!");
+#end
+</script>

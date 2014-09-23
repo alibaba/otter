@@ -1,0 +1,159 @@
+$control.setTemplate("home:navigation.vm")
+#set($user = $rundata.request.session.getAttribute("managerUser"))
+<script type="text/javascript" src="js/trcolor.js"></script>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
+<script language="javascript">
+    <!--
+	changeNav("sync");
+    $(function () {
+        $('.bubbleInfo').each(function () {
+            var distance = 10;
+            var time = 250;
+            var hideDelay = 200;
+
+            var hideDelayTimer = null;
+
+            var beingShown = false;
+            var shown = false;
+            var trigger = $('.trigger', this);
+            var info = $('.popup', this).css('opacity', 0);
+
+
+            $([trigger.get(0), info.get(0)]).mouseover(function () {
+                if (hideDelayTimer) clearTimeout(hideDelayTimer);
+                if (beingShown || shown) {
+                    // don't trigger the animation again
+                    return;
+                } else {
+                    // reset position of info box
+                    beingShown = true;
+
+                    info.css({
+                        top: 10,
+                        left: 10,
+                        display: 'block'
+                    }).animate({
+                        top: '+=' + distance + 'px',
+                        opacity: 1
+                    }, time, 'swing', function() {
+                        beingShown = false;
+                        shown = true;
+                    });
+                }
+
+                return false;
+            }).mouseout(function () {
+                if (hideDelayTimer) clearTimeout(hideDelayTimer);
+                hideDelayTimer = setTimeout(function () {
+                    hideDelayTimer = null;
+                    info.animate({
+                        top: '-=' + distance + 'px',
+                        opacity: 0
+                    }, time, 'swing', function () {
+                        shown = false;
+                        info.css('display', 'none');
+                    });
+
+                }, hideDelay);
+
+                return false;
+            });
+        });
+    });
+    
+    //-->
+</script>
+
+
+<div class="main">
+  <div class="title"> 
+    <h2>Pipeline管理</h2>
+  </div>
+  <div class="crumbs"><a href="channelList.htm?channelId=$channel.id">channel管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="pipelineList.htm?channelId=$channel.id">Pipeline管理</a></div>
+  <div class="crumbs"></div>     
+<!--列表-->
+ 
+        <table border="0" cellspacing="0" cellpadding="0" class="list changecolor_g">
+          <tr> 
+            <th width="3%">序号</th>
+            <th width="6%">Pipeline名字</th>
+			<th width="3%">并行度</th>
+			<th width="3%">主站点</th>
+			<th width="5%">mainstem状态</th>
+			<th width="5%">延迟时间</th>
+			<th width="8%">最后同步时间</th>
+			<th width="8%">最后位点时间</th>
+			<th width="3%">监控数</th>
+        	<th width="20%">操作</th>
+          </tr>
+          <tr> 
+			#foreach ($pipeline in $pipelines)
+      <td width="3%">$pipeline.id</td>
+      <td width="6%">
+      <div class="bubbleInfo">
+         <a href="dataMediaPairList.htm?pipelineId=$pipeline.id" id="download" class="trigger">$pipeline.name</a>
+         <div class="popup">
+         <div class="pop_tips_top"></div>
+         <div class="pop_tips_mid">
+          <div class="pop_tips_font">$!pipeline.description</div>
+         </div>
+         <div class="pop_tips_bottom"></div>
+         </div>
+      </div>      
+      </td>
+	  <td width="3%">$pipeline.parameters.parallelism</td>
+	  <td width="3%">$pipeline.parameters.home</td>
+	  <td width="5%">
+		#set($mainstemData = $mainstemDatas.get($pipeline.id))
+		#if(!$mainstemData)
+			<font color="#FF0000">未工作</font>
+		#else
+    		#if($mainstemData.status.isTaking())
+    			<font color="#FF0000">定位中</font>
+    		#else
+    			工作中
+    		#end
+		#end
+	  </td>
+	  <td width="5%">$!numberFormat.formatDelay($delayStats.get($pipeline.id).delayTime)</td>
+	  #set($throughputStat = $throughputStats.get($pipeline.id))
+	  <td width="8%">$!numberFormat.format($!throughputStat.gmtModified)</td>
+	  #set($positionData = $positionDatas.get($pipeline.id))
+	  <td width="8%">$!numberFormat.format($!positionData.modifiedTime)</td>
+	  <td width="3%">$alarmRuleStats.get($pipeline.id).size()</td>
+	  <td>
+		#set ($pipelineInfoURL = $homeModule.setTarget("pipelineInfo.vm").addQueryData("pipelineId", $pipeline.id))
+		<a href="$pipelineInfoURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">查看</span></a>
+		#set ($monitorURL = $homeModule.setTarget("alarmRuleList.vm").addQueryData("pipelineId", $pipeline.id).addQueryData("channelId", $channel.id))
+		<span class="ico_line">|</span><a href="$monitorURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">监控</span></a>
+		#set ($logRecordURL = $homeModule.setTarget("logRecordTab.vm").addQueryData("pipelineId", $pipeline.id))
+		<span class="ico_line">|</span><a href="$logRecordURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">日志</span></a>
+		#if($user.authorizeType.isAdmin() && $channel.status.isStop())
+    		#set($flag = false)
+			#foreach($pair in $pipeline.pairs)
+				#set($flag = true)
+			#end
+			#set ($editURL = $homeModule.setTarget("editPipeline.vm").addQueryData("pipelineId", $pipeline.id))
+    		<span class="ico_line">|</span><a href="$editURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">编辑</span></a>
+			#if($flag)
+    			<span class="ico_line">|</span><img src="images/ico_del.png" width="9" height="9"  /><span class="ico_font" title="pipeline必须不包含映射关系才能执行删除">删除</span>
+			#elseif($alarmRuleStats.get($pipeline.id).size() > 0)
+				<span class="ico_line">|</span><img src="images/ico_del.png" width="9" height="9"  /><span class="ico_font" title="pipeline必须不包含监控信息才能执行删除">删除</span>
+			#else
+				#set ($deleteURL = $homeModule.setAction("pipelineAction").addQueryData("pipelineId", $pipeline.id).addQueryData("channelId", $channel.id).addQueryData("eventSubmitDoDelete", "true"))
+				<span class="ico_line">|</span><a href="javascript:if(confirm('确实要删除吗?'))location='$deleteURL'"><img src="images/ico_del.png" width="13" height="13" /><span class="ico_font">删除</span></a>
+			#end
+		#end
+	  </td>
+      
+    </tr>
+		  #end
+        </table>
+		#if($user.authorizeType.isAdmin() && $channel.status.isStop() && $channel.pipelines.size() < 2 )
+        		<div class="btn">
+        			#set ($addURL = $homeModule.setTarget("addPipeline.vm").addQueryData("channelId", $channel.id))
+        			<a href="$addURL">添加</a>
+        		</div>
+        #end
+        
+</div>

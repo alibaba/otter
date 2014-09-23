@@ -1,0 +1,190 @@
+$control.setTemplate("home:navigation.vm")
+#set($user = $rundata.request.session.getAttribute("managerUser"))
+<script type="text/javascript" src="js/trcolor.js"></script>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+<script language="javascript" type="text/javascript" src="js/My97DatePicker/WdatePicker.js" ></script>
+
+<script language="javascript">
+    <!--
+	changeNav("record");
+    $(function () {
+        $('.bubbleInfo').each(function () {
+            var distance = 10;
+            var time = 250;
+            var hideDelay = 200;
+
+            var hideDelayTimer = null;
+
+            var beingShown = false;
+            var shown = false;
+            var trigger = $('.trigger', this);
+            var info = $('.popup', this).css('opacity', 0);
+
+
+            $([trigger.get(0), info.get(0)]).mouseover(function () {
+                if (hideDelayTimer) clearTimeout(hideDelayTimer);
+                if (beingShown || shown) {
+                    // don't trigger the animation again
+                    return;
+                } else {
+                    // reset position of info box
+                    beingShown = true;
+
+                    info.css({
+                        top: 10,
+                        left: 10,
+                        display: 'block'
+                    }).animate({
+                        top: '+=' + distance + 'px',
+                        opacity: 1
+                    }, time, 'swing', function() {
+                        beingShown = false;
+                        shown = true;
+                    });
+                }
+
+                return false;
+            }).mouseout(function () {
+                if (hideDelayTimer) clearTimeout(hideDelayTimer);
+                hideDelayTimer = setTimeout(function () {
+                    hideDelayTimer = null;
+                    info.animate({
+                        top: '-=' + distance + 'px',
+                        opacity: 0
+                    }, time, 'swing', function () {
+                        shown = false;
+                        info.css('display', 'none');
+                    });
+
+                }, hideDelay);
+
+                return false;
+            });
+        });
+    });
+    
+    //-->
+</script>
+
+
+<div class="main">
+  <div class="title"> 
+    <h2>监控配置列表</h2>
+  </div>
+  <div class="crumbs"></div>     
+<!--列表-->
+  <!--分页表单-->
+   <form id="pageform" name="pageform" action="$homeModule.setTarget('alarmSystemList.vm')" method="post">
+    	<input type="hidden" id="pageIndex" name="pageIndex" value=""/>
+		<input type="hidden" id="searchKey" name="searchKey" value="$!searchKey"/>
+   </form>
+   
+        <table border="0" cellspacing="0" cellpadding="0" class="list changecolor_g">
+          <tr> 
+            <th width="8%">序号</th>
+			<th width="8%">PIPELINE通道</th>
+            <th width="8%">监控项目</th>
+			<th width="8%">阈值</th>
+			<th width="8%">状态</th>
+			<th width="8%">发送对象</th>
+			<th width="12%">暂停时间</th>
+        	<th width="24%">操作</th>
+            
+          </tr>
+			#set($flag = false)
+			#foreach ($alarmRule in $alarmRules)
+				#set($flag = true)
+			<tr> 
+				<td width="8%">$alarmRule.id</td>
+                <td width="8%"><a href="dataMediaPairList.htm?pipelineId=$alarmRule.pipelineId" >$alarmRule.pipelineId</a></td>
+                <td width="8%">#if($alarmRule.monitorName.isQueueSize()) 堆积 #elseif($alarmRule.monitorName.isDelayTime()) 延迟 #elseif($alarmRule.monitorName.isPipelineTimeout()) Pipeline超时 #elseif($alarmRule.monitorName.isProcessTimeout()) Process超时 #elseif($alarmRule.monitorName.isException()) 异常 #elseif($alarmRule.monitorName.isPositionTimeout()) Position超时 #end</td>
+				<td width="8%">$alarmRule.matchValue</td>
+				<td width="8%">#if($alarmRule.status.isEnable() && !$alarmRule.isPaused()) <img src="images/alarm.png" title="开启" width="22" height="22" /> #else <img src="images/alarm_on.png" title="暂停" width="22" height="22" /> #end</td>
+				<td width="8%">$alarmRule.receiverKey</td>
+				<td width="12%">#if($alarmRule.isPaused())$!numberFormat.format($alarmRule.pauseTime)#end</td>
+				<td width="24%">
+					<img src="images/ico_edit.png" width="13" height="13" /><span title="$alarmRule.description" class="ico_font">描述</span>
+                    <span class="ico_line">|</span><img src="images/ico_edit.png" width="13" height="13" /><span title="$alarmRule.description" class="ico_font"><a href="logRecordList.htm?pipelineId=$alarmRule.pipelineId&monitorName=$alarmRule.monitorName">历史</a></span>
+					
+					#if($user.authorizeType.isAdmin())
+						#if($alarmRule.status.isEnable())
+    						#if($alarmRule.isPaused())
+								#set ($reEnableURL = $homeModule.setAction("AlarmRuleAction").addQueryData("alarmRuleId", $alarmRule.id).addQueryData("status", "enable").addQueryData("eventSubmitDoStatusSystem", "true").render())
+								<span class="ico_line">|</span><a href="$reEnableURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">恢复</span></a>
+							#else
+        						#set ($disableURL = $homeModule.setAction("AlarmRuleAction").addQueryData("alarmRuleId", $alarmRule.id).addQueryData("status", "disable").addQueryData("eventSubmitDoStatusSystem", "true").render())
+								<span class="ico_line">|</span><a href="#" onclick="WdatePicker({el:'rule_${alarmRule.id}',dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'%y-%M-%d %H:%m:%s',qsEnabled:true,quickSel:['%y-%M-%d #{%H+2}:%m:%s','%y-%M-%d #{%H+6}:%m:%s','%y-%M-%d #{%H+12}:%m:%s','%y-%M-#{%d+1} %H:%m:%s','%y-%M-#{%d+2} %H:%m:%s'], onpicked:function(){url='${disableURL}&pauseTime=' + $dp.cal.getDateStr();window.location.href=url;}});return false;"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font" id="">暂停</span><span id="rule_${alarmRule.id}" style="display:none;" /></a>
+							#end
+    					#else
+    						#set ($enableURL = $homeModule.setAction("AlarmRuleAction").addQueryData("alarmRuleId", $alarmRule.id).addQueryData("status", "enable").addQueryData("pageIndex", $paginator.page).addQueryData("eventSubmitDoStatusSystem", "true").render())
+    						<span class="ico_line">|</span><a href="$enableURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">开启</span></a>
+						#end
+						
+						#set ($editURL = $homeModule.setTarget("editAlarmRule.vm").addQueryData("alarmRuleId", $alarmRule.id).render())
+    					<span class="ico_line">|</span><a href="$editURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">编辑</span></a>
+						#if($alarmRule.status.isEnable() && !$alarmRule.isPaused())
+							<span class="ico_line">|</span><img src="images/ico_del.png" width="9" height="9" /><span title="暂停监控后才可以删除" class="ico_font">删除</span>
+						#else
+							#set ($removeURL = $homeModule.setAction("AlarmRuleAction").addQueryData("alarmRuleId", $alarmRule.id).addQueryData("pipelineId",$pipelineId).addQueryData("eventSubmitDoDelete", "true").render())
+							<span class="ico_line">|</span><a href="$removeURL"><img src="images/ico_del.png" width="9" height="9" /><span class="ico_font">删除</span></a>
+						#end
+					#end
+				</td>
+			</tr>
+			#end
+		 
+		  
+        </table>
+		#if($user.authorizeType.isAdmin())
+				#if($flag)
+				<div class="btn">
+					#set ($enableAllURL = $homeModule.setAction("AlarmRuleAction").addQueryData("pageIndex", $paginator.page).addQueryData("alarmRuleIds", $alarmRuleIds).addQueryData("status", "enable").addQueryData("eventSubmitDoStatusByRule", "true").render())
+        			<a href="$enableAllURL">全部开启</a>
+				</div>
+				<div class="btn">
+					#set ($disableAllURL = $homeModule.setAction("AlarmRuleAction").addQueryData("pageIndex", $paginator.page).addQueryData("alarmRuleIds", $alarmRuleIds).addQueryData("status", "disable").addQueryData("eventSubmitDoStatusByRule", "true").render())
+        			<a href="#" onclick="WdatePicker({el:'rule_all',dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'%y-%M-%d %H:%m:%s',qsEnabled:true,quickSel:['%y-%M-%d #{%H+2}:%m:%s','%y-%M-%d #{%H+6}:%m:%s','%y-%M-%d #{%H+12}:%m:%s','%y-%M-#{%d+1} %H:%m:%s','%y-%M-#{%d+2} %H:%m:%s'], onpicked:function(){url='${disableAllURL}&pauseTime=' + $dp.cal.getDateStr();window.location.href=url;}});return false;">全部暂停<span id="rule_all" style="display:none;" /></a>
+				</div>
+				#end
+		#end		
+		 <!--分页-->
+     <div class="page">共$paginator.items条数据&nbsp;&nbsp;第$paginator.page页/共$paginator.pages页&nbsp;&nbsp; 
+       
+	   #if($paginator.page == 1)
+            <font color="999999">首页</font>
+	   #else
+			<a href="#" class="prev" onclick="pageNavigation(this,1)">首页</a>
+	   #end
+	   
+	   #if($paginator.page > 1)
+			#set($pre_page = $paginator.page - 1)
+				<a href="#" class="prev" onclick="pageNavigation(this,$pre_page)">上一页</a>
+	   #else
+            <font color="999999">上一页</font>
+	   #end
+	   ##分页下标
+	   #set($counts_keys = $paginator.getSlider(7))
+	   #foreach( $thisPage in $counts_keys)
+			#if( $thisPage == $paginator.page)
+                <b>$thisPage</b>
+			#else
+				#if($thisPage != 0)
+					<a href="#" class="num" onclick="pageNavigation(this,$thisPage)">$thisPage</a> 
+				#end
+			#end
+	   #end
+	   
+	   #if($paginator.page < $paginator.pages)
+			#set($next_page = $paginator.page + 1)
+				<a href="#" class="prev" onclick="pageNavigation(this,$next_page)">下一页</a>
+	   #else
+            <font color="999999">下一页</font>
+	   #end
+	   
+	   #if($paginator.page == $paginator.pages)
+            <font color="999999">末页</font>
+	   #else
+			<a href="#" class="prev" onclick="pageNavigation(this,$paginator.pages)">末页</a>
+	   #end
+     </div>    
+</div>

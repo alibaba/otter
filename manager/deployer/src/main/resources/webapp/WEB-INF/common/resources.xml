@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:services="http://www.alibaba.com/schema/services"
+	xmlns:res-filters="http://www.alibaba.com/schema/services/resource-loading/filters"
+	xmlns:res-loaders="http://www.alibaba.com/schema/services/resource-loading/loaders"
+	xsi:schemaLocation="
+                 http://www.alibaba.com/schema/services http://localhost:8080/schema/services.xsd
+                 http://www.alibaba.com/schema/services/resource-loading/filters http://localhost:8080/schema/services-resource-loading-filters.xsd
+                 http://www.alibaba.com/schema/services/resource-loading/loaders http://localhost:8080/schema/services-resource-loading-loaders.xsd
+                 http://www.springframework.org/schema/beans http://localhost:8080/schema/www.springframework.org/schema/beans/spring-beans.xsd
+             ">
+
+	<services:resource-loading>
+
+		<resource-alias pattern="/" name="/webapp" />
+		<resource-alias pattern="/templates" name="/webapp/templates" />
+		
+		<!-- 全局模板目录： /*/templates/global -->
+		<resource-alias pattern="/*/templates/global" name="/webapp/templates/home" />
+
+		<!-- 配置文件根目录：/conf -->
+		<resource-alias pattern="/conf" name="/webapp/WEB-INF" />
+		
+		<!-- 子模块模板目录：/*/templates -->
+		<!-- 
+		<resource pattern="/templates">
+			<res-loaders:classpath-loader />
+		</resource>
+		 -->
+
+		<!-- 内部资源 -->
+		<resource pattern="/webapp" internal="true">
+			<res-loaders:webapp-loader />
+		</resource>
+		<resource pattern="/classpath" internal="true">
+			<res-loaders:classpath-loader />
+		</resource>
+	</services:resource-loading>
+</beans:beans>

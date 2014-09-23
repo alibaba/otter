@@ -1,0 +1,509 @@
+$control.setTemplate("home:navigation.vm")
+<script language="javascript">
+<!--
+	changeNav("canal");
+	
+	function changePositionConfig() {
+		var obj = document.getElementById('positionSuperConfig');
+		if(obj.checked) {
+			changeDisplay('positionSuperConfig','table-row');
+		}else {
+			changeDisplay('positionSuperConfig','none');
+		}
+	}
+	
+	function changeNetworkConfig() {
+		var obj = document.getElementById('networkSuperConfig');
+		if(obj.checked) {
+			changeDisplay('networkSuperConfig','table-row');
+		}else {
+			changeDisplay('networkSuperConfig','none');
+		}
+	}
+//-->
+</script>
+#macro (editCanalMessage $field)
+    #if (!$field.valid) $field.message #end
+#end	
+
+<div class="main">
+  <div class="title"> 
+    <h2>编辑canal</h2>
+  </div>
+ <div class="crumbs"><a href="canalList.htm">canal管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="editCanal.htm?canalId=$canal.id">编辑canal</a></div>
+ 
+ 
+<form name="editCanalForm" method="post" enctype="multipart/form-data">
+	$csrfToken.hiddenField
+	<input type="hidden" name="action" value="canal_action"/>
+	<input type="hidden" name="event_submit_do_edit" value="1" />
+	
+ <div class="setting_box">
+ 
+   #set ($canalGroup = $form.canalInfo.defaultInstance)
+   #set ($canalParameterGroup = $form.canalParameterInfo.defaultInstance)
+   
+	<input type="hidden" name="$canalGroup.id.key" value="$canal.id" />
+	<input type="hidden" name="canalId" value="$canal.id" />
+	
+    <table cellpadding="0" cellspacing="0" class="setting_otter">
+    	<tr>
+    	<th width="300"></th>
+    	<td width="329">
+    		#foreach($f in ${canalParameterGroup.getFields()})
+    			#if (!$f.valid) 
+    				<span class="red">$!f.message</span><br/>
+    			#end
+    		#end
+    	</td>
+    </tr>
+    
+      <tr> 
+        <th width="300">canal名称：</th>
+        <td width="329">
+            <input type="text" name="$canalGroup.name.key" value="$!canal.name" disabled class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editCanalMessage ($canalGroup.name) #editCanalMessage ($canalGroup.formCanalError)</span>
+		</td>
+      </tr>
+	  
+	  <tr> 
+        <th width="300">运行模式：</th>
+        <td width="329">
+            <input type="radio" name="$canalParameterGroup.runMode.key" value="EMBEDDED" id="RadioGroup1_0" #if($!canal.canalParameter.runMode.isEmbedded()) checked="checked" #end class="radio"/>嵌入式 &nbsp;
+            <input type="radio" name="$canalParameterGroup.runMode.key" value="SERVICE" id="RadioGroup1_1" #if($!canal.canalParameter.runMode.isService()) checked="checked" #end disabled class="radio"/>独立服务 &nbsp;
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.runMode)</span>
+		</td>
+      </tr>
+	 <tr> 
+        <th>zookeeper集群：</th>
+        <td>
+            <select id="zkCluster" name="$canalParameterGroup.autoKeeperClusterId.key">
+			#foreach($zkCluster in $zkClusters)
+            <option value="$zkCluster.id" #if($!canal.canalParameter.zkClusterId == $zkCluster.id)selected#end>$zkCluster.clusterName</option>
+			#end
+        </td>
+      </tr>
+	  #*
+	  <tr> 
+        <th>ZooKeeper集群：</th>
+        <td>
+			<textarea class="service" name="$canalParameterGroup.zkClusters.key" cols="45" rows="5" >#foreach($storeAddress in $!canal.canalParameter.zkClusters)$storeAddress;#end</textarea><span class="red">*</span>
+			  <br />
+			  <span>格式如 10.20.10.20:8080;（必须以分号结束，可添多个）</span>
+			  <br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.zkClusters)</span>
+		</td>
+      </tr>
+	  *#
+	  <tr> 
+        <th width="300">-------------------------------</th>
+		<td width="329">---------------------------------------------------------------------------------------------</td>
+      </tr>
+	  
+	  <div id="dbConfig">
+		<tr> 
+        <th width="300">数据源类型：</th>
+        <td width="329">
+            <input type="radio" name="$canalParameterGroup.sourcingType.key" value="MYSQL" onclick="changeDisplay('mysqlSourcing','table-row');changeDisplay('oracleSourcing','none');changeDisplay('localSourcing','none');" id="RadioGroup5_0" #if($!canal.canalParameter.sourcingType.isMysql()) checked="checked" #end class="radio"/>mysql &nbsp;
+			#**
+			<input type="radio" name="$canalParameterGroup.sourcingType.key" value="ORACLE" onclick="changeDisplay('mysqlSourcing','none');changeDisplay('oracleSourcing','table-row');changeDisplay('localSourcing','none');" id="RadioGroup5_1" #if($!canal.canalParameter.sourcingType.isOracle()) checked="checked" #end class="radio"/>oracle &nbsp;
+            <input type="radio" name="$canalParameterGroup.sourcingType.key" value="LOCALBINLOG" onclick="changeDisplay('mysqlSourcing','none');changeDisplay('oracleSourcing','none');changeDisplay('localSourcing','table-row');" id="RadioGroup5_2" #if($!canal.canalParameter.sourcingType.isLocalBinlog()) checked="checked" #end class="radio"/>localbinlog &nbsp;
+			*#
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.sourcingType)</span>
+		</td>
+        </tr>
+		
+		<tr> 
+            <th width="300">数据库地址：</th>
+            <td width="329">
+    			<textarea class="service" name="$canalParameterGroup.groupDbAddresses.key" cols="45" rows="5" >$!numberFormat.formatGroupDbAddress($canal.canalParameter.sourcingType,$canal.canalParameter.groupDbAddresses)</textarea><span class="red">*</span>
+    			<br />
+    			<span>格式如 127.0.0.1:3306,127.0.0.1:3307;(必须以分号结束，逗号代表分组，可添多个)</span>
+    			<br />
+    			<span class="red">#editCanalMessage ($canalParameterGroup.groupDbAddresses)</span>
+    		</td>
+          </tr>
+    	  <tr> 
+            <th width="300">数据库帐号：</th>
+            <td width="329">
+                <input type="text" name="$canalParameterGroup.dbUsername.key" value="$!canal.canalParameter.dbUsername" class="setting_input"/><span class="red">*</span>
+    			<br />
+    			<span class="red">#editCanalMessage ($canalParameterGroup.dbUsername)</span>
+    		</td>
+          </tr>
+    	  <tr> 
+            <th width="300">数据库密码：</th>
+            <td width="329">
+                <input type="password" name="$canalParameterGroup.dbPassword.key" value="$!canal.canalParameter.dbPassword" class="setting_input"/><span class="red">*</span>
+    			<br />
+    			<span class="red">#editCanalMessage ($canalParameterGroup.dbPassword)</span>
+    		</td>
+          </tr>
+    	 <tr> 
+            <th width="300">connectionCharset：</th>
+            <td width="329">
+                <input type="text" name="$canalParameterGroup.connectionCharset.key" value="$!canal.canalParameter.connectionCharset" class="setting_input"/><span class="red">*</span>
+    			<br />
+    			<span class="red">#editCanalMessage ($canalParameterGroup.connectionCharset)</span>
+    		</td>
+          </tr>
+		 #**
+		 <tr class="mysqlSourcing"> 
+            <th width="300">链接到mysql的slaveId：</th>
+            <td width="329">
+                <input type="text" name="$canalParameterGroup.slaveId.key" value="$!canal.canalParameter.slaveId" class="setting_input"/><span class="red">*</span>
+    			<br />
+    			<span class="red">#editCanalMessage ($canalParameterGroup.slaveId)</span>
+    		</td>
+          </tr>
+		  *#
+		  <input type="hidden" name="$canalParameterGroup.slaveId.key" value="$!canal.canalParameter.slaveId" />
+		  <tr class="localSourcing">
+            <th width="300">本地localBinlog目录：</th>
+            <td width="329">
+                <input type="text" name="$canalParameterGroup.localBinlogDirectory.key" value="$!canal.canalParameter.localBinlogDirectory" class="setting_input"/><span class="red">*</span>
+    			<br />
+    			<span class="red">#editCanalMessage ($canalParameterGroup.localBinlogDirectory)</span>
+    		</td>
+          </tr>
+	  </div>
+	  
+	  <div id="positionConfig">
+	  <tr>
+		<th width="300">位点自定义设置：</th>
+        <td width="329">
+              <input id="positionSuperConfig" type='checkbox' value=1  class="setting_input" onclick="changePositionConfig()" />
+			  <br />
+        </td>
+      </tr>
+	  
+	  <tr class="positionSuperConfig"> 
+        <th width="300">位点信息：</th>
+        <td width="329">
+			<textarea class="service" name="$canalParameterGroup.positions.key" cols="45" rows="5" >#foreach($position in $!canal.canalParameter.positions)$position;#end</textarea><span class="red">*</span>
+			示例：{"journalName":"","position":0,"timestamp":0}; (必须以分号结束，可添多个)</span>
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.positions)</span>
+		</td>
+      </tr>
+	  </div>
+	  
+	  <tr> 
+        <th width="300">-------------------------------</th>
+		<td width="329">---------------------------------------------------------------------------------------------</td>
+      </tr>
+	  
+	  <div id="storageConfig">
+		<tr> 
+        <th width="300">存储机制：</th>
+        <td width="329">
+            <input type="radio" name="$canalParameterGroup.storageMode.key" value="MEMORY" onclick="changeDisplay('memoryStorage','table-row');changeDisplay('fileStorage','none');" id="RadioGroup4_0" #if($!canal.canalParameter.storageMode.isMemory()) checked="checked" #end class="radio" class="radio"/>memory &nbsp;
+            <input type="radio" name="$canalParameterGroup.storageMode.key" value="FILE" onclick="changeDisplay('memoryStorage','none');changeDisplay('fileStorage','table-row');" id="RadioGroup4_2" #if($!canal.canalParameter.storageMode.isFile()) checked="checked" #end disabled class="radio"/>file &nbsp;
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.storageMode)</span>
+		</td>
+       </tr>
+	   <tr class="memoryStorage">
+        <th width="300">内存存储batch获取模式：</th>
+        <td width="329">
+            <input type="radio" name="$canalParameterGroup.storageBatchMode.key" value="MEMSIZE" id="RadioGroup6_0" #if($!canal.canalParameter.storageBatchMode.isMemSize()) checked="checked" #end class="radio"/>MEMSIZE &nbsp;
+			<input type="radio" name="$canalParameterGroup.storageBatchMode.key" value="ITEMSIZE" id="RadioGroup6_1" #if($!canal.canalParameter.storageBatchMode.isItemSize()) checked="checked" #end class="radio"/>ITEMSIZE &nbsp;
+			<br />
+			<span><code>MEMSIZE模式 内存大小计算 = 记录数 * 记录单元大小</code></span>
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.storageBatchMode)</span>
+		</td>
+      </tr>
+	  <tr class="memoryStorage">
+        <th width="300">内存存储buffer记录数：</th>
+        <td width="329">
+            <input type="text" name="$canalParameterGroup.memoryStorageBufferSize.key" value="$!canal.canalParameter.memoryStorageBufferSize" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.memoryStorageBufferSize)</span>
+		</td>
+      </tr>
+	  <tr class="memoryStorage">
+        <th width="300">内存存储buffer记录单元大小：</th>
+        <td width="329">
+            <input type="text" name="$canalParameterGroup.memoryStorageBufferMemUnit.key" value="$!canal.canalParameter.memoryStorageBufferMemUnit" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.memoryStorageBufferMemUnit)</span>
+		</td>
+      </tr>
+	  
+	 <tr class="fileStorage"> 
+        <th width="300">文件存储的目录位置：</th>
+        <td width="329">
+            <input type="text" name="$canalParameterGroup.fileStorageDirectory.key" value="$!canal.canalParameter.fileStorageDirectory" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.fileStorageDirectory)</span>
+		</td>
+      </tr>
+	  <tr class="fileStorage"> 
+        <th width="300">文件存储store记录数：</th>
+        <td width="329">
+            <input type="text" name="$canalParameterGroup.fileStorageStoreCount.key" value="$!canal.canalParameter.fileStorageStoreCount" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.fileStorageStoreCount)</span>
+		</td>
+      </tr>
+	  <tr class="fileStorage"> 
+        <th width="300">文件存储store文件个数：</th>
+        <td width="329">
+            <input type="text" name="$canalParameterGroup.fileStorageRollverCount.key" value="$!canal.canalParameter.fileStorageRollverCount" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.fileStorageRollverCount)</span>
+		</td>
+      </tr>
+	 <tr class="fileStorage"> 
+        <th width="300">文件存储store存储占disk百分比：</th>
+        <td width="329">
+            <input type="text" name="$canalParameterGroup.fileStoragePercentThresold.key" value="$!canal.canalParameter.fileStoragePercentThresold" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.fileStoragePercentThresold)</span>
+		</td>
+      </tr>
+	  </div>
+	  
+	  <tr> 
+        <th width="300">-------------------------------</th>
+		<td width="329">---------------------------------------------------------------------------------------------</td>
+      </tr>
+	  
+	  <div id="haConfig">
+	  <tr> 
+        <th width="300">HA机制：</th>
+        <td width="329">
+            <input type="radio" name="$canalParameterGroup.haMode.key" value="HEARTBEAT" onclick="changeDisplay('heartbeatHa','table-row');changeDisplay('mediaHa','none');" id="RadioGroup6_0" #if($!canal.canalParameter.haMode.isHeartBeat()) checked="checked" #end class="radio"/>heartbeat &nbsp;
+            <input type="radio" name="$canalParameterGroup.haMode.key" value="MEDIA" onclick="changeDisplay('heartbeatHa','none');changeDisplay('mediaHa','table-row');" id="RadioGroup6_1" #if($!canal.canalParameter.haMode.isMedia()) checked="checked" #end class="radio"/>media &nbsp;
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.haMode)</span>
+		</td>
+      </tr>
+	  </div>
+	  
+	  <tr class="mediaHa">
+        <th width="300">media group key:</th>
+        <td width="329">
+			<input type="text" name="$canalParameterGroup.mediaGroup.key" value="$!canal.canalParameter.mediaGroup" class="setting_input"/>
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.mediaGroup)</span>
+		</td>
+      </tr>
+	  
+	  <div id="detectConfig">
+		<tr> 
+        <th width="300">是否开启心跳：</th>
+        <td width="329">
+            <input type="radio" name="$canalParameterGroup.detectingEnable.key" value="true" onclick="changeDisplay('detectEnable','table-row');" id="RadioGroup8_0" #if($!canal.canalParameter.detectingEnable) checked="checked" #end class="radio"/>是 &nbsp;
+            <input type="radio" name="$canalParameterGroup.detectingEnable.key" value="false" onclick="changeDisplay('detectEnable','none');" id="RadioGroup8_1" #if(!$!canal.canalParameter.detectingEnable) checked="checked" #end class="radio"/>否 &nbsp;
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.detectingEnable)</span>
+		</td>
+      </tr>
+	  
+	  <tr class="detectEnable"> 
+        <th width="300">心跳sql：</th>
+        <td width="329">
+            <textarea class="service" name="$canalParameterGroup.detectingSQL.key" cols="45" rows="5">$!canal.canalParameter.detectingSQL</textarea><span class="red">*</span>
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.detectingSQL) #editCanalMessage ($canalParameterGroup.formHeartBeatError)</span>
+		</td>
+      </tr>
+	  
+	  <tr class="detectEnable"> 
+        <th width="300">心跳检测频率(s)：</th>
+        <td width="329">
+            <input type="text" name="$canalParameterGroup.detectingIntervalInSeconds.key" value="$!canal.canalParameter.detectingIntervalInSeconds" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.detectingIntervalInSeconds)</span>
+		</td>
+      </tr>
+	  
+	  <tr class="detectEnable"> 
+        <th width="300">心跳超时时间(s)：</th>
+        <td width="329">
+            <input type="text" name="$canalParameterGroup.detectingTimeoutThresholdInSeconds.key" value="$!canal.canalParameter.detectingTimeoutThresholdInSeconds" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.detectingTimeoutThresholdInSeconds)</span>
+		</td>
+      </tr>
+	  
+	  <tr class="detectEnable"> 
+        <th width="300">心跳检查重试次数：</th>
+        <td width="329">
+            <input type="text" name="$canalParameterGroup.detectingRetryTimes.key" value="$!canal.canalParameter.detectingRetryTimes" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.detectingRetryTimes)</span>
+		</td>
+      </tr>
+	  
+	  <tr class="detectEnable">
+        <th width="300">是否启用心跳HA：</th>
+        <td width="329">
+			<input type="radio" name="$canalParameterGroup.heartbeatHaEnable.key" value="true" id="RadioGroup8_0" #if($!canal.canalParameter.heartbeatHaEnable) checked="checked" #end class="radio"/>是 &nbsp;
+            <input type="radio" name="$canalParameterGroup.heartbeatHaEnable.key" value="false" id="RadioGroup8_1" #if(!$!canal.canalParameter.heartbeatHaEnable) checked="checked" #end class="radio"/>否 &nbsp;
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.heartbeatHaEnable)</span>
+		</td>
+      </tr>
+	  </div>
+	  
+	  <div id="networkConfig">
+	  <tr>
+		<th width="300">其他参数设置：</th>
+        <td width="329">
+              <input id="networkSuperConfig" type='checkbox' name='super' value=1  class="setting_input" onclick="changeNetworkConfig()" />
+			  <br />
+        </td>
+      </tr>
+	  
+	  <tr class="networkSuperConfig"> 
+        <th width="300">meta机制：</th>
+        <td width="329">
+            <input type="radio" name="$canalParameterGroup.metaMode.key" value="MEMORY" id="RadioGroup3_0" #if($!canal.canalParameter.metaMode.isMemory()) checked="checked" #end class="radio"/>memory &nbsp;
+            <input type="radio" name="$canalParameterGroup.metaMode.key" value="ZOOKEEPER" id="RadioGroup3_1" #if($!canal.canalParameter.metaMode.isZookeeper()) checked="checked" #end class="radio"/>zookeeper &nbsp;
+			<input type="radio" name="$canalParameterGroup.metaMode.key" value="MIXED" id="RadioGroup3_2" #if($!canal.canalParameter.metaMode.isMixed()) checked="checked" #end class="radio"/>mixed &nbsp;
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.metaMode)</span>
+		</td>
+      </tr>
+	  
+	  <tr class="networkSuperConfig"> 
+        <th width="300">索引机制：</th>
+        <td width="329">
+            <input type="radio" name="$canalParameterGroup.indexMode.key" value="MEMORY" id="RadioGroup7_0" #if($!canal.canalParameter.indexMode.isMemory()) checked="checked" #end class="radio"/>memory &nbsp;
+            <input type="radio" name="$canalParameterGroup.indexMode.key" value="ZOOKEEPER" id="RadioGroup7_1" #if($!canal.canalParameter.indexMode.isZookeeper()) checked="checked" #end class="radio"/>zookeeper &nbsp;
+			<input type="radio" name="$canalParameterGroup.indexMode.key" value="MIXED" id="RadioGroup7_2" #if($!canal.canalParameter.indexMode.isMixed()) checked="checked" #end class="radio"/>mixed &nbsp;
+			<input type="radio" name="$canalParameterGroup.indexMode.key" value="META" id="RadioGroup7_3" #if($!canal.canalParameter.indexMode.isMeta()) checked="checked" #end class="radio"/>meta &nbsp;
+			<input type="radio" name="$canalParameterGroup.indexMode.key" value="MEMORY_META_FAILBACK" #if($!canal.canalParameter.indexMode.isMemoryMetaFailback()) checked="checked" #end id="RadioGroup7_4" class="radio"/>memory_meta_failback &nbsp;
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.indexMode)</span>
+		</td>
+      </tr>
+	  <tr class="networkSuperConfig"> 
+        <th width="300">服务端口：</th>
+        <td width="329">
+            <input type="text" name="$canalParameterGroup.port.key" value="$!canal.canalParameter.port" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.port)</span>
+		</td>
+      </tr>
+	  
+	 <tr class="networkSuperConfig"> 
+        <th width="300">默认连接超时(s)：</th>
+        <td width="329">
+            <input type="text" name="$canalParameterGroup.defaultConnectionTimeoutInSeconds.key" value="$!canal.canalParameter.defaultConnectionTimeoutInSeconds" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.defaultConnectionTimeoutInSeconds)</span>
+		</td>
+      </tr>
+	  
+	  <tr class="networkSuperConfig"> 
+        <th width="300">snedBufferSize：</th>
+        <td width="329">
+            <input type="text" name="$canalParameterGroup.receiveBufferSize.key" value="$!canal.canalParameter.receiveBufferSize" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.receiveBufferSize)</span>
+		</td>
+      </tr>
+	  
+	  <tr class="networkSuperConfig"> 
+        <th width="300">receiveBufferSize：</th>
+        <td width="329">
+            <input type="text" name="$canalParameterGroup.sendBufferSize.key" value="$!canal.canalParameter.sendBufferSize" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.sendBufferSize)</span>
+		</td>
+      </tr>
+	  
+	  <tr class="networkSuperConfig"> 
+        <th width="300">切换回退时间：</th>
+        <td width="329">
+            <input type="text" name="$canalParameterGroup.fallbackIntervalInSeconds.key" value="$!canal.canalParameter.fallbackIntervalInSeconds" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editCanalMessage($canalParameterGroup.fallbackIntervalInSeconds)</span>
+		</td>
+      </tr>
+	  </div>
+	  
+	 <tr>
+       <th>过滤表达式：</th>
+       <td>
+    		<textarea cols="45" rows="5" name="$canalParameterGroup.blackFilter.key">$!canal.canalParameter.blackFilter</textarea><span class="red">*</span>
+    		<br />
+    		<span class="red">#editCanalMessage ($canalParameterGroup.blackFilter)</span>
+	   </td>
+      </tr>
+	  <tr>
+       <th>描述信息：</th>
+       <td>
+    		<textarea cols="45" rows="5" name="$canalGroup.desc.key">$!canal.desc</textarea><span class="red">*</span>
+    		<br />
+    		<span class="red">#editCanalMessage ($canalGroup.desc)</span>
+	   </td>
+      </tr>
+    </table>
+ </div>
+   <div class="btn"><a href="javascript:document.editCanalForm.submit();">保存</a></div> 
+  
+  </form>
+</div>
+	
+<script language="javascript">
+<!--
+	#if($!canal.canalParameter.sourcingType.isMysql())
+		changeDisplay('mysqlSourcing','table-row')
+	#else
+		changeDisplay('mysqlSourcing','none')
+	#end
+
+	#if($!canal.canalParameter.sourcingType.isOracle())
+		changeDisplay('oracleSourcing','table-row')
+	#else
+		changeDisplay('oracleSourcing','none')
+	#end
+
+	#if($!canal.canalParameter.sourcingType.isLocalBinlog())
+		changeDisplay('localSourcing','table-row')
+	#else
+		changeDisplay('localSourcing','none')
+	#end
+	
+	#if($!canal.canalParameter.storageMode.isMemory())
+		changeDisplay('memoryStorage','table-row')
+	#else
+		changeDisplay('memoryStorage','none')
+	#end
+
+	#if($!canal.canalParameter.storageMode.isFile())
+		changeDisplay('fileStorage','table-row')
+	#else
+		changeDisplay('fileStorage','none')
+	#end
+	
+	#if($!canal.canalParameter.haMode.isHeartBeat())
+		changeDisplay('heartbeatHa','table-row')
+	#else
+		changeDisplay('heartbeatHa','none')
+	#end
+
+	#if($!canal.canalParameter.haMode.isMedia())
+		changeDisplay('mediaHa','table-row')
+	#else
+    	changeDisplay('mediaHa','none')
+	#end
+	
+	#if($!canal.canalParameter.detectingEnable)
+		changeDisplay('detectEnable','table-row')
+	#else
+		changeDisplay('detectEnable','none')
+	#end
+	
+	changePositionConfig();
+	changeNetworkConfig();
+//-->
+</script>

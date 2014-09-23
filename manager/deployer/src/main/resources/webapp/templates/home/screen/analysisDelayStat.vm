@@ -1,0 +1,143 @@
+$control.setTemplate("home:navigation.vm")
+<script language="javascript" type="text/javascript" src="js/jquery-1.4.2.min.js" > </script>
+<script language="javascript" type="text/javascript" src="js/jquery.simplemodal-1.4.js" ></script>
+<script language="javascript" type="text/javascript" src="js/My97DatePicker/WdatePicker.js" ></script>
+<script language="javascript" type="text/javascript" src="js/analysisStatus.js" ></script>
+
+<script language="javascript" type="text/javascript" src="js/flot/jquery.colorhelpers.js" > </script>
+<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.js" ></script>
+<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.crosshair.js"></script>
+<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.fillbetween.js"></script>
+<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.image.js" > </script>
+<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.navigate.js" ></script>
+<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.pie.js"></script>
+<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.selection.js"></script>
+<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.stack.js" > </script>
+<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.symbol.js" ></script>
+<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.threshold.js"></script>
+<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.resize.js"></script>
+<!--[if IE]><script language="javascript" type="text/javascript" src="js/flot/excanvas.min.js"></script><![endif]-->
+<script type="text/javascript">
+
+//****************0.create JVM Flash*********************************
+$(function () { 
+	var number;
+	var time;
+	var create;
+	var flotTime=[];
+	#foreach ($key in $delayStatInfos.keySet())
+		time=$delayStatInfos.get($key).avgDelayTime;
+		create=$key;
+		flotTime.push([create,time]);
+	#end
+	
+				
+	createDelayStatFlash(flotTime);
+				
+				
+	function showTooltip(x, y, contents) {
+        $('<div id="tooltip">' + contents + '</div>').css( {
+            position: 'absolute',
+            display: 'none',
+            top: y + 5,
+            left: x + 5,
+            border: '1px solid #fdd',
+            padding: '2px',
+            'background-color': '#fee',
+            opacity: 0.80
+        }).appendTo("body").fadeIn(200);
+    };
+ 
+    var previousPoint = null;
+	
+
+function showTip(id){
+	$(id).bind("plothover", function (event, pos, item) {
+            if (item) {
+                if (previousPoint != item.dataIndex) {
+                    previousPoint = item.dataIndex;
+                    
+                    $("#tooltip").remove();
+                    var x = item.datapoint[0],
+                        y = strFormat(item.datapoint[1].toFixed(2));  
+					var dateTime = new Date();  
+                    dateTime.setTime(x);      
+                    var dateTimeStr = dateTime.toLocaleString();  
+                    dateTimeStr = dateTimeStr.replace(' ',''); 
+					var context = "(" + dateTimeStr + " , " + y+  ")";
+                    showTooltip(item.pageX, item.pageY,context);
+                }
+            }
+            else {
+                $("#tooltip").remove();
+                previousPoint = null;            
+            }
+    })
+};
+	showTip("#delayTime");
+});
+
+
+</script>
+
+<div class="main">
+  <div class="title"> 
+    <h2>延迟时间</h2>
+  </div>
+  <div class="crumbs"><a href="channelList.htm?channelId=$channel.id">channel管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="pipeline_list.htm?channelId=$channel.id">Pipeline</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="analysisDelayStat.htm?pipelineId=$pipelineId">延迟时间</a></div>  
+     <!--Channel搜索-->
+  <div class="crumbs"></div>     
+     <div class="tab" id="Tab2" >
+        <div class="menubox">
+        <ul>
+        <li id="two1"><a href="dataMediaPairList.htm?pipelineId=$pipelineId">映射关系列表</a></li>
+           
+        <li id="two2" ><a href="analysisThroughputStat.htm?pipelineId=$pipelineId">吞吐量</a></li>
+        
+        <li id="two3" class="tab_active"><a href="analysisDelayStat.htm?pipelineId=$pipelineId">延迟时间</a></li>
+           
+        <li id="two4"><a href="analysisStageStat.htm?pipelineId=$pipelineId">同步进度</a></li>  
+		
+		<li id="two5"><a href="analysisThroughputHistory.htm?pipelineId=$pipelineId">历史吞吐量</a></li>
+		
+		<li id="two6"><a href="alarmRuleList.htm?pipelineId=$pipelineId">监控管理</a></li>
+        
+		<li id="two7"><a href="logRecordTab.htm?pipelineId=$pipelineId">日志记录</a></li>
+		
+        </ul>
+        </div>
+		<div class="contentbox_tab box_tab">
+		  <div class="search_o" style="margin:5px 0 15px 15px;" > 
+		<form name="search_delayStat" method="post">
+			<div class="divInPut">
+				<table border="0" cellspacing="0" cellpadding="0" style="margin-bottom:6px;">
+					<tr>
+					<td><img src="images/search_global_l.png" width="78" height="32" /></td>
+					<td background="images/search_global_m.png">
+                                                时间：<input name="d5221" id="d5221" class="Wdate" type="text" value="$!start" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm',maxDate:'#F{$dp.$D(\'d5222\')}'})"/>
+                </td>                       
+				<td background="images/search_global_m.png"> 至：
+                  <input name="d5222" id="d5222" class="Wdate" type="text" value="$!end" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm',minDate:'#F{$dp.$D(\'d5221\')}'})"/>
+                </td>
+				<td><div ><a class="search_btn2" href="javascript:document.search_delayStat.submit();"></a></div>
+				</td>
+				<td><img src="images/search_global_r2.png"/></td>
+			   </tr>			
+               </table>
+               </div>	
+			   </form>
+			   </div>
+			#*
+			<fieldset style="border:1px #ccc solid; margin:0 0 20px 15px;width:730px;padding:25px 10px 20px 15px;"><legend><b>堆积量（条）</b></legend>
+			    <div id="delayNumber" style="width:700px;height:250px"></div>
+			</fieldset>
+			*#
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	平均延迟: <span style="font-weight: bold;">$!numberFormat.formatDelay($delayAvg)</span>
+            <br/><br/>
+			<fieldset style="border:1px #ccc solid; margin:0 0 20px 15px;width:730px;padding:25px 10px 20px 15px;"><legend><b>延迟时间</b></legend>
+			    <div id="delayTime" style="width:700px;height:250px"></div>
+			</fieldset>
+  </div>
+</div>
+</div>

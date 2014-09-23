@@ -1,0 +1,81 @@
+
+<script type="text/javascript" src="js/trcolor.js"></script>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
+
+$control.setTemplate("home:navigation.vm")
+<script language="javascript">
+<!--
+	changeNav("sync");
+//-->
+</script>
+
+<div class="main">
+  <div class="title"> 
+    <h2>吞吐量</h2>
+  </div>
+  <div class="crumbs"><a href="channelList.htm?channelId=$channel.id">channel管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="pipeline_list.htm?channelId=$channel.id">Pipeline</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="analysisThroughputStat.htm?pipelineId=$pipelineId">吞吐量</a></div>
+<div class="crumbs"></div>     
+     <div class="tab" id="Tab2">
+        <div class="menubox">
+        <ul>
+        <li id="two1"><a href="dataMediaPairList.htm?pipelineId=$pipelineId">映射关系列表</a></li>
+           
+        <li id="two2" class="tab_active"><a href="analysisThroughputStat.htm?pipelineId=$pipelineId">吞吐量</a></li>
+        
+        <li id="two3"><a href="analysisDelayStat.htm?pipelineId=$pipelineId">延迟时间</a></li>
+           
+        <li id="two4"><a href="analysisStageStat.htm?pipelineId=$pipelineId">同步进度</a></li>   
+		
+		<li id="two5"><a href="analysisThroughputHistory.htm?pipelineId=$pipelineId">历史吞吐量</a></li>
+		
+		<li id="two6"><a href="alarmRuleList.htm?pipelineId=$pipelineId">监控管理</a></li>
+        
+		<li id="two7"><a href="logRecordTab.htm?pipelineId=$pipelineId">日志记录</a></li>
+		
+		</ul>
+        </div>
+         <div class="contentbox_tab box_tab">  
+           <div id="con_two_1">
+<!--列表-->
+     
+        <table border="0" cellspacing="0" cellpadding="0" class="list2 changecolor_g">
+          <tr> 
+            <th width="6%">PipelineId</th>
+            <th width="4%">类型</th>
+            <th width="11%">TPS<span class="STYLE3">&nbsp;(1分钟)</span></th>
+            <th width="11%">TPS<span class="STYLE3">&nbsp;(5分钟)</span></th>
+            <th width="11%">TPS<span class="STYLE3">&nbsp;(15分钟)</span></th>
+            <th width="11%">吞吐量<span class="STYLE3">&nbsp;(1分钟)</span></th>
+            <th width="11%">吞吐量<span class="STYLE3">&nbsp;(5分钟)</span></th>
+            <th width="11%">吞吐量<span class="STYLE3">&nbsp;(15分钟)</span></th>
+			<th width="20%">最后同步时间</th>
+          </tr>
+          <tr> 
+            <td width="6%">$pipelineId</td>
+            <td width="4%">FILE </td>
+            <td>$!numberFormat.format($throughputInfos1.get($one).Tps)</td>
+            <td>$!numberFormat.format($throughputInfos1.get($five).Tps)</td>
+            <td>$!numberFormat.format($throughputInfos1.get($fifteen).Tps)</td>
+            <td>$!numberFormat.formatFileSize($throughputInfos1.get($one).Quantity)</td>
+            <td>$!numberFormat.formatFileSize($throughputInfos1.get($five).Quantity)</span></td>
+            <td>$!numberFormat.formatFileSize($throughputInfos1.get($fifteen).Quantity)</td>
+            <td>$!numberFormat.format($!throughputStat1.gmtModified)</td>
+          </tr>
+          <tr> 
+            <td width="6%">$pipelineId</td>
+            <td width="4%">ROW </td>
+            <td>$!numberFormat.format($throughputInfos2.get($one).Tps)</td>
+            <td>$!numberFormat.format($throughputInfos2.get($five).Tps)</td>
+            <td>$!numberFormat.format($throughputInfos2.get($fifteen).Tps)</td>
+            <td>$!numberFormat.formatFileSize($throughputInfos2.get($one).Quantity)</td>
+            <td>$!numberFormat.formatFileSize($throughputInfos2.get($five).Quantity)</td>
+            <td>$!numberFormat.formatFileSize($throughputInfos2.get($fifteen).Quantity)</td>
+            <td>$!numberFormat.format($!throughputStat2.gmtModified)</td>
+          </tr>
+        </table>
+             
+                 
+    </div>
+  </div>
+</div>
+</div>

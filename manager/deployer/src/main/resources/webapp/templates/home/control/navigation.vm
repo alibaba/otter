@@ -1,0 +1,97 @@
+#set($user = $rundata.request.session.getAttribute("managerUser"))
+<!--页面头部-->
+<div class="head">
+  <div class="header"></div>
+  <div class="head_right">
+    <div class="exit">
+		#set ($logoutURL = $homeModule.setAction("userAction").addQueryData("eventSubmitDoLogout", "true"))
+		<a href="$logoutURL" title="重新登录"><img src="images/exit.png" width="14" height="19" /></a></div>
+    <span>$!user.name #if($user.authorizeType.isAdmin()) （超级管理员） #elseif($user.authorizeType.isOperator()) （普通用户） #else 匿名用户 #end，欢迎您进入！</span>
+  </div>
+</div>
+
+<!--横向菜单-->
+<div class="nav">
+   <ul>
+    <li id="sync"><a href="$channelListLink">同步管理</a></li>
+	<li id="node" class="sub_nav"><a href="#">机器管理</a>
+		<ul>
+    		<li><a href="$autoKeeperClustersListLink">zookeeper管理</a></li>
+    		<li><a href="$nodeListLink">Node管理</a></li>
+		</ul>
+	</li>
+    <li id="datamedia" class="sub_nav"><a href="#">配置管理</a>
+      <ul>
+        <li><a href="$dataMediaSourceListLink">数据源配置</a></li>
+        <li><a href="$dataMediaListLink">数据表配置</a></li>
+		<li><a href="$canalListLink">canal配置</a></li>
+		<li><a href="$dataMatrixListLink">主备配置</a></li>
+      </ul>   
+    </li>
+	<li id="record" class="sub_nav"><a href="#">监控管理</a>
+		<ul>
+			<li><a href="$logRecordLink">日志记录</a></li>
+			<li><a href="$alarmLogLink">监控列表</a></li>
+			<li><a href="${analysisTopStatLink}?topN=15&statTime=1&searchKey=">同步TOP</a></li>
+        </ul>
+	</li>
+	<li id="manual" class="sub_nav"><a href="#">使用文档</a>
+	      <ul>
+			<li><a href="$wikiLink">wiki文档</a></li>
+	        <li><a href="$sqlInitLink">数据库初始化</a></li>
+	      </ul>
+	    </li>
+	#if($user.authorizeType.isAdmin())
+		<li id="user" class="sub_nav"><a href="#">系统管理</a>
+	      <ul>
+	        <li><a href="$userListLink">权限管理</a></li>
+	        <li><a href="$systemReductionLink">系统初始化</a></li>
+			<li><a href="$systemParameterLink">系统参数</a></li>
+	      </ul>   
+	    </li>
+	#end
+   </ul>
+  <div class="about"><a href="http://github.com/alibaba/otter" target="_blank">About</a></div>
+</div>
+
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
+<script language="javascript">
+<!--
+        function changeNav(navName) {
+        	var element = document.getElementById(navName);
+        	element.setAttribute("class", "current_nosub"); //for firefox
+        	element.setAttribute("className", "current_nosub"); //for IE
+		}
+		function getElement(key){
+      		return document.getElementById(key);
+   		}
+   
+        function pageNavigation(event,pageIndex){
+            stopDefault(event);
+            pageNavCallBack(pageIndex);
+        }
+    	
+    	function pageNavCallBack(page){
+        	getElement('pageIndex').value=page;
+        	getElement('pageform').submit();
+        	return false;
+        }
+		
+		function stopDefault(e) { //函数功能：阻止浏览器的默认行为
+			e = e || window.event;  //兼容firefox
+    		if ( e && e.preventDefault ) {
+         		e.preventDefault(); //阻止默认浏览器动作(W3C)
+     		} else {
+         		e.returnValue = false; //IE中阻止函数器默认动作的方式
+     		}
+    		return false;
+		} 
+		
+		function changeDisplay(id , action) {
+    		var trs = $("tr[class='" + id +"']");   
+            for(i = 0; i < trs.length; i++){     
+                    trs[i].style.display = action;
+            }  
+    	}
+//-->
+</script>

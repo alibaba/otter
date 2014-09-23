@@ -1,0 +1,288 @@
+$control.setTemplate("home:navigation.vm")
+#set($user = $rundata.request.session.getAttribute("managerUser"))
+<script language="javascript">
+<!--
+	changeNav("sync");
+	
+	function showdiv(targetid,objN){
+      var target=document.getElementById(targetid);
+      var clicktext=document.getElementById(objN)
+
+            if (target.style.display=="block"){
+                target.style.display="none";
+                clicktext.innerText="查看";
+  
+
+            } else {
+                target.style.display="block";
+                clicktext.innerText='关闭';
+            }
+   
+	}
+//-->
+</script>
+<div class="main">
+  <div class="title"> 
+    <h2>同步进度</h2>
+  </div>
+  <div class="crumbs"><a href="channelList.htm?channelId=$pipeline.channelId">channel管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="pipeline_list.htm?channelId=$pipeline.channelId">Pipeline</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="analysisStageStat.htm?pipelineId=$pipelineId">同步进度</a></div>   
+  <div class="crumbs"></div>     
+     <div class="tab" id="Tab2">
+        <div class="menubox">
+        <ul>
+        <li id="two1"><a href="dataMediaPairList.htm?pipelineId=$pipelineId">映射关系列表</a></li>
+           
+        <li id="two2" ><a href="analysisThroughputStat.htm?pipelineId=$pipelineId">吞吐量</a></li>
+        
+        <li id="two3"><a href="analysisDelayStat.htm?pipelineId=$pipelineId">延迟时间</a></li>
+           
+        <li id="two4" class="tab_active"><a href="analysisStageStat.htm?pipelineId=$pipelineId">同步进度</a></li>  
+		
+		<li id="two5"><a href="analysisThroughputHistory.htm?pipelineId=$pipelineId">历史吞吐量</a></li>
+		
+		<li id="two6"><a href="alarmRuleList.htm?pipelineId=$pipelineId">监控管理</a></li>
+        
+		<li id="two7"><a href="logRecordTab.htm?pipelineId=$pipelineId">日志记录</a></li>
+
+        </ul>
+        </div>
+         <div class="contentbox_tab box_tab"> 
+			<div id="con_two_1" style="margin-bottom:10px">
+				<table border="0" cellspacing="0" cellpadding="0" id="list" style="table-layout:fixed" onClick="displayLegendDiv(event);">
+                     <tr align="left"> 
+						<th>SELECT:</th>
+						<th><div style="width:12px; height:12px; background-color:#D9B300; border:1px #D9B300 solid;margin:0 15px 0 5px;"></div></th>
+						<th><div style="width:30px"></div></th>
+						<th>EXTRACT:</th>
+						<th><div style="width:12px; height:12px; background-color:#FFC1E0; border:1px #FFA1E0 solid;margin:0 15px 0 5px;"></div></th>
+						<th><div style="width:30px"></div></th>
+						<th>TRANSFORM:</th>
+						<th><div style="width:12px; height:12px; background-color:#4DFFFF; border:1px #32bfe2 solid;margin:0 15px 0 5px;"></div></th>
+						<th><div style="width:30px"></div></th>
+						<th>LOAD:</th>
+						<th><div style="width:12px; height:12px; background-color:#79FF79; border:1px #41bb4c solid;margin:0 15px 0 5px;"></div></th>
+						<th><div style="width:30px"></div></th>
+						<th>RUNNING:</th>
+						<th><div style="width:12px; height:12px; background-color:#FF2D2D; border:1px #e78000 solid;margin:0 15px 0 5px;"></div></th>
+						<th><div style="width:30px"></div></th>
+						<th>END:</th>
+						<th><div style="width:12px; height:12px; background-color:#2bbb2e; border:1px #013f04 solid;margin:0 15px 0 5px;"></div></th>
+						<th><div style="width:20px"></div></th>
+						
+					 </tr>
+					 </table>
+					 <table>
+					 <tr>
+						<th><div style="height:12px;"></div>(单位&nbsp;:&nbsp;&nbsp;毫秒)</th>
+					 </tr>
+					 </table>
+					 <br/>
+					 <table class="list changecolor_w" border="0" cellspacing="0" cellpadding="0" style="table-layout:fixed ; width:40%" onClick="displayLegendDiv(event);">
+					 <tr>
+						<td style="width:25%">mainstem状态 : </td>
+						<td style="width:72%">
+                    		#if(!$mainstemData)
+                    			<font color="#FF0000">未工作</font>
+                    		#else
+                        		#set ($nodeInfoURL = $homeModule.setTarget("nodeInfo.vm").addQueryData("nodeId", $mainstemData.nid).fork())
+								#set ($switchURL = $homeModule.setTarget("analysisStageStat.vm").addQueryData("pipelineId", $pipelineId).setAction("switchWarmupAction").addQueryData("eventSubmitDoSwitch", "true").render())
+								#set ($restartURL = $homeModule.setTarget("analysisStageStat.vm").addQueryData("pipelineId", $pipelineId).setAction("switchWarmupAction").addQueryData("eventSubmitDoRestart", "true").render())
+                        		#if($mainstemData.status.isTaking())
+                        			<font color="#FF0000">定位中</font> ( node : $mainstemData.nid ) <span class="ico_line">|</span> <a href="$nodeInfoURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">查看</span></a>
+									#if($user.authorizeType.isAdmin())
+									<span class="ico_line">|</span><a href="$switchURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">切换</span></a>
+									<span class="ico_line">|</span><a href="$restartURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">重启</span></a>
+									#end
+                        		#else
+                        			工作中 ( node : $mainstemData.nid ) <span class="ico_line">|</span> <a href="$nodeInfoURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">查看</span></a>
+									#if($user.authorizeType.isAdmin())
+									<span class="ico_line">|</span><a href="$switchURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">切换</span></a>
+									<span class="ico_line">|</span><a href="$restartURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">重启</span></a>
+									#end
+                        		#end
+    						#end
+						</b></td>
+					 </tr>
+					 <tr>
+						<td style="width:25%">position 状态 : </td>
+						<td style="width:72%">
+                    		#if(!$positionData)
+                    			<font color="#FF0000">无信息</font>
+                    		#else
+								#set ($removeURL = $homeModule.setTarget("analysisStageStat.vm").addQueryData("pipelineId", $pipelineId).setAction("PositionAction").addQueryData("eventSubmitDoRemove", "true").render())
+                    			最后更新时间 : $!numberFormat.format($positionData.modifiedTime) <span class="ico_line">|</span><img src="images/ico_edit.png" width="13" height="13" /><a id="showtext-position" onClick="showdiv('contentid-position','showtext-position')"><span class="ico_font">查看</span></a>
+								#if($user.authorizeType.isAdmin())
+    								#if($channelStatus.isStop()) 
+    									<span class="ico_line">|</span><a href="javascript:if(confirm('确实要删除吗?'))location='$removeURL'"><img src="images/ico_del.png" width="13" height="13" /><span class="ico_font">删除</span></a>
+    								#else
+    									<span class="ico_line">|</span><img src="images/ico_del.png" width="13" height="13" /><span class="ico_font" title="需要先停用channel">删除</span></a>
+    								#end
+								#end
+    						#end
+						</b></td>
+					 </tr>
+					 <tr>
+						<td width="100%" colspan="2" class="message">
+							<div id="contentid-position" class="contentid" style="display:none">#noescape() $!positionData.position #end</div>
+						</td>
+					 </tr>
+					 </table>
+		#foreach ($processStat in $processStats)
+			<table border="0" cellspacing="0" cellpadding="0" id="list" style="margin-top:16px;table-layout:fixed;" onClick="displayLegendDiv(event);">
+		  <tr align="left" style="background-color:#eee;"> 
+			<td style="width:75px;height:30px;padding:0px 0px 0px 0px;text-align:center">$processStat.processId</td>
+			<td style="width:1px;height:60px;background-color:#ddd;padding:0px 0px 0px 0px;"></td>
+			#foreach($stageStat in $processStat.stageStats)
+				#set($temp=$velocityCount)
+    			#set($context = "")
+				#if($stageStat.number)
+					#set($context=$!{context} + "number:" + $!numberFormat.format($stageStat.number) +"&#10;")
+				#end
+				
+				#if($stageStat.size)
+					#set($context=$!{context} + "size:" + $!numberFormat.format($stageStat.size)+"&#10;")
+				#end
+				
+				#if($stageStat.exts && $stageStat.exts.size() > 0)
+					#set($context=$!{context} + "exts:&#10;")
+					#foreach($key in $stageStat.exts.keySet())
+						#if($key == "desc")
+							#set($descExts = $!{stageStat.exts.get($key)})
+							#foreach($descIter in $descExts)
+								#foreach($descIter in $descExts)
+									#foreach($deskey in $!{descIter.keySet()})
+										#set($value = "$descIter.get($deskey)")
+        								#set($context = $!{context} + "&#09; "+ $!{deskey} + ":" + $stringUtil.replace($value , '"',"'") + "&#10;")
+									#end
+								#end
+							#end
+						#else
+    						#set($context = $!{context} + "&#09; "+ $!{key} + ":" + $!{stageStat.exts.get($key)} +"&#10;")
+						#end
+					#end
+				#end
+				
+				#if(!$stringUtil.isEmpty($!context))
+					#set($context = $stringUtil.substringBeforeLast($context , "&#10;"))
+				#end
+			
+				#if($temp==1)
+					#if($stageStat.startTime)
+						#set($time = $stageStat.startTime - $stageStart)
+					    #set($width = $time * $offset)
+					    #if($width>0)
+							#if($width<1)
+								#set($width=1)
+							#end
+							<td style="width:${width}px;height:60px;padding:0px 0px 0px 0px;">$!numberFormat.format($time)</td>
+						#end
+						#if($stageStat.endTime)
+							#set($time = $stageStat.endTime - $stageStat.startTime)
+							#set($width = $time * $offset)
+							#if($width<1)
+								#set($width=1)
+							#end
+							<td id ="select" style="width:${width}px;height:60px;background-color:#D9B300;padding:0px 0px 0px 0px;" title="#noescape()$!context#end">$!numberFormat.format($time)</td>
+						#else
+							#set($time = $stageEnd - $stageStat.startTime)
+							#set($width = $time * $offset)
+							#if($width<1)
+								#set($width=1)
+							#end
+							<td style="width:${width}px;height:60px;background-color:#FF2D2D;padding:0px 0px 0px 0px;" title="#noescape()$!context#end">$!numberFormat.format($time)</td>
+						#end
+					#end					
+				#end
+			    #if($temp==2)
+					#if($stageStat.startTime)
+						#set($time = $stageStat.startTime - $preStageStat.endTime)
+						#set($width = $time * $offset)
+						#if($width>0)
+							#if($width<1)
+								#set($width=1)
+							#end
+							<td style="width:${width}px;height:60px;padding:0px 0px 0px 0px;">$!numberFormat.format($time)</td>
+						#end
+						#if($stageStat.endTime)
+							#set($time = $stageStat.endTime - $stageStat.startTime)
+							#set($width = $time * $offset)
+							#if($width<1)
+								#set($width=1)
+							#end
+							<td style="width:${width}px;height:60px;background-color:#FFC1E0;padding:0px 0px 0px 0px;" title="#noescape()$!context#end">$!numberFormat.format($time)</td>
+						#else
+							#set($time = $stageEnd - $stageStat.startTime)
+							#set($width = $time * $offset)
+							#if($width<1)
+								#set($width=1)
+							#end
+							<td style="width:${width}px;height:60px;background-color:#FF2D2D;padding:0px 0px 0px 0px;" title="#noescape()$!context#end">$!numberFormat.format($time)</td>
+						#end
+					#end
+				#end
+				#if($temp==3)
+					#if($stageStat.startTime)
+						#set($time = $stageStat.startTime - $preStageStat.endTime)
+						#set($width = $time * $offset)
+						#if($width>0)
+							#if($width<1)
+								#set($width=1)
+							#end
+							<td style="width:${width}px;height:60px;padding:0px 0px 0px 0px;">$!numberFormat.format($time)</td>
+						#end 
+						#if($stageStat.endTime)
+							#set($time = $stageStat.endTime - $stageStat.startTime)
+							#set($width = $time * $offset)
+							#if($width<1)
+								#set($width=1)
+							#end
+							<td style="width:${width}px;height:60px;background-color:#4DFFFF;padding:0px 0px 0px 0px;" title="#noescape()$!context#end">$!numberFormat.format($time)</td>
+						#else
+							#set($time = $stageEnd - $stageStat.startTime)
+							#set($width = $time * $offset)
+							#if($width<1)
+								#set($width=1)
+							#end
+							<td style="width:${width}px;height:60px;background-color:#FF2D2D;padding:0px 0px 0px 0px;" title="#noescape()$!context#end">$!numberFormat.format($time)</td>
+						#end
+					#end
+				#end
+				#if($temp==4)
+					#if($stageStat.startTime)
+						#set($time = $stageStat.startTime - $preStageStat.endTime)
+						#set($width = $time * $offset)
+						#if($width>0)
+							#if($width<1)
+								#set($width=1)
+							#end
+							<td style="width:${width}px;height:60px;padding:0px 0px 0px 0px;">$!numberFormat.format($time)</td>
+						#end
+						#if($stageStat.endTime)
+							#set($time = $stageStat.endTime - $stageStat.startTime)
+							#set($width = $time * $offset)
+							#if($width<1)
+								#set($width=1)
+							#end
+							<td style="width:${width}px;height:60px;background-color:#79FF79;padding:0px 0px 0px 0px;" title="#noescape()$!context#end">$!numberFormat.format($time)</td>
+							<td style="width:10px;height:60px;background-color:#2bbb2e;padding:0px 0px 0px 0px;"></td>
+						#else
+							#set($time = $stageEnd - $stageStat.startTime)
+							#set($width = $time * $offset)
+							#if($width<1)
+								#set($width=1)
+							#end
+							<td style="width:${width}px;height:60px;background-color:#FF2D2D;padding:0px 0px 0px 0px;" title="#noescape()$!context#end">$!numberFormat.format($time)</td>
+						#end
+					#end
+				#end
+				#set ($preStageStat = $stageStat)
+			#end
+			<td><b>&nbsp;&nbsp;&nbsp;总时间:$!numberFormat.format($processTime.get($processStat.processId))</b></td>
+          </tr>
+		   </table>
+		#end
+		 
+      </div>    
+    </div>
+  </div>
+</div>

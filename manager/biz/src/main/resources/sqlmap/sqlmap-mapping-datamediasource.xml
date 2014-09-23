@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+    <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"  
+       "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="com.alibaba.otter.manager.biz.config.datamediasource.dal.dataobject.DataMediaSourceDO">
+	<typeAlias alias="dataMediaSource"
+		type="com.alibaba.otter.manager.biz.config.datamediasource.dal.dataobject.DataMediaSourceDO" />
+
+	<resultMap id="dataMediaSourceResult" class="dataMediaSource">
+		<result property="id" column="ID" />
+		<result property="name" column="NAME" />
+		<result property="type" column="TYPE" typeHandler=""/>
+		<result property="properties" column="PROPERTIES" />
+		<result property="gmtCreate" column="GMT_CREATE" />
+		<result property="gmtModified" column="GMT_MODIFIED" />
+	</resultMap>
+
+	<!-- all dataMediaSource columns -->
+	<sql id="allDataMediaSourceColumns">ID,NAME,TYPE,PROPERTIES,GMT_CREATE,GMT_MODIFIED</sql>
+
+	<select id="findDataMediaSourceById" resultMap="dataMediaSourceResult"
+		parameterClass="long">
+		select
+		<include refid="allDataMediaSourceColumns" />
+		from DATA_MEDIA_SOURCE where ID = #value#
+	</select>
+	
+	<select id="getSourceCount" resultClass="Integer">
+		select count(*) from DATA_MEDIA_SOURCE 
+		<dynamic prepend="where">
+			<isNotEmpty property="searchKey">
+			NAME like concat('%',replace(#searchKey#,'_','\_'),'%') 
+			or ID like concat('%',replace(#searchKey#,'_','\_'),'%')
+			or TYPE like concat('%',replace(#searchKey#,'_','\_'),'%')
+			or PROPERTIES like concat('%',replace(#searchKey#,'_','\_'),'%')
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="listDataMediaSources" resultMap="dataMediaSourceResult">
+		select
+		<include refid="allDataMediaSourceColumns" />
+		from DATA_MEDIA_SOURCE 
+		<dynamic prepend="where">
+			<isNotEmpty property="searchKey">
+			NAME like concat('%',replace(#searchKey#,'_','\_'),'%') 
+			or ID like concat('%',replace(#searchKey#,'_','\_'),'%')
+			or TYPE like concat('%',replace(#searchKey#,'_','\_'),'%')
+			or PROPERTIES like concat('%',replace(#searchKey#,'_','\_'),'%')
+			</isNotEmpty>
+		</dynamic>
+	
+		ORDER BY ID DESC
+		
+		<dynamic>
+			<isNotEmpty property="offset" >
+				<isNotEmpty property="length">
+					limit #offset#, #length#
+				</isNotEmpty>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="listSourceByIds" resultMap="dataMediaSourceResult" >
+		select
+		<include refid="allDataMediaSourceColumns" />
+		from DATA_MEDIA_SOURCE where ID in
+		<iterate open="(" close=")" conjunction=",">
+			#[]#
+		</iterate>
+		ORDER BY ID DESC
+	</select>
+
+	<update id="updateDataMediaSource" parameterClass="dataMediaSource"><![CDATA[
+		update DATA_MEDIA_SOURCE
+		set
+		NAME=#name#,
+		TYPE=#type#,
+		PROPERTIES=#properties#,
+		GMT_MODIFIED=now()
+		WHERE ID = #id#
+	]]></update>
+	
+	<select id="checkDataMediaSourceUnique" resultClass="Integer"
+		parameterClass="dataMediaSource">
+		select count(*) from DATA_MEDIA_SOURCE
+		where DATA_MEDIA_SOURCE.ID != #id#
+		and DATA_MEDIA_SOURCE.NAME = #name#
+	</select>
+	
+	<insert id="insertDataMediaSource" parameterClass="dataMediaSource">
+		insert into DATA_MEDIA_SOURCE
+		(NAME,TYPE,PROPERTIES,GMT_CREATE, GMT_MODIFIED)
+		SELECT #name#,#type#,#properties#,now(),now()
+		from dual
+		WHERE not exists (select * from DATA_MEDIA_SOURCE
+		where DATA_MEDIA_SOURCE.NAME = #name# ); 
+		<selectKey keyProperty="id" resultClass="long">
+			select
+			last_insert_id()
+		</selectKey>
+	</insert>
+
+	<delete id="deleteDataMediaSourceById" parameterClass="long"><![CDATA[
+    	delete from DATA_MEDIA_SOURCE where ID = #value#
+    ]]></delete>
+
+</sqlMap>  

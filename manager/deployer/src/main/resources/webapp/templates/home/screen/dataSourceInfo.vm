@@ -1,0 +1,51 @@
+$control.setTemplate("home:navigation.vm")
+#set($user = $rundata.request.session.getAttribute("managerUser"))
+
+<div class="main">
+ <div class="title"><h2>数据源信息</h2></div>
+ <div class="crumbs">数据源信息</div>
+ <div class="setting_box">
+ <table cellpadding="0" cellspacing="0" class="setting">
+  <tr>
+  <th>数据源序号：</th><td>$!source.id</td>
+  </tr>
+  <tr>
+  <th>数据源名：</th><td>$!source.name</td>
+  </tr>
+  <tr>
+  <th>数据类型：</th><td>$!source.type</td>
+  </tr>
+  <tr>
+  <th>编码：</th><td>$!source.encode</td>
+  </tr>
+  <tr>
+  <th>URL：</th><td>$!source.url</td>
+  </tr>
+ </table>
+ </div>
+ 
+ <table border="0" cellspacing="0" cellpadding="0" class="list changecolor_w" width="60%">
+    <tr>
+	  <th>序号</th>
+      <th>Schema Name</th>
+      <th>Table Name</th>
+	  <th>操作</th>
+    </tr>
+    
+    #foreach ($dataMedia in $dataMedias)
+		<tr> 
+		  <td width="15%">$!dataMedia.id</td>
+    	  <td width="25%">$!dataMedia.namespace</td>
+          <td width="25%">$!dataMedia.name</td>
+		  <td>
+			#set ($dataMediaInfoURL = $homeModule.setTarget("dataMediaInfo.vm").addQueryData("dataMediaId", $dataMedia.id))
+    		<a href="$dataMediaInfoURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">查看</span></a>
+    		#if($user.authorizeType.isAdmin())
+        		#set ($editURL = $homeModule.setTarget("editDataMedia.vm").addQueryData("dataMediaId", $dataMedia.id))
+        		<span class="ico_line">|</span><a href="$editURL"><img src="images/ico_edit.png" alt="" width="13" height="13" /><span class="ico_font">编辑</span></a>
+    		#end
+		  </td>
+	    </tr>
+	#end
+  </table>
+</div>

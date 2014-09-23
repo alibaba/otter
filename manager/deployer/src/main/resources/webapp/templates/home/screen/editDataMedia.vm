@@ -1,0 +1,92 @@
+$control.setTemplate("home:navigation.vm")
+<script type='text/javascript' src='dwr/interface/Hello.js'></script>  
+<script type='text/javascript' src='dwr/engine.js'></script>  
+<script type='text/javascript' src='dwr/util.js'></script>  
+<script type='text/javascript' src='js/dbCheck.js'></script>
+<script language="javascript">
+<!--
+	changeNav("datamedia");
+//-->
+function changeKeyword(id, name) {
+	if( document.getElementById("dataSourceId") && document.getElementById("dataSourceName")){
+    	document.getElementById('dataSourceId').value = id;
+    	document.getElementById('dataSourceName').value = name;
+	}
+}
+</script>
+#macro (editDataMediaMessage $field)
+    #if (!$field.valid) $field.message #end
+#end	
+
+<div class="main">
+  <div class="title"> 
+    <h2>编辑数据表</h2>
+  </div>
+  <div class="crumbs"><a href="dataMediaList.htm">数据表配置</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="editDataMedia.htm?dataMediaId=$dataMedia.id">编辑数据表</a></div>
+  
+  <form name="editDataMediaForm" method="post" enctype="multipart/form-data">
+	$csrfToken.hiddenField
+	<input type="hidden" name="action" value="data_media_action"/>
+	<input type="hidden" name="event_submit_do_edit" value="1" />
+	<input type="hidden" id="pageIndex" name="pageIndex" value="$!pageIndex"/>
+	<input type="hidden" id="searchKey" name="searchKey" value="$!searchKey"/>
+ <div class="setting_box">
+	#set ($dataMediaGroup = $form.dataMediaInfo.defaultInstance)
+	<input type="hidden" name="dataMediaId" value="$dataMedia.id" />
+	<input type="hidden" name="$dataMediaGroup.id.key" value="$dataMedia.id" />
+    <table cellpadding="0" cellspacing="0" class="setting_otter">
+		<tr>
+            <span class="red">#editDataMediaMessage ($dataMediaGroup.formDataMediaError)</span>
+        </tr>
+	  <tr> 
+        <th width="300">schema name：</th>
+        <td width="329">
+			<input id="namespace" name="$dataMediaGroup.namespace.key" value="$!dataMedia.namespace" type="text" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editDataMediaMessage ($dataMediaGroup.namespace)</span>
+		</td>
+      </tr>
+      <tr>
+        <th width="300">table name：</th>
+        <td width="329">
+			<input id="name" name="$dataMediaGroup.name.key" value="$!dataMedia.name" type="text" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#editDataMediaMessage ($dataMediaGroup.name)</span>
+		</td>
+      </tr>
+	  
+	  <tr> 
+        <th>数据源：</th>
+        <td>
+			<input id="dataSourceName" type="text" name="$dataMediaGroup.sourceName.key" value="$!dataMedia.source.name" class="setting_input" readonly  />
+			<input id="dataSourceId" name="$dataMediaGroup.sourceId.key" value="$!dataMedia.source.id" type="hidden" class="setting_input"  />
+			<input type="button" value="查找数据源" onclick="window.open('selectDataSource.htm', 'selectDataSource')"><span class="red">*</span>
+			<br />
+			<span class="red">#editDataMediaMessage ($dataMediaGroup.sourceId)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th><input type='button' value='验证连接表' onclick='checkMap();' /><br><hr align="right" style="width:100px;">
+            <input type='button' value='查询Schema&Table' onclick='checkNamespaceTables()' />
+			</th>
+        <td>
+			<span class="red" id="result"></span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>table示例说明</th>
+        <td>
+			<br/>
+			单表配置: alibaba.product<br/>
+			分表配置: alibaba[1-64].product , alibaba.product[01-32]<br/>
+			正则配置: (.*).(.*)<br/>
+		</td>
+      </tr>
+    </table>
+ </div>
+  <div class="btn"><a href="javascript:document.editDataMediaForm.submit();">保存</a></div>
+  </form>
+  <br />
+  <br />
+  <br />
+</div>

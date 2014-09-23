@@ -1,0 +1,73 @@
+$control.setTemplate("home:navigation.vm")
+<script language="javascript">
+<!--
+	changeNav("datamedia");
+//-->
+</script>
+#macro (addDataMatrixMessage $field)
+    #if (!$field.valid) $field.message #end
+#end	
+
+<div class="main">
+  <div class="title"> 
+    <h2>添加主备配置</h2>
+  </div>
+  <div class="crumbs"><a href="dataMediaList.htm">数据表配置</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="addDataMatrix.htm">添加主备配置</a></div>
+
+ <form id="addDataMatrixForm" name="addDataMatrixForm" method="post" enctype="multipart/form-data">
+	$csrfToken.hiddenField
+	<input type="hidden" name="action" value="data_matrix_action"/>
+	<input type="hidden" name="event_submit_do_add" value="1" />
+ <div class="setting_box">
+	#set ($dataMatrixGroup = $form.dataMatrixInfo.defaultInstance)
+    <table cellpadding="0" cellspacing="0" class="setting_otter">
+        <tr>
+        	<th width="300"></th>
+        	<td width="329">
+        		#foreach($f in ${dataMatrixGroup.getFields()})
+        			#if (!$f.valid) 
+        				<span class="red">$!f.message</span><br/>
+        			#end
+        		#end
+        	</td>
+        </tr>
+      <tr> 
+        <th width="300">group Key：</th>
+        <td width="329">
+			<input id="groupKey" name="$dataMatrixGroup.groupKey.key" value="$!dataMatrixGroup.groupKey.value" type="text" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#addDataMatrixMessage ($dataMatrixGroup.groupKey)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th width="300">master：</th>
+        <td width="329">
+			<input id="master" name="$dataMatrixGroup.master.key" value="$!dataMatrixGroup.master.value" type="text" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#addDataMatrixMessage ($dataMatrixGroup.master)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th width="300">slave：</th>
+        <td width="329">
+			<input id="slaves" name="$dataMatrixGroup.slave.key"  value="$dataMatrixGroup.slave.value" type="text" class="setting_input"/>
+			<br />
+			<span class="red">#addDataMatrixMessage ($dataMatrixGroup.slave)</span>
+		</td>
+      </tr>
+	   <tr>
+       <th>描述信息：</th>
+       <td>
+    		<textarea cols="45" rows="5" name="$dataMatrixGroup.description.key">$!dataMatrixGroup.description.value</textarea><span class="red">*</span>
+    		<br />
+    		<span class="red">#addDataMatrixMessage ($dataMatrixGroup.description)</span>
+	   </td>
+      </tr>   
+    </table>
+ </div>
+  <div class="btn"><a href="javascript:document.addDataMatrixForm.submit();">保存</a></div>
+  </form>
+  <br />
+  <br />
+  <br />
+</div>

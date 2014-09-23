@@ -1,0 +1,94 @@
+$control.setTemplate("home:navigation.vm")
+<script language="javascript">
+<!--
+	changeNav("sync");
+//-->
+</script>
+#macro (addAlarmRuleMessage $field)
+    #if (!$field.valid) $field.message #end
+#end	
+
+<div class="main">
+  <div class="title"> 
+    <h2>添加监控</h2>
+  </div>
+ <div class="crumbs"><a href="channelList.htm?channelId=$channelId">channel管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="pipelineList.htm?channelId=$channelId">Pipeline管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="alarmRuleList.htm?pipelineId=$pipelineId">监控管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;添加监控</div>
+ 
+ 
+<form name="addAlarmRuleForm" method="post" enctype="multipart/form-data">
+	$csrfToken.hiddenField
+	<input type="hidden" name="action" value="alarm_rule_action"/>
+	<input type="hidden" name="event_submit_do_add" value="1" />
+ <div class="setting_box">
+ 
+   #set ($alarmRuleGroup = $form.alarmRuleInfo.defaultInstance)
+   <input type="hidden" name="$alarmRuleGroup.pipelineId.key" value="$pipelineId"/>
+   <input type="hidden" name="$alarmRuleGroup.status.key" value="DISABLE"/>
+   
+    <table cellpadding="0" cellspacing="0" class="setting_otter">
+		<span class="red">#addAlarmRuleMessage ($alarmRuleGroup.formAlarmRuleError)</span>
+      <tr> 
+        <th width="300">监控项目：</th>
+        <td width="329">
+			<select name="$alarmRuleGroup.monitorName.key" id="select">
+                <option value="DELAYTIME" selected="selected">延迟</option>
+				<option value="PIPELINETIMEOUT">Pipeline超时</option>
+				<option value="PROCESSTIMEOUT">Process超时</option>
+            	<option value="POSITIONTIMEOUT" >Position超时</option>
+				<option value="EXCEPTION">异常</option>
+            </select><span class="red">*</span>
+		</td>
+      </tr>
+      <tr> 
+        <th>阈值：</th>
+        <td>
+			<input type="text" name="$alarmRuleGroup.matchValue.key" value="$!alarmRuleGroup.matchValue.value" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#addAlarmRuleMessage ($alarmRuleGroup.matchValue)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>报警间隔时间(秒)：</th>
+        <td>
+			<input type="text" name="$alarmRuleGroup.intervalTime.key" value="$!alarmRuleGroup.intervalTime.value" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#addAlarmRuleMessage ($alarmRuleGroup.intervalTime)</span>
+		</td>
+      </tr>
+      <tr> 
+        <th>发送人KEY：</th>
+        <td>
+			<input type="text" name="$alarmRuleGroup.receiverKey.key" value="$!alarmRuleGroup.receiverKey.value" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#addAlarmRuleMessage ($alarmRuleGroup.receiverKey)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>开始自动恢复：</th>
+        <td>
+			<input type="radio" name="$alarmRuleGroup.autoRecovery.key" value="true" id="RadioGroup2_0"  class="radio"/>是
+            <input type="radio" name="$alarmRuleGroup.autoRecovery.key" value="false" id="RadioGroup2_1" checked class="radio"/>否 
+			<br />
+			<span class="red">#addAlarmRuleMessage ($alarmRuleGroup.autoRecovery)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>触发自动恢复阀值：</th>
+        <td>
+			<input type="text" name="$alarmRuleGroup.recoveryThresold.key" value="2" class="setting_input"/><span class="red">*</span>
+			<br />
+			<span class="red">#addAlarmRuleMessage ($alarmRuleGroup.recoveryThresold)</span>
+		</td>
+      </tr>
+      <tr>
+       <th>描述：</th>
+       <td>
+    		<textarea cols="45" rows="5" name="$alarmRuleGroup.description.key">$!alarmRuleGroup.description.value</textarea>
+	   </td>
+      </tr>
+    </table>
+ </div>
+   <div class="btn"><a href="javascript:document.addAlarmRuleForm.submit();">保存</a></div> 
+  
+  </form>
+</div>

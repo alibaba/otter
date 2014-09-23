@@ -1,0 +1,935 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:services="http://www.alibaba.com/schema/services"
+	xmlns:fm-conditions="http://www.alibaba.com/schema/services/form/conditions"
+	xmlns:fm-validators="http://www.alibaba.com/schema/services/form/validators"
+	xsi:schemaLocation="
+                 http://www.alibaba.com/schema/services http://localhost:8080/schema/services.xsd
+                 http://www.alibaba.com/schema/services/form/conditions http://localhost:8080/schema/services-form-conditions.xsd
+                 http://www.alibaba.com/schema/services/form/validators http://localhost:8080/schema/services-form-validators.xsd
+                 http://www.springframework.org/schema/beans http://localhost:8080/schema/www.springframework.org/schema/beans/spring-beans.xsd
+             ">
+
+	<services:form postOnlyByDefault="true">
+		<!-- - ======== - 用来检查csrf token。 - ======== -->
+		<group name="csrfCheck">
+			<field name="csrfToken">
+				<fm-validators:csrf-validator>
+					<message>提交的数据已过期</message>
+				</fm-validators:csrf-validator>
+			</field>
+		</group>
+
+		<!-- - ======== - channel info - ======== -->
+		<group name="channelInfo" extends="csrfCheck">
+			<field name="formChannelError">
+				<fm-validators:custom-error id="invalidChannelName">
+					<message>插入的Channel和数据库有重名</message>
+				</fm-validators:custom-error>
+			</field>
+			<field name="id" displayName="Channel的ID" />
+			<field name="name" displayName="Channel名称">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+				<fm-validators:string-length-validator minLength="4"
+					maxLength="64">
+					<message>${displayName} 最少由${minLength}个字符组成，最多不能超过${maxLength}个字符</message>
+				</fm-validators:string-length-validator>
+			</field>
+			<field name="status" displayName="Channel运行状态" />
+			<field name="description" displayName="Channel描述" />
+		</group>
+
+		<!-- - ======== - channel parameter - ======== -->
+		<group name="channelParameterInfo" extends="csrfCheck">
+			<field name="channelId" displayName="Channel的ID" />
+			<field name="enableRemedy" displayName="冲突补救">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="remedyDelayThresoldForMedia"
+				displayName="一致性反查数据库阀值">
+				<fm-validators:if test="enableRemedy.value == true">
+					<fm-validators:required-validator>
+						<message>必须填写${displayName}</message>
+					</fm-validators:required-validator>
+					<fm-validators:number-validator>
+						<message>${displayName} 必须是数字且是整数</message>
+					</fm-validators:number-validator>
+					<fm-validators:number-validator greaterThan="0">
+						<message>${displayName} 必须是大于0的整数</message>
+					</fm-validators:number-validator>
+				</fm-validators:if>
+			</field>
+			<field name="remedyAlgorithm" displayName="一致性算法">
+				<fm-validators:if test="enableRemedy.value == true">
+					<fm-validators:required-validator>
+						<message>必须填写${displayName}</message>
+					</fm-validators:required-validator>
+				</fm-validators:if>
+			</field>
+
+			<field name="syncMode" displayName="同步模式">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="syncConsistency" displayName="同步一致性">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+		</group>
+
+		<!-- - ======== - pipeline info - ======== -->
+		<group name="pipelineInfo" extends="csrfCheck">
+			<field name="formPipelineError">
+				<fm-validators:custom-error id="invalidPipelineName">
+					<message>插入的Pipeline在该Channel节点下有重名</message>
+				</fm-validators:custom-error>
+				<fm-validators:custom-error id="invalidDestinationName">
+					<message>canal已经被其他pipeline所关联</message>
+				</fm-validators:custom-error>
+			</field>
+			<field name="id" displayName="pipeline的id" />
+			<field name="channelId" displayName="关联的ChannelId" />
+			<field name="name" displayName="pipeline的名字">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+				<fm-validators:string-length-validator minLength="4"
+					maxLength="64">
+					<message>${displayName} 最少由${minLength}个字符组成，最多不能超过${maxLength}个字符</message>
+				</fm-validators:string-length-validator>
+			</field>
+			<field name="description" displayName="pipeline的描述" />
+			<field name="selectNodeIds" displayName="Select节点的ID集合">
+				<fm-validators:required-validator>
+					<message>必须选择一个以上${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<!-- <field name="extractNodeIds" displayName="Extract节点的ID集合"> 
+				<required-validator> <message>必须选择一个以上${displayName}</message> </required-validator> 
+				</field> -->
+			<field name="loadNodeIds" displayName="Load节点的ID集合">
+				<fm-validators:required-validator>
+					<message>必须选择一个以上${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+		</group>
+		<!-- - ======== - pipeline parameter - ======== -->
+		<group name="pipelineParameterInfo" extends="csrfCheck">
+			<field name="pipelineId" displayName="pipeline的ID" />
+			<field name="parallelism" displayName="并行度">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+				<fm-validators:number-validator>
+					<message>${displayName} 必须是数字且是整数</message>
+				</fm-validators:number-validator>
+				<fm-validators:number-validator greaterThan="0">
+					<message>${displayName} 必须是大于0的整数</message>
+				</fm-validators:number-validator>
+			</field>
+			<field name="extractPoolSize" displayName="反查线程数">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+				<fm-validators:number-validator>
+					<message>${displayName} 必须是数字且是整数</message>
+				</fm-validators:number-validator>
+				<fm-validators:number-validator greaterThan="0">
+					<message>${displayName} 必须是大于0的整数</message>
+				</fm-validators:number-validator>
+			</field>
+			<field name="loadPoolSize" displayName="数据载入线程数">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+				<fm-validators:number-validator>
+					<message>${displayName} 必须是数字且是整数</message>
+				</fm-validators:number-validator>
+				<fm-validators:number-validator greaterThan="0">
+					<message>${displayName} 必须是大于0的整数</message>
+				</fm-validators:number-validator>
+			</field>
+			<field name="fileLoadPoolSize" displayName="文件载入线程数">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+				<fm-validators:number-validator>
+					<message>${displayName} 必须是数字且是整数</message>
+				</fm-validators:number-validator>
+				<fm-validators:number-validator greaterThan="0">
+					<message>${displayName} 必须是大于0的整数</message>
+				</fm-validators:number-validator>
+			</field>
+			<field name="useBatch" displayName="使用batch" />
+			<field name="needDeleteColumns" displayName="删除类型需要全字段" />
+			<field name="skipLoadException" displayName="跳过Load异常" />
+			<field name="skipSelectException" displayName="跳过Select异常" />
+			<field name="skipDdlException" displayName="跳过ddl异常" />
+			<field name="skipFreedom" displayName="跳过自由门数据" />
+			<field name="arbitrateMode" displayName="仲裁器调度模式" />
+			<field name="lbAlgorithm" displayName="负载均衡算法" />
+			<field name="dumpSelector" displayName="是否记录selector日志" />
+			<field name="dumpSelectorDetail" displayName="是否记录selector详细日志" />
+			<field name="dumpEvent" displayName="是否记录load日志" />
+			<field name="home" displayName="主站点" />
+			<field name="useLocalFileMutliThread" displayName="local文件同步启用多线程" />
+			<field name="useFileEncrypt" displayName="文件传输加密" />
+			<field name="useExternalIp" displayName="启用公网同步" />
+			<field name="fileDetect" displayName="是否开启文件重复同步对比" />
+			<field name="pipeChooseType" displayName="传输模式" />
+			<field name="useTableTransform" displayName="表类型转化" />
+			<field name="enableCompatibleMissColumn"
+				displayName="兼容字段新增同步" />
+			<field name="skipNoRow" displayName="忽略反查无记录" />
+			<field name="selectorMode" displayName="数据提取模式">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="destinationName" displayName="DestinationName">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="mainstemBatchsize" displayName="主道消费批次大小">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+				<fm-validators:number-validator>
+					<message>${displayName} 必须是数字且是整数</message>
+				</fm-validators:number-validator>
+				<fm-validators:number-validator greaterThan="0">
+					<message>${displayName} 必须是大于0的整数</message>
+				</fm-validators:number-validator>
+			</field>
+			<field name="channelInfo" displayName="同步标记" />
+			<field name="dryRun" displayName="DryRun模式" />
+			<field name="ddlSync" displayName="支持ddl同步" />
+			<field name="batchTimeout" displayName="获取批次数据超时时间">
+				<fm-validators:if test="selectorMode.value == 'Canal'">
+					<fm-validators:required-validator>
+						<message>必须填写${displayName}</message>
+					</fm-validators:required-validator>
+				</fm-validators:if>
+			</field>
+		</group>
+
+		<!-- - ======== - 数据库的 dataMediaSource - ======== -->
+		<group name="dataMediaSourceInfo" extends="csrfCheck">
+			<field name="formDataMediaSourceError">
+				<fm-validators:custom-error id="invalidDataMediaSource">
+					<message>数据库中存在重名的数据源</message>
+				</fm-validators:custom-error>
+				<fm-validators:custom-error id="canntConnectDataSource">
+					<message>数据库不能正常连接，请确认后再添加</message>
+				</fm-validators:custom-error>
+			</field>
+			<field name="id" displayName="dataSource的id" />
+			<field name="name" displayName="dataSource的名称">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="type" displayName="dataSource的类型" />
+			<field name="username" displayName="用户名" />
+			<field name="password" displayName="密码" />
+			<field name="url" displayName="链接">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="encode" displayName="数据库编码">
+				<fm-validators:required-validator>
+					<message>必须选择${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+		</group>
+
+		<!-- - ======== - 字段映射 - ======== -->
+		<group name="columnPairInfo" extends="csrfCheck">
+			<field name="formColumnPairError">
+				<fm-validators:custom-error id="invalidColumnPair">
+					<message>左右映射关系数量不一致</message>
+				</fm-validators:custom-error>
+			</field>
+			<field name="id" displayName="id" />
+			<field name="dltTarget_l" displayName="源字段集合" />
+			<field name="dltTarget_r" displayName="目标字段集合" />
+		</group>
+
+		<!-- - ======== - 字段组 - ======== -->
+		<group name="columnPairGroupInfo" extends="csrfCheck">
+			<field name="formColumnPairGroupError">
+				<fm-validators:custom-error id="invalidColumnPairGroup">
+					<message>映射组出错</message>
+				</fm-validators:custom-error>
+			</field>
+			<field name="id" displayName="id" />
+			<field name="groupResult" displayName="字段组集合" />
+		</group>
+
+		<!-- - ======== - dataMedia info - ======== -->
+		<group name="dataMediaInfo" extends="csrfCheck">
+			<field name="formDataMediaError">
+				<fm-validators:custom-error id="invalidDataMedia">
+					<message>数据库中存在重复的数据表</message>
+				</fm-validators:custom-error>
+				<fm-validators:custom-error id="canntSelectDataMedia">
+					<message>数据库不正常，不能添加</message>
+				</fm-validators:custom-error>
+			</field>
+			<field name="id" displayName="dataMedia的id" />
+			<field name="name" displayName="名称" />
+			<field name="namespace" displayName="命名空间">
+				<fm-validators:required-validator>
+					<message>必须填写 ${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="encode" displayName="数据编码" />
+			<field name="sourceName" displayName="数据源名称" />
+			<field name="sourceId" displayName="数据源">
+				<fm-validators:required-validator>
+					<message>必须选择一个 ${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+		</group>
+
+		<!-- - ======== - zookeeperCluster info - ======== -->
+		<group name="autokeeperClusterInfo" extends="csrfCheck">
+			<field name="formAutokeeperClusterError">
+				<fm-validators:custom-error id="invalidAutokeeperCluster">
+					<message>数据库中存在重复的数据表</message>
+				</fm-validators:custom-error>
+			</field>
+			<field name="id" displayName="cluster的id" />
+			<field name="clusterName" displayName="名称" />
+			<field name="zookeeperClusters" displayName="ZK的服务器集群">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+				<fm-validators:any-of>
+					<fm-validators:regexp-validator pattern="^((((?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\:\d+\,?)+)\;)+$">
+						<message>${displayName} 不符合格式（1.1.1.1:80;）</message>
+					</fm-validators:regexp-validator>
+					<fm-validators:regexp-validator pattern="^((((([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])\:\d+\,?)+)\;)+$">
+						<message>${displayName} 不是一个合法的(hostname:80;)</message>
+					</fm-validators:regexp-validator>
+					<fm-validators:regexp-validator pattern="^((((([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])\:\d+\,?)+)\;)+$">
+						<message>${displayName} 不是一个合法的(hostname:80;)</message>
+					</fm-validators:regexp-validator>
+				</fm-validators:any-of>
+			</field>
+			<field name="description" displayName="描述信息" />
+		</group>
+
+		<!-- - ======== - dataMediaPair info - ======== -->
+		<group name="dataMediaPairInfo" extends="csrfCheck">
+			<field name="formDataMediaPairError">
+				<fm-validators:custom-error id="invalidDataMediaPair">
+					<message>数据库中存在重复的映射关系</message>
+				</fm-validators:custom-error>
+			</field>
+			<field name="batchPairContent" displayName="批量导入大本文">
+			</field>
+			<field name="id" displayName="dataMedia的id" />
+			<field name="pullWeight" displayName="提取权重" />
+
+			<field name="pushWeight" displayName="载入权重">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+				<fm-validators:number-validator>
+					<message>${displayName} 必须是数字且是整数</message>
+				</fm-validators:number-validator>
+				<fm-validators:number-validator greaterThan="0">
+					<message>${displayName} 必须是大于0的整数</message>
+				</fm-validators:number-validator>
+			</field>
+			<field name="filterType" displayName="processor类型" />
+			<field name="filterText" displayName="processor文本" />
+			<field name="resolverType" displayName="resolver类型" />
+			<field name="resolverText" displayName="resolver文本" />
+			<field name="filter" displayName="过滤器类" />
+			<field name="sourceDataMediaName"
+				displayName="源数据表名称" />
+			<field name="targetDataMediaName"
+				displayName="目标数据表名称" />
+			<field name="sourceDataMediaId" displayName="源数据表">
+				<fm-validators:required-validator>
+					<message>必须选择 ${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="targetDataMediaId" displayName="目标数据表">
+				<fm-validators:required-validator>
+					<message>必须选择 ${displayName}</message>
+				</fm-validators:required-validator>
+				<fm-validators:string-compare-validator notEqualTo="sourceDataMediaId">
+					<message>${displayName} 不能与 ${sourceDataMediaId.displayName} 相同</message>
+				</fm-validators:string-compare-validator>
+			</field>
+			<field name="pipelineId" displayName="所属pipeline" />
+			<field name="columnPairMode" displayName="视图配置模式" />
+		</group>
+
+		<!-- - ======== - batchDataMediaPair info - ======== -->
+		<group name="batchDataMediaPairInfo" extends="csrfCheck">
+			<field name="formBatchDataMediaPairError">
+				<fm-validators:custom-error id="invalidBatchDataMediaPair">
+					<message>批量导入失败，请检查配置文档，可能原因:文档字段缺失或者sourceId不存在</message>
+				</fm-validators:custom-error>
+			</field>
+			<field name="batchPairContent" displayName="批量导入大本文">
+			</field>
+			<field name="pipelineId" displayName="所属pipeline" />
+		</group>
+
+		<!-- - ======== - node info - ======== -->
+		<group name="nodeInfo" extends="csrfCheck">
+			<field name="formNodeError">
+				<fm-validators:custom-error id="invalidNode">
+					<message>数据库中存在重复的Node配置(可能原因：Node重复，或者IP+PORT重复)</message>
+				</fm-validators:custom-error>
+			</field>
+			<field name="id" displayName="服务器的ID" />
+			<field name="name" displayName="服务器的名字">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+				<fm-validators:string-length-validator minLength="4"
+					maxLength="64">
+					<message>${displayName} 最少由${minLength}个字符组成，最多不能超过${maxLength}个字符</message>
+				</fm-validators:string-length-validator>
+			</field>
+			<field name="ip" displayName="服务器的IP">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+				
+				<fm-validators:any-of>
+					<fm-validators:regexp-validator pattern="((?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d))">
+						<message>${displayName} 不符合格式（1.1.1.1）</message>
+					</fm-validators:regexp-validator>
+					<fm-validators:regexp-validator pattern="^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$">
+						<message>${displayName} 不是一个合法的(hostname)</message>
+					</fm-validators:regexp-validator>
+					<fm-validators:regexp-validator pattern="^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$">
+						<message>${displayName} 不是一个合法的(hostname)</message>
+					</fm-validators:regexp-validator>
+				</fm-validators:any-of>
+			</field>
+			<field name="port" displayName="服务器的端口">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+				<fm-validators:number-validator>
+					<message>${displayName} 必须是数字且是整数</message>
+				</fm-validators:number-validator>
+				<fm-validators:number-validator greaterThan="0">
+					<message>${displayName} 必须是大于0的整数</message>
+				</fm-validators:number-validator>
+			</field>
+			<field name="description" displayName="服务器的描述" />
+		</group>
+
+		<!-- - ======== - alarmRule info - ======== -->
+		<group name="alarmRuleInfo" extends="csrfCheck">
+			<field name="formAlarmRuleError">
+				<fm-validators:custom-error id="invalidAlarmRule">
+					<message>错误的监控配置</message>
+				</fm-validators:custom-error>
+			</field>
+			<field name="id" displayName="监控的ID" />
+			<field name="monitorName" displayName="监控项目">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="pipelineId" displayName="pipelineId" />
+			<field name="status" displayName="状态" />
+			<field name="intervalTime" displayName="报警间隔时间">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="matchValue" displayName="监控的阈值">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="receiverKey" displayName="发送对象KEY">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="autoRecovery" displayName="自动恢复" />
+			<field name="recoveryThresold" displayName="自动恢复阀值">
+				<fm-validators:number-validator>
+					<message>${displayName} 必须是数字且是整数</message>
+				</fm-validators:number-validator>
+			</field>
+			<field name="description" displayName="服务器的描述" />
+		</group>
+
+		<!-- - ======== - nodeParameter info - ======== -->
+		<group name="nodeParameterInfo" extends="csrfCheck">
+			<field name="downloadPort" displayName="下载端口">
+				<!-- <required-validator> <message>必须填写${displayName}</message> </required-validator> -->
+				<fm-validators:number-validator>
+					<message>${displayName} 必须是数字且是整数</message>
+				</fm-validators:number-validator>
+				<fm-validators:number-validator greaterThan="0">
+					<message>${displayName} 必须是大于0的整数</message>
+				</fm-validators:number-validator>
+			</field>
+			<field name="mbeanPort" displayName="MBean端口">
+				<!-- <required-validator> <message>必须填写${displayName}</message> </required-validator> -->
+				<fm-validators:number-validator>
+					<message>${displayName} 必须是数字且是整数</message>
+				</fm-validators:number-validator>
+				<fm-validators:number-validator greaterThan="0">
+					<message>${displayName} 必须是大于0的整数</message>
+				</fm-validators:number-validator>
+			</field>
+			<field name="externalIp" displayName="外部IP">
+				<fm-validators:if test="useExternalIp.value">
+					<fm-validators:required-validator>
+						<message>启用外部IP通讯时必须填写${displayName}</message>
+					</fm-validators:required-validator>
+				</fm-validators:if>
+			</field>
+			<field name="useExternalIp" displayName="启用外部IP" />
+			<field name="autoKeeperClusterId" displayName="zookeeper集群" />
+		</group>
+
+		<group name="userInfo" extends="csrfCheck">
+			<field name="formUserError">
+				<fm-validators:custom-error id="invalidUser">
+					<message>用户名重复</message>
+				</fm-validators:custom-error>
+				<fm-validators:custom-error id="passwordTooLess">
+					<message>新修改的密码低于6位</message>
+				</fm-validators:custom-error>
+			</field>
+			<field name="id" displayName="用户ID" />
+			<field name="department" displayName="部门">
+				<fm-validators:required-validator>
+					<message>必须填写 ${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="realName" displayName="真实姓名">
+				<fm-validators:required-validator>
+					<message>必须填写 ${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="authorizeType" displayName="权限" />
+		</group>
+
+		<group name="addUserInfo" extends="userInfo">
+			<field name="name" displayName="登录名">
+				<fm-validators:required-validator>
+					<message>必须填写 ${displayName}</message>
+				</fm-validators:required-validator>
+				<fm-validators:string-length-validator minLength="3"
+					maxLength="64">
+					<message>${displayName} 最少由${minLength}个字符组成，最多不能超过${maxLength}个字符</message>
+				</fm-validators:string-length-validator>
+			</field>
+			<field name="password" displayName="密码">
+				<fm-validators:required-validator>
+					<message>必须填写 ${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="rePassword" displayName="重新输入一次密码">
+				<fm-validators:required-validator>
+					<message>必须填写 ${displayName}</message>
+				</fm-validators:required-validator>
+				<fm-validators:string-compare-validator equalTo="password">
+					<message>两次密码输入不相同</message>
+				</fm-validators:string-compare-validator>
+			</field>
+		</group>
+
+		<group name="editUserInfo" extends="userInfo">
+			<field name="name" displayName="登录名" />
+			<field name="password" displayName="密码" />
+			<field name="rePassword" displayName="重新输入一次密码">
+				<fm-validators:string-compare-validator equalTo="password">
+					<message>两次密码输入不相同</message>
+				</fm-validators:string-compare-validator>
+			</field>
+		</group>
+
+
+		<group name="login">
+			<field name="loginError">
+				<fm-validators:custom-error id="invalidUserOrPassword">
+					<message>用户名或密码不正确,请重新输入</message>
+				</fm-validators:custom-error>
+			</field>
+			<field name="name" displayName="登录名">
+				<fm-validators:required-validator>
+					<message>必须填写 ${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="password" displayName="密码">
+				<fm-validators:required-validator>
+					<message>必须填写 ${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+		</group>
+
+		<!-- - ======== - systemPamameter info - ======== -->
+		<group name="systemParameterInfo" extends="csrfCheck">
+			<field name="id" displayName="系统参数ID">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+		</group>
+
+		<!-- - ======== - sysremPamameterDetail info - ======== -->
+		<group name="systemParameterDetailInfo"
+			extends="csrfCheck">
+			<field name="systemSchema" displayName="system.schema">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="systemMarkTable" displayName="system.markTable">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="systemMarkTableColumn"
+				displayName="system.markTable.column">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="systemMarkTableInfo"
+				displayName="system.markTable.info">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="systemBufferTable" displayName="system.bufferTable">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="systemDualTable" displayName="system.dualTable">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="retriever" displayName="otter.download.retriever">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="defaultAlarmReceiver" displayName="默认报警联系人">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="alarmReceiver" displayName="自定义报警联系人"/>
+		</group>
+
+		<!-- - ======== - canal info - ======== -->
+		<group name="canalInfo" extends="csrfCheck">
+			<field name="formCanalError">
+				<fm-validators:custom-error id="invalidCanal">
+					<message>数据库中存在重复的Canal配置(可能原因：Canal Name重复 )</message>
+				</fm-validators:custom-error>
+			</field>
+			<field name="id" displayName="canal ID" />
+			<field name="name" displayName="canal的名字" />
+			<field name="desc" displayName="canal的描述" />
+		</group>
+
+		<!-- - ======== - canalParameter info - ======== -->
+		<group name="canalParameterInfo" extends="csrfCheck">
+			<field name="formHeartBeatError">
+				<fm-validators:custom-error id="invaliedHeartBeat">
+					<message>心跳SQL不允许使用select,建议为insert/update,定时产生binlog数据</message>
+				</fm-validators:custom-error>
+			</field>
+			<field name="id" displayName="canal ID" />
+			<field name="runMode" displayName="运行模式" />
+			<field name="clusterMode" displayName="集群模式" />
+			<field name="autoKeeperClusterId" displayName="zookeeper集群" />
+			<field name="zkClusters" displayName="ZK集群">
+				<fm-validators:any-of>
+					<fm-validators:regexp-validator pattern="^((((?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\:\d+\,?)+)\;)+$">
+						<message>${displayName} 不符合格式（1.1.1.1:80;）</message>
+					</fm-validators:regexp-validator>
+					<fm-validators:regexp-validator pattern="^((((([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])\:\d+\,?)+)\;)+$">
+						<message>${displayName} 不是一个合法的(hostname:80;)</message>
+					</fm-validators:regexp-validator>
+					<fm-validators:regexp-validator pattern="^((((([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])\:\d+\,?)+)\;)+$">
+						<message>${displayName} 不是一个合法的(hostname:80;)</message>
+					</fm-validators:regexp-validator>
+				</fm-validators:any-of>
+			</field>
+			<field name="metaMode" displayName="meta机制">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="indexMode" displayName="索引机制">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="sourcingType" displayName="数据来源类型">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="haMode" displayName="ha机制">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="storageMode" displayName="存储机制">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+
+			<field name="groupDbAddresses" displayName="数据库信息">
+				<fm-validators:if test="haMode.value == 'HEARTBEAT'">
+					<fm-validators:required-validator>
+						<message>必须填写${displayName}</message>
+					</fm-validators:required-validator>
+					<fm-validators:any-of>
+						<fm-validators:regexp-validator pattern="^((((?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\:\d+\,?)+)\;)+$">
+							<message>${displayName} 不符合格式（127.0.0.1:3306;）</message>
+						</fm-validators:regexp-validator>
+						<fm-validators:regexp-validator pattern="^((((([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])\:\d+\,?)+)\;)+$">
+							<message>${displayName} 不是一个合法的(hostname:3306;)</message>
+						</fm-validators:regexp-validator>
+						<fm-validators:regexp-validator pattern="^((((([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])\:\d+\,?)+)\;)+$">
+							<message>${displayName} 不是一个合法的(hostname:3306;)</message>
+						</fm-validators:regexp-validator>
+					</fm-validators:any-of>
+				</fm-validators:if>
+			</field>
+			<field name="dbUsername" displayName="数据库帐号">
+				<fm-validators:if test="haMode.value != 'TDDL'">
+					<fm-validators:required-validator>
+						<message>不使用tddl配置时必须填写${displayName}</message>
+					</fm-validators:required-validator>
+				</fm-validators:if>
+			</field>
+			<field name="dbPassword" displayName="数据库密码">
+				<fm-validators:if test="haMode.value != 'TDDL'">
+					<fm-validators:required-validator>
+						<message>不使用tddl配置时必须填写${displayName}</message>
+					</fm-validators:required-validator>
+				</fm-validators:if>
+			</field>
+			<field name="slaveId" displayName="链接到mysql的slaveId">
+				<!-- <fm-validators:if test="sourcingType.value == 'MYSQL'"> <required-validator> <message>数据源为MYSQL时必须填写${displayName}</message> 
+					</required-validator> </fm-validators:if> -->
+			</field>
+			<field name="connectionCharset" displayName="connectionCharset">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="localBinlogDirectory"
+				displayName="本地localBinlog目录">
+				<fm-validators:if test="sourcingType.value == 'LOCALBINLOG'">
+					<fm-validators:required-validator>
+						<message>数据源为LOCALBINLOG时必须填写${displayName}</message>
+					</fm-validators:required-validator>
+				</fm-validators:if>
+			</field>
+			<field name="positions" displayName="位点信息">
+				<fm-validators:regexp-validator pattern="^(\{.*\}\;)+$">
+					<message>${displayName} 不符合格式（{"journalName":"","position":0,"timestamp":0};）</message>
+				</fm-validators:regexp-validator>
+			</field>
+			<field name="storageBatchMode" displayName="内存存储batch获取模式">
+				<fm-validators:if test="storageMode.value == 'MEMORY'">
+					<fm-validators:required-validator>
+						<message>存储模式为MEMORY时必须填写${displayName}</message>
+					</fm-validators:required-validator>
+				</fm-validators:if>
+			</field>
+			<field name="memoryStorageBufferSize"
+				displayName="内存存储buffer记录数">
+				<fm-validators:if test="storageMode.value == 'MEMORY'">
+					<fm-validators:required-validator>
+						<message>存储模式为MEMORY时必须填写${displayName}</message>
+					</fm-validators:required-validator>
+				</fm-validators:if>
+			</field>
+			<field name="memoryStorageBufferMemUnit"
+				displayName="内存存储buffer记录单元大小">
+				<fm-validators:if test="storageMode.value == 'MEMORY'">
+					<fm-validators:required-validator>
+						<message>存储模式为MEMORY时必须填写${displayName}</message>
+					</fm-validators:required-validator>
+				</fm-validators:if>
+			</field>
+			<field name="fileStorageDirectory"
+				displayName="文件存储的目录位置">
+				<fm-validators:if test="storageMode.value == 'FILE'">
+					<fm-validators:required-validator>
+						<message>存储模式为FILE时必须填写${displayName}</message>
+					</fm-validators:required-validator>
+				</fm-validators:if>
+			</field>
+			<field name="fileStorageStoreCount"
+				displayName="每个文件store存储的记录数">
+				<fm-validators:if test="storageMode.value == 'FILE'">
+					<fm-validators:required-validator>
+						<message>存储模式为FILE时必须填写${displayName}</message>
+					</fm-validators:required-validator>
+				</fm-validators:if>
+			</field>
+			<field name="fileStorageRollverCount"
+				displayName="store文件的个数">
+				<fm-validators:if test="storageMode.value == 'FILE'">
+					<fm-validators:required-validator>
+						<message>存储模式为FILE时必须填写${displayName}</message>
+					</fm-validators:required-validator>
+				</fm-validators:if>
+			</field>
+			<field name="fileStoragePercentThresold"
+				displayName="整个store存储占disk硬盘的百分比">
+				<fm-validators:if test="storageMode.value == 'FILE'">
+					<fm-validators:required-validator>
+						<message>存储模式为FILE时必须填写${displayName}</message>
+					</fm-validators:required-validator>
+				</fm-validators:if>
+			</field>
+			<field name="metaqStoreUri" displayName="metaq store uri">
+				<fm-validators:if test="storageMode.value == 'METAQ'">
+					<fm-validators:required-validator>
+						<message>存储模式为METAQ时必须填写${displayName}</message>
+					</fm-validators:required-validator>
+				</fm-validators:if>
+			</field>
+			<field name="port" displayName="服务端口" />
+			<field name="defaultConnectionTimeoutInSeconds"
+				displayName="默认连接超时时间">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="receiveBufferSize" displayName="接收BufferSize">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="sendBufferSize" displayName="发送BufferSize">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+
+			<field name="detectingEnable" displayName="是否开启心跳">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="detectingSQL" displayName="心跳sql">
+				<fm-validators:if test="detectingEnable.value == true">
+					<fm-validators:required-validator>
+						<message>开启心跳模式时必须填写${displayName}</message>
+					</fm-validators:required-validator>
+				</fm-validators:if>
+			</field>
+			<field name="detectingIntervalInSeconds"
+				displayName="心跳检测频率">
+				<fm-validators:if test="detectingEnable.value == true">
+					<fm-validators:required-validator>
+						<message>开启心跳模式时必须填写${displayName}</message>
+					</fm-validators:required-validator>
+				</fm-validators:if>
+			</field>
+			<field name="detectingTimeoutThresholdInSeconds"
+				displayName="心跳超时时间">
+				<fm-validators:if test="detectingEnable.value == true">
+					<fm-validators:required-validator>
+						<message>开启心跳模式时必须填写${displayName}</message>
+					</fm-validators:required-validator>
+				</fm-validators:if>
+			</field>
+			<field name="detectingRetryTimes"
+				displayName="心跳检查重试次数">
+				<fm-validators:if test="detectingEnable.value == true">
+					<fm-validators:required-validator>
+						<message>开启心跳模式时必须填写${displayName}</message>
+					</fm-validators:required-validator>
+				</fm-validators:if>
+			</field>
+			<field name="app" displayName="tddl app key">
+				<fm-validators:if test="haMode.value == 'TDDL'">
+					<fm-validators:required-validator>
+						<message>HA模式为TDDL时必须填写${displayName}</message>
+					</fm-validators:required-validator>
+				</fm-validators:if>
+			</field>
+			<field name="group" displayName="tddl group key">
+				<fm-validators:if test="haMode.value == 'TDDL'">
+					<fm-validators:required-validator>
+						<message>HA模式为TDDL时必须填写${displayName}</message>
+					</fm-validators:required-validator>
+				</fm-validators:if>
+			</field>
+
+			<field name="mediaGroup" displayName="media group key">
+				<fm-validators:if test="haMode.value == 'MEDIA'">
+					<fm-validators:required-validator>
+						<message>HA模式为MEDIA时必须填写${displayName}</message>
+					</fm-validators:required-validator>
+				</fm-validators:if>
+			</field>
+
+			<field name="fallbackIntervalInSeconds"
+				displayName="切换回退时间">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="heartbeatHaEnable" displayName="是否启用心跳HA">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="blackFilter" displayName="过滤表达式"/>
+		</group>
+
+		<group name="dataMatrixInfo" extends="csrfCheck">
+			<field name="formDataMatrixError">
+				<fm-validators:custom-error id="invalidDataMatrix">
+					<message>重复的groupKey设置</message>
+				</fm-validators:custom-error>
+			</field>
+			<field name="groupKey" displayName="groupKey">
+				<fm-validators:required-validator>
+					<message>必须填写 ${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="master" displayName="master">
+				<fm-validators:required-validator>
+					<message>必须填写 ${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
+			<field name="slave" displayName="slave" />
+			<field name="description" displayName="描述" />
+			<field name="id" displayName="matrix id" />
+		</group>
+	</services:form>
+</beans:beans>

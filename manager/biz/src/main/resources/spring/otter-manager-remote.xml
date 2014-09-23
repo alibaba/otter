@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:lang="http://www.springframework.org/schema/lang" xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.directwebremoting.org/schema/spring-dwr http://www.directwebremoting.org/schema/spring-dwr-2.0.xsd"
+    default-autowire="byName">
+
+	<!--  communication tool -->
+	<!-- 
+	<bean id="endpoint" class="com.alibaba.otter.shared.communication.core.impl.rmi.RmiCommunicationEndpoint" scope="singleton" init-method="initial" destroy-method="destory">
+		<property name="port" value="${otter.communication.manager.port}" />
+	</bean>
+	
+	<bean id="poolCommunicationClient" class="com.alibaba.otter.shared.communication.core.impl.DefaultCommunicationClientImpl" init-method="initial" destroy-method="destory">
+		<property name="factory">
+			<bean class="com.alibaba.otter.shared.communication.core.impl.connection.CommunicationConnectionPoolFactory" init-method="initial" destroy-method="destory" >
+				<property name="factory">
+					<bean class="com.alibaba.otter.shared.communication.core.impl.rmi.RmiCommunicationConnectionFactory" />
+				</property>
+				<property name="maxActive" value="${otter.communication.pool.size}" />
+			</bean>
+		</property>
+	</bean>
+	 -->
+	<bean id="endpoint" class="com.alibaba.otter.shared.communication.core.impl.dubbo.DubboCommunicationEndpoint" init-method="initial" destroy-method="destory">
+		<property name="port" value="${otter.communication.manager.port:1099}" />
+	</bean>
+	<bean id="communicationClient" class="com.alibaba.otter.shared.communication.core.impl.DefaultCommunicationClientImpl" init-method="initial" destroy-method="destory">
+		<property name="poolSize" value="${otter.communication.pool.size:10}" />
+		<property name="factory">
+			<bean class="com.alibaba.otter.shared.communication.core.impl.dubbo.DubboCommunicationConnectionFactory" />
+		</property>
+	</bean>
+	 
+	<!-- 异常处理拦截器 -->
+	<bean id="remoteExceptionLoggerInterceptor" class="com.alibaba.otter.manager.biz.remote.interceptor.RemoteExceptionLoggerInterceptor" scope="singleton"/>
+	<bean id="baseRemoteService" class="org.springframework.aop.framework.ProxyFactoryBean" abstract="true">
+		<property name="proxyTargetClass" value="true"/>
+		<!-- 强制使用cglib代理 -->
+		<property name="interceptorNames">
+			<list>
+				<value>remoteExceptionLoggerInterceptor</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="configRemoteService" parent="baseRemoteService" scope="singleton">
+		<property name="targetName" value="configRemoteServiceTarget"/>
+	</bean>
+	<bean id="configRemoteServiceTarget" class="com.alibaba.otter.manager.biz.remote.impl.ConfigRemoteServiceImpl"  scope="singleton">
+		<property name="communicationClient" ref="communicationClient" />
+	</bean>
+	
+	<bean id="statsRemoteService" parent="baseRemoteService" scope="singleton">
+		<property name="targetName" value="statsRemoteServiceTarget"/>
+	</bean>
+	<bean id="statsRemoteServiceTarget" class="com.alibaba.otter.manager.biz.remote.impl.StatsRemoteServiceImpl"  scope="singleton">
+	</bean>
+	
+	<bean id="arbitrateRemoteService" parent="baseRemoteService" scope="singleton">
+		<property name="targetName" value="arbitrateRemoteServiceTarget"/>
+	</bean>
+	<bean id="arbitrateRemoteServiceTarget" class="com.alibaba.otter.manager.biz.remote.impl.ArbitrateRemoteServiceImpl"  scope="singleton">
+	</bean>
+	
+	<bean id="canalRemoteService" parent="baseRemoteService" scope="singleton">
+		<property name="targetName" value="canalRemoteServiceTarget"/>
+	</bean>
+	<bean id="canalRemoteServiceTarget" class="com.alibaba.otter.manager.biz.remote.impl.CanalRemoteServiceImpl"  scope="singleton">
+	</bean>
+	
+	<!-- MBEAN -->
+	<bean id="nodeRemoteService" class="com.alibaba.otter.manager.biz.remote.impl.NodeMBeanServiceImpl">
+		<dwr:remote javascript="Node">
+			<dwr:include method="isSelectRunning"/>
+			<dwr:include method="isExtractRunning"/>
+			<dwr:include method="isTransformRunning"/>
+			<dwr:include method="isLoadRunning"/>
+			<dwr:include method="selectStageAggregation"/>
+			<dwr:include method="extractStageAggregation"/>
+			<dwr:include method="transformStageAggregation"/>
+			<dwr:include method="loadStageAggregation"/>
+			<dwr:include method="selectPendingProcess"/>
+			<dwr:include method="extractPendingProcess"/>
+			<dwr:include method="transformPendingProcess"/>
+			<dwr:include method="loadPendingProcess"/>
+		</dwr:remote>
+	</bean>
+</beans>

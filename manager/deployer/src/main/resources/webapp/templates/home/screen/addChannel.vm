@@ -1,0 +1,94 @@
+$control.setTemplate("home:navigation.vm")
+<script language="javascript">
+<!--
+	changeNav("sync");
+//-->
+</script>
+#macro (addChannelMessage $field)
+    #if (!$field.valid) $field.message #end
+#end	
+
+<div class="main">
+  <div class="title"> 
+    <h2>添加Channel</h2>
+  </div>
+ <div class="crumbs"><a href="channelList.htm">Channel管理</a>&nbsp;&nbsp;>&nbsp;&nbsp;<a href="addChannel.htm">添加Channel</a></div>
+ 
+ 
+<form name="addChannelForm" method="post" enctype="multipart/form-data">
+	$csrfToken.hiddenField
+	<input type="hidden" name="action" value="channel_action"/>
+	<input type="hidden" name="event_submit_do_add" value="1" />
+ <div class="setting_box">
+ 
+   #set ($channelGroup = $form.channelInfo.defaultInstance)
+   #set ($channelParameterGroup = $form.channelParameterInfo.defaultInstance)
+   
+    <table cellpadding="0" cellspacing="0" class="setting_otter">
+      <tr> 
+        <th width="300">Channel Name：</th>
+        <td width="329">
+            <input type="text" name="$channelGroup.name.key" value="$!channelGroup.name.value" class="setting_input"/><span class="red">*</span>
+			<br />
+            <span>4-15个字符</span>
+			<br />
+			<span class="red">#addChannelMessage ($channelGroup.name)#addChannelMessage ($channelGroup.formChannelError)</span>
+		</td>
+      </tr>
+	  <tr> 
+        <th>同步一致性：</th>
+        <td>
+			<input name="$channelParameterGroup.syncConsistency.key" type="radio" value="MEDIA" class="radio"/>
+			基于数据库反查&nbsp;&nbsp;&nbsp;&nbsp; 
+			<input name="$channelParameterGroup.syncConsistency.key" type="radio" value="BASE" checked='checked' class="radio"/>
+			基于当前日志变更
+		</td>
+      </tr>
+      <tr> 
+        <th>同步模式：</th>
+        <td><input name="$channelParameterGroup.syncMode.key" type="radio" value="ROW" class="radio"/>
+          行记录模式&nbsp;&nbsp;&nbsp;&nbsp; 
+          <input name="$channelParameterGroup.syncMode.key" type="radio" value="FIELD" checked='checked' class="radio"/>
+          列记录模式</td>
+      </tr>
+	  <tr> 
+        <th>是否开启数据一致性：</th>
+        <td>
+			<input type="radio" name="$channelParameterGroup.enableRemedy.key" value="true" onclick="changeDisplay('enableRemedy','table-row')" class="radio"/>是
+            <input type="radio" name="$channelParameterGroup.enableRemedy.key" value="false" onclick="changeDisplay('enableRemedy','none')" checked="checked" class="radio"/>否 
+		</td>
+      </tr>
+	  <tr class="enableRemedy"> 
+        <th>一致性算法：</th>
+        <td>
+			<input name="$channelParameterGroup.remedyAlgorithm.key" type="radio" value="LOOPBACK" checked='checked' class="radio"/>
+			单向回环补救&nbsp;&nbsp;&nbsp;&nbsp; 
+			<input name="$channelParameterGroup.remedyAlgorithm.key" type="radio" value="INTERSECTION" disabled class="radio"/>
+			时间交集补救&nbsp;&nbsp;&nbsp;
+		</td>
+      </tr>
+	  <tr class="enableRemedy"> 
+        <th>一致性反查数据库延迟阀值(s)：</th>
+        <td>
+              <input name="$channelParameterGroup.remedyDelayThresoldForMedia.key" value="60" type="text" class="setting_input"/><span class="red">*</span>
+			  <br />
+			  <span class="red">#addChannelMessage ($channelParameterGroup.remedyDelayThresoldForMedia)</span>
+        </td>
+      </tr>
+      <tr>
+       <th>描述：</th>
+       <td><textarea cols="45" rows="5" name="$channelGroup.description.key">$!group.description.value</textarea><span class="red">#addChannelMessage ($channelGroup.description)</span><span class="red">*</span></td>
+      </tr>
+    </table>
+ </div>
+   <div class="btn"><a href="javascript:document.addChannelForm.submit();">保存</a></div> 
+  
+  </form>
+</div>
+	
+<script language="javascript">
+<!--
+	changeDisplay('enableDetect','none')
+	changeDisplay('enableRemedy','none')
+//-->
+</script>

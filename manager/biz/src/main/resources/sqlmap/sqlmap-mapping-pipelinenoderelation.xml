@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+    <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"  
+       "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap
+	namespace="com.alibaba.otter.manager.biz.config.pipeline.dal.dataobject.PipelineNodeRelationDO">
+	<typeAlias alias="pipelineNodeRelation"
+		type="com.alibaba.otter.manager.biz.config.pipeline.dal.dataobject.PipelineNodeRelationDO" />
+
+	<resultMap id="pipelineNodeRelationResult" class="pipelineNodeRelation">
+		<result property="id" column="ID" />
+		<result property="nodeId" column="NODE_ID" />
+		<result property="pipelineId" column="PIPELINE_ID" />
+		<result property="location" column="LOCATION" typeHandler="" />
+		<result property="gmtCreate" column="GMT_CREATE" />
+		<result property="gmtModified" column="GMT_MODIFIED" />
+	</resultMap>
+
+	<!-- all pipeline columns -->
+	<sql id="allPipelineNodeRelationColumns">ID,NODE_ID,PIPELINE_ID,LOCATION,GMT_CREATE,GMT_MODIFIED
+	</sql>
+
+
+	<select id="findPipelineNodeRelationById" resultMap="pipelineNodeRelationResult"
+		parameterClass="long">
+		select
+		<include refid="allPipelineNodeRelationColumns" />
+		from PIPELINE_NODE_RELATION where ID = #value#
+	</select>
+
+	<select id="getRelationCount" resultClass="Integer">
+		select count(*) from PIPELINE_NODE_RELATION
+	</select>
+
+	<select id="listRelationsByNodeId" resultMap="pipelineNodeRelationResult"
+		parameterClass="long">
+		select
+		<include refid="allPipelineNodeRelationColumns" />
+		from PIPELINE_NODE_RELATION where NODE_ID = #value# ORDER BY ID DESC
+	</select>
+
+	<select id="listRelationsByPipelineIds" resultMap="pipelineNodeRelationResult">
+		select
+		<include refid="allPipelineNodeRelationColumns" />
+		from PIPELINE_NODE_RELATION where PIPELINE_ID in
+		<iterate open="(" close=")" conjunction=",">
+			#[]#
+		</iterate>
+		 ORDER BY ID DESC
+	</select>
+
+	<update id="updatePipelineNodeRelation" parameterClass="pipelineNodeRelation"><![CDATA[
+		update PIPELINE_NODE_RELATION
+		set
+		NODE_ID=#nodeId#,
+		PIPELINE_ID=#pipelineId#,
+		LOCATION=#location#,
+		GMT_MODIFIED = now() 
+		WHERE ID = #id#  
+	]]></update>
+
+	<insert id="insertPipelineNodeRelation" parameterClass="pipelineNodeRelation">
+		insert into PIPELINE_NODE_RELATION
+		(NODE_ID, PIPELINE_ID,LOCATION,
+		GMT_CREATE, GMT_MODIFIED)
+		values
+		(#nodeId#,#pipelineId#,#location#,now(),now())
+		<selectKey keyProperty="id" resultClass="long">
+			select
+			last_insert_id()
+		</selectKey>
+	</insert>
+
+	<delete id="deletePipelineNodeRelationById" parameterClass="long"><![CDATA[
+    	delete from PIPELINE_NODE_RELATION where ID = #value#
+    ]]></delete>
+
+
+	<delete id="deleteRelationByPipelineId" parameterClass="long"><![CDATA[
+    	delete from PIPELINE_NODE_RELATION where PIPELINE_ID = #value#
+    ]]></delete>
+    
+</sqlMap>  

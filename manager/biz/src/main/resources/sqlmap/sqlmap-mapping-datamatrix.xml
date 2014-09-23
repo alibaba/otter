@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+    <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"  
+       "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap
+	namespace="com.alibaba.otter.manager.biz.config.datamatrix.dal.dataobject.DataMatrixDO">
+	<typeAlias alias="dataMatrix" type="com.alibaba.otter.manager.biz.config.datamatrix.dal.dataobject.DataMatrixDO" />
+
+	<resultMap id="dataMatrixResult" class="dataMatrix">
+		<result property="id" column="ID" />
+		<result property="groupKey" column="GROUP_KEY" />
+		<result property="description" column="DESCRIPTION" />
+		<result property="master" column="MASTER" />
+		<result property="slave" column="SLAVE" />
+		<result property="gmtCreate" column="GMT_CREATE" />
+		<result property="gmtModified" column="GMT_MODIFIED" />
+	</resultMap>
+
+	<!-- all columns -->
+	<sql id="allColumns">ID,GROUP_KEY,MASTER,SLAVE,DESCRIPTION,GMT_CREATE,GMT_MODIFIED
+	</sql>
+
+	<update id="updateDataMatrix" parameterClass="dataMatrix"><![CDATA[
+		update DATA_MATRIX
+		set
+		GROUP_KEY=#groupKey#,
+		MASTER=#master#,
+		SLAVE=#slave#,
+		DESCRIPTION=#description#,
+		GMT_MODIFIED=now()
+		WHERE ID = #id#
+	]]></update>
+
+	<select id="checkDataMatrixUnique" resultClass="Integer" parameterClass="dataMatrix">
+		select count(*) from DATA_MATRIX
+		where ID != #id#
+		and
+		GROUP_KEY = #groupKey#
+	</select>
+
+	<insert id="insertDataMatrix" parameterClass="dataMatrix">
+		insert into DATA_MATRIX
+		(GROUP_KEY,MASTER,SLAVE,DESCRIPTION,GMT_CREATE,GMT_MODIFIED)
+		SELECT
+		#groupKey#,#master#,#slave#,#description#,now(),now()
+		from dual
+		WHERE not exists (select * from DATA_MATRIX
+		where DATA_MATRIX.GROUP_KEY = #groupKey# );
+		<selectKey keyProperty="id" resultClass="long">
+			select
+			last_insert_id()
+		</selectKey>
+	</insert>
+
+	<delete id="deleteDataMatrixById" parameterClass="long"><![CDATA[
+    	delete from DATA_MATRIX where ID = #value#
+    ]]></delete>
+    
+    
+    <select id="findDataMatrixByGroupKey" parameterClass="string" resultClass="dataMatrix">
+		select
+		<include refid="allColumns" />
+		from DATA_MATRIX
+		where GROUP_KEY = #groupKey#
+	</select>
+  	
+	<select id="listDataMatrixByIds" resultMap="dataMatrixResult">
+		select
+		<include refid="allColumns" />
+		from DATA_MATRIX where ID in
+		<iterate open="(" close=")" conjunction=",">
+			#[]#
+		</iterate>
+		ORDER BY ID DESC
+	</select>
+	
+	<select id="getDataMatrixCount" resultClass="Integer">
+		select count(*) from DATA_MATRIX 
+		<dynamic prepend="where">
+			<isNotEmpty property="searchKey">
+				GROUP_KEY like concat('%',replace(#searchKey#,'_','\_'),'%')
+				or ID like concat('%',replace(#searchKey#,'_','\_'),'%')
+				or MASTER like concat('%',replace(#searchKey#,'_','\_'),'%')
+				or SLAVE like concat('%',replace(#searchKey#,'_','\_'),'%')
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="listDataMatrixs" resultMap="dataMatrixResult">
+		select
+		<include refid="allColumns" />
+		from DATA_MATRIX
+		<dynamic prepend="where">
+			<isNotEmpty property="searchKey">
+				GROUP_KEY like concat('%',replace(#searchKey#,'_','\_'),'%')
+				or ID like concat('%',replace(#searchKey#,'_','\_'),'%')
+				or MASTER like concat('%',replace(#searchKey#,'_','\_'),'%')
+				or SLAVE like concat('%',replace(#searchKey#,'_','\_'),'%')
+			</isNotEmpty>
+		</dynamic>
+		ORDER BY ID DESC
+		<dynamic>
+			<isNotEmpty property="offset">
+				<isNotEmpty property="length">
+					limit #offset#, #length#
+				</isNotEmpty>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+</sqlMap>  
