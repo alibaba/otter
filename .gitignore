@@ -12,5 +12,4 @@ antx.properties
 .idea/
 *.iml
 htdocs
-download
 package-info.java
