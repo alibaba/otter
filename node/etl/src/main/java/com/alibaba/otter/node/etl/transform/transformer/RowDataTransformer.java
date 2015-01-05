@@ -27,7 +27,6 @@ import org.springframework.util.CollectionUtils;
 
 import com.alibaba.otter.node.etl.common.db.dialect.DbDialect;
 import com.alibaba.otter.node.etl.common.db.dialect.DbDialectFactory;
-import com.alibaba.otter.node.etl.common.db.utils.SqlUtils;
 import com.alibaba.otter.node.etl.transform.exception.TransformException;
 import com.alibaba.otter.shared.common.model.config.ConfigHelper;
 import com.alibaba.otter.shared.common.model.config.data.ColumnPair;
@@ -318,15 +317,16 @@ public class RowDataTransformer extends AbstractOtterTransformer<EventData, Even
         tcolumn.setColumnName(scolumn.getColumnName());
         tcolumn.setColumnType(scolumn.getColumnType());
         tcolumn.setUpdate(scolumn.isUpdate());
-        if (dataMediaPair.getTarget().getSource().getType().isOracle()) {
-            // 特殊处理下oracle编码
-            String encodeValue = SqlUtils.encoding(newValue, scolumn.getColumnType(), dataMediaPair.getSource()
-                .getSource()
-                .getEncode(), dataMediaPair.getTarget().getSource().getEncode());
-            tcolumn.setColumnValue(encodeValue);
-        } else {
-            tcolumn.setColumnValue(newValue);
-        }
+        // if (dataMediaPair.getTarget().getSource().getType().isOracle()) {
+        // // 特殊处理下oracle编码
+        // String encodeValue = SqlUtils.encoding(newValue,
+        // scolumn.getColumnType(), dataMediaPair.getSource()
+        // .getSource()
+        // .getEncode(), dataMediaPair.getTarget().getSource().getEncode());
+        // tcolumn.setColumnValue(encodeValue);
+        // } else {
+        tcolumn.setColumnValue(newValue);
+        // }
         return tcolumn;
     }
 
