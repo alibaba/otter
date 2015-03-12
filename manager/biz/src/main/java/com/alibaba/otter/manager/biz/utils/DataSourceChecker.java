@@ -28,6 +28,8 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.ddlutils.model.Table;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.alibaba.otter.manager.biz.common.DataSourceCreator;
@@ -47,8 +49,8 @@ import com.alibaba.otter.shared.common.utils.meta.DdlUtils;
  */
 public class DataSourceChecker {
 
+    private static final Logger    logger             = LoggerFactory.getLogger(DataSourceChecker.class);
     private DataMediaSourceService dataMediaSourceService;
-
     private DataSourceCreator      dataSourceCreator;
 
     // private static final String MYSQL_FLAG = "mysql";
@@ -103,7 +105,7 @@ public class DataSourceChecker {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("", e);
         }
     }
 
@@ -112,8 +114,10 @@ public class DataSourceChecker {
         Statement stmt = null;
         ResultSet rs = null;
         // boolean typeConflict = true;
-        // if ((sourceType.toLowerCase().equals(MYSQL_FLAG) && url.toLowerCase().contains(MYSQL_FLAG))
-        // || sourceType.toLowerCase().equals(ORACLE_FLAG) && url.toLowerCase().contains(ORACLE_FLAG)) {
+        // if ((sourceType.toLowerCase().equals(MYSQL_FLAG) &&
+        // url.toLowerCase().contains(MYSQL_FLAG))
+        // || sourceType.toLowerCase().equals(ORACLE_FLAG) &&
+        // url.toLowerCase().contains(ORACLE_FLAG)) {
         // typeConflict = false;
         // }
         //
@@ -179,8 +183,10 @@ public class DataSourceChecker {
             }
 
         } catch (SQLException se) {
+            logger.error("check error!", se);
             return ENCODE_QUERY_ERROR;
         } catch (Exception e) {
+            logger.error("check error!", e);
             return DATABASE_FAIL;
         } finally {
             closeConnection(conn);
@@ -199,17 +205,17 @@ public class DataSourceChecker {
         try {
             DbMediaSource dbMediaSource = (DbMediaSource) source;
             dataSource = dataSourceCreator.createDataSource(dbMediaSource);
-            //            conn = dataSource.getConnection();
-            //            if (null == conn) {
-            //                return DATABASE_FAIL;
-            //            }
+            // conn = dataSource.getConnection();
+            // if (null == conn) {
+            // return DATABASE_FAIL;
+            // }
             ModeValue namespaceValue = ConfigHelper.parseMode(namespace);
             ModeValue nameValue = ConfigHelper.parseMode(name);
             String tempNamespace = namespaceValue.getSingleValue();
             String tempName = nameValue.getSingleValue();
 
-            //            String descSql = "desc " + tempNamespace + "." + tempName;
-            //            stmt = conn.createStatement();
+            // String descSql = "desc " + tempNamespace + "." + tempName;
+            // stmt = conn.createStatement();
 
             try {
                 Table table = DdlUtils.findTable(new JdbcTemplate(dataSource), tempNamespace, tempNamespace, tempName);
@@ -217,15 +223,21 @@ public class DataSourceChecker {
                     return SELECT_FAIL;
                 }
             } catch (SQLException se) {
+                logger.error("check error!", se);
                 return SELECT_FAIL;
             } catch (Exception e) {
+                logger.error("check error!", e);
                 return SELECT_FAIL;
             }
 
-            // String selectSql = "SELECT * from " + tempNamespace + "." + tempName + " where 1 = 0";
-            // String insertSql = "INSERT INTO " + tempNamespace + "." + tempName + " select * from ";
-            // insertSql += "( SELECT * from " + tempNamespace + "." + tempName + ") table2 where 1 = 0";
-            // String deleteSql = "DELETE from " + tempNamespace + "." + tempName + " where 1 = 0";
+            // String selectSql = "SELECT * from " + tempNamespace + "." +
+            // tempName + " where 1 = 0";
+            // String insertSql = "INSERT INTO " + tempNamespace + "." +
+            // tempName + " select * from ";
+            // insertSql += "( SELECT * from " + tempNamespace + "." + tempName
+            // + ") table2 where 1 = 0";
+            // String deleteSql = "DELETE from " + tempNamespace + "." +
+            // tempName + " where 1 = 0";
             //
             // stmt = conn.createStatement();
             //
@@ -306,6 +318,7 @@ public class DataSourceChecker {
             }
             return StringUtils.join(matchSchemaTables, "<br>\n");
         } catch (Exception e) {
+            logger.error("check error!", e);
             return TABLE_FAIL;
         } finally {
             dataSourceCreator.destroyDataSource(dataSource);
