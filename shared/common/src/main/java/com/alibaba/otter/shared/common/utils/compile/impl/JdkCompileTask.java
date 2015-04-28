@@ -30,11 +30,11 @@ import java.util.Map.Entry;
 
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
+import javax.tools.JavaCompiler.CompilationTask;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
-import javax.tools.JavaCompiler.CompilationTask;
 
 import com.alibaba.otter.shared.common.utils.compile.exception.JdkCompileException;
 import com.alibaba.otter.shared.common.utils.compile.model.JavaFileManagerImpl;
@@ -70,8 +70,8 @@ public class JdkCompileTask<T> {
         if (loader instanceof URLClassLoader
             && (!loader.getClass().getName().equalsIgnoreCase("sun.misc.Launcher$AppClassLoader"))) {
             try {
+                @SuppressWarnings("resource")
                 URLClassLoader urlClassLoader = (URLClassLoader) loader;
-
                 List<File> path = new ArrayList<File>();
                 for (URL url : urlClassLoader.getURLs()) {
                     File file = new File(url.getFile());
@@ -126,8 +126,10 @@ public class JdkCompileTask<T> {
                 final String packageName = dotPos == -1 ? "" : qualifiedClassName.substring(0, dotPos);
                 final JavaFileObjectImpl source = new JavaFileObjectImpl(className, javaSource);
                 sources.add(source);
-                javaFileManager.putFileForInput(StandardLocation.SOURCE_PATH, packageName, className + JAVA_EXTENSION,
-                                                source);
+                javaFileManager.putFileForInput(StandardLocation.SOURCE_PATH,
+                    packageName,
+                    className + JAVA_EXTENSION,
+                    source);
             }
         }
 
@@ -139,7 +141,8 @@ public class JdkCompileTask<T> {
         }
 
         try {
-            // For each class name in the inpput map, get its compiled class and put it in the output map
+            // For each class name in the inpput map, get its compiled class and
+            // put it in the output map
             for (String qualifiedClassName : classes.keySet()) {
                 final Class<T> newClass = loadClass(qualifiedClassName);
                 compiled.put(qualifiedClassName, (Class<?>) newClass);

@@ -45,7 +45,8 @@ public abstract class PackableObject {
     public abstract byte[] getHeader();
 
     /**
-     * Returns the default FileExtension for this archive, for example "zip", "tar"...
+     * Returns the default FileExtension for this archive, for example "zip",
+     * "tar"...
      */
     public abstract String getDefaultFileExtension();
 
@@ -76,15 +77,15 @@ public abstract class PackableObject {
     }
 
     /**
-     * Compares a file to a list of packables and identifies an object by header. If no matching header is found, it
-     * identifies the file by file extension. If identification was not successfull, null is returned
+     * Compares a file to a list of packables and identifies an object by
+     * header. If no matching header is found, it identifies the file by file
+     * extension. If identification was not successfull, null is returned
      * 
      * @param file the file to identify
      * @param packables a list of packables
      * @return a matching packable object, or null
      * @throws IOException
      */
-    @SuppressWarnings("resource")
     public static PackableObject identifyByHeader(File file, List packables) throws IOException {
         FileInputStream fis = null;
         try {
@@ -107,8 +108,10 @@ public abstract class PackableObject {
                 }
             }
 
-            // if we couldn't find an archiver by header bytes, we'll give it a try
-            // with the default name extension. This is useful, cause some archives
+            // if we couldn't find an archiver by header bytes, we'll give it a
+            // try
+            // with the default name extension. This is useful, cause some
+            // archives
             // like tar have no header.
             String name = file.getName();
             String extension = null;

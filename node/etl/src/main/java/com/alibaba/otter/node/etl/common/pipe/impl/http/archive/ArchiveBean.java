@@ -147,12 +147,13 @@ public class ArchiveBean implements InitializingBean, DisposableBean {
     /**
      * 执行压缩
      */
+    @SuppressWarnings("resource")
     private boolean doPack(final File targetArchiveFile, List<FileData> fileDatas,
                            final ArchiveRetriverCallback<FileData> callback) {
         // 首先判断下对应的目标文件是否存在，如存在则执行删除
         if (true == targetArchiveFile.exists() && false == NioUtils.delete(targetArchiveFile, 3)) {
             throw new ArchiveException(String.format("[%s] exist and delete failed",
-                                                     targetArchiveFile.getAbsolutePath()));
+                targetArchiveFile.getAbsolutePath()));
         }
 
         boolean exist = false;
@@ -162,7 +163,7 @@ public class ArchiveBean implements InitializingBean, DisposableBean {
         ExecutorCompletionService completionService = new ExecutorCompletionService(executor, queue);
 
         final File targetDir = new File(targetArchiveFile.getParentFile(),
-                                        FilenameUtils.getBaseName(targetArchiveFile.getPath()));
+            FilenameUtils.getBaseName(targetArchiveFile.getPath()));
         try {
             // 创建一个临时目录
             FileUtils.forceMkdir(targetDir);
@@ -366,9 +367,13 @@ public class ArchiveBean implements InitializingBean, DisposableBean {
     }
 
     public void afterPropertiesSet() throws Exception {
-        executor = new ThreadPoolExecutor(poolSize, poolSize, 0L, TimeUnit.MILLISECONDS,
-                                          new ArrayBlockingQueue(poolSize * 4), new NamedThreadFactory(WORKER_NAME),
-                                          new ThreadPoolExecutor.CallerRunsPolicy());
+        executor = new ThreadPoolExecutor(poolSize,
+            poolSize,
+            0L,
+            TimeUnit.MILLISECONDS,
+            new ArrayBlockingQueue(poolSize * 4),
+            new NamedThreadFactory(WORKER_NAME),
+            new ThreadPoolExecutor.CallerRunsPolicy());
     }
 
     public void destroy() throws Exception {
