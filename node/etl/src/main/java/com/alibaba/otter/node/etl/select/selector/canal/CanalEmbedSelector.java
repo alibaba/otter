@@ -56,6 +56,7 @@ import com.alibaba.otter.node.etl.select.selector.Message;
 import com.alibaba.otter.node.etl.select.selector.MessageDumper;
 import com.alibaba.otter.node.etl.select.selector.MessageParser;
 import com.alibaba.otter.node.etl.select.selector.OtterSelector;
+import com.alibaba.otter.shared.common.model.config.channel.ChannelParameter.SyncMode;
 import com.alibaba.otter.shared.common.model.config.data.DataMedia.ModeValue;
 import com.alibaba.otter.shared.common.model.config.data.DataMediaPair;
 import com.alibaba.otter.shared.common.model.config.pipeline.Pipeline;
@@ -114,6 +115,7 @@ public class CanalEmbedSelector implements OtterSelector {
         batchSize = pipeline.getParameters().getMainstemBatchsize();
         batchTimeout = pipeline.getParameters().getBatchTimeout();
         ddlSync = pipeline.getParameters().getDdlSync();
+        final SyncMode syncMode = pipeline.getParameters().getSyncMode();
         // 暂时使用skip load代替
         filterTableError = pipeline.getParameters().getSkipSelectException();
         if (pipeline.getParameters().getDumpSelector() != null) {
@@ -158,6 +160,14 @@ public class CanalEmbedSelector implements OtterSelector {
                         super.startEventParserInternal(parser, isGroup);
 
                         if (eventParser instanceof MysqlEventParser) {
+                            // 设置支持的类型
+                            ((MysqlEventParser) eventParser).setSupportBinlogFormats("ROW");
+                            if (syncMode.isRow()) {
+                                ((MysqlEventParser) eventParser).setSupportBinlogImages("FULL");
+                            } else {
+                                ((MysqlEventParser) eventParser).setSupportBinlogImages("FULL,MINIMAL");
+                            }
+
                             MysqlEventParser mysqlEventParser = (MysqlEventParser) eventParser;
                             CanalHAController haController = mysqlEventParser.getHaController();
 
