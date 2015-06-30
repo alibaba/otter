@@ -474,6 +474,9 @@ public class MessageParser {
             for (Column column : beforeColumns) {
                 if (isKey(tableHolder, tableName, column)) {
                     oldKeyColumns.put(column.getName(), copyEventColumn(column, true, tableHolder));
+                    // 同时记录一下new
+                    // key,因为mysql5.6之后出现了minimal模式,after里会没有主键信息,需要在before记录中找
+                    keyColumns.put(column.getName(), copyEventColumn(column, true, tableHolder));
                 } else {
                     if (needAllColumns && entry.getHeader().getSourceType() == CanalEntry.Type.ORACLE) {
                         // 针对行记录同步时，针对oracle记录一下非主键的字段，因为update时针对未变更的字段在aftercolume里没有

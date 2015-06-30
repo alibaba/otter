@@ -147,6 +147,7 @@ public class DataSourceChecker {
             try {
                 conn = dataSource.getConnection();
             } catch (Exception e) {
+                logger.error("check error!", e);
             }
 
             if (null == conn) {

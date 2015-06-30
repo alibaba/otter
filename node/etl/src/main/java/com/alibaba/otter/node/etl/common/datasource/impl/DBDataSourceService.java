@@ -17,6 +17,7 @@
 package com.alibaba.otter.node.etl.common.datasource.impl;
 
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -218,7 +219,12 @@ public class DBDataSourceService implements DataSourceService, DisposableBean {
             dbcpDs.addConnectionProperty("yearIsDateType", "false");// 直接返回字符串，不做year转换date处理
             dbcpDs.addConnectionProperty("noDatetimeStringSync", "true");// 返回时间类型的字符串,不做时区处理
             if (StringUtils.isNotEmpty(encoding)) {
-                dbcpDs.addConnectionProperty("characterEncoding", encoding);
+                if (StringUtils.equalsIgnoreCase(encoding, "utf8mb4")) {
+                    dbcpDs.addConnectionProperty("characterEncoding", "utf8");
+                    dbcpDs.setConnectionInitSqls(Arrays.asList("set names utf8mb4"));
+                } else {
+                    dbcpDs.addConnectionProperty("characterEncoding", encoding);
+                }
             }
             dbcpDs.setValidationQuery("select 1");
         } else {

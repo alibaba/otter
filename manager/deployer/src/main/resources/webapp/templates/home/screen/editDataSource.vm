@@ -88,6 +88,7 @@ $control.setTemplate("home:navigation.vm")
 			<select id="sourceEncode" name="$dataMediaSourceGroup.encode.key"  style="width:200px;" > 
 				<option value="GBK" #if($!source.encode == 'GBK') selected  #end>GBK</option>
 				<option value="UTF8" #if($!source.encode == 'UTF8') selected  #end>UTF8</option>
+				<option value="UTF8MB4" #if($!source.encode == 'UTF8MB4') selected  #end>UTF8MB4</option>
 				<option value="ISO-8859-1" #if($!source.encode == 'ISO-8859-1') selected  #end>ISO-8859-1</option>
             </select><span class="red">*</span>
 		</td>
