@@ -237,9 +237,10 @@ public class SqlUtils {
             // value = rs.getTime(index);
             // } catch (SQLException e) {
             value = rs.getString(index);// 尝试拿为string对象，0000无法用Time表示
-            if (value == null && !rs.wasNull()) {
-                value = "00:00:00"; // mysql设置了zeroDateTimeBehavior=convertToNull，出现0值时返回为null
-            }
+            // if (value == null && !rs.wasNull()) {
+            // value = "00:00:00"; //
+            // mysql设置了zeroDateTimeBehavior=convertToNull，出现0值时返回为null
+            // }
             // }
         } else if (java.sql.Timestamp.class.equals(requiredType) || java.sql.Date.class.equals(requiredType)) {
             // try {
@@ -247,9 +248,10 @@ public class SqlUtils {
             // } catch (SQLException e) {
             // 尝试拿为string对象，0000-00-00 00:00:00无法用Timestamp 表示
             value = rs.getString(index);
-            if (value == null && !rs.wasNull()) {
-                value = "0000:00:00 00:00:00"; // mysql设置了zeroDateTimeBehavior=convertToNull，出现0值时返回为null
-            }
+            // if (value == null && !rs.wasNull()) {
+            // value = "0000:00:00 00:00:00"; //
+            // mysql设置了zeroDateTimeBehavior=convertToNull，出现0值时返回为null
+            // }
             // }
         } else if (BigDecimal.class.equals(requiredType)) {
             value = rs.getBigDecimal(index);
