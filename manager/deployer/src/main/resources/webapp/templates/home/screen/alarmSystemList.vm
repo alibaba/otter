@@ -125,7 +125,7 @@ $control.setTemplate("home:navigation.vm")
 						#if($alarmRule.status.isEnable() && !$alarmRule.isPaused())
 							<span class="ico_line">|</span><img src="images/ico_del.png" width="9" height="9" /><span title="暂停监控后才可以删除" class="ico_font">删除</span>
 						#else
-							#set ($removeURL = $homeModule.setAction("AlarmRuleAction").addQueryData("alarmRuleId", $alarmRule.id).addQueryData("pipelineId",$pipelineId).addQueryData("eventSubmitDoDelete", "true").render())
+							#set ($removeURL = $homeModule.setAction("AlarmRuleAction").addQueryData("alarmRuleId", $alarmRule.id).addQueryData("pipelineId",$alarmRule.pipelineId).addQueryData("eventSubmitDoDelete", "true").render())
 							<span class="ico_line">|</span><a href="$removeURL"><img src="images/ico_del.png" width="9" height="9" /><span class="ico_font">删除</span></a>
 						#end
 					#end
