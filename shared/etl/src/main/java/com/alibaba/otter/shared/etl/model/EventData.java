@@ -300,7 +300,7 @@ public class EventData implements ObjectData, Serializable {
         data.setRemedy(remedy);
         data.setHint(hint);
         data.setWithoutSchema(withoutSchema);
-        return null;
+        return data;
     }
 
     public String toString() {
