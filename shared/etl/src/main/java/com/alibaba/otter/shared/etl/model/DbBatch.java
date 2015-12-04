@@ -44,6 +44,8 @@ public class DbBatch implements Serializable {
 
     public DbBatch(RowBatch rowBatch){
         this.rowBatch = rowBatch;
+        this.fileBatch = new FileBatch();
+        this.fileBatch.setIdentity(rowBatch.getIdentity());
     }
 
     public DbBatch(RowBatch rowBatch, FileBatch fileBatch, File root){
