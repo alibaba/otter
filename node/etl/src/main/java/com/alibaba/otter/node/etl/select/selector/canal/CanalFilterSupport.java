@@ -1,22 +1,20 @@
 package com.alibaba.otter.node.etl.select.selector.canal;
 
-import com.alibaba.otter.node.etl.select.exceptions.SelectException;
-import com.alibaba.otter.shared.common.model.config.data.DataMedia;
-import com.alibaba.otter.shared.common.model.config.data.DataMediaPair;
-import com.alibaba.otter.shared.common.model.config.pipeline.Pipeline;
-
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import com.alibaba.otter.node.etl.select.exceptions.SelectException;
+import com.alibaba.otter.shared.common.model.config.data.DataMedia;
+import com.alibaba.otter.shared.common.model.config.data.DataMediaPair;
+import com.alibaba.otter.shared.common.model.config.pipeline.Pipeline;
+
 /**
- * Created with Intellij IDEA.
- * Author: yinxiu
- * Date: 2016-01-11
- * Time: 16:12
+ * Created with Intellij IDEA. Author: yinxiu Date: 2016-01-11 Time: 16:12
  */
 public class CanalFilterSupport {
+
     /**
      * 构建filter 表达式
      */
@@ -55,11 +53,11 @@ public class CanalFilterSupport {
         }
 
         String markTable = pipeline.getParameters().getSystemSchema() + "."
-                + pipeline.getParameters().getSystemMarkTable();
+                           + pipeline.getParameters().getSystemMarkTable();
         String bufferTable = pipeline.getParameters().getSystemSchema() + "."
-                + pipeline.getParameters().getSystemBufferTable();
+                             + pipeline.getParameters().getSystemBufferTable();
         String dualTable = pipeline.getParameters().getSystemSchema() + "."
-                + pipeline.getParameters().getSystemDualTable();
+                           + pipeline.getParameters().getSystemDualTable();
 
         if (!mediaNames.contains(markTable)) {
             result.append(",").append(markTable);
@@ -82,7 +80,8 @@ public class CanalFilterSupport {
         return result.toString();
     }
 
-    private static void buildFilter(Set<String> mediaNames, String namespace, DataMedia.ModeValue nameMode, boolean wildcard) {
+    private static void buildFilter(Set<String> mediaNames, String namespace, DataMedia.ModeValue nameMode,
+                                    boolean wildcard) {
         String splitChar = ".";
         if (wildcard) {
             splitChar = "\\.";

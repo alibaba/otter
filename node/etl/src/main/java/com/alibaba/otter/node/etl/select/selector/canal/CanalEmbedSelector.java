@@ -18,10 +18,7 @@ package com.alibaba.otter.node.etl.select.selector.canal;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
@@ -31,18 +28,30 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.util.CollectionUtils;
 
+import com.alibaba.otter.canal.common.CanalException;
 import com.alibaba.otter.canal.extend.communication.CanalConfigClient;
+import com.alibaba.otter.canal.extend.ha.MediaHAController;
+import com.alibaba.otter.canal.instance.core.CanalInstance;
+import com.alibaba.otter.canal.instance.core.CanalInstanceGenerator;
+import com.alibaba.otter.canal.instance.manager.CanalInstanceWithManager;
+import com.alibaba.otter.canal.instance.manager.model.Canal;
+import com.alibaba.otter.canal.instance.manager.model.CanalParameter.HAMode;
+import com.alibaba.otter.canal.parse.CanalEventParser;
+import com.alibaba.otter.canal.parse.ha.CanalHAController;
+import com.alibaba.otter.canal.parse.inbound.mysql.MysqlEventParser;
+import com.alibaba.otter.canal.parse.support.AuthenticationInfo;
 import com.alibaba.otter.canal.protocol.CanalEntry.Entry;
 import com.alibaba.otter.canal.protocol.ClientIdentity;
+import com.alibaba.otter.canal.server.embedded.CanalServerWithEmbedded;
+import com.alibaba.otter.canal.sink.AbstractCanalEventSink;
+import com.alibaba.otter.canal.sink.CanalEventSink;
 import com.alibaba.otter.node.common.config.ConfigClientService;
 import com.alibaba.otter.node.etl.OtterConstants;
-import com.alibaba.otter.node.etl.select.exceptions.SelectException;
+import com.alibaba.otter.node.etl.OtterContextLocator;
 import com.alibaba.otter.node.etl.select.selector.Message;
 import com.alibaba.otter.node.etl.select.selector.MessageDumper;
 import com.alibaba.otter.node.etl.select.selector.MessageParser;
 import com.alibaba.otter.node.etl.select.selector.OtterSelector;
-import com.alibaba.otter.shared.common.model.config.data.DataMedia.ModeValue;
-import com.alibaba.otter.shared.common.model.config.data.DataMediaPair;
 import com.alibaba.otter.shared.common.model.config.pipeline.Pipeline;
 import com.alibaba.otter.shared.etl.model.EventData;
 
@@ -62,7 +71,7 @@ public class CanalEmbedSelector implements OtterSelector {
     private boolean                 dump             = true;
     private boolean                 dumpDetail       = true;
     private Long                    pipelineId;
-    private OtterCanalInstance      otterCanalInstance;
+    private CanalServerWithEmbedded canalServer;
     private ClientIdentity          clientIdentity;
     private MessageParser           messageParser;
     private ConfigClientService     configClientService;
@@ -72,6 +81,8 @@ public class CanalEmbedSelector implements OtterSelector {
     private String                  filter;
     private int                     batchSize        = 10000;
     private long                    batchTimeout     = -1L;
+    private boolean                 ddlSync          = true;
+    private boolean                 filterTableError = false;
 
     private CanalConfigClient       canalConfigClient;
     private volatile boolean        running          = false;                                            // 是否处于运行中
@@ -79,8 +90,7 @@ public class CanalEmbedSelector implements OtterSelector {
 
     public CanalEmbedSelector(Long pipelineId){
         this.pipelineId = pipelineId;
-        final Pipeline pipeline = configClientService.findPipeline(pipelineId);
-        otterCanalInstance = new OtterCanalInstance(canalConfigClient, pipeline);
+        canalServer = new CanalServerWithEmbedded();
     }
 
     public boolean isStart() {
@@ -97,6 +107,11 @@ public class CanalEmbedSelector implements OtterSelector {
         destination = pipeline.getParameters().getDestinationName();
         batchSize = pipeline.getParameters().getMainstemBatchsize();
         batchTimeout = pipeline.getParameters().getBatchTimeout();
+        ddlSync = pipeline.getParameters().getDdlSync();
+        final boolean syncFull = pipeline.getParameters().getSyncMode().isRow()
+                                 || pipeline.getParameters().isEnableRemedy();
+        // 暂时使用skip load代替
+        filterTableError = pipeline.getParameters().getSkipSelectException();
         if (pipeline.getParameters().getDumpSelector() != null) {
             dump = pipeline.getParameters().getDumpSelector();
         }
@@ -105,9 +120,92 @@ public class CanalEmbedSelector implements OtterSelector {
             dumpDetail = pipeline.getParameters().getDumpSelectorDetail();
         }
 
-        otterCanalInstance.start();
+        canalServer.setCanalInstanceGenerator(new CanalInstanceGenerator() {
+
+            public CanalInstance generate(String destination) {
+                Canal canal = canalConfigClient.findCanal(destination);
+                final OtterAlarmHandler otterAlarmHandler = new OtterAlarmHandler();
+                otterAlarmHandler.setPipelineId(pipelineId);
+                OtterContextLocator.autowire(otterAlarmHandler); // 注入一下spring资源
+                // 设置下slaveId，保证多个piplineId下重复引用时不重复
+                long slaveId = 10000;// 默认基数
+                if (canal.getCanalParameter().getSlaveId() != null) {
+                    slaveId = canal.getCanalParameter().getSlaveId();
+                }
+                canal.getCanalParameter().setSlaveId(slaveId + pipelineId);
+                canal.getCanalParameter().setDdlIsolation(ddlSync);
+                canal.getCanalParameter().setFilterTableError(filterTableError);
+
+                CanalInstanceWithManager instance = new CanalInstanceWithManager(canal, filter) {
+
+                    protected CanalHAController initHaController() {
+                        HAMode haMode = parameters.getHaMode();
+                        if (haMode.isMedia()) {
+                            return new MediaHAController(parameters.getMediaGroup(),
+                                parameters.getDbUsername(),
+                                parameters.getDbPassword(),
+                                parameters.getDefaultDatabaseName());
+                        } else {
+                            return super.initHaController();
+                        }
+                    }
+
+                    protected void startEventParserInternal(CanalEventParser parser, boolean isGroup) {
+                        super.startEventParserInternal(parser, isGroup);
+
+                        if (eventParser instanceof MysqlEventParser) {
+                            // 设置支持的类型
+                            ((MysqlEventParser) eventParser).setSupportBinlogFormats("ROW");
+                            if (syncFull) {
+                                ((MysqlEventParser) eventParser).setSupportBinlogImages("FULL");
+                            } else {
+                                ((MysqlEventParser) eventParser).setSupportBinlogImages("FULL,MINIMAL");
+                            }
+
+                            MysqlEventParser mysqlEventParser = (MysqlEventParser) eventParser;
+                            CanalHAController haController = mysqlEventParser.getHaController();
+
+                            if (haController instanceof MediaHAController) {
+                                if (isGroup) {
+                                    throw new CanalException("not support group database use media HA");
+                                }
+
+                                ((MediaHAController) haController).setCanalHASwitchable(mysqlEventParser);
+                            }
+
+                            if (!haController.isStart()) {
+                                haController.start();
+                            }
+
+                            // 基于media的Ha，直接从tddl中获取数据库信息
+                            if (haController instanceof MediaHAController) {
+                                AuthenticationInfo authenticationInfo = ((MediaHAController) haController).getAvailableAuthenticationInfo();
+                                ((MysqlEventParser) eventParser).setMasterInfo(authenticationInfo);
+                            }
+                        }
+                    }
+
+                };
+                instance.setAlarmHandler(otterAlarmHandler);
+
+                CanalEventSink eventSink = instance.getEventSink();
+                if (eventSink instanceof AbstractCanalEventSink) {
+                    handler = new OtterDownStreamHandler();
+                    handler.setPipelineId(pipelineId);
+                    handler.setDetectingIntervalInSeconds(canal.getCanalParameter().getDetectingIntervalInSeconds());
+                    OtterContextLocator.autowire(handler); // 注入一下spring资源
+                    ((AbstractCanalEventSink) eventSink).addHandler(handler, 0); // 添加到开头
+                    handler.start();
+                }
+
+                return instance;
+            }
+        });
+        canalServer.start();
+
+        canalServer.start(destination);
         this.clientIdentity = new ClientIdentity(destination, pipeline.getParameters().getMainstemClientId(), filter);
-        otterCanalInstance.subscribe(clientIdentity);// 发起一次订阅
+        canalServer.subscribe(clientIdentity);// 发起一次订阅
 
         running = true;
     }
@@ -124,7 +222,8 @@ public class CanalEmbedSelector implements OtterSelector {
         }
 
         handler = null;
-        otterCanalInstance.stop();
+        canalServer.stop(destination);
+        canalServer.stop();
     }
 
     public Message<EventData> selector() throws InterruptedException {
@@ -132,7 +231,7 @@ public class CanalEmbedSelector implements OtterSelector {
         com.alibaba.otter.canal.protocol.Message message = null;
         if (batchTimeout < 0) {// 进行轮询处理
             while (running) {
-                message = otterCanalInstance.getWithoutAck(clientIdentity, batchSize);
+                message = canalServer.getWithoutAck(clientIdentity, batchSize);
                 if (message == null || message.getId() == -1L) { // 代表没数据
                     applyWait(emptyTimes++);
                 } else {
@@ -144,7 +243,7 @@ public class CanalEmbedSelector implements OtterSelector {
             }
         } else { // 进行超时控制
             while (running) {
-                message = otterCanalInstance.getWithoutAck(clientIdentity, batchSize, batchTimeout, TimeUnit.MILLISECONDS);
+                message = canalServer.getWithoutAck(clientIdentity, batchSize, batchTimeout, TimeUnit.MILLISECONDS);
                 if (message == null || message.getId() == -1L) { // 代表没数据
                     continue;
                 } else {
@@ -180,19 +279,19 @@ public class CanalEmbedSelector implements OtterSelector {
     }
 
     public void rollback(Long batchId) {
-        otterCanalInstance.rollback(clientIdentity, batchId);
+        canalServer.rollback(clientIdentity, batchId);
     }
 
     public void rollback() {
-        otterCanalInstance.rollback(clientIdentity);
+        canalServer.rollback(clientIdentity);
     }
 
     public void ack(Long batchId) {
-        otterCanalInstance.ack(clientIdentity, batchId);
+        canalServer.ack(clientIdentity, batchId);
     }
 
     public List<Long> unAckBatchs() {
-        return otterCanalInstance.listBatchIds(clientIdentity);
+        return canalServer.listBatchIds(clientIdentity);
     }
 
     public Long lastEntryTime() {
@@ -233,8 +332,6 @@ public class CanalEmbedSelector implements OtterSelector {
             index += logSplitSize;
         } while (index < size);
     }
-
-
 
     // 处理无数据的情况，避免空循环挂死
     private void applyWait(int emptyTimes) {
