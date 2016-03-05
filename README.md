@@ -54,10 +54,15 @@ otter之前开源的一个子项目，开源链接地址：<a href="http://githu
 
 <h1>
 <a name="%E7%89%88%E6%9C%AC%E7%9B%B8%E5%85%B3-" class="anchor" href="#%E7%89%88%E6%9C%AC%E7%9B%B8%E5%85%B3-"><span class="octicon octicon-link"></span></a>版本相关: </h1>
-<p>1. 建议版本：4.2.10  (otter开源版本从内部演变而来，所以初始版本直接从4.x开始) </p>
+<p>1. 建议版本：4.2.12  (otter开源版本从内部演变而来，所以初始版本直接从4.x开始) </p>
 <p>2. 下载发布包：<a href="https://github.com/alibaba/otter/releases">download </a></p>
 <p>3. maven依赖 ： 暂无 </p>
 
+<h1>相关开源</h1>
+<ol>
+<li>阿里巴巴mysql数据库binlog的增量订阅&消费组件：<a href="http://github.com/alibaba/canal">http://github.com/alibaba/canal</a></li>
+<li>阿里巴巴去Oracle数据迁移同步工具(目标支持MySQL/DRDS)：<a href="http://github.com/alibaba/yugong">http://github.com/alibaba/yugong</a></li>
+</ol>
 
 <p> </p>
 <h1>
