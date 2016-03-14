@@ -34,7 +34,7 @@ otter之前开源的一个子项目，开源链接地址：<a href="http://githu
 <p> </p>
 <h1>
 <a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h1>
-<p>See the page for quick start: <a class="internal present" href="https://github.com/alibaba/otter/wiki/Introduction">Introduction</a>.</p>
+<p>See the page for introduction: <a class="internal present" href="https://github.com/alibaba/otter/wiki/Introduction">Introduction</a>.</p>
 <h1>
 <a name="quickstart" class="anchor" href="#quickstart"><span class="octicon octicon-link"></span></a>QuickStart</h1>
 <p>See the page for quick start: <a class="internal present" href="https://github.com/alibaba/otter/wiki/QuickStart">QuickStart</a>.</p>
