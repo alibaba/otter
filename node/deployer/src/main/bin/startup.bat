@@ -7,7 +7,7 @@ if "%OS%" == "Windows_NT" set ENV_PATH=%~dp0%
 
 set conf_dir=%ENV_PATH%\..\conf
 set nid_file=%conf_dir%\nid
-set /p nid=<%nid_file%
+set /p nid=<"%nid_file%"
 set otter_conf=%conf_dir%\otter.properties
 set logback_configurationFile=%conf_dir%\logback.xml
 
