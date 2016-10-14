@@ -21,7 +21,7 @@
 <p> </p>
 <h1>
 <a name="%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86" class="anchor" href="#%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="octicon octicon-link"></span></a>工作原理</h1>
-<p><img width="848" src="https://github-camo.global.ssl.fastly.net/2988fbbc7ddfe94ed027cd71720b1ffa5912a635/687474703a2f2f646c322e69746579652e636f6d2f75706c6f61642f6174746163686d656e742f303038382f313138392f64343230636131342d326438302d336435352d383038312d6239303833363036613830312e6a7067" height="303" alt=""></p>
+<p><img width="848" src="https://camo.githubusercontent.com/2988fbbc7ddfe94ed027cd71720b1ffa5912a635/687474703a2f2f646c322e69746579652e636f6d2f75706c6f61642f6174746163686d656e742f303038382f313138392f64343230636131342d326438302d336435352d383038312d6239303833363036613830312e6a7067" height="303" alt=""></p>
 <p>原理描述：</p>
 <p>1.   基于Canal开源产品，获取数据库增量日志数据。 什么是Canal,  请<a href="https://github.com/alibaba/canal">点击</a></p>
 <p>2.   典型管理系统架构，manager(web管理)+node(工作节点)</p>
