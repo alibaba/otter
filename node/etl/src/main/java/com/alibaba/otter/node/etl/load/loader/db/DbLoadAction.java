@@ -89,20 +89,20 @@ import com.alibaba.otter.shared.etl.model.RowBatch;
  */
 public class DbLoadAction implements InitializingBean, DisposableBean {
 
-    private static final Logger logger             = LoggerFactory.getLogger(DbLoadAction.class);
-    private static final String WORKER_NAME        = "DbLoadAction";
+    private static final Logger logger = LoggerFactory.getLogger(DbLoadAction.class);
+    private static final String WORKER_NAME = "DbLoadAction";
     private static final String WORKER_NAME_FORMAT = "pipelineId = %s , pipelineName = %s , " + WORKER_NAME;
-    private static final int    DEFAULT_POOL_SIZE  = 5;
-    private int                 poolSize           = DEFAULT_POOL_SIZE;
-    private int                 retry              = 3;
-    private int                 retryWait          = 3000;
-    private LoadInterceptor     interceptor;
-    private ExecutorService     executor;
-    private DbDialectFactory    dbDialectFactory;
+    private static final int DEFAULT_POOL_SIZE = 5;
+    private int poolSize = DEFAULT_POOL_SIZE;
+    private int retry = 3;
+    private int retryWait = 3000;
+    private LoadInterceptor interceptor;
+    private ExecutorService executor;
+    private DbDialectFactory dbDialectFactory;
     private ConfigClientService configClientService;
-    private int                 batchSize          = 50;
-    private boolean             useBatch           = true;
-    private LoadStatsTracker    loadStatsTracker;
+    private int batchSize = 50;
+    private boolean useBatch = true;
+    private LoadStatsTracker loadStatsTracker;
 
     /**
      * 返回结果为已处理成功的记录
@@ -512,14 +512,14 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
 
     class DbLoadWorker implements Callable<Exception> {
 
-        private DbLoadContext   context;
-        private DbDialect       dbDialect;
+        private DbLoadContext context;
+        private DbDialect dbDialect;
         private List<EventData> datas;
-        private boolean         canBatch;
-        private List<EventData> allFailedDatas   = new ArrayList<EventData>();
+        private boolean canBatch;
+        private List<EventData> allFailedDatas = new ArrayList<EventData>();
         private List<EventData> allProcesedDatas = new ArrayList<EventData>();
-        private List<EventData> processedDatas   = new ArrayList<EventData>();
-        private List<EventData> failedDatas      = new ArrayList<EventData>();
+        private List<EventData> processedDatas = new ArrayList<EventData>();
+        private List<EventData> failedDatas = new ArrayList<EventData>();
 
         public DbLoadWorker(DbLoadContext context, List<EventData> datas, boolean canBatch){
             this.context = context;
@@ -739,9 +739,19 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
 
                 Boolean isRequired = isRequiredMap.get(StringUtils.lowerCase(column.getColumnName()));
                 if (isRequired == null) {
-                    throw new LoadException(String.format("column name %s is not found in Table[%s]",
-                        column.getColumnName(),
-                        table.toString()));
+                    // 清理一下目标库的表结构,二次检查一下
+                    table = dbDialect.findTable(data.getSchemaName(), data.getTableName(), false);
+                    isRequiredMap = new HashMap<String, Boolean>();
+                    for (Column tableColumn : table.getColumns()) {
+                        isRequiredMap.put(StringUtils.lowerCase(tableColumn.getName()), tableColumn.isRequired());
+                    }
+
+                    isRequired = isRequiredMap.get(StringUtils.lowerCase(column.getColumnName()));
+                    if (isRequired == null) {
+                        throw new LoadException(String.format("column name %s is not found in Table[%s]",
+                            column.getColumnName(),
+                            table.toString()));
+                    }
                 }
 
                 Object param = null;
