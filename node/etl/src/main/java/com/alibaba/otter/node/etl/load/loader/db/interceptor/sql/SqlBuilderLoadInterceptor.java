@@ -63,7 +63,8 @@ public class SqlBuilderLoadInterceptor extends AbstractLoadInterceptor<DbLoadCon
                     currentData.getTableName(),
                     buildColumnNames(currentData.getKeys()),
                     buildColumnNames(currentData.getColumns()),
-                    new String[] {});
+                    new String[] {},
+                    !dbDialect.isDRDS());
             }
         } else if (type.isUpdate()) {
             // String[] keyColumns = buildColumnNames(currentData.getKeys());
@@ -97,7 +98,8 @@ public class SqlBuilderLoadInterceptor extends AbstractLoadInterceptor<DbLoadCon
                     currentData.getTableName(),
                     keyColumns,
                     otherColumns,
-                    new String[] {});
+                    new String[] {},
+                    !dbDialect.isDRDS());
             } else {// 否则进行update sql
                 sql = sqlTemplate.getUpdateSql(schemaName, currentData.getTableName(), keyColumns, otherColumns);
             }

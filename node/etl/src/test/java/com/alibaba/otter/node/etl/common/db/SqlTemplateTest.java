@@ -48,8 +48,8 @@ public class SqlTemplateTest extends BaseDbTest {
         sql2 = sqlTemplate.getDeleteSql(SCHEMA_NAME, TABLE_NAME, pkColumns);
         want.bool(sql1 == sql2);
         // 执行merge
-        sql1 = sqlTemplate.getMergeSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns, null);
-        sql2 = sqlTemplate.getMergeSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns, null);
+        sql1 = sqlTemplate.getMergeSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns, null, true);
+        sql2 = sqlTemplate.getMergeSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns, null, true);
         want.bool(sql1 == sql2);
 
     }
@@ -70,8 +70,8 @@ public class SqlTemplateTest extends BaseDbTest {
         sql2 = sqlTemplate.getDeleteSql(SCHEMA_NAME, TABLE_NAME, pkColumns);
         want.bool(sql1 == sql2);
         // 执行merge
-        sql1 = sqlTemplate.getMergeSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns, null);
-        sql2 = sqlTemplate.getMergeSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns, null);
+        sql1 = sqlTemplate.getMergeSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns, null, true);
+        sql2 = sqlTemplate.getMergeSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns, null, true);
         want.bool(sql1 == sql2);
     }
 

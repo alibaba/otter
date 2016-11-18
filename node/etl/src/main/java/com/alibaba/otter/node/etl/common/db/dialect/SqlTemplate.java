@@ -36,5 +36,5 @@ public interface SqlTemplate {
      * 获取对应的mergeSql
      */
     public String getMergeSql(String schemaName, String tableName, String[] pkNames, String[] columnNames,
-                              String[] viewColumnNames);
+                              String[] viewColumnNames, boolean updatePks);
 }

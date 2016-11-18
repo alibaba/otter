@@ -41,9 +41,11 @@ import com.alibaba.otter.node.etl.common.db.dialect.DbDialectFactory;
 import com.alibaba.otter.node.etl.common.db.dialect.mysql.MysqlDialect;
 import com.alibaba.otter.node.etl.common.db.dialect.oracle.OracleDialect;
 import com.alibaba.otter.node.etl.select.exceptions.SelectException;
+import com.alibaba.otter.node.etl.transform.exception.TransformException;
 import com.alibaba.otter.shared.common.model.config.ConfigHelper;
 import com.alibaba.otter.shared.common.model.config.channel.ChannelParameter.SyncConsistency;
 import com.alibaba.otter.shared.common.model.config.data.DataMedia;
+import com.alibaba.otter.shared.common.model.config.data.DataMedia.ModeValue;
 import com.alibaba.otter.shared.common.model.config.data.DataMediaPair;
 import com.alibaba.otter.shared.common.model.config.data.db.DbMediaSource;
 import com.alibaba.otter.shared.common.model.config.pipeline.Pipeline;
@@ -417,10 +419,13 @@ public class MessageParser {
         if (!StringUtils.equalsIgnoreCase(pipeline.getParameters().getSystemSchema(), eventData.getSchemaName())) {
             boolean useTableTransform = pipeline.getParameters().getUseTableTransform();
             Table table = null;
-            DataMedia dataMedia = ConfigHelper.findSourceDataMedia(pipeline,
+            DataMediaPair dataMediaPair = ConfigHelper.findDataMediaPairBySourceName(pipeline,
                 eventData.getSchemaName(),
                 eventData.getTableName());
+            DataMedia dataMedia = dataMediaPair.getSource();
             eventData.setTableId(dataMedia.getId());
+            // 获取目标表
+            DataMedia targetDataMedia = dataMediaPair.getTarget();
             if (useTableTransform || dataMedia.getSource().getType().isOracle()) {// oracle需要反查一次meta
                 // 如果设置了需要进行table meta转化，则反查一下table信息
                 // 比如oracle erosa解析时可能使用了非物理主键，需要直接使用，信任erosa的信息
@@ -431,6 +436,33 @@ public class MessageParser {
                     logger.warn("find table[{}.{}] is null , may be drop table.",
                         eventData.getSchemaName(),
                         eventData.getTableName());
+                }
+                // 获取一下目标库的拆分字段,设置源表为主键
+                // 首先要求源和目标的库名表名是一致的
+                DbDialect targetDbDialect = dbDialectFactory.getDbDialect(pipeline.getId(),
+                    (DbMediaSource) targetDataMedia.getSource());
+                if (targetDbDialect.isDRDS()) {
+                    String schemaName = buildName(eventData.getSchemaName(),
+                        dataMedia.getNamespaceMode(),
+                        targetDataMedia.getNamespaceMode());
+                    String tableName = buildName(eventData.getSchemaName(),
+                        dataMedia.getNameMode(),
+                        targetDataMedia.getNameMode());
+                    String shardColumns = targetDbDialect.getShardColumns(schemaName, tableName);
+                    if (StringUtils.isNotEmpty(shardColumns)) {
+                        String columns[] = StringUtils.split(shardColumns, ',');
+                        for (String key : columns) {
+                            org.apache.ddlutils.model.Column col = table.findColumn(key, false);
+                            if (col != null) {
+                                col.setPrimaryKey(true);
+                            } else {
+                                logger.warn(String.format("shardColumn %s in table[%s.%s] is not found",
+                                    key,
+                                    eventData.getSchemaName(),
+                                    eventData.getTableName()));
+                            }
+                        }
+                    }
                 }
                 tableHolder = new TableInfoHolder(dbDialect, table, useTableTransform);
             }
@@ -665,6 +697,21 @@ public class MessageParser {
                 new Object[] { tableName, column.getName(), isMKey, isEKey });
         }
         return isMKey;
+    }
+
+    private String buildName(String name, ModeValue sourceModeValue, ModeValue targetModeValue) {
+        if (targetModeValue.getMode().isWildCard()) {
+            return name; // 通配符，认为源和目标一定是一致的
+        } else if (targetModeValue.getMode().isMulti()) {
+            int index = ConfigHelper.indexIgnoreCase(sourceModeValue.getMultiValue(), name);
+            if (index == -1) {
+                throw new TransformException("can not found namespace or name in media:" + sourceModeValue.toString());
+            }
+
+            return targetModeValue.getMultiValue().get(index);
+        } else {
+            return targetModeValue.getSingleValue();
+        }
     }
 
     // ======================== setter / getter =============================

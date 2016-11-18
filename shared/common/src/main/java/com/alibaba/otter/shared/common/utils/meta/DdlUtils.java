@@ -18,6 +18,7 @@ package com.alibaba.otter.shared.common.utils.meta;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -41,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.util.Assert;
@@ -56,7 +58,6 @@ public class DdlUtils {
     private static final Logger               logger                = LoggerFactory.getLogger(DdlUtils.class);
     private static TableType[]                SUPPORTED_TABLE_TYPES = new TableType[] { TableType.view, TableType.table };
     private final static Map<Integer, String> _defaultSizes         = new HashMap<Integer, String>();
-
     static {
         _defaultSizes.put(new Integer(1), "254");
         _defaultSizes.put(new Integer(12), "254");
@@ -121,7 +122,7 @@ public class DdlUtils {
             public Object doInConnection(Connection con) throws SQLException, DataAccessException {
                 Table table = null;
                 DatabaseMetaDataWrapper metaData = new DatabaseMetaDataWrapper();
-
+                boolean isDRDS = false;
                 try {
                     if (filter != null) {
                         con = filter.filterConnection(con);
@@ -131,6 +132,13 @@ public class DdlUtils {
                     if (filter != null) {
                         databaseMetaData = filter.filterDataBaseMetaData(jdbcTemplate, con, databaseMetaData);
                         Assert.notNull(databaseMetaData);
+                    }
+
+                    String databaseName = databaseMetaData.getDatabaseProductName();
+                    String version = databaseMetaData.getDatabaseProductVersion();
+                    if (StringUtils.startsWithIgnoreCase(databaseName, "mysql")
+                        && StringUtils.contains(version, "-TDDL-")) {
+                        isDRDS = true;
                     }
 
                     metaData.setMetaData(databaseMetaData);
@@ -170,7 +178,9 @@ public class DdlUtils {
                 }
 
                 makeAllColumnsPrimaryKeysIfNoPrimaryKeysFound(table);
-
+                if (isDRDS) {
+                    makeDRDSShardColumnsAsPrimaryKeys(table, jdbcTemplate, catalogName, schemaName, tableName);
+                }
                 return table;
             }
         });
@@ -186,7 +196,7 @@ public class DdlUtils {
             public Object doInConnection(Connection con) throws SQLException, DataAccessException {
                 List<Table> tables = new ArrayList<Table>();
                 DatabaseMetaDataWrapper metaData = new DatabaseMetaDataWrapper();
-
+                boolean isDRDS = false;
                 try {
                     if (filter != null) {
                         con = filter.filterConnection(con);
@@ -196,6 +206,13 @@ public class DdlUtils {
                     if (filter != null) {
                         databaseMetaData = filter.filterDataBaseMetaData(jdbcTemplate, con, databaseMetaData);
                         Assert.notNull(databaseMetaData);
+                    }
+
+                    String databaseName = databaseMetaData.getDatabaseProductName();
+                    String version = databaseMetaData.getDatabaseProductVersion();
+                    if (StringUtils.startsWithIgnoreCase(databaseName, "mysql")
+                        && StringUtils.contains(version, "-TDDL-")) {
+                        isDRDS = true;
                     }
 
                     metaData.setMetaData(databaseMetaData);
@@ -237,6 +254,9 @@ public class DdlUtils {
 
                 for (Table table : tables) {
                     makeAllColumnsPrimaryKeysIfNoPrimaryKeysFound(table);
+                    if (isDRDS) {
+                        makeDRDSShardColumnsAsPrimaryKeys(table, jdbcTemplate, catalogName, schemaName, table.getName());
+                    }
                 }
 
                 return tables;
@@ -254,6 +274,72 @@ public class DdlUtils {
             for (Column column : allCoumns) {
                 column.setPrimaryKey(true);
             }
+        }
+    }
+
+    private static void makeDRDSShardColumnsAsPrimaryKeys(Table table, final JdbcTemplate jdbcTemplate,
+                                                          final String catalogName, final String schemaName,
+                                                          final String tableName) {
+        String shardColumns = getShardKeyByDRDS(jdbcTemplate, catalogName, schemaName, tableName);
+        if (StringUtils.isNotEmpty(shardColumns)) {
+            String columns[] = StringUtils.split(shardColumns, ',');
+            for (String key : columns) {
+                Column col = table.findColumn(key, false);
+                if (col != null) {
+                    col.setPrimaryKey(true);
+                } else {
+                    throw new NullPointerException(String.format("%s pk %s is null", tableName, key));
+                }
+            }
+        }
+    }
+
+    /**
+     * 获取DRDS下表的拆分字段, 返回格式为 id,name
+     * 
+     * @param dataSource
+     * @param schemaName
+     * @param tableName
+     * @return
+     */
+    public static String getShardKeyByDRDS(final JdbcTemplate jdbcTemplate, final String catalogName,
+                                            final String schemaName, final String tableName) {
+        try {
+            return (String) jdbcTemplate.execute("show partitions from ?", new PreparedStatementCallback() {
+
+                public Object doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {
+                    DatabaseMetaData metaData = ps.getConnection().getMetaData();
+                    // String sName = getIdentifierName(schemaName, metaData);
+                    String convertTableName = tableName;
+                    if (metaData.storesUpperCaseIdentifiers()) {
+                        convertTableName = tableName.toUpperCase();
+                    }
+                    if (metaData.storesLowerCaseIdentifiers()) {
+                        convertTableName = tableName.toLowerCase();
+                    }
+                    String tName = convertTableName;
+                    ps.setString(1, tName);
+                    ResultSet rs = ps.executeQuery();
+                    String log = null;
+                    if (rs.next()) {
+                        log = rs.getString("KEYS");
+                    }
+
+                    rs.close();
+                    return log;
+                }
+            });
+        } catch (DataAccessException e) {
+            // 兼容下oracle源库和目标库DRDS表名不一致的情况,识别一下表名不存在
+            Throwable cause = e.getRootCause();
+            if (cause instanceof SQLException) {
+                // ER_NO_SUCH_TABLE
+                if (((SQLException) cause).getErrorCode() == 1146) {
+                    return null;
+                }
+            }
+
+            throw e;
         }
     }
 

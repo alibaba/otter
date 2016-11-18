@@ -106,6 +106,31 @@ public class ConfigHelper {
     }
 
     /**
+     * 根据NameSpace和Name得到对应的DataMediaPair.
+     */
+    public static DataMediaPair findDataMediaPairBySourceName(Pipeline pipeline, String namespace, String name) {
+        return findDataMediaPairBySourceName(pipeline, namespace, name, false);
+    }
+
+    /**
+     * 根据NameSpace和Name得到对应的DataMediaPair
+     */
+    public static DataMediaPair findDataMediaPairBySourceName(Pipeline pipeline, String namespace, String name,
+                                                              boolean notExistReturnNull) {
+        for (DataMediaPair pair : pipeline.getPairs()) {
+            if (isMatch(pair.getSource(), namespace, name)) {
+                return pair;
+            }
+        }
+
+        if (notExistReturnNull) {
+            return null;
+        } else {
+            throw new ConfigException("no such DataMedia , the namespace = " + namespace + " name = " + name);
+        }
+    }
+
+    /**
      * 根据DataMedia id得到对应的DataMediaPair
      */
     public static List<DataMediaPair> findDataMediaPairByMediaId(Pipeline pipeline, Long tid) {

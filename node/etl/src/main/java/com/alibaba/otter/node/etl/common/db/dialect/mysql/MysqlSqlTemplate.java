@@ -29,7 +29,7 @@ public class MysqlSqlTemplate extends AbstractSqlTemplate {
     private static final String ESCAPE = "`";
 
     public String getMergeSql(String schemaName, String tableName, String[] pkNames, String[] columnNames,
-                              String[] viewColumnNames) {
+                              String[] viewColumnNames, boolean includePks) {
         StringBuilder sql = new StringBuilder("insert into " + getFullName(schemaName, tableName) + "(");
         int size = columnNames.length;
         for (int i = 0; i < size; i++) {
@@ -58,14 +58,20 @@ public class MysqlSqlTemplate extends AbstractSqlTemplate {
                 .append("=values(")
                 .append(appendEscape(columnNames[i]))
                 .append(")");
-            sql.append(" , ");
+            if (includePks) {
+                sql.append(" , ");
+            } else {
+                sql.append((i + 1 < size) ? " , " : "");
+            }
         }
 
-        // mysql merge sql匹配了uniqe / primary key时都会执行update，所以需要更新pk信息
-        size = pkNames.length;
-        for (int i = 0; i < size; i++) {
-            sql.append(appendEscape(pkNames[i])).append("=values(").append(appendEscape(pkNames[i])).append(")");
-            sql.append((i + 1 < size) ? " , " : "");
+        if (includePks) {
+            // mysql merge sql匹配了uniqe / primary key时都会执行update，所以需要更新pk信息
+            size = pkNames.length;
+            for (int i = 0; i < size; i++) {
+                sql.append(appendEscape(pkNames[i])).append("=values(").append(appendEscape(pkNames[i])).append(")");
+                sql.append((i + 1 < size) ? " , " : "");
+            }
         }
 
         return sql.toString().intern();// intern优化，避免出现大量相同的字符串

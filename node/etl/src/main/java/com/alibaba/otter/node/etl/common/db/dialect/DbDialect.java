@@ -49,6 +49,8 @@ public interface DbDialect {
 
     public boolean isSupportMergeSql();
 
+    public boolean isDRDS();
+
     public LobHandler getLobHandler();
 
     public JdbcTemplate getJdbcTemplate();
@@ -60,6 +62,8 @@ public interface DbDialect {
     public Table findTable(String schema, String table);
 
     public Table findTable(String schema, String table, boolean useCache);
+
+    public String getShardColumns(String schema, String table);
 
     public void reloadTable(String schema, String table);
 

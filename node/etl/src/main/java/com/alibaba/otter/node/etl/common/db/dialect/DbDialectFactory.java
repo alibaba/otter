@@ -55,19 +55,19 @@ public class DbDialectFactory implements DisposableBean {
     public DbDialectFactory(){
         // 构建第一层map
         GenericMapMaker mapMaker = null;
-        mapMaker = new MapMaker().softValues().evictionListener(new MapEvictionListener<Long, Map<DbMediaSource, DbDialect>>() {
+        mapMaker = new MapMaker().softValues()
+            .evictionListener(new MapEvictionListener<Long, Map<DbMediaSource, DbDialect>>() {
 
-                                                                    public void onEviction(Long pipelineId,
-                                                                                           Map<DbMediaSource, DbDialect> dialect) {
-                                                                        if (dialect == null) {
-                                                                            return;
-                                                                        }
+                public void onEviction(Long pipelineId, Map<DbMediaSource, DbDialect> dialect) {
+                    if (dialect == null) {
+                        return;
+                    }
 
-                                                                        for (DbDialect dbDialect : dialect.values()) {
-                                                                            dbDialect.destory();
-                                                                        }
-                                                                    }
-                                                                });
+                    for (DbDialect dbDialect : dialect.values()) {
+                        dbDialect.destory();
+                    }
+                }
+            });
 
         dialects = mapMaker.makeComputingMap(new Function<Long, Map<DbMediaSource, DbDialect>>() {
 
@@ -83,19 +83,23 @@ public class DbDialectFactory implements DisposableBean {
                             public Object doInConnection(Connection c) throws SQLException, DataAccessException {
                                 DatabaseMetaData meta = c.getMetaData();
                                 String databaseName = meta.getDatabaseProductName();
+                                String databaseVersion = meta.getDatabaseProductVersion();
                                 int databaseMajorVersion = meta.getDatabaseMajorVersion();
                                 int databaseMinorVersion = meta.getDatabaseMinorVersion();
-                                DbDialect dialect = dbDialectGenerator.generate(jdbcTemplate, databaseName,
-                                                                                databaseMajorVersion,
-                                                                                databaseMinorVersion, source.getType());
+                                DbDialect dialect = dbDialectGenerator.generate(jdbcTemplate,
+                                    databaseName,
+                                    databaseVersion,
+                                    databaseMajorVersion,
+                                    databaseMinorVersion,
+                                    source.getType());
                                 if (dialect == null) {
                                     throw new UnsupportedOperationException("no dialect for" + databaseName);
                                 }
 
                                 if (logger.isInfoEnabled()) {
                                     logger.info(String.format("--- DATABASE: %s, SCHEMA: %s ---",
-                                                              databaseName,
-                                                              (dialect.getDefaultSchema() == null) ? dialect.getDefaultCatalog() : dialect.getDefaultSchema()));
+                                        databaseName,
+                                        (dialect.getDefaultSchema() == null) ? dialect.getDefaultCatalog() : dialect.getDefaultSchema()));
                                 }
 
                                 return dialect;

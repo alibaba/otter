@@ -74,9 +74,9 @@ public abstract class AbstractSqlTemplate implements SqlTemplate {
     protected String getFullName(String schemaName, String tableName) {
         StringBuilder sb = new StringBuilder();
         if (schemaName != null) {
-            sb.append(schemaName).append(DOT);
+            sb.append(appendEscape(schemaName)).append(DOT);
         }
-        sb.append(tableName);
+        sb.append(appendEscape(tableName));
         return sb.toString().intern();
     }
 

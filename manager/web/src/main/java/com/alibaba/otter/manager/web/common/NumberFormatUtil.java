@@ -190,7 +190,7 @@ public class NumberFormatUtil {
             List<String> address = new ArrayList<String>();
             for (DataSourcing dbAddress : groupDbAddress) {
                 StringBuilder dbAddressBuilder = new StringBuilder();
-                dbAddressBuilder.append(dbAddress.getDbAddress().getAddress().getHostAddress());
+                dbAddressBuilder.append(dbAddress.getDbAddress().getAddress().getHostName());
                 dbAddressBuilder.append(":");
                 dbAddressBuilder.append(String.valueOf(dbAddress.getDbAddress().getPort()));
                 if (!defaultType.equals(dbAddress.getType())) {

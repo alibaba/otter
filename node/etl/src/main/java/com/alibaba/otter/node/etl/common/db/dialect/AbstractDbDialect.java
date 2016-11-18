@@ -157,6 +157,14 @@ public abstract class AbstractDbDialect implements DbDialect {
         return sqlTemplate;
     }
 
+    public boolean isDRDS() {
+        return false;
+    }
+
+    public String getShardColumns(String schema, String table) {
+        return null;
+    }
+
     public void destory() {
     }
 

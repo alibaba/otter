@@ -123,7 +123,7 @@ public class DbDialectTest extends BaseDbTest {
                 });
                 want.number(affect).isEqualTo(1);
                 // 执行merge
-                sql = sqlTemplate.getMergeSql(MYSQL_SCHEMA_NAME, TABLE_NAME, pkColumns, columns, null);
+                sql = sqlTemplate.getMergeSql(MYSQL_SCHEMA_NAME, TABLE_NAME, pkColumns, columns, null, true);
                 System.out.println(sql);
                 affect = (Integer) jdbcTemplate.execute(sql, new PreparedStatementCallback() {
 
@@ -203,7 +203,7 @@ public class DbDialectTest extends BaseDbTest {
                 });
                 want.number(affect).isEqualTo(1);
                 // 执行merge
-                sql = sqlTemplate.getMergeSql(ORACLE_SCHEMA_NAME, TABLE_NAME, pkColumns, columns, null);
+                sql = sqlTemplate.getMergeSql(ORACLE_SCHEMA_NAME, TABLE_NAME, pkColumns, columns, null, true);
                 System.out.println(sql);
 
                 affect = (Integer) jdbcTemplate.execute(sql, new PreparedStatementCallback() {
