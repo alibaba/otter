@@ -89,20 +89,20 @@ import com.alibaba.otter.shared.etl.model.RowBatch;
  */
 public class DbLoadAction implements InitializingBean, DisposableBean {
 
-    private static final Logger logger = LoggerFactory.getLogger(DbLoadAction.class);
-    private static final String WORKER_NAME = "DbLoadAction";
+    private static final Logger logger             = LoggerFactory.getLogger(DbLoadAction.class);
+    private static final String WORKER_NAME        = "DbLoadAction";
     private static final String WORKER_NAME_FORMAT = "pipelineId = %s , pipelineName = %s , " + WORKER_NAME;
-    private static final int DEFAULT_POOL_SIZE = 5;
-    private int poolSize = DEFAULT_POOL_SIZE;
-    private int retry = 3;
-    private int retryWait = 3000;
-    private LoadInterceptor interceptor;
-    private ExecutorService executor;
-    private DbDialectFactory dbDialectFactory;
+    private static final int    DEFAULT_POOL_SIZE  = 5;
+    private int                 poolSize           = DEFAULT_POOL_SIZE;
+    private int                 retry              = 3;
+    private int                 retryWait          = 3000;
+    private LoadInterceptor     interceptor;
+    private ExecutorService     executor;
+    private DbDialectFactory    dbDialectFactory;
     private ConfigClientService configClientService;
-    private int batchSize = 50;
-    private boolean useBatch = true;
-    private LoadStatsTracker loadStatsTracker;
+    private int                 batchSize          = 50;
+    private boolean             useBatch           = true;
+    private LoadStatsTracker    loadStatsTracker;
 
     /**
      * 返回结果为已处理成功的记录
@@ -132,8 +132,7 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
             // 处理下ddl语句，ddl/dml语句不可能是在同一个batch中，由canal进行控制
             // 主要考虑ddl的幂等性问题，尽可能一个ddl一个batch，失败或者回滚都只针对这条sql
             if (isDdlDatas(datas)) {
-                
-                (context, datas);
+                doDdl(context, datas);
             } else {
                 WeightBuckets<EventData> buckets = buildWeightBuckets(context, datas);
                 List<Long> weights = buckets.weights();
@@ -364,7 +363,7 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
                            // result &= stmt.execute("use " + data.getDdlSchemaName());
                             
                             // 解决当数据库名称为关键字如"Order"的时候,会报错,无法同步
-                            result &= stmt.execute("use `" + this.val$data.getDdlSchemaName() + "`"));
+                            result &= stmt.execute("use `" + data.getDdlSchemaName() + "`"));
                         }
                         result &= stmt.execute(data.getSql());
                         return result;
@@ -516,14 +515,14 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
 
     class DbLoadWorker implements Callable<Exception> {
 
-        private DbLoadContext context;
-        private DbDialect dbDialect;
+        private DbLoadContext   context;
+        private DbDialect       dbDialect;
         private List<EventData> datas;
-        private boolean canBatch;
-        private List<EventData> allFailedDatas = new ArrayList<EventData>();
+        private boolean         canBatch;
+        private List<EventData> allFailedDatas   = new ArrayList<EventData>();
         private List<EventData> allProcesedDatas = new ArrayList<EventData>();
-        private List<EventData> processedDatas = new ArrayList<EventData>();
-        private List<EventData> failedDatas = new ArrayList<EventData>();
+        private List<EventData> processedDatas   = new ArrayList<EventData>();
+        private List<EventData> failedDatas      = new ArrayList<EventData>();
 
         public DbLoadWorker(DbLoadContext context, List<EventData> datas, boolean canBatch){
             this.context = context;
