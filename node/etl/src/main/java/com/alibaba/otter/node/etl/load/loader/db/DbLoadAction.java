@@ -132,7 +132,8 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
             // 处理下ddl语句，ddl/dml语句不可能是在同一个batch中，由canal进行控制
             // 主要考虑ddl的幂等性问题，尽可能一个ddl一个batch，失败或者回滚都只针对这条sql
             if (isDdlDatas(datas)) {
-                doDdl(context, datas);
+                
+                (context, datas);
             } else {
                 WeightBuckets<EventData> buckets = buildWeightBuckets(context, datas);
                 List<Long> weights = buckets.weights();
@@ -360,7 +361,10 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
                         Boolean result = false;
                         if (dbDialect instanceof MysqlDialect && StringUtils.isNotEmpty(data.getDdlSchemaName())) {
                             // 如果mysql，执行ddl时，切换到在源库执行的schema上
-                            result &= stmt.execute("use " + data.getDdlSchemaName());
+                           // result &= stmt.execute("use " + data.getDdlSchemaName());
+                            
+                            // 解决当数据库名称为关键字如"Order"的时候,会报错,无法同步
+                            result &= stmt.execute("use `" + this.val$data.getDdlSchemaName() + "`"));
                         }
                         result &= stmt.execute(data.getSql());
                         return result;
