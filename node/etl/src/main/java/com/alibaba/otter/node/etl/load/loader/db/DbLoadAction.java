@@ -363,7 +363,7 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
                            // result &= stmt.execute("use " + data.getDdlSchemaName());
                             
                             // 解决当数据库名称为关键字如"Order"的时候,会报错,无法同步
-                            result &= stmt.execute("use `" + data.getDdlSchemaName() + "`"));
+                            result &= stmt.execute("use `" + data.getDdlSchemaName() + "`");
                         }
                         result &= stmt.execute(data.getSql());
                         return result;
