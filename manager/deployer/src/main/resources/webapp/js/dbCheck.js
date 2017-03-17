@@ -35,3 +35,6 @@ function callback2(msg) {
         result.innerHTML = msg;
     }
 }
+
+function changeform(){
+}
