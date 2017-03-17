@@ -88,7 +88,7 @@ public class DelayStatRuleMonitor extends AbstractRuleMonitor {
         String matchValue = rule.getMatchValue();
         matchValue = StringUtils.substringBeforeLast(matchValue, "@");
         Long maxDelayTime = Long.parseLong(StringUtils.trim(matchValue));
-        if (delayTime >= maxDelayTime * 1000) {
+        if (delayTime >= maxDelayTime) {
             sendAlarm(rule, String.format(DELAY_TIME_MESSAGE, rule.getPipelineId(), delayTime));
             return true;
         }
