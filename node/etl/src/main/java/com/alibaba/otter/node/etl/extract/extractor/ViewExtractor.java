@@ -53,16 +53,26 @@ public class ViewExtractor extends AbstractExtractor<DbBatch> {
          * Key = TableId<br>
          * Value = a List of this tableId's column need to sync<br>
          */
-        Map<Long, List<ColumnPair>> viewColumnPairs = new HashMap<Long, List<ColumnPair>>();
-        Map<Long, ColumnPairMode> viewColumnPairModes = new HashMap<Long, ColumnPairMode>();
+        Map<Long, Map<Long, List<ColumnPair>>> viewColumnPairs = new HashMap<Long, Map<Long, List<ColumnPair>>>();
+        Map<Long, Map<Long, ColumnPairMode>> viewColumnPairModes = new HashMap<Long, Map<Long, ColumnPairMode>>();
 
         for (DataMediaPair dataMediaPair : dataMediaPairs) {
             List<ColumnPair> columnPairs = dataMediaPair.getColumnPairs();
             // 设置ColumnPairMode
-            viewColumnPairModes.put(dataMediaPair.getSource().getId(), dataMediaPair.getColumnPairMode());
+            Map<Long, ColumnPairMode> oldModes = viewColumnPairModes.get(dataMediaPair.getSource().getId());            
+            if (oldModes == null) {
+            	oldModes = new HashMap<Long, ColumnPairMode>();            	
+            }            
+            oldModes.put(dataMediaPair.getTarget().getId(), dataMediaPair.getColumnPairMode());            
+        	viewColumnPairModes.put(dataMediaPair.getSource().getId(), oldModes);            
             // 如果没有columnPairs，则默认全字段同步，不做处理
             if (!CollectionUtils.isEmpty(columnPairs)) {
-                viewColumnPairs.put(dataMediaPair.getSource().getId(), columnPairs);
+            	Map<Long, List<ColumnPair>> oldPairs = viewColumnPairs.get(dataMediaPair.getSource().getId());
+            	if (oldPairs == null) {
+            		oldPairs = new HashMap<Long, List<ColumnPair>>();
+            	}
+            	oldPairs.put(dataMediaPair.getTarget().getId(), columnPairs);
+                viewColumnPairs.put(dataMediaPair.getSource().getId(), oldPairs);
             }
         }
 
@@ -73,14 +83,39 @@ public class ViewExtractor extends AbstractExtractor<DbBatch> {
                 continue;
             }
 
-            List<ColumnPair> columns = viewColumnPairs.get(eventData.getTableId());
-            if (!CollectionUtils.isEmpty(columns)) {
-                // 组装需要同步的Column
-                ColumnPairMode mode = viewColumnPairModes.get(eventData.getTableId());
-                eventData.setColumns(columnFilter(eventData.getColumns(), columns, mode));
-                eventData.setKeys(columnFilter(eventData.getKeys(), columns, mode));
+            Map<Long, List<ColumnPair>> columnsMap = viewColumnPairs.get(eventData.getTableId());            
+            if (!CollectionUtils.isEmpty(columnsMap)) {
+            	List<EventColumn> columnList = new ArrayList<EventColumn>();
+            	List<EventColumn> keyList = new ArrayList<EventColumn>();
+            	List<EventColumn> oldKeyList = new ArrayList<EventColumn>();
+            	Map<Long, ColumnPairMode> modeMap = viewColumnPairModes.get(eventData.getTableId());
+            	
+            	for (Map.Entry<Long, List<ColumnPair>> entry : columnsMap.entrySet()) {
+            		Long targetId = entry.getKey();
+            		List<ColumnPair> columns = entry.getValue();
+            		ColumnPairMode mode = modeMap.get(targetId);
+
+            		List<EventColumn> c = columnFilter(eventData.getColumns(), columns, mode);
+            		//合并到columnList中，保证元素不重复
+            		columnList.removeAll(c);
+            		columnList.addAll(c);
+            		
+            		List<EventColumn> k = columnFilter(eventData.getKeys(), columns, mode);            		
+            		//合并到keyList中，保证元素不重复
+            		keyList.removeAll(k);
+            		keyList.addAll(k);
+            		
+            		if (!CollectionUtils.isEmpty(eventData.getOldKeys())) {
+            			List<EventColumn> ok= columnFilter(eventData.getOldKeys(), columns, mode);
+            			//合并到oldKeyList中，保证元素不重复
+            			oldKeyList.removeAll(ok);
+            			oldKeyList.addAll(ok);
+                    }
+            	}
+            	eventData.setColumns(columnList);
+            	eventData.setKeys(keyList);
                 if (!CollectionUtils.isEmpty(eventData.getOldKeys())) {
-                    eventData.setOldKeys(columnFilter(eventData.getOldKeys(), columns, mode));
+                    eventData.setOldKeys(oldKeyList);
                 }
 
                 if (CollectionUtils.isEmpty(eventData.getKeys())) { // 无主键，报错
