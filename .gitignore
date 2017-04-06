@@ -13,3 +13,4 @@ antx.properties
 *.iml
 htdocs
 package-info.java
+.DS_Store

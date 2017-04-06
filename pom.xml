@@ -118,7 +118,7 @@
 		<file_encoding>UTF-8</file_encoding>
 		<spring-version>3.1.2.RELEASE</spring-version>
 		<jetty_verion>8.1.7.v20120910</jetty_verion>
-		<otter_canal_version>1.0.24-SNAPSHOT</otter_canal_version>
+		<otter_canal_version>1.0.24</otter_canal_version>
 	</properties>
 
 	<modules>
@@ -168,7 +168,7 @@
 			<dependency>
 				<groupId>com.alibaba</groupId>
 				<artifactId>fastjson</artifactId>
-				<version>1.1.35</version>
+				<version>1.2.28</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.guava</groupId>
@@ -180,6 +180,11 @@
 				<artifactId>protobuf-java</artifactId>
 				<version>2.6.1</version>
 			</dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid</artifactId>
+                <version>1.0.25</version>
+            </dependency>
 			<!-- zookeeper -->
 			<dependency>
 				<groupId>org.apache.zookeeper</groupId>
