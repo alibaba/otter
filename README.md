@@ -1,3 +1,17 @@
+<h1>环境搭建 & 打包</h1>
+<strong>环境搭建：</strong>
+<ol>
+<li>进入$otter_home目录</li>
+<li>执行：mvn clean install</li>
+<li>导入maven项目。如果eclipse下报"Missing artifact com.oracle:ojdbc14:jar:10.2.0.3.0"，修改$otter_home/pom.xml中"${user.dir}/lib/ojdbc14-10.2.0.3.0.jar"为绝对路径，比如"d:/lib/ojdbc14-10.2.0.3.0.jar" </li>
+</ol>
+<strong>打包：</strong>
+<ol>
+<li>进入$otter_home目录</li>
+<li>执行：mvn clean install -Dmaven.test.skip -Denv=release</li>
+<li>发布包位置：$otter_home/target</li>
+</ol>
+
 <h1>
 <a name="%E9%A1%B9%E7%9B%AE%E8%83%8C%E6%99%AF" class="anchor" href="#%E9%A1%B9%E7%9B%AE%E8%83%8C%E6%99%AF"><span class="octicon octicon-link"></span></a>项目背景</h1>
 <p>
@@ -21,7 +35,7 @@
 <p> </p>
 <h1>
 <a name="%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86" class="anchor" href="#%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="octicon octicon-link"></span></a>工作原理</h1>
-<p><img width="848" src="https://github-camo.global.ssl.fastly.net/2988fbbc7ddfe94ed027cd71720b1ffa5912a635/687474703a2f2f646c322e69746579652e636f6d2f75706c6f61642f6174746163686d656e742f303038382f313138392f64343230636131342d326438302d336435352d383038312d6239303833363036613830312e6a7067" height="303" alt=""></p>
+<p><img width="848" src="https://camo.githubusercontent.com/2988fbbc7ddfe94ed027cd71720b1ffa5912a635/687474703a2f2f646c322e69746579652e636f6d2f75706c6f61642f6174746163686d656e742f303038382f313138392f64343230636131342d326438302d336435352d383038312d6239303833363036613830312e6a7067" height="303" alt=""></p>
 <p>原理描述：</p>
 <p>1.   基于Canal开源产品，获取数据库增量日志数据。 什么是Canal,  请<a href="https://github.com/alibaba/canal">点击</a></p>
 <p>2.   典型管理系统架构，manager(web管理)+node(工作节点)</p>
@@ -75,3 +89,9 @@ otter之前开源的一个子项目，开源链接地址：<a href="http://githu
 <p><span>3.  </span><span>新浪微博： agapple0002</span></p>
 <p><span>4.  </span><span>报告issue：</span><a href="https://github.com/alibaba/otter/issues">issues</a></p>
 <p> </p>
+<pre>
+【招聘】阿里巴巴中间件团队招聘JAVA高级工程师
+岗位主要为技术型内容(非业务部门)，阿里中间件整个体系对于未来想在技术上有所沉淀的同学还是非常有帮助的
+工作地点：杭州、北京均可. ps. 阿里待遇向来都是不错的，有意者可以QQ、微博私聊. 
+具体招聘内容：https://job.alibaba.com/zhaopin/position_detail.htm?positionId=32666
+</pre>
