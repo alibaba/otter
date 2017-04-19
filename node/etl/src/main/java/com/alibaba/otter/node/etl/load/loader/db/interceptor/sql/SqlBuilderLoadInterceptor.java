@@ -52,8 +52,9 @@ public class SqlBuilderLoadInterceptor extends AbstractLoadInterceptor<DbLoadCon
         String schemaName = (currentData.isWithoutSchema() ? null : currentData.getSchemaName());
         // 注意insert/update语句对应的字段数序都是将主键排在后面
         if (type.isInsert()) {
-            if (CollectionUtils.isEmpty(currentData.getColumns()) && sqlTemplate instanceof OracleSqlTemplate) { // 如果表为全主键，直接进行insert
-                                                                                                                 // sql
+            if (CollectionUtils.isEmpty(currentData.getColumns())
+                && (dbDialect.isDRDS() || sqlTemplate instanceof OracleSqlTemplate)) { // 如果表为全主键，直接进行insert
+                // sql
                 sql = sqlTemplate.getInsertSql(schemaName,
                     currentData.getTableName(),
                     buildColumnNames(currentData.getKeys()),
@@ -87,7 +88,12 @@ public class SqlBuilderLoadInterceptor extends AbstractLoadInterceptor<DbLoadCon
                 // 需要考虑主键变更的场景
                 // 构造sql如下：update table xxx set pk = newPK where pk = oldPk
                 keyColumns = buildColumnNames(currentData.getOldKeys());
-                otherColumns = buildColumnNames(currentData.getUpdatedColumns(), currentData.getKeys());
+                // 这里需要精确获取变更的主键,因为目标为DRDS时主键会包含拆分键,正常的原主键变更只更新对应的单主键列即可
+                if (dbDialect.isDRDS()) {
+                    otherColumns = buildColumnNames(currentData.getUpdatedColumns(), currentData.getUpdatedKeys());
+                } else {
+                    otherColumns = buildColumnNames(currentData.getUpdatedColumns(), currentData.getKeys());
+                }
             } else {
                 keyColumns = buildColumnNames(currentData.getKeys());
                 otherColumns = buildColumnNames(currentData.getUpdatedColumns());

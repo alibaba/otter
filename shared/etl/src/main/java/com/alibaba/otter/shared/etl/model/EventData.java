@@ -268,6 +268,20 @@ public class EventData implements ObjectData, Serializable {
         return columns;
     }
 
+    /**
+     * 返回所有变更的主键字段
+     */
+    public List<EventColumn> getUpdatedKeys() {
+        List<EventColumn> columns = new ArrayList<EventColumn>();
+        for (EventColumn column : this.keys) {
+            if (column.isUpdate()) {
+                columns.add(column);
+            }
+        }
+
+        return columns;
+    }
+
     private List<EventColumn> cloneColumn(List<EventColumn> columns) {
         if (columns == null) {
             return null;
