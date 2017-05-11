@@ -87,8 +87,10 @@ public abstract class AbstractHttpPipe<T, KEY extends HttpPipeKey> implements Pi
                     File htdocsDirFile = new File(htdocsDir);
                     File[] htdocsFiles = htdocsDirFile.listFiles();
                     Set<File> files = Sets.newHashSet();
-                    for (File htdocsFile : htdocsFiles) {
-                        files.add(htdocsFile);
+                    if (htdocsFiles != null) {
+                        for (File htdocsFile : htdocsFiles) {
+                            files.add(htdocsFile);
+                        }
                     }
                     if (downloadDir.equals(htdocsDir) == false) {
                         File downloadDirFile = new File(downloadDir);
