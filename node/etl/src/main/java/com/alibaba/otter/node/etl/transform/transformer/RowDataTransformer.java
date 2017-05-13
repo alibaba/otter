@@ -128,7 +128,12 @@ public class RowDataTransformer extends AbstractOtterTransformer<EventData, Even
             context.getDataMediaPair(),
             translateColumnNames,
             tableHolder);
-
+     
+        //变更的字段不在映射范围内，忽略，返回null
+        if (CollectionUtils.isEmpty(otherColumns) && CollectionUtils.isEmpty(result.getOldKeys())) {
+        	return null;
+        }
+        
         result.setColumns(otherColumns);
         return result;
     }
@@ -249,8 +254,9 @@ public class RowDataTransformer extends AbstractOtterTransformer<EventData, Even
 
         String columnName = translateColumnName(scolumn.getColumnName(), dataMediaPair, translateColumnNames);
         if (StringUtils.isBlank(columnName)) {
-            throw new TransformException("can't translate column name:" + scolumn.getColumnName() + "in pair:"
-                                         + dataMediaPair.toString());
+//            throw new TransformException("can't translate column name:" + scolumn.getColumnName() + "in pair:"
+//                                         + dataMediaPair.toString());
+            return null;
         }
 
         // 特殊处理
@@ -355,7 +361,8 @@ public class RowDataTransformer extends AbstractOtterTransformer<EventData, Even
 
         Collection<String> tColumnNames = translateDict.get(srcColumnName);
         if (CollectionUtils.isEmpty(tColumnNames)) {
-            throw new TransformException(srcColumnName + " is not found in column pairs: " + translateDict.toString());
+//            throw new TransformException(srcColumnName + " is not found in column pairs: " + translateDict.toString());
+            return null;
         }
         String columnName = tColumnNames.iterator().next();
 
