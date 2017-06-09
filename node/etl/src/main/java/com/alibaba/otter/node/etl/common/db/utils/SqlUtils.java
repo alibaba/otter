@@ -131,7 +131,7 @@ public class SqlUtils {
         // 设置变量
         String sourceValue = value;
         if (SqlUtils.isTextType(sqlType)) {
-            if ((sourceValue == null) || (true == StringUtils.isEmpty(sourceValue) && isEmptyStringNulled)) {
+            if ((sourceValue == null) || (StringUtils.isEmpty(sourceValue) && isEmptyStringNulled)) {
                 return isRequired ? REQUIRED_FIELD_NULL_SUBSTITUTE : null;
             } else {
                 return sourceValue;
