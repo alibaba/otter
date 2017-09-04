@@ -57,7 +57,7 @@
     ]]></delete>
     
     
-    <select id="findDataMatrixByGroupKey" parameterClass="string" resultClass="dataMatrix">
+    <select id="findDataMatrixByGroupKey" parameterClass="string" resultMap="dataMatrixResult">
 		select
 		<include refid="allColumns" />
 		from DATA_MATRIX
