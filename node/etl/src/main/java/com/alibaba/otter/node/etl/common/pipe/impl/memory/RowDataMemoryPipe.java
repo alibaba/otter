@@ -25,6 +25,7 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -65,7 +66,10 @@ public class RowDataMemoryPipe extends AbstractMemoryPipe<DbBatch, MemoryPipeKey
     }
 
     public DbBatch get(MemoryPipeKey key) {
-        return cache.remove(key);
+        //return cache.remove(key); edit by liyc
+        DbBatch  x=cache.getIfPresent(key);
+        cache.invalidate(key);
+        return x;
     }
 
     // 处理对应的附件

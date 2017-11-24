@@ -16,6 +16,7 @@
 
 package com.alibaba.otter.node.etl.common.db.dialect;
 
+import com.alibaba.otter.node.etl.common.db.dialect.clickhouse.ClickHouseDialect;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.lob.LobHandler;
@@ -32,6 +33,7 @@ public class DbDialectGenerator {
 
     protected static final String ORACLE      = "oracle";
     protected static final String MYSQL       = "mysql";
+    protected static final String CLICKHOUSE  = "ClickHouse";
     protected static final String TDDL_GROUP  = "TGroupDatabase";
     protected static final String TDDL_CLIENT = "TDDL";
 
@@ -41,7 +43,7 @@ public class DbDialectGenerator {
     protected DbDialect generate(JdbcTemplate jdbcTemplate, String databaseName, String databaseNameVersion,
                                  int databaseMajorVersion, int databaseMinorVersion, DataMediaType dataMediaType) {
         DbDialect dialect = null;
-
+        //TODO add by liyc 如果要添加库，要在这里添加
         if (StringUtils.startsWithIgnoreCase(databaseName, ORACLE)) { // for
                                                                       // oracle
             dialect = new OracleDialect(jdbcTemplate,
@@ -57,6 +59,13 @@ public class DbDialectGenerator {
                 databaseNameVersion,
                 databaseMajorVersion,
                 databaseMinorVersion);
+        } else if (StringUtils.startsWithIgnoreCase(databaseName,CLICKHOUSE )) { // for
+                                                                                // clickhouse
+            dialect = new ClickHouseDialect(jdbcTemplate,
+                    oracleLobHandler,
+                    databaseName,
+                    databaseMajorVersion,
+                    databaseMinorVersion);
         } else if (StringUtils.startsWithIgnoreCase(databaseName, TDDL_GROUP)) { // for
                                                                                  // tddl
                                                                                  // group

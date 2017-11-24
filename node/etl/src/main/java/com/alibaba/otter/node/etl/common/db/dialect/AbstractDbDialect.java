@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.cache.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.NestableRuntimeException;
 import org.apache.ddlutils.model.Table;
@@ -41,8 +42,8 @@ import com.alibaba.otter.node.etl.common.datasource.DataSourceService;
 import com.alibaba.otter.shared.common.utils.meta.DdlUtils;
 import com.alibaba.otter.shared.common.utils.meta.DdlUtilsFilter;
 import com.google.common.base.Function;
-import com.google.common.collect.GenericMapMaker;
-import com.google.common.collect.MapEvictionListener;
+//import com.google.common.collect.GenericMapMaker;
+//import com.google.common.collect.MapEvictionListener;
 import com.google.common.collect.MapMaker;
 
 /**
@@ -60,7 +61,7 @@ public abstract class AbstractDbDialect implements DbDialect {
     protected JdbcTemplate             jdbcTemplate;
     protected TransactionTemplate      transactionTemplate;
     protected LobHandler               lobHandler;
-    protected Map<List<String>, Table> tables;
+    protected LoadingCache<List<String>, Table> tables;
 
     public AbstractDbDialect(final JdbcTemplate jdbcTemplate, LobHandler lobHandler){
         this.jdbcTemplate = jdbcTemplate;
@@ -105,10 +106,11 @@ public abstract class AbstractDbDialect implements DbDialect {
     public Table findTable(String schema, String table, boolean useCache) {
         List<String> key = Arrays.asList(schema, table);
         if (useCache == false) {
-            tables.remove(key);
+            //tables.remove(key); delete by liyc
+            tables.invalidate(key);
         }
 
-        return tables.get(key);
+        return tables.getUnchecked(key); //edit by liyc
     }
 
     public Table findTable(String schema, String table) {
@@ -117,10 +119,12 @@ public abstract class AbstractDbDialect implements DbDialect {
 
     public void reloadTable(String schema, String table) {
         if (StringUtils.isNotEmpty(table)) {
-            tables.remove(Arrays.asList(schema, table));
+            //tables.remove(Arrays.asList(schema, table)); delete by liyc
+            tables.invalidate(Arrays.asList(schema, table));
         } else {
             // 如果没有存在表名，则直接清空所有的table，重新加载
-            tables.clear();
+            //tables.clear(); delete by liyc
+            tables.cleanUp();
         }
     }
 
@@ -171,7 +175,7 @@ public abstract class AbstractDbDialect implements DbDialect {
     // ================================ helper method ==========================
 
     private void initTables(final JdbcTemplate jdbcTemplate) {
-        // soft引用设置，避免内存爆了
+        /* soft引用设置，避免内存爆了
         GenericMapMaker mapMaker = null;
         mapMaker = new MapMaker().softValues().evictionListener(new MapEvictionListener<List<String>, Table>() {
 
@@ -201,6 +205,35 @@ public abstract class AbstractDbDialect implements DbDialect {
                 }
             }
         });
+        */
+        RemovalListener<List<String>,Table> removalListener = new RemovalListener<List<String>,Table>() {
+            public void onRemoval(RemovalNotification<List<String>,Table> removal) {
+                logger.warn("Eviction For Table:" + removal.getValue());
+            }
+        };
+        this.tables =  CacheBuilder.newBuilder()
+                .maximumSize(100000)
+                .removalListener(removalListener)
+                .build(new CacheLoader<List<String>, Table>() {
+                    public Table load(List<String> names) {
+                        Assert.isTrue(names.size() == 2);
+                        try {
+                            beforeFindTable(jdbcTemplate, names.get(0), names.get(0), names.get(1));
+                            DdlUtilsFilter filter = getDdlUtilsFilter(jdbcTemplate, names.get(0), names.get(0), names.get(1));
+                            Table table = DdlUtils.findTable(jdbcTemplate, names.get(0), names.get(0), names.get(1), filter);
+                            afterFindTable(table, jdbcTemplate, names.get(0), names.get(0), names.get(1));
+                            if (table == null) {
+                                throw new NestableRuntimeException("no found table [" + names.get(0) + "." + names.get(1)
+                                        + "] , pls check");
+                            } else {
+                                return table;
+                            }
+                        } catch (Exception e) {
+                            throw new NestableRuntimeException("find table [" + names.get(0) + "." + names.get(1) + "] error",
+                                    e);
+                        }
+                    }
+                });
     }
 
     protected DdlUtilsFilter getDdlUtilsFilter(JdbcTemplate jdbcTemplate, String catalogName, String schemaName,

@@ -98,7 +98,9 @@ public class ColumnPairAction extends AbstractAction {
                 columnPair.setDataMediaPairId(dataMediaPairId);
                 columnPairs.add(columnPair);
             }
-        } else if (targetMedia.getSource().getType().isMysql() || targetMedia.getSource().getType().isOracle()) {
+        } else if (targetMedia.getSource().getType().isMysql()
+                || targetMedia.getSource().getType().isOracle()
+                || targetMedia.getSource().getType().isClickHouse()) {
             for (ColumnPair columnPair : columnPairsInDb) {
                 int i = 0;
                 for (String sourceColumnName : sourceColumnNames) {

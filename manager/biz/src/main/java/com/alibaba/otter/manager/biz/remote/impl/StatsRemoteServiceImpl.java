@@ -24,6 +24,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -61,8 +64,8 @@ public class StatsRemoteServiceImpl implements StatsRemoteService {
     private ThroughputStatService                          throughputStatService;
     private Long                                           statUnit     = 60 * 1000L;                                           //统计周期，默认60秒
     private ScheduledThreadPoolExecutor                    scheduler;
-    private Map<Long, AvgStat>                             delayStats;
-    private Map<Long, Map<ThroughputType, ThroughputStat>> throughputStats;
+    private LoadingCache<Long, AvgStat> delayStats;
+    private LoadingCache<Long, Map<ThroughputType, ThroughputStat>> throughputStats;
 
     public StatsRemoteServiceImpl(){
         // 注册一下事件处理
@@ -70,6 +73,7 @@ public class StatsRemoteServiceImpl implements StatsRemoteService {
         CommunicationRegistry.regist(StatisticsEventType.tableStat, this);
         CommunicationRegistry.regist(StatisticsEventType.throughputStat, this);
 
+        /* delete by liyc
         delayStats = new MapMaker().makeComputingMap(new Function<Long, AvgStat>() {
 
             public AvgStat apply(Long pipelineId) {
@@ -82,7 +86,20 @@ public class StatsRemoteServiceImpl implements StatsRemoteService {
                 return new HashMap<ThroughputType, ThroughputStat>();
             }
         });
+        */
+        delayStats = CacheBuilder.newBuilder().build(new CacheLoader<Long, AvgStat>() {
 
+            public AvgStat load(Long pipelineId) {
+                return new AvgStat();
+            }
+        });
+
+        throughputStats = CacheBuilder.newBuilder().build(new CacheLoader<Long, Map<ThroughputType, ThroughputStat>>() {
+
+            public Map<ThroughputType, ThroughputStat> load(Long pipelineId) {
+                return new HashMap<ThroughputType, ThroughputStat>();
+            }
+        });
         scheduler = new ScheduledThreadPoolExecutor(DEFAULT_POOL, new NamedThreadFactory("Otter-Statistics-Server"),
                                                     new ThreadPoolExecutor.CallerRunsPolicy());
         if (statUnit > 0) {
@@ -126,7 +143,7 @@ public class StatsRemoteServiceImpl implements StatsRemoteService {
             delayStatService.createDelayStat(stat);
         } else {
             synchronized (delayStats) {
-                delayStats.get(count.getPipelineId()).merge(stat);
+                delayStats.getUnchecked(count.getPipelineId()).merge(stat); //edit by liyc
             }
         }
     }
@@ -141,7 +158,7 @@ public class StatsRemoteServiceImpl implements StatsRemoteService {
         } else {
             synchronized (throughputStats) {
                 for (ThroughputStat stat : event.getStats()) {
-                    Map<ThroughputType, ThroughputStat> data = throughputStats.get(stat.getPipelineId());
+                    Map<ThroughputType, ThroughputStat> data = throughputStats.getUnchecked(stat.getPipelineId()); //edit by liyc
                     ThroughputStat old = data.get(stat.getType());
                     if (old != null) {
                         //执行合并
@@ -173,7 +190,7 @@ public class StatsRemoteServiceImpl implements StatsRemoteService {
     private void flushDelayStat() {
         synchronized (delayStats) {
             // 需要做同步，避免delay数据丢失
-            for (Map.Entry<Long, AvgStat> stat : delayStats.entrySet()) {
+            for (Map.Entry<Long, AvgStat> stat : delayStats.asMap().entrySet()) { //edit by liyc
                 if (stat.getValue().count.get() > 0) {
                     DelayStat delay = new DelayStat();
                     delay.setPipelineId(stat.getKey());
@@ -182,19 +199,19 @@ public class StatsRemoteServiceImpl implements StatsRemoteService {
                     delayStatService.createDelayStat(delay);
                 }
             }
-            delayStats.clear();
+            delayStats.cleanUp(); //edit by liyc
         }
     }
 
     private void flushThroughputStat() {
         synchronized (throughputStats) {
-            Collection<Map<ThroughputType, ThroughputStat>> stats = throughputStats.values();
+            Collection<Map<ThroughputType, ThroughputStat>> stats = throughputStats.asMap().values(); //edit by liyc
             for (Map<ThroughputType, ThroughputStat> stat : stats) {
                 for (ThroughputStat data : stat.values()) {
                     throughputStatService.createOrUpdateThroughput(data);
                 }
             }
-            throughputStats.clear();
+            throughputStats.cleanUp(); //edit by liyc
         }
     }
 

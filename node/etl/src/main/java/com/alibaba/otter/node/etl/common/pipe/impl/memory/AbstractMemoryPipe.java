@@ -19,6 +19,9 @@ package com.alibaba.otter.node.etl.common.pipe.impl.memory;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+//import com.google.common.cache.CacheLoader;
 import org.springframework.beans.factory.InitializingBean;
 
 import com.alibaba.otter.node.etl.common.pipe.Pipe;
@@ -35,11 +38,15 @@ public abstract class AbstractMemoryPipe<T, KEY extends MemoryPipeKey> implement
 
     protected Long                        timeout = 60 * 1000L; // 对应的超时时间,1分钟
 
-    protected Map<MemoryPipeKey, DbBatch> cache;
+    protected Cache<MemoryPipeKey, DbBatch> cache;
 
     public void afterPropertiesSet() throws Exception {
+
+        /* delete by liyc
         // 一定要设置过期时间，因为针对rollback操作，不会有后续的节点来获取数据，需要自动过期删除掉
         cache = new MapMaker().expireAfterWrite(timeout, TimeUnit.MILLISECONDS).softValues().makeMap();
+        */
+        cache = CacheBuilder.newBuilder().expireAfterWrite(timeout, TimeUnit.MILLISECONDS).softValues().build();
     }
 
     // ============== setter / getter ===============

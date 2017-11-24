@@ -26,6 +26,9 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -209,9 +212,19 @@ public class DataBatchLoader implements OtterLoader<DbBatch, List<LoadContext>>,
      */
     private List<RowBatch> split(RowBatch rowBatch) {
         final Identity identity = rowBatch.getIdentity();
+        /*
         Map<DataMediaSource, RowBatch> result = new MapMaker().makeComputingMap(new Function<DataMediaSource, RowBatch>() {
 
             public RowBatch apply(DataMediaSource input) {
+                RowBatch rowBatch = new RowBatch();
+                rowBatch.setIdentity(identity);
+                return rowBatch;
+            }
+        });
+        */
+        LoadingCache<DataMediaSource, RowBatch> result = CacheBuilder.newBuilder().build(new CacheLoader<DataMediaSource, RowBatch>() {
+
+            public RowBatch load(DataMediaSource input) {
                 RowBatch rowBatch = new RowBatch();
                 rowBatch.setIdentity(identity);
                 return rowBatch;
@@ -222,10 +235,10 @@ public class DataBatchLoader implements OtterLoader<DbBatch, List<LoadContext>>,
             // 获取介质信息
             DataMedia media = ConfigHelper.findDataMedia(configClientService.findPipeline(identity.getPipelineId()),
                                                          eventData.getTableId());
-            result.get(media.getSource()).merge(eventData); // 归类
+            result.getUnchecked(media.getSource()).merge(eventData); // 归类 edit by liyc
         }
 
-        return new ArrayList<RowBatch>(result.values());
+        return new ArrayList<RowBatch>(result.asMap().values());
     }
 
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {

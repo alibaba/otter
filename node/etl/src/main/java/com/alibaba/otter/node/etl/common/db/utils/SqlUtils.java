@@ -35,7 +35,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public class SqlUtils {
 
-    public static final String                  REQUIRED_FIELD_NULL_SUBSTITUTE = " ";
+    public static final String                  REQUIRED_FIELD_NULL_SUBSTITUTE = "";
     public static final String                  SQLDATE_FORMAT                 = "yyyy-MM-dd";
     public static final String                  TIMESTAMP_FORMAT               = "yyyy-MM-dd HH:mm:ss";
     private static final Map<Integer, Class<?>> sqlTypeToJavaTypeMap           = new HashMap<Integer, Class<?>>();

@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.cache.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.NestableRuntimeException;
 import org.apache.ddlutils.model.Table;
@@ -30,8 +31,8 @@ import org.springframework.util.Assert;
 import com.alibaba.otter.node.etl.common.db.dialect.AbstractDbDialect;
 import com.alibaba.otter.shared.common.utils.meta.DdlUtils;
 import com.google.common.base.Function;
-import com.google.common.collect.GenericMapMaker;
-import com.google.common.collect.MapEvictionListener;
+//import com.google.common.collect.GenericMapMaker;
+//import com.google.common.collect.MapEvictionListener;
 import com.google.common.collect.MapMaker;
 
 /**
@@ -43,7 +44,7 @@ import com.google.common.collect.MapMaker;
 public class MysqlDialect extends AbstractDbDialect {
 
     private boolean                   isDRDS = false;
-    private Map<List<String>, String> shardColumns;
+    private LoadingCache<List<String>, String> shardColumns;
 
     public MysqlDialect(JdbcTemplate jdbcTemplate, LobHandler lobHandler){
         super(jdbcTemplate, lobHandler);
@@ -62,7 +63,7 @@ public class MysqlDialect extends AbstractDbDialect {
     }
 
     private void initShardColumns() {
-        // soft引用设置，避免内存爆了
+        /* soft引用设置，避免内存爆了 delete by liyc
         GenericMapMaker mapMaker = null;
         mapMaker = new MapMaker().softValues().evictionListener(new MapEvictionListener<List<String>, Table>() {
 
@@ -88,6 +89,31 @@ public class MysqlDialect extends AbstractDbDialect {
                 }
             }
         });
+        */
+        RemovalListener<List<String>,String> removalListener = new RemovalListener<List<String>,String>() {
+            public void onRemoval(RemovalNotification<List<String>,String> removal) {
+                logger.warn("Eviction For Table:" + removal.getValue());
+            }
+        };
+        this.shardColumns = CacheBuilder.newBuilder()
+                .maximumSize(100000)
+                .removalListener(removalListener)
+                .build(new CacheLoader<List<String>, String>() {
+                        public String load(List<String> names) {
+                            Assert.isTrue(names.size() == 2);
+                            try {
+                                String result = DdlUtils.getShardKeyByDRDS(jdbcTemplate, names.get(0), names.get(0), names.get(1));
+                                if (StringUtils.isEmpty(result)) {
+                                    return "";
+                                } else {
+                                    return result;
+                                }
+                            } catch (Exception e) {
+                                throw new NestableRuntimeException("find table [" + names.get(0) + "." + names.get(1) + "] error",
+                                        e);
+                            }
+                        }
+                    });
     }
 
     public boolean isCharSpacePadded() {
@@ -116,7 +142,7 @@ public class MysqlDialect extends AbstractDbDialect {
 
     public String getShardColumns(String schema, String table) {
         if (isDRDS()) {
-            return shardColumns.get(Arrays.asList(schema, table));
+            return shardColumns.getUnchecked(Arrays.asList(schema, table)); //edit by liyc
         } else {
             return null;
         }

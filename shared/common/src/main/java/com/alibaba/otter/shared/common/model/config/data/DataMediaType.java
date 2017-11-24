@@ -35,10 +35,16 @@ public enum DataMediaType {
     /** napoli */
     NAPOLI,
     /** diamond push for us */
-    DIAMOND_PUSH;
+    DIAMOND_PUSH,
+    /** CLICKHOUSE */
+    CLICKHOUSE;
 
     public boolean isMysql() {
         return this.equals(DataMediaType.MYSQL);
+    }
+
+    public boolean isClickHouse() {
+        return this.equals(DataMediaType.CLICKHOUSE);
     }
 
     public boolean isOracle() {

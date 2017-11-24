@@ -19,6 +19,9 @@ package com.alibaba.otter.manager.biz.common.arbitrate;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.springframework.beans.factory.InitializingBean;
 
 import com.alibaba.otter.manager.biz.config.channel.ChannelService;
@@ -45,7 +48,7 @@ public class ArbitrateConfigImpl implements ArbitrateConfig, InitializingBean {
     private static final Long                  DEFAULT_PERIOD = 60 * 1000L;
     private Long                               timeout        = DEFAULT_PERIOD;
     private RefreshMemoryMirror<Long, Channel> channelCache;
-    private Map<Long, Long>                    channelMapping;
+    private LoadingCache<Long, Long> channelMapping;
     private ChannelService                     channelService;
     private NodeService                        nodeService;
     private RefreshMemoryMirror<Long, Node>    nodeCache;
@@ -68,12 +71,12 @@ public class ArbitrateConfigImpl implements ArbitrateConfig, InitializingBean {
     }
 
     public Channel findChannelByPipelineId(Long pipelineId) {
-        Long channelId = channelMapping.get(pipelineId);
+        Long channelId = channelMapping.getUnchecked(pipelineId); //edit by liyc
         return channelCache.get(channelId);
     }
 
     public Pipeline findOppositePipeline(Long pipelineId) {
-        Long channelId = channelMapping.get(pipelineId);
+        Long channelId = channelMapping.getUnchecked(pipelineId); //edit by liyc
         Channel channel = channelCache.get(channelId);
         List<Pipeline> pipelines = channel.getPipelines();
         for (Pipeline pipeline : pipelines) {
@@ -86,7 +89,7 @@ public class ArbitrateConfigImpl implements ArbitrateConfig, InitializingBean {
     }
 
     public Pipeline findPipeline(Long pipelineId) {
-        Long channelId = channelMapping.get(pipelineId);
+        Long channelId = channelMapping.getUnchecked(pipelineId); //edit by liyc
         Channel channel = channelCache.get(channelId);
         List<Pipeline> pipelines = channel.getPipelines();
         for (Pipeline pipeline : pipelines) {
@@ -100,6 +103,7 @@ public class ArbitrateConfigImpl implements ArbitrateConfig, InitializingBean {
 
     public void afterPropertiesSet() throws Exception {
         // 获取一下nid变量
+        /* delete by liyc
         channelMapping = new MapMaker().makeComputingMap(new Function<Long, Long>() {
 
             public Long apply(Long pipelineId) {
@@ -115,7 +119,22 @@ public class ArbitrateConfigImpl implements ArbitrateConfig, InitializingBean {
 
             }
         });
+        */
+        channelMapping = CacheBuilder.newBuilder().build(new CacheLoader<Long, Long>() {
 
+            public Long load(Long pipelineId) {
+                // 处理下pipline -> channel映射关系不存在的情况
+                Channel channel = channelService.findByPipelineId(pipelineId);
+                if (channel == null) {
+                    throw new ConfigException("No Such Channel by pipelineId[" + pipelineId + "]");
+                }
+
+                updateMapping(channel, pipelineId);// 排除下自己
+                channelCache.put(channel.getId(), channel);// 更新下channelCache
+                return channel.getId();
+
+            }
+        });
         channelCache = new RefreshMemoryMirror<Long, Channel>(timeout, new ComputeFunction<Long, Channel>() {
 
             public Channel apply(Long key, Channel oldValue) {

@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 
 import javax.sql.DataSource;
 
+import com.google.common.cache.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +32,8 @@ import com.alibaba.otter.common.push.datasource.DataSourceHanlder;
 import com.alibaba.otter.shared.common.model.config.data.DataMediaType;
 import com.alibaba.otter.shared.common.model.config.data.db.DbMediaSource;
 import com.google.common.base.Function;
-import com.google.common.collect.GenericMapMaker;
-import com.google.common.collect.MapEvictionListener;
+//import com.google.common.collect.GenericMapMaker;
+//import com.google.common.collect.MapEvictionListener;
 import com.google.common.collect.MapMaker;
 
 /**
@@ -53,10 +54,10 @@ public class MediaPushDataSourceHandler implements DataSourceHanlder {
      * key = pipelineId<br>
      * value = key(dataMediaSourceId)-value(DataSource)<br>
      */
-    private Map<Long, Map<DbMediaSource, DataSource>> dataSources;
+    private LoadingCache<Long, LoadingCache<DbMediaSource, DataSource>> dataSources;
 
     public MediaPushDataSourceHandler(){
-        // 设置soft策略
+        /*设置soft策略 delete by liyc
         GenericMapMaker mapMaker = new MapMaker().softValues();
         mapMaker = ((MapMaker) mapMaker).evictionListener(new MapEvictionListener<Long, Map<DbMediaSource, DataSource>>() {
 
@@ -92,6 +93,43 @@ public class MediaPushDataSourceHandler implements DataSourceHanlder {
                 });
             }
         });
+        */
+        RemovalListener<Long, LoadingCache<DbMediaSource, DataSource>> removalListener =
+                new RemovalListener<Long, LoadingCache<DbMediaSource, DataSource>>() {
+            public void onRemoval(RemovalNotification<Long, LoadingCache<DbMediaSource, DataSource>> removal) {
+                if (removal.getValue() == null) {
+                    return;
+                }
+
+                for (DataSource dataSource : removal.getValue().asMap().values()) {
+                    try {
+                        MediaPushDataSource mediaPushDataSource = (MediaPushDataSource) dataSource;
+                        mediaPushDataSource.destory();
+                    } catch (SQLException e) {
+                        log.error("ERROR ## close the datasource has an error", e);
+                    }
+                }
+            }
+        };
+
+        // 构建第一层map
+        dataSources = CacheBuilder.newBuilder()
+                .removalListener(removalListener).
+                        build(new CacheLoader<Long, LoadingCache<DbMediaSource, DataSource>>() {
+                        public LoadingCache<DbMediaSource, DataSource> load(Long pipelineId) {
+                            // 构建第二层map
+                            return  CacheBuilder.newBuilder().build(new CacheLoader<DbMediaSource, DataSource>() {
+
+                                public DataSource load(DbMediaSource dbMediaSource) {
+                                    return createDataSource(dbMediaSource.getUrl(), dbMediaSource.getUsername(),
+                                            dbMediaSource.getPassword(), dbMediaSource.getDriver(),
+                                            dbMediaSource.getType(), dbMediaSource.getEncode());
+                                }
+
+                            });
+                        }
+                    });
+
     }
 
     public boolean support(DbMediaSource dbMediaSource) {
@@ -106,7 +144,7 @@ public class MediaPushDataSourceHandler implements DataSourceHanlder {
     }
 
     public DataSource create(Long pipelineId, DbMediaSource dbMediaSource) {
-        return dataSources.get(pipelineId).get(dbMediaSource);
+        return dataSources.getUnchecked(pipelineId).getUnchecked(dbMediaSource); //edit by liyc
     }
 
     protected DataSource createDataSource(String url, String userName, String password, String driverClassName,
@@ -131,7 +169,9 @@ public class MediaPushDataSourceHandler implements DataSourceHanlder {
 
     @Override
     public boolean destory(Long pipelineId) {
+        /* delete by liyc
         Map<DbMediaSource, DataSource> sources = dataSources.remove(pipelineId);
+
         if (sources != null) {
             for (DataSource dataSource : sources.values()) {
                 try {
@@ -144,7 +184,8 @@ public class MediaPushDataSourceHandler implements DataSourceHanlder {
 
             sources.clear();
         }
-
+        */
+        dataSources.invalidate(pipelineId);
         return true;
     }
 

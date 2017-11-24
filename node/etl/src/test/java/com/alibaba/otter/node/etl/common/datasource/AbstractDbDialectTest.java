@@ -69,6 +69,8 @@ public class AbstractDbDialectTest {
         if (dataMediaType.isOracle()) {
             dbcpDs.addConnectionProperty("restrictGetTables", "true");
             dbcpDs.setValidationQuery("select 1 from dual");
+        } else if (dataMediaType.isClickHouse()) {
+            dbcpDs.setValidationQuery("select 1");
         } else if (dataMediaType.isMysql()) {
             // open the batch mode for mysql since 5.1.8
             dbcpDs.addConnectionProperty("useServerPrepStmts", "true");

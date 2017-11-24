@@ -20,6 +20,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.I0Itec.zkclient.IZkStateListener;
 import org.apache.commons.lang.StringUtils;
 import org.apache.zookeeper.Watcher.Event.KeeperState;
@@ -39,12 +42,22 @@ public class ZooKeeperClient {
 
     private static String               cluster;
     private static int                  sessionTimeout = 10 * 1000;
+    /*
     private static Map<Long, ZkClientx> clients        = new MapMaker().makeComputingMap(new Function<Long, ZkClientx>() {
 
                                                            public ZkClientx apply(Long pipelineId) {
                                                                return createClient();
                                                            }
                                                        });
+                                                       */
+
+    private static LoadingCache<Long, ZkClientx> clients        = CacheBuilder.newBuilder().build(new CacheLoader<Long, ZkClientx>() {
+
+                                                           public ZkClientx load(Long pipelineId) {
+                                                               return createClient();
+                                                           }
+                                                       });
+
     private static Long                 defaultId      = 0L;
 
     /**
@@ -58,11 +71,11 @@ public class ZooKeeperClient {
      * 根据pipelineId获取对应的zookeeper客户端，每个pipelineId可以独立一个zookeeper链接，保证性能
      */
     public static ZkClientx getInstance(Long pipelineId) {
-        return clients.get(pipelineId);
-    }
+        return clients.getUnchecked(pipelineId);
+    } //edit by liyc
 
     public static void destory() {
-        for (ZkClientx zkClient : clients.values()) {
+        for (ZkClientx zkClient : clients.asMap().values()) { //edit by liyc
             zkClient.close();
         }
     }

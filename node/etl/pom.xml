@@ -55,6 +55,13 @@
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc14</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>ru.yandex.clickhouse</groupId>
+			<artifactId>clickhouse-jdbc</artifactId>
+			<version>0.1.24</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-compress</artifactId>

@@ -62,6 +62,12 @@
 			<artifactId>ojdbc14</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>ru.yandex.clickhouse</groupId>
+			<artifactId>clickhouse-jdbc</artifactId>
+			<version>0.1.24</version>
+		</dependency>
+
 		<!-- spring -->
 		<dependency>
 			<groupId>org.springframework</groupId>

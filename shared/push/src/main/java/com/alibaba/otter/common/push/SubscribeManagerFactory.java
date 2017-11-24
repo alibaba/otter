@@ -18,6 +18,9 @@ package com.alibaba.otter.common.push;
 
 import java.util.Map;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -35,6 +38,7 @@ public class SubscribeManagerFactory implements ApplicationContextAware {
 
     private static ApplicationContext                         context        = null;
 
+    /* delete by liyc
     private static final Map<SubscribeType, SubscribeManager> innerContainer = new MapMaker().makeComputingMap(new Function<SubscribeType, SubscribeManager>() {
 
                                                                                  @Override
@@ -42,6 +46,14 @@ public class SubscribeManagerFactory implements ApplicationContextAware {
                                                                                      return createSubsrcibeManager(input);
                                                                                  }
                                                                              });
+    */
+    private static final LoadingCache<SubscribeType, SubscribeManager> innerContainer =
+            CacheBuilder.newBuilder().build(new CacheLoader<SubscribeType, SubscribeManager>() {
+                @Override
+                public SubscribeManager load(SubscribeType input) {
+                    return createSubsrcibeManager(input);
+                }
+            });
 
     private static SubscribeManager createSubsrcibeManager(SubscribeType type) {
         SubscribeManager manager = null;
@@ -79,7 +91,7 @@ public class SubscribeManagerFactory implements ApplicationContextAware {
         if (type == null) {
             return null;
         }
-        SubscribeManager manager = (SubscribeManager) innerContainer.get(type);
+        SubscribeManager manager = (SubscribeManager) innerContainer.getUnchecked(type); //edit by liyc
         return manager;
     }
 

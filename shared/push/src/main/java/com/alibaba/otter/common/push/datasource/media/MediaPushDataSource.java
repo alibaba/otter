@@ -164,6 +164,8 @@ public class MediaPushDataSource implements DataSource {
                 dbcpDs.addConnectionProperty("characterEncoding", encoding);
             }
             dbcpDs.setValidationQuery("select 1");
+        }  else if (dataMediaType.isClickHouse()){
+            dbcpDs.setValidationQuery("select 1");
         } else {
             logger.error("ERROR ## Unknow database type");
         }

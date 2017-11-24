@@ -141,6 +141,9 @@ public class DataSourceChecker {
             } else if (sourceType.equalsIgnoreCase("ORACLE")) {
                 dbMediaSource.setType(DataMediaType.ORACLE);
                 dbMediaSource.setDriver("oracle.jdbc.driver.OracleDriver");
+            }else if (sourceType.equalsIgnoreCase("CLICKHOUSE")) {
+                dbMediaSource.setType(DataMediaType.CLICKHOUSE);
+                dbMediaSource.setDriver("ru.yandex.clickhouse.ClickHouseDriver");
             }
 
             dataSource = dataSourceCreator.createDataSource(dbMediaSource);
@@ -158,6 +161,10 @@ public class DataSourceChecker {
             String sql = null;
             if (sourceType.equals("MYSQL")) {
                 sql = "SHOW VARIABLES LIKE 'character_set_database'";
+            }else if (sourceType.equals("CLICKHOUSE")) {
+                // sql
+                // ="select * from V$NLS_PARAMETERS where parameter in('NLS_LANGUAGE','NLS_TERRITORY','NLS_CHARACTERSET')";
+                sql = "select  'UTF8'";
             } else if (sourceType.equals("ORACLE")) {
                 // sql
                 // ="select * from V$NLS_PARAMETERS where parameter in('NLS_LANGUAGE','NLS_TERRITORY','NLS_CHARACTERSET')";
@@ -180,6 +187,9 @@ public class DataSourceChecker {
                     if (!encode.toLowerCase().equals(defaultEncode)) {
                         return ENCODE_FAIL + defaultEncode;
                     }
+                }else if (sourceType.equals("CLICKHOUSE")) {
+                    // ORACLE查询服务器默认字符集需要管理员权限
+                    defaultEncode = "utf8";
                 }
 
             }

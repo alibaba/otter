@@ -19,6 +19,8 @@ package com.alibaba.otter.node.etl.common.pipe.impl.rpc;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import org.springframework.beans.factory.InitializingBean;
 
 import com.alibaba.otter.node.etl.common.pipe.Pipe;
@@ -42,10 +44,15 @@ public abstract class AbstractRpcPipe<T, KEY extends RpcPipeKey> implements Pipe
 
     protected Long                     timeout = 60 * 1000L; // 对应的超时时间,1分钟
 
-    protected Map<RpcPipeKey, DbBatch> cache;
+    protected Cache<RpcPipeKey, DbBatch> cache;
 
     public void afterPropertiesSet() throws Exception {
+        /* delete by liyc
         cache = new MapMaker().expireAfterWrite(timeout, TimeUnit.MILLISECONDS).softValues().makeMap();
+        */
+        cache = CacheBuilder.newBuilder()
+                .expireAfterWrite(timeout, TimeUnit.MILLISECONDS)
+                .softValues().build();
     }
 
     // rpc get操作事件

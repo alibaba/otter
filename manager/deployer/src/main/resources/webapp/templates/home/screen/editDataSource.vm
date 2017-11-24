@@ -45,6 +45,7 @@ $control.setTemplate("home:navigation.vm")
             <select id="sourceType" name="$dataMediaSourceGroup.type.key">			
 				<option value="MYSQL" #if($source.type.isMysql()) selected="selected" #end>MySQL</option>
 				<option value="ORACLE" #if($source.type.isOracle()) selected="selected" #end>Oracle</option>
+                <option value="CLICKHOUSE" #if($source.type.isClickHouse()) selected="selected" #end>ClickHouse</option>
 			</select><span class="red">*</span>
         </td>
 	  </tr>
@@ -103,6 +104,7 @@ $control.setTemplate("home:navigation.vm")
         <th>url示例说明</th>
         <td>
 			mysql例子: jdbc:mysql://10.20.144.15:3306<br/>
+            clickhouse例子 : jdbc:clickhouse://172.20.23.150:8123/default<br/>
 			oracle例子 : jdbc:oracle:thin:@10.20.144.29:1521:OINTEST<br/>
 			media例子 : jdbc:mysql://groupKey=key (更改 key)
 		</td> 

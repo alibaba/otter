@@ -54,11 +54,15 @@ public class DataMediaSourceAction extends AbstractAction {
         DataMediaSource dataMediaSource = new DataMediaSource();
         dataMediaSourceInfo.setProperties(dataMediaSource);
 
-        if (dataMediaSource.getType().isMysql() || dataMediaSource.getType().isOracle()) {
+        if (dataMediaSource.getType().isMysql()
+                || dataMediaSource.getType().isOracle()
+                || dataMediaSource.getType().isClickHouse()) {
             DbMediaSource dbMediaSource = new DbMediaSource();
             dataMediaSourceInfo.setProperties(dbMediaSource);
             if (dataMediaSource.getType().isMysql()) {
                 dbMediaSource.setDriver("com.mysql.jdbc.Driver");
+            } else if (dataMediaSource.getType().isClickHouse()) {
+                dbMediaSource.setDriver("ru.yandex.clickhouse.ClickHouseDriver");
             } else if (dataMediaSource.getType().isOracle()) {
                 dbMediaSource.setDriver("oracle.jdbc.driver.OracleDriver");
             }
@@ -105,6 +109,8 @@ public class DataMediaSourceAction extends AbstractAction {
 
         if (dbMediaSource.getType().isMysql()) {
             dbMediaSource.setDriver("com.mysql.jdbc.Driver");
+        } else if (dbMediaSource.getType().isClickHouse()) {
+            dbMediaSource.setDriver("ru.yandex.clickhouse.ClickHouseDriver");
         } else if (dbMediaSource.getType().isOracle()) {
             dbMediaSource.setDriver("oracle.jdbc.driver.OracleDriver");
         }

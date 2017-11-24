@@ -19,6 +19,9 @@ package com.alibaba.otter.shared.arbitrate.impl.setl.rpc;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.apache.commons.lang.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,14 +49,14 @@ import com.google.common.collect.MapMaker;
 public class RpcStageController extends ArbitrateLifeCycle implements ProcessListener {
 
     private static final Logger               logger                 = LoggerFactory.getLogger(RpcStageController.class);
-    private Map<StageType, ReplyProcessQueue> replys;
+    private LoadingCache<StageType, ReplyProcessQueue> replys;
     private Map<Long, StageProgress>          progress;
     private ProcessMonitor                    processMonitor;
     private volatile Long                     lastestLoadedProcessId = -1L;                                              // 最近一次同步成功的processId
 
     public RpcStageController(Long pipelineId){
         super(pipelineId);
-
+        /* delete by liyc
         replys = new MapMaker().makeComputingMap(new Function<StageType, ReplyProcessQueue>() {
 
             public ReplyProcessQueue apply(StageType input) {
@@ -64,7 +67,17 @@ public class RpcStageController extends ArbitrateLifeCycle implements ProcessLis
                 return new ReplyProcessQueue(size);
             }
         });
+        */
+        replys = CacheBuilder.newBuilder().build(new CacheLoader<StageType, ReplyProcessQueue>() {
 
+            public ReplyProcessQueue load(StageType input) {
+                int size = ArbitrateConfigUtils.getParallelism(getPipelineId()) * 10;
+                if (size < 100) {
+                    size = 100;
+                }
+                return new ReplyProcessQueue(size);
+            }
+        });
         progress = new MapMaker().makeMap();
         // 注册一下监听事件变化
         processMonitor = ArbitrateFactory.getInstance(pipelineId, ProcessMonitor.class);
@@ -77,7 +90,7 @@ public class RpcStageController extends ArbitrateLifeCycle implements ProcessLis
             throw new ArbitrateException("not support");
         }
 
-        return replys.get(stage).take();
+        return replys.getUnchecked(stage).take();//edit by liyc
     }
 
     /**
@@ -89,7 +102,8 @@ public class RpcStageController extends ArbitrateLifeCycle implements ProcessLis
 
     public void destory() {
         processMonitor.removeListener(this);
-        replys.clear();
+        //replys.clear(); edit by liyc
+        replys.invalidateAll();
         progress.clear();
     }
 
@@ -98,11 +112,11 @@ public class RpcStageController extends ArbitrateLifeCycle implements ProcessLis
         switch (stage) {
             case SELECT:
                 progress.put(etlEventData.getProcessId(), new StageProgress(StageType.SELECT, etlEventData));
-                replys.get(StageType.EXTRACT).offer(etlEventData.getProcessId());
+                replys.getUnchecked(StageType.EXTRACT).offer(etlEventData.getProcessId()); //edit by liyc
                 break;
             case EXTRACT:
                 progress.put(etlEventData.getProcessId(), new StageProgress(StageType.EXTRACT, etlEventData));
-                replys.get(StageType.TRANSFORM).offer(etlEventData.getProcessId());
+                replys.getUnchecked(StageType.TRANSFORM).offer(etlEventData.getProcessId()); //edit by liyc
                 break;
             case TRANSFORM:
                 progress.put(etlEventData.getProcessId(), new StageProgress(StageType.TRANSFORM, etlEventData));
@@ -135,7 +149,7 @@ public class RpcStageController extends ArbitrateLifeCycle implements ProcessLis
         // 针对上一个id为本地load成功的，直接忽略，触发下一个id
         Long processId = getMinTransformedProcessId(lastestLoadedProcessId);
         if (processId != null) {
-            replys.get(StageType.LOAD).offer(processId);
+            replys.getUnchecked(StageType.LOAD).offer(processId); //edit by liyc
         }
     }
 
@@ -188,7 +202,7 @@ public class RpcStageController extends ArbitrateLifeCycle implements ProcessLis
     public void processChanged(List<Long> processIds) {
         compareProgress(processIds);
 
-        for (ReplyProcessQueue replyProcessIds : replys.values()) {
+        for (ReplyProcessQueue replyProcessIds : replys.asMap().values()) { //edit by liyc
             compareReply(processIds, replyProcessIds);
         }
 

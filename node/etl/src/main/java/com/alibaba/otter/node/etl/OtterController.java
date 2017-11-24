@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import com.google.common.cache.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,12 +68,35 @@ public class OtterController implements NodeTaskListener, OtterControllerMBean {
     private static final Logger                   logger      = LoggerFactory.getLogger(OtterController.class);
 
     // 第一层为pipelineId，第二层为S.E.T.L模块
+    /* delete by liyc
     private Map<Long, Map<StageType, GlobalTask>> controllers = new MapMaker().makeComputingMap(new Function<Long, Map<StageType, GlobalTask>>() {
 
                                                                   public Map<StageType, GlobalTask> apply(Long pipelineId) {
                                                                       return new MapMaker().makeMap();
                                                                   }
                                                               });
+    */
+    private LoadingCache<Long, Map<StageType, GlobalTask>> controllers = CacheBuilder
+            .newBuilder()
+            .removalListener(new RemovalListener<Long, Map<StageType, GlobalTask>>() {
+                public void onRemoval(RemovalNotification<Long, Map<StageType, GlobalTask>> removal) {
+                    if (removal != null) {
+                        logger.info("INFO ## shutdown this pipeline sync ,the pipelineId = {} and tasks = {}",
+                                removal.getKey(),
+                                removal.getValue().keySet());
+                        stopPipeline(removal.getKey(),  removal.getValue());
+                    } else {
+                        logger.info("INFO ## this pipeline id = {} is not start sync", removal.getKey());
+                    }
+                }
+            })
+            .build(new CacheLoader<Long, Map<StageType, GlobalTask>>() {
+
+                public Map<StageType, GlobalTask> load(Long pipelineId) {
+                    return new MapMaker().makeMap();
+                }
+            });
+
     private ConfigClientService                   configClientService;
     private ArbitrateManageService                arbitrateManageService;
     private NodeTaskService                       nodeTaskService;
@@ -91,7 +115,7 @@ public class OtterController implements NodeTaskListener, OtterControllerMBean {
     }
 
     public void stop() throws Throwable {
-        for (Map<StageType, GlobalTask> tasks : controllers.values()) {
+        for (Map<StageType, GlobalTask> tasks : controllers.asMap().values()) {
             for (GlobalTask task : tasks.values()) {
                 try {
                     task.shutdown();
@@ -138,6 +162,7 @@ public class OtterController implements NodeTaskListener, OtterControllerMBean {
             boolean shutdown = nodeTask.isShutdown();
             Long pipelineId = nodeTask.getPipeline().getId();
             if (shutdown) {
+                /* delete by liyc
                 Map<StageType, GlobalTask> tasks = controllers.remove(pipelineId);
                 if (tasks != null) {
                     logger.info("INFO ## shutdown this pipeline sync ,the pipelineId = {} and tasks = {}", pipelineId,
@@ -146,6 +171,8 @@ public class OtterController implements NodeTaskListener, OtterControllerMBean {
                 } else {
                     logger.info("INFO ## this pipeline id = {} is not start sync", pipelineId);
                 }
+                */
+                controllers.invalidate(pipelineId);
             } else {
                 startPipeline(nodeTask);
             }
@@ -159,7 +186,7 @@ public class OtterController implements NodeTaskListener, OtterControllerMBean {
     public void startPipeline(NodeTask nodeTask) {
         Long pipelineId = nodeTask.getPipeline().getId();
         releasePipeline(pipelineId);
-        Map<StageType, GlobalTask> tasks = controllers.get(pipelineId);
+        Map<StageType, GlobalTask> tasks = controllers.getUnchecked(pipelineId); //edit by liyc
         // 处理具体的任务命令
         List<StageType> stage = nodeTask.getStage();
         List<TaskEvent> event = nodeTask.getEvent();
@@ -285,12 +312,12 @@ public class OtterController implements NodeTaskListener, OtterControllerMBean {
     }
 
     public int getRunningPipelineCount() {
-        return controllers.size();
+        return controllers.asMap().size(); //edit by liyc
     }
 
     public List<Long> getRunningPipelines() {
-        return new ArrayList<Long>(controllers.keySet());
-    }
+        return new ArrayList<Long>(controllers.asMap().keySet());
+    } //edit by liyc
 
     public int getThreadActiveSize() {
         if (executorService instanceof ThreadPoolExecutor) {
@@ -323,19 +350,19 @@ public class OtterController implements NodeTaskListener, OtterControllerMBean {
     }
 
     public boolean isSelectRunning(Long pipelineId) {
-        return controllers.get(pipelineId).containsKey(StageType.SELECT);
+        return controllers.getUnchecked(pipelineId).containsKey(StageType.SELECT); //edit by liyc
     }
 
     public boolean isExtractRunning(Long pipelineId) {
-        return controllers.get(pipelineId).containsKey(StageType.EXTRACT);
+        return controllers.getUnchecked(pipelineId).containsKey(StageType.EXTRACT);//edit by liyc
     }
 
     public boolean isTransformRunning(Long pipelineId) {
-        return controllers.get(pipelineId).containsKey(StageType.TRANSFORM);
+        return controllers.getUnchecked(pipelineId).containsKey(StageType.TRANSFORM); //edit by liyc
     }
 
     public boolean isLoadRunning(Long pipelineId) {
-        return controllers.get(pipelineId).containsKey(StageType.LOAD);
+        return controllers.getUnchecked(pipelineId).containsKey(StageType.LOAD); //edit by liyc
     }
 
     public String selectStageAggregation(Long pipelineId) {
@@ -371,7 +398,7 @@ public class OtterController implements NodeTaskListener, OtterControllerMBean {
     }
 
     private String pendingProcess(Long pipelineId, StageType stage) {
-        GlobalTask task = controllers.get(pipelineId).get(stage);
+        GlobalTask task = controllers.getUnchecked(pipelineId).get(stage); //edit by liyc
         if (task != null) {
             return "stage:" + stage + " , pending:[" + StringUtils.join(task.getPendingProcess(), ',') + "]";
         } else {

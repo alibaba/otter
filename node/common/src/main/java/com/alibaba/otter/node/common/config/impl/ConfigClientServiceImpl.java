@@ -19,6 +19,9 @@ package com.alibaba.otter.node.common.config.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +57,7 @@ public class ConfigClientServiceImpl implements InternalConfigClientService, Arb
     private Long                               nid;
     private NodeCommmunicationClient           nodeCommmunicationClient;
     private RefreshMemoryMirror<Long, Channel> channelCache;
-    private Map<Long, Long>                    channelMapping;                                                     // 将pipelineId映射为channelId
+    private LoadingCache<Long, Long> channelMapping;                                                     // 将pipelineId映射为channelId
     private RefreshMemoryMirror<Long, Node>    nodeCache;
 
     public ConfigClientServiceImpl(){
@@ -77,12 +80,12 @@ public class ConfigClientServiceImpl implements InternalConfigClientService, Arb
     }
 
     public Channel findChannelByPipelineId(Long pipelineId) {
-        Long channelId = channelMapping.get(pipelineId);
+        Long channelId = channelMapping.getUnchecked(pipelineId);//edit by liyc
         return channelCache.get(channelId);
     }
 
     public Pipeline findOppositePipeline(Long pipelineId) {
-        Long channelId = channelMapping.get(pipelineId);
+        Long channelId = channelMapping.getUnchecked(pipelineId); //edit by liyc
         Channel channel = channelCache.get(channelId);
         List<Pipeline> pipelines = channel.getPipelines();
         for (Pipeline pipeline : pipelines) {
@@ -95,7 +98,7 @@ public class ConfigClientServiceImpl implements InternalConfigClientService, Arb
     }
 
     public Pipeline findPipeline(Long pipelineId) {
-        Long channelId = channelMapping.get(pipelineId);
+        Long channelId = channelMapping.getUnchecked(pipelineId); //edit by liyc
         Channel channel = channelCache.get(channelId);
         List<Pipeline> pipelines = channel.getPipelines();
         for (Pipeline pipeline : pipelines) {
@@ -119,7 +122,7 @@ public class ConfigClientServiceImpl implements InternalConfigClientService, Arb
         }
 
         this.nid = Long.valueOf(nid);
-
+        /* delete by liyc
         channelMapping = new MapMaker().makeComputingMap(new Function<Long, Long>() {
 
             public Long apply(Long pipelineId) {
@@ -141,7 +144,28 @@ public class ConfigClientServiceImpl implements InternalConfigClientService, Arb
                 throw new ConfigException("No Such Channel by pipelineId[" + pipelineId + "]");
             }
         });
+        */
+        channelMapping = CacheBuilder.newBuilder().build(new CacheLoader<Long, Long>() {
 
+            public Long load(Long pipelineId) {
+                // 处理下pipline -> channel映射关系不存在的情况
+                FindChannelEvent event = new FindChannelEvent();
+                event.setPipelineId(pipelineId);
+                try {
+                    Object obj = nodeCommmunicationClient.callManager(event);
+                    if (obj != null && obj instanceof Channel) {
+                        Channel channel = (Channel) obj;
+                        updateMapping(channel, pipelineId);// 排除下自己
+                        channelCache.put(channel.getId(), channel);// 更新下channelCache
+                        return channel.getId();
+                    }
+                } catch (Exception e) {
+                    logger.error("call_manager_error", event.toString(), e);
+                }
+
+                throw new ConfigException("No Such Channel by pipelineId[" + pipelineId + "]");
+            }
+        });
         nodeCache = new RefreshMemoryMirror<Long, Node>(timeout, new ComputeFunction<Long, Node>() {
 
             public Node apply(Long key, Node oldValue) {

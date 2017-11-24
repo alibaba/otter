@@ -32,6 +32,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.alibaba.otter.node.etl.common.db.dialect.clickhouse.ClickHouseDialect;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.ddlutils.model.Column;
@@ -106,14 +107,17 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
 
     /**
      * 返回结果为已处理成功的记录
+     * add by liyc 这里做特殊处理，es不用启动多线程处理，clickhouse 需要验证线程池的稳定性
      */
+    //todo es client本来就是一个笨重的多线程程序
+
     public DbLoadContext load(RowBatch rowBatch, WeightController controller) {
         Assert.notNull(rowBatch);
         Identity identity = rowBatch.getIdentity();
         DbLoadContext context = buildContext(identity);
-
         try {
             List<EventData> datas = rowBatch.getDatas();
+            System.out.println("********************begin datas size " + datas.size()+"****************");
             context.setPrepareDatas(datas);
             // 执行重复录入数据过滤
             datas = context.getPrepareDatas();
@@ -129,6 +133,7 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
             interceptor.prepare(context);
             // 执行重复录入数据过滤
             datas = context.getPrepareDatas();
+
             // 处理下ddl语句，ddl/dml语句不可能是在同一个batch中，由canal进行控制
             // 主要考虑ddl的幂等性问题，尽可能一个ddl一个batch，失败或者回滚都只针对这条sql
             if (isDdlDatas(datas)) {
@@ -151,9 +156,12 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
                     List<EventData> items = buckets.getItems(weight);
                     logger.debug("##start load for weight:" + weight);
                     // 预处理下数据
-
                     // 进行一次数据合并，合并相同pk的多次I/U/D操作
-                    items = DbLoadMerger.merge(items);
+                    DbDialect dbDialect = dbDialectFactory.getDbDialect(context.getIdentity().getPipelineId(),
+                            (DbMediaSource)context.getDataMediaSource());
+                    if (!(dbDialect instanceof ClickHouseDialect)){
+                        items = DbLoadMerger.merge(items);
+                    }
                     // 按I/U/D进行归并处理
                     DbLoadData loadData = new DbLoadData();
                     doBefore(items, context, loadData);
@@ -161,6 +169,7 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
                     doLoad(context, loadData);
                     controller.single(weight.intValue());
                     logger.debug("##end load for weight:" + weight);
+                    logger.debug("##end load for weight:" + weight +" record: "+items.size() + " preeced id :"  + identity.getProcessId());
                 }
             }
             interceptor.commit(context);
@@ -171,8 +180,9 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
             interceptor.error(context);
             throw new LoadException(e);
         }
-
+        logger.info("end datas  context failed size " + context.getProcessedDatas().size()+" Success size " + context.getProcessedDatas().size());
         return context;// 返回处理成功的记录
+
     }
 
     private DbLoadContext buildContext(Identity identity) {
@@ -398,7 +408,6 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
             if (CollectionUtils.isEmpty(rows)) {
                 continue; // 过滤空记录
             }
-
             results.add(executor.submit(new DbLoadWorker(context, rows, canBatch)));
         }
 
@@ -412,9 +421,9 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
                     interceptor.after(context, data);// 通知加载完成
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 ex = e;
             }
-
             if (ex != null) {
                 logger.warn("##load phase one failed!", ex);
                 partFailed = true;
@@ -561,9 +570,8 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
                     index = end;// 移动到下一批次
                 } else {
                     splitDatas.add(datas.get(index));
-                    index = index + 1;// 移动到下一条
+                    index++;// 移动到下一条
                 }
-
                 int retryCount = 0;
                 while (true) {
                     try {
@@ -573,72 +581,78 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
                         } else {
                             failedDatas.addAll(splitDatas); // 先添加为出错记录，可能获取lob,datasource会出错
                         }
-
-                        final LobCreator lobCreator = dbDialect.getLobHandler().getLobCreator();
-                        if (useBatch && canBatch) {
-                            // 处理batch
-                            final String sql = splitDatas.get(0).getSql();
-                            int[] affects = new int[splitDatas.size()];
-                            affects = (int[]) dbDialect.getTransactionTemplate().execute(new TransactionCallback() {
-
-                                public Object doInTransaction(TransactionStatus status) {
-                                    // 初始化一下内容
-                                    try {
-                                        failedDatas.clear(); // 先清理
-                                        processedDatas.clear();
-                                        interceptor.transactionBegin(context, splitDatas, dbDialect);
-                                        JdbcTemplate template = dbDialect.getJdbcTemplate();
-                                        int[] affects = template.batchUpdate(sql, new BatchPreparedStatementSetter() {
-
-                                            public void setValues(PreparedStatement ps, int idx) throws SQLException {
-                                                doPreparedStatement(ps, dbDialect, lobCreator, splitDatas.get(idx));
-                                            }
-
-                                            public int getBatchSize() {
-                                                return splitDatas.size();
-                                            }
-                                        });
-                                        interceptor.transactionEnd(context, splitDatas, dbDialect);
-                                        return affects;
-                                    } finally {
-                                        lobCreator.close();
-                                    }
-                                }
-
-                            });
-
+                        if (  dbDialect instanceof  ClickHouseDialect && ( splitDatas.get(0).getEventType().isDelete() ||
+                                splitDatas.get(0).getEventType().isUpdate())) {
                             // 更新统计信息
-                            for (int i = 0; i < splitDatas.size(); i++) {
-                                processStat(splitDatas.get(i), affects[i], true);
+                            for (int v = 0; v < splitDatas.size(); v++) {
+                                processStat(splitDatas.get(v), 1, true);
                             }
                         } else {
-                            final EventData data = splitDatas.get(0);// 直接取第一条
-                            int affect = 0;
-                            affect = (Integer) dbDialect.getTransactionTemplate().execute(new TransactionCallback() {
+                            //clickhouse 不支持
+                            final LobCreator lobCreator = dbDialect.getLobHandler().getLobCreator();
+                            if (useBatch && canBatch) {
+                                // 处理batch
+                                final String sql = splitDatas.get(0).getSql();
+                                int[] affects = new int[splitDatas.size()];
+                                //clickhouse 不支持 update,delete ,判断sql是否为null
+                                affects = (int[]) dbDialect.getTransactionTemplate().execute(new TransactionCallback() {
+                                    public Object doInTransaction(TransactionStatus status) {
+                                        // 初始化一下内容
+                                        try {
+                                            failedDatas.clear(); // 先清理
+                                            processedDatas.clear();
+                                            interceptor.transactionBegin(context, splitDatas, dbDialect);
+                                            JdbcTemplate template = dbDialect.getJdbcTemplate();
+                                            int[] affects = template.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
-                                public Object doInTransaction(TransactionStatus status) {
-                                    try {
-                                        failedDatas.clear(); // 先清理
-                                        processedDatas.clear();
-                                        interceptor.transactionBegin(context, Arrays.asList(data), dbDialect);
-                                        JdbcTemplate template = dbDialect.getJdbcTemplate();
-                                        int affect = template.update(data.getSql(), new PreparedStatementSetter() {
+                                                public void setValues(PreparedStatement ps, int idx) throws SQLException {
+                                                    doPreparedStatement(ps, dbDialect, lobCreator, splitDatas.get(idx));
+                                                }
+                                                public int getBatchSize() {
+                                                    return splitDatas.size();
+                                                }
 
-                                            public void setValues(PreparedStatement ps) throws SQLException {
-                                                doPreparedStatement(ps, dbDialect, lobCreator, data);
-                                            }
-                                        });
-                                        interceptor.transactionEnd(context, Arrays.asList(data), dbDialect);
-                                        return affect;
-                                    } finally {
-                                        lobCreator.close();
+                                            });
+                                            interceptor.transactionEnd(context, splitDatas, dbDialect);
+                                            return affects;
+                                        } finally {
+                                            lobCreator.close();
+                                        }
                                     }
-                                }
-                            });
-                            // 更新统计信息
-                            processStat(data, affect, false);
-                        }
 
+                                });
+                                // 更新统计信息
+                                for (int i = 0; i < splitDatas.size(); i++) {
+                                    processStat(splitDatas.get(i), affects[i], true);
+                                }
+                        } else {
+                                final EventData data = splitDatas.get(0);// 直接取第一条
+                                int affect = 0;
+                                affect = (Integer) dbDialect.getTransactionTemplate().execute(new TransactionCallback() {
+
+                                    public Object doInTransaction(TransactionStatus status) {
+                                        try {
+                                            failedDatas.clear(); // 先清理
+                                            processedDatas.clear();
+                                            interceptor.transactionBegin(context, Arrays.asList(data), dbDialect);
+                                            JdbcTemplate template = dbDialect.getJdbcTemplate();
+                                            int affect = template.update(data.getSql(), new PreparedStatementSetter() {
+
+                                                public void setValues(PreparedStatement ps) throws SQLException {
+                                                    doPreparedStatement(ps, dbDialect, lobCreator, data);
+                                                }
+                                            });
+                                            interceptor.transactionEnd(context, Arrays.asList(data), dbDialect);
+                                            return affect;
+                                        } finally {
+                                            lobCreator.close();
+                                        }
+                                    }
+                                });
+                                // 更新统计信息
+                                processStat(data, affect, false);
+                            }
+                        }
                         error = null;
                         exeResult = ExecuteResult.SUCCESS;
                     } catch (DeadlockLoserDataAccessException ex) {
@@ -656,10 +670,12 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
                         // }
                         exeResult = ExecuteResult.ERROR;
                     } catch (RuntimeException ex) {
+                        ex.printStackTrace();
                         error = new LoadException(ExceptionUtils.getFullStackTrace(ex),
                             DbLoadDumper.dumpEventDatas(splitDatas));
                         exeResult = ExecuteResult.ERROR;
                     } catch (Throwable ex) {
+                        ex.printStackTrace();
                         error = new LoadException(ExceptionUtils.getFullStackTrace(ex),
                             DbLoadDumper.dumpEventDatas(splitDatas));
                         exeResult = ExecuteResult.ERROR;
@@ -769,6 +785,28 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
                     // 解决mysql的0000-00-00 00:00:00问题，直接依赖mysql
                     // driver进行处理，如果转化为Timestamp会出错
                     param = column.getColumnValue();
+                } else if   (dbDialect instanceof ClickHouseDialect && (column.isNull() || column.getColumnValue() == null)) {
+                    // 解决 clickhouse 数字类型出现空置的情况
+                    if (SqlUtils.isNumeric(sqlType)) {
+                        param = 0;
+                    } else if (SqlUtils.isTextType(sqlType)) {
+                        param="";
+                    } else if (sqlType == Types.TIMESTAMP) {
+                        param = SqlUtils.stringToSqlValue("0000-00-00 00:00:00",
+                                sqlType,
+                                isRequired,
+                                dbDialect.isEmptyStringNulled());
+                    } else  if (sqlType == Types.DATE) {
+                        param = SqlUtils.stringToSqlValue("0000-00-00",
+                                sqlType,
+                                isRequired,
+                                dbDialect.isEmptyStringNulled());
+                    } else {
+                        param = SqlUtils.stringToSqlValue(column.getColumnValue(),
+                                sqlType,
+                                isRequired,
+                                dbDialect.isEmptyStringNulled());
+                    }
                 } else {
                     param = SqlUtils.stringToSqlValue(column.getColumnValue(),
                         sqlType,
@@ -789,7 +827,7 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
                         case Types.TIMESTAMP:
                         case Types.DATE:
                             // 只处理mysql的时间类型，oracle的进行转化处理
-                            if (dbDialect instanceof MysqlDialect) {
+                            if (dbDialect instanceof MysqlDialect ) {
                                 // 解决mysql的0000-00-00 00:00:00问题，直接依赖mysql
                                 // driver进行处理，如果转化为Timestamp会出错
                                 ps.setObject(paramIndex, param);

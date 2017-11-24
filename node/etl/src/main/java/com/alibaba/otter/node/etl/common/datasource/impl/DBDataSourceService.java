@@ -20,9 +20,11 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import javax.sql.DataSource;
 
+import com.google.common.cache.*;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -37,10 +39,9 @@ import com.alibaba.otter.shared.common.model.config.data.DataMediaSource;
 import com.alibaba.otter.shared.common.model.config.data.DataMediaType;
 import com.alibaba.otter.shared.common.model.config.data.db.DbMediaSource;
 import com.google.common.base.Function;
-import com.google.common.collect.GenericMapMaker;
-import com.google.common.collect.MapEvictionListener;
+//import com.google.common.collect.GenericMapMaker;
+//import com.google.common.collect.MapEvictionListener;
 import com.google.common.collect.MapMaker;
-
 /**
  * Comment of DataSourceServiceImpl
  * 
@@ -76,9 +77,10 @@ public class DBDataSourceService implements DataSourceService, DisposableBean {
      * key = pipelineId<br>
      * value = key(dataMediaSourceId)-value(DataSource)<br>
      */
-    private Map<Long, Map<DbMediaSource, DataSource>> dataSources;
+    private LoadingCache<Long, LoadingCache<DbMediaSource, DataSource>> dataSources;
 
     public DBDataSourceService(){
+        /* delete by liyc
         // 设置soft策略
         GenericMapMaker mapMaker = new MapMaker().softValues();
         mapMaker = ((MapMaker) mapMaker).evictionListener(new MapEvictionListener<Long, Map<DbMediaSource, DataSource>>() {
@@ -129,15 +131,73 @@ public class DBDataSourceService implements DataSourceService, DisposableBean {
                 });
             }
         });
+        */
+        // 设置soft策略
+        RemovalListener<Long, LoadingCache<DbMediaSource, DataSource>> removalListener =
+                new RemovalListener<Long, LoadingCache<DbMediaSource, DataSource>>(){
+                    public void onRemoval(RemovalNotification<Long, LoadingCache<DbMediaSource, DataSource>> tmp) {
+
+                        if (tmp.getValue() == null) {
+                            return;
+                        }
+
+                        for (DataSource dataSource : tmp.getValue().asMap().values()) {
+                            // for filter to destroy custom datasource
+                            if (letHandlerDestroyIfSupport(tmp.getKey(), dataSource)) {
+                                continue;
+                            }
+                            BasicDataSource basicDataSource = (BasicDataSource) dataSource;
+                            try {
+                                basicDataSource.close();
+                            } catch (SQLException e) {
+                                logger.error("ERROR ## close the datasource has an error", e);
+                            }
+                        }
+                        tmp.getValue().cleanUp();
+                    }
+                };
+
+        // 构建第一层map
+        dataSources =  CacheBuilder.newBuilder().removalListener(removalListener)
+                .build(new CacheLoader<Long, LoadingCache<DbMediaSource, DataSource>>() {
+                public LoadingCache<DbMediaSource, DataSource> load(final Long pipelineId) {
+                    // 构建第二层map
+                    return  CacheBuilder.newBuilder().build(new CacheLoader<DbMediaSource, DataSource>() {
+                        public DataSource load(DbMediaSource dbMediaSource) {
+                            // 扩展功能,可以自定义一些自己实现的 dataSource
+                            DataSource customDataSource = preCreate(pipelineId, dbMediaSource);
+                            if (customDataSource != null) {
+                                return customDataSource;
+                            }
+
+                            return createDataSource(dbMediaSource.getUrl(),
+                                    dbMediaSource.getUsername(),
+                                    dbMediaSource.getPassword(),
+                                    dbMediaSource.getDriver(),
+                                    dbMediaSource.getType(),
+                                    dbMediaSource.getEncode());
+                        }
+
+                    });
+                }
+            });
 
     }
 
-    public DataSource getDataSource(long pipelineId, DataMediaSource dataMediaSource) {
+
+    public DataSource getDataSource(long pipelineId, DataMediaSource  dataMediaSource) {
         Assert.notNull(dataMediaSource);
-        return dataSources.get(pipelineId).get(dataMediaSource);
+        try {
+            return dataSources.get(pipelineId).get((DbMediaSource)dataMediaSource); //edit by liyc
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return  null;
     }
 
     public void destroy(Long pipelineId) {
+        dataSources.invalidate(pipelineId);
+        /*
         Map<DbMediaSource, DataSource> sources = dataSources.remove(pipelineId);
         if (sources != null) {
             for (DataSource source : sources.values()) {
@@ -158,6 +218,7 @@ public class DBDataSourceService implements DataSourceService, DisposableBean {
 
             sources.clear();
         }
+        */
     }
 
     private boolean letHandlerDestroyIfSupport(Long pipelineId, DataSource dataSource) {
@@ -178,7 +239,7 @@ public class DBDataSourceService implements DataSourceService, DisposableBean {
     }
 
     public void destroy() throws Exception {
-        for (Long pipelineId : dataSources.keySet()) {
+        for (Long pipelineId : dataSources.asMap().keySet()) {
             destroy(pipelineId);
         }
     }
@@ -227,6 +288,10 @@ public class DBDataSourceService implements DataSourceService, DisposableBean {
                 }
             }
             dbcpDs.setValidationQuery("select 1");
+        }  else if (dataMediaType.isClickHouse()) {
+
+            dbcpDs.setValidationQuery("select 1");
+
         } else {
             logger.error("ERROR ## Unknow database type");
         }

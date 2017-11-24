@@ -502,6 +502,12 @@ $control.setTemplate("home:navigation.vm")
 	#else
 		changeDisplay('detectEnable','none')
 	#end
+
+	#if($!canal.canalParameter.sourcingType.isClickHouse())
+		changeDisplay('oracleSourcing','table-row')
+	#else
+		changeDisplay('oracleSourcing','none')
+	#end
 	
 	changePositionConfig();
 	changeNetworkConfig();

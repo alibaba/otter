@@ -27,6 +27,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.I0Itec.zkclient.DataUpdater;
 import org.I0Itec.zkclient.ExceptionUtil;
 import org.I0Itec.zkclient.IZkChildListener;
@@ -67,15 +70,22 @@ import com.google.common.collect.MapMaker;
 public class ZkClientx implements Watcher {
 
     // 对于zkclient进行一次缓存，避免一个jvm内部使用多个zk connection
+    /* delete by liyc
     private static Map<String, ZkClientx> clients = new MapMaker().makeComputingMap(new Function<String, ZkClientx>() {
 
                                                       public ZkClientx apply(String servers) {
                                                           return new ZkClientx(servers);
                                                       }
                                                   });
+    */
+    private static LoadingCache<String, ZkClientx> clients = CacheBuilder.newBuilder().build(new CacheLoader<String, ZkClientx>() {
 
+        public ZkClientx load(String servers) {
+            return new ZkClientx(servers);
+        }
+    });
     public static ZkClientx getZkClient(String servers) {
-        return clients.get(servers);
+        return clients.getUnchecked(servers);
     }
 
     public ZkClientx(String serverstring){

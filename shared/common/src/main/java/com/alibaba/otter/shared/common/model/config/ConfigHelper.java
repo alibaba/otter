@@ -16,11 +16,13 @@
 
 package com.alibaba.otter.shared.common.model.config;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
 
+import com.google.common.cache.CacheBuilder;
+
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.apache.commons.lang.StringUtils;
 import org.apache.oro.text.regex.MalformedPatternException;
 import org.apache.oro.text.regex.MatchResult;
@@ -49,6 +51,21 @@ import com.google.common.collect.MapMaker;
 public class ConfigHelper {
 
     public static final String          MODE_PATTERN = "(.*)(\\[(\\d+)\\-(\\d+)\\])(.*)"; // 匹配offer[1-128]
+    // add by liyc google guava 19不支持这种写法，已经废弃
+    public  static LoadingCache<String, Pattern> patterns = CacheBuilder.newBuilder().softValues()
+            .build(new CacheLoader<String, Pattern>() {
+                public Pattern load(String input) {
+                    PatternCompiler pc = new Perl5Compiler();
+                    try {
+                        return pc.compile(input,
+                                Perl5Compiler.CASE_INSENSITIVE_MASK
+                                        | Perl5Compiler.READ_ONLY_MASK);
+                    } catch (MalformedPatternException e) {
+                        throw new ConfigException(e);
+                    }
+                }
+            });
+    /*
     private static Map<String, Pattern> patterns     = new MapMaker().makeComputingMap(new Function<String, Pattern>() {
 
                                                          public Pattern apply(String input) {
@@ -62,7 +79,7 @@ public class ConfigHelper {
                                                              }
                                                          }
                                                      });
-
+                                                     */
     /**
      * 根据DataMedia id得到对应的DataMedia
      */
@@ -166,7 +183,7 @@ public class ConfigHelper {
      */
     public static ModeValue parseMode(String value) {
         PatternMatcher matcher = new Perl5Matcher();
-        if (matcher.matches(value, patterns.get(MODE_PATTERN))) {
+        if (matcher.matches(value, patterns.getUnchecked(MODE_PATTERN))) {
             MatchResult matchResult = matcher.getMatch();
             String prefix = matchResult.group(1);
             String startStr = matchResult.group(3);
@@ -193,6 +210,7 @@ public class ConfigHelper {
         } else {
             return new ModeValue(Mode.SINGLE, Arrays.asList(value));
         }
+
     }
 
     public static String makeSQLPattern(String rawValue) {
@@ -296,7 +314,7 @@ public class ConfigHelper {
 
     private static boolean isWildCardMatch(String matchPattern, String value) {
         PatternMatcher matcher = new Perl5Matcher();
-        return matcher.matches(value, patterns.get(matchPattern));
+        return matcher.matches(value, patterns.getUnchecked(matchPattern));
     }
 
     public static int indexIgnoreCase(List<String> datas, String value) {

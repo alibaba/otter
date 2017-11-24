@@ -32,8 +32,11 @@ import com.alibaba.otter.manager.biz.config.node.NodeService;
 import com.alibaba.otter.manager.biz.remote.NodeRemoteService;
 import com.alibaba.otter.shared.common.model.config.node.Node;
 import com.google.common.base.Function;
-import com.google.common.collect.GenericMapMaker;
-import com.google.common.collect.MapEvictionListener;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+//import com.google.common.collect.GenericMapMaker;
+//import com.google.common.collect.MapEvictionListener;
 import com.google.common.collect.MapMaker;
 
 /**
@@ -47,7 +50,7 @@ public class NodeMBeanServiceImpl implements NodeRemoteService {
     private static final String              SERVICE_URL = "service:jmx:rmi://{0}/jndi/rmi://{0}:{1}/mbean";
     private ObjectName                       objectName;
     private NodeService                      nodeService;
-    private Map<Long, MBeanServerConnection> mbeanServers;
+    private LoadingCache<Long, MBeanServerConnection> mbeanServers;
 
     public NodeMBeanServiceImpl(){
         try {
@@ -55,7 +58,7 @@ public class NodeMBeanServiceImpl implements NodeRemoteService {
         } catch (Exception e) {
             throw new ManagerException(e);
         }
-
+        /*
         GenericMapMaker mapMaker = null;
         mapMaker = new MapMaker().expireAfterAccess(5, TimeUnit.MINUTES)
             .softValues()
@@ -94,6 +97,36 @@ public class NodeMBeanServiceImpl implements NodeRemoteService {
             }
 
         });
+        */
+        mbeanServers= CacheBuilder.newBuilder()
+                .expireAfterAccess(5, TimeUnit.MINUTES)
+                .build(new CacheLoader<Long, MBeanServerConnection>() {
+                    public MBeanServerConnection load(Long nid) {
+                        Node node = nodeService.findById(nid);
+                        String ip = node.getIp();
+                        if (node.getParameters().getUseExternalIp()) {
+                            ip = node.getParameters().getExternalIp();
+                        }
+
+                        int port = node.getPort().intValue() + 1;
+                        Integer mbeanPort = node.getParameters().getMbeanPort();
+                        if (mbeanPort != null && mbeanPort != 0) {// 做个兼容处理，<=4.2.2版本没有mbeanPort设置
+                            port = mbeanPort;
+                        }
+
+                        try {
+                            JMXServiceURL serviceURL = new JMXServiceURL(MessageFormat.format(SERVICE_URL,
+                                    ip,
+                                    String.valueOf(port)));
+                            JMXConnector cntor = JMXConnectorFactory.connect(serviceURL, null);
+                            MBeanServerConnection mbsc = cntor.getMBeanServerConnection();
+                            return mbsc;
+                        } catch (Exception e) {
+                            throw new ManagerException(e);
+                        }
+                    }
+
+                });
     }
 
     public String getHeapMemoryUsage(Long nid) {
@@ -127,7 +160,8 @@ public class NodeMBeanServiceImpl implements NodeRemoteService {
                 new Object[] { profile },
                 new String[] { "java.lang.Boolean" });
         } catch (Exception e) {
-            mbeanServers.remove(nid);
+            //mbeanServers.remove(nid); edit by liyc
+            mbeanServers.invalidate(nid);
             throw new ManagerException(e);
         }
     }
@@ -139,7 +173,8 @@ public class NodeMBeanServiceImpl implements NodeRemoteService {
                 new Object[] { size },
                 new String[] { "java.lang.Integer" });
         } catch (Exception e) {
-            mbeanServers.remove(nid);
+            //mbeanServers.remove(nid);edit by liyc
+            mbeanServers.invalidate(nid);
             throw new ManagerException(e);
         }
     }
@@ -200,7 +235,8 @@ public class NodeMBeanServiceImpl implements NodeRemoteService {
         try {
             return mbeanServers.get(nid).getAttribute(objectName, attribute);
         } catch (Exception e) {
-            mbeanServers.remove(nid);
+            //mbeanServers.remove(nid);edit by liyc
+            mbeanServers.invalidate(nid);
             throw new ManagerException(e);
         }
     }
@@ -212,7 +248,8 @@ public class NodeMBeanServiceImpl implements NodeRemoteService {
                 new Object[] { pipelineId },
                 new String[] { "java.lang.Long" });
         } catch (Exception e) {
-            mbeanServers.remove(nid);
+            //mbeanServers.remove(nid);edit by liyc
+            mbeanServers.invalidate(nid);
             throw new ManagerException(e);
         }
     }

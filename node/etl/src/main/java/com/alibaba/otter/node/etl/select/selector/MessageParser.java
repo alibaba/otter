@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.otter.node.etl.common.db.dialect.clickhouse.ClickHouseDialect;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ddlutils.model.Table;
 import org.slf4j.Logger;
@@ -359,6 +360,9 @@ public class MessageParser {
                     schemaName,
                     tableName,
                     notExistReturnNull);
+                if ( dataMedia == null){
+                    logger.error("存在异常的数据: 管道数据"+pipeline.getPairs() + "对应同步的表:" + schemaName +"."+ tableName);
+                }
                 // 如果EventType是CREATE/ALTER，需要reload
                 // DataMediaInfo;并且把CREATE/ALTER类型的事件丢弃掉.
                 if (dataMedia != null && (eventType.isCreate() || eventType.isAlter() || eventType.isRename())) {
@@ -769,6 +773,10 @@ public class MessageParser {
 
         public boolean isOracle() {
             return (dbDialect != null && dbDialect instanceof OracleDialect);
+        }
+
+        public boolean isClickHouse() {
+            return (dbDialect != null && dbDialect instanceof ClickHouseDialect);
         }
 
         public boolean isMysql() {

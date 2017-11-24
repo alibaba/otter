@@ -28,6 +28,9 @@ import com.alibaba.otter.shared.communication.core.impl.connection.Communication
 import com.alibaba.otter.shared.communication.core.impl.connection.CommunicationConnectionFactory;
 import com.alibaba.otter.shared.communication.core.model.CommunicationParam;
 import com.google.common.base.Function;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.MapMaker;
 
 /**
@@ -43,6 +46,7 @@ public class DubboCommunicationConnectionFactory implements CommunicationConnect
     private DubboProtocol                      protocol          = DubboProtocol.getDubboProtocol();
     private ProxyFactory                       proxyFactory      = ExtensionLoader.getExtensionLoader(ProxyFactory.class).getExtension("javassist");
 
+    /*
     private Map<String, CommunicationEndpoint> connections       = null;
 
     public DubboCommunicationConnectionFactory(){
@@ -53,7 +57,16 @@ public class DubboCommunicationConnectionFactory implements CommunicationConnect
             }
         });
     }
+    */
+    private LoadingCache<String, CommunicationEndpoint> connections       = null;
 
+    public DubboCommunicationConnectionFactory(){
+        connections = CacheBuilder.newBuilder().build(new CacheLoader<String, CommunicationEndpoint>() {
+            public CommunicationEndpoint load(String serviceUrl) {
+                return proxyFactory.getProxy(protocol.refer(CommunicationEndpoint.class, URL.valueOf(serviceUrl)));
+            }
+        });
+    }
     public CommunicationConnection createConnection(CommunicationParam params) {
         if (params == null) {
             throw new IllegalArgumentException("param is null!");
@@ -61,7 +74,7 @@ public class DubboCommunicationConnectionFactory implements CommunicationConnect
 
         // 构造对应的url
         String serviceUrl = MessageFormat.format(DUBBO_SERVICE_URL, params.getIp(), String.valueOf(params.getPort()));
-        CommunicationEndpoint endpoint = connections.get(serviceUrl);
+        CommunicationEndpoint endpoint = connections.getUnchecked(serviceUrl); //edit by liyc
         return new DubboCommunicationConnection(params, endpoint);
 
     }

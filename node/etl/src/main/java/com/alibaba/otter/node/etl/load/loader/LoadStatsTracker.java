@@ -22,6 +22,9 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import com.alibaba.otter.shared.etl.model.Identity;
 import com.google.common.base.Function;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.MapMaker;
 
 /**
@@ -32,46 +35,66 @@ import com.google.common.collect.MapMaker;
  */
 public class LoadStatsTracker {
 
-    private Map<Identity, LoadThroughput> throughputs;
+    private LoadingCache<Identity, LoadThroughput> throughputs;
 
     public LoadStatsTracker(){
+        /* add by liyc
         throughputs = new MapMaker().makeComputingMap(new Function<Identity, LoadThroughput>() {
 
             public LoadThroughput apply(Identity identity) {
                 return new LoadThroughput(identity);
             }
         });
+        */
+        throughputs = CacheBuilder.newBuilder().build(new CacheLoader<Identity, LoadThroughput>() {
+
+            public LoadThroughput load(Identity identity) {
+                return new LoadThroughput(identity);
+            }
+        });
+
     }
 
     public LoadThroughput getStat(Identity identity) {
-        return throughputs.get(identity);
+        return throughputs.getUnchecked(identity);
     }
 
     public void removeStat(Identity identity) {
-        throughputs.remove(identity);
+        //add by liyc
+        throughputs.invalidate(identity);
+        //throughputs.remove(identity);
     }
 
     public static class LoadThroughput {
 
         private Identity               identity;
         private Long                   startTime;
-        private Map<Long, LoadCounter> counters;
+        private LoadingCache<Long, LoadCounter> counters;
 
         public LoadThroughput(Identity identity){
+            /* delete by liyc
             counters = new MapMaker().makeComputingMap(new Function<Long, LoadCounter>() {
 
                 public LoadCounter apply(Long pairId) {
                     return new LoadCounter(pairId);
                 }
             });
+            */
+            counters = CacheBuilder.newBuilder().build(new CacheLoader<Long, LoadCounter>() {
+
+                public LoadCounter load(Long pairId) {
+                    return new LoadCounter(pairId);
+                }
+            });
         }
 
         public LoadCounter getStat(Long pairId) {
-            return counters.get(pairId);
+            //return counters.get(pairId); delete by liyc
+            return counters.getUnchecked(pairId);
         }
 
         public Collection<LoadCounter> getStats() {
-            return counters.values();
+            return counters.asMap().values();// edit by liyc
         }
 
         public Identity getIdentity() {

@@ -20,6 +20,7 @@ import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.Map;
 
+import com.google.common.cache.*;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -39,6 +40,7 @@ public class ArbitrateFactory implements ApplicationContextAware {
 
     private static ApplicationContext            context = null;
     // 两层的Map接口，第一层为pipelineId，第二层为具体的资源类型class
+    /* delete by liyc
     private static Map<Long, Map<Class, Object>> cache   = new MapMaker().makeComputingMap(new Function<Long, Map<Class, Object>>() {
 
                                                              public Map<Class, Object> apply(final Long pipelineId) {
@@ -50,7 +52,45 @@ public class ArbitrateFactory implements ApplicationContextAware {
                                                                  });
                                                              }
                                                          });
+    */
+    private static LoadingCache<Long, LoadingCache<Class, Object>> cache   = CacheBuilder
+            .newBuilder()
+            .removalListener( new RemovalListener<Long, LoadingCache<Class, Object>>() {
+                public void onRemoval(RemovalNotification<Long, LoadingCache<Class, Object>> removal) {
+                    if (removal.getValue() != null) {
+                        Collection collection = removal.getValue().asMap().values();
+                        for (Object obj : collection) {
+                            if (obj instanceof ArbitrateLifeCycle) {
+                                ArbitrateLifeCycle lifeCycle = (ArbitrateLifeCycle) obj;
+                                lifeCycle.destory();// 调用销毁方法
+                            }
+                        }
+                    }
+                }
+            })
+            .build(new CacheLoader<Long, LoadingCache<Class, Object>>() {
 
+                public LoadingCache<Class, Object> load(final Long pipelineId) {
+                    return  CacheBuilder
+                            .newBuilder()
+                            .removalListener( new RemovalListener<Class, Object>() {
+                                public void onRemoval(RemovalNotification<Class, Object> removal) {
+                                    if (removal.getValue() != null) {
+                                        if (removal.getValue() instanceof ArbitrateLifeCycle) {
+                                            ArbitrateLifeCycle lifeCycle = (ArbitrateLifeCycle) removal.getValue();
+                                            lifeCycle.destory();// 调用销毁方法
+                                        }
+                                    }
+                                }
+                            })
+                            .build(new CacheLoader<Class, Object>() {
+
+                                public Object load(Class instanceClass) {
+                                    return newInstance(pipelineId, instanceClass);
+                                }
+                            });
+                }
+            });
     private static Object newInstance(Long pipelineId, Class instanceClass) {
         Object obj = newInstance(instanceClass, pipelineId);// 通过反射调用构造函数进行初始化
         autowire(obj);
@@ -87,7 +127,7 @@ public class ArbitrateFactory implements ApplicationContextAware {
         // }
         // return (T) obj;
 
-        return (T) cache.get(pipelineId).get(instanceClass);
+        return (T) cache.getUnchecked(pipelineId).getUnchecked(instanceClass); //edit by liyc
     }
 
     public static void autowire(Object obj) {
@@ -98,7 +138,7 @@ public class ArbitrateFactory implements ApplicationContextAware {
     }
 
     public static void destory() {
-        for (Long pipelineId : cache.keySet()) {
+        for (Long pipelineId : cache.asMap().keySet()) { //edit by liyc
             destory(pipelineId);
         }
     }
@@ -109,6 +149,7 @@ public class ArbitrateFactory implements ApplicationContextAware {
      * @param pipelineId
      */
     public static void destory(Long pipelineId) {
+        /*
         Map<Class, Object> resources = cache.remove(pipelineId);
         if (resources != null) {
             Collection collection = resources.values();
@@ -119,6 +160,8 @@ public class ArbitrateFactory implements ApplicationContextAware {
                 }
             }
         }
+        */
+        cache.invalidate(pipelineId);
     }
 
     /**
@@ -127,14 +170,17 @@ public class ArbitrateFactory implements ApplicationContextAware {
      * @param pipelineId
      */
     public static <T extends ArbitrateLifeCycle> void destory(Long pipelineId, Class<T> instanceClass) {
+        /*
         Map<Class, Object> resources = cache.get(pipelineId);
+
         if (resources != null) {
             Object obj = resources.remove(instanceClass);
             if (obj instanceof ArbitrateLifeCycle) {
                 ArbitrateLifeCycle lifeCycle = (ArbitrateLifeCycle) obj;
                 lifeCycle.destory();// 调用销毁方法
             }
-        }
+        }*/
+        cache.getUnchecked(pipelineId).invalidate(instanceClass);
     }
 
     // ==================== helper method =======================

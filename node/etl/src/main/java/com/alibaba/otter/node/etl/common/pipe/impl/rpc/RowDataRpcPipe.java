@@ -24,6 +24,8 @@ import com.alibaba.otter.shared.communication.core.CommunicationRegistry;
 import com.alibaba.otter.shared.communication.core.model.EventType;
 import com.alibaba.otter.shared.etl.model.DbBatch;
 
+import java.util.concurrent.ExecutionException;
+
 /**
  * 基于rpc调用实现rowData的数据传递
  * 
@@ -63,7 +65,8 @@ public class RowDataRpcPipe extends AbstractRpcPipe<DbBatch, RpcPipeKey> {
     @SuppressWarnings("unused")
     // 处理rpc调用事件
     private DbBatch onGet(RpcEvent event) {
-        return cache.remove(event.getKey()); // 不建议使用remove，rpc调用容易有retry请求，导致第二次拿到的数据为null
+        return cache.getIfPresent(event.getKey());
+        //return cache.remove(event.getKey()); // 不建议使用remove，rpc调用容易有retry请求，导致第二次拿到的数据为null
     }
 
     private Long getNid() {

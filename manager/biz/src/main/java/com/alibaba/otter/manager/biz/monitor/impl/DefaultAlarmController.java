@@ -24,6 +24,8 @@ import com.alibaba.otter.manager.biz.monitor.AlarmController;
 import com.alibaba.otter.manager.biz.monitor.AlarmRecovery;
 import com.alibaba.otter.shared.common.model.config.alarm.AlarmRule;
 import com.alibaba.otter.shared.common.model.config.alarm.MonitorName;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.MapMaker;
 
 /**
@@ -34,7 +36,10 @@ public class DefaultAlarmController implements AlarmController {
 
     // seconds
     private Long                    DEFAULT_THRESHOLD = 1800L;
-    private Map<PoolKey, PoolValue> pool              = new MapMaker().expireAfterWrite(1, TimeUnit.HOURS).makeMap();
+//    private Map<PoolKey, PoolValue> pool              = new MapMaker().expireAfterWrite(1, TimeUnit.HOURS).makeMap();
+    //add by liyc
+    private Cache<PoolKey, PoolValue> pool              =  CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build();
+
     private AlarmRecovery           restartAlarmRecovery;
 
     @Override
@@ -48,7 +53,7 @@ public class DefaultAlarmController implements AlarmController {
         Long threshold = rule.getIntervalTime() == null ? DEFAULT_THRESHOLD : rule.getIntervalTime();
 
         PoolKey key = new PoolKey(rule, message, data);
-        PoolValue value = pool.get(key);
+        PoolValue value = pool.getIfPresent(key); //edit by liyc
         boolean needAlarm = true;
 
         Long now = System.currentTimeMillis();

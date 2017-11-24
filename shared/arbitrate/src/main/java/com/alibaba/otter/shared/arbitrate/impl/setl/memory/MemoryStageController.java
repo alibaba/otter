@@ -24,6 +24,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.springframework.util.CollectionUtils;
 
 import com.alibaba.otter.shared.arbitrate.impl.config.ArbitrateConfigUtils;
@@ -44,17 +47,28 @@ import com.google.common.collect.MapMaker;
 public class MemoryStageController extends ArbitrateLifeCycle {
 
     private AtomicLong                        atomicMaxProcessId = new AtomicLong(0);
-    private Map<StageType, ReplyProcessQueue> replys;
+    private LoadingCache<StageType, ReplyProcessQueue> replys;
     private Map<Long, StageProgress>          progress;
     private BlockingQueue<TerminEventData>    termins;
     private StageProgress                     nullProgress       = new StageProgress();
 
     public MemoryStageController(Long pipelineId){
         super(pipelineId);
-
+        /* add by liyc
         replys = new MapMaker().makeComputingMap(new Function<StageType, ReplyProcessQueue>() {
 
             public ReplyProcessQueue apply(StageType input) {
+                int size = ArbitrateConfigUtils.getParallelism(getPipelineId()) * 10;
+                if (size < 100) {
+                    size = 100;
+                }
+                return new ReplyProcessQueue(size);
+            }
+        });
+        */
+        replys = CacheBuilder.newBuilder().build(new CacheLoader<StageType, ReplyProcessQueue>() {
+
+            public ReplyProcessQueue load(StageType input) {
                 int size = ArbitrateConfigUtils.getParallelism(getPipelineId()) * 10;
                 if (size < 100) {
                     size = 100;
@@ -68,11 +82,11 @@ public class MemoryStageController extends ArbitrateLifeCycle {
     }
 
     public Long waitForProcess(StageType stage) throws InterruptedException {
-        if (stage.isSelect() && !replys.containsKey(stage)) {
+        if (stage.isSelect() && !replys.asMap().containsKey(stage)) {
             initSelect();
         }
 
-        Long processId = replys.get(stage).take();
+        Long processId = replys.getUnchecked(stage).take();
         if (stage.isSelect()) {// select一旦分出processId，就需要在progress中记录一笔，用于判断谁是最小的一个processId
             progress.put(processId, nullProgress);
         }
@@ -85,7 +99,8 @@ public class MemoryStageController extends ArbitrateLifeCycle {
     }
 
     public synchronized void destory() {
-        replys.clear();
+        //replys.clear(); edit by liyc
+        replys.invalidateAll();
         progress.clear();
     }
 
@@ -133,14 +148,14 @@ public class MemoryStageController extends ArbitrateLifeCycle {
             case SELECT:
                 if (progress.containsKey(etlEventData.getProcessId())) {// 可能发生了rollback，对应的progress已经被废弃
                     progress.put(etlEventData.getProcessId(), new StageProgress(stage, etlEventData));
-                    replys.get(StageType.EXTRACT).offer(etlEventData.getProcessId());
+                    replys.getUnchecked(StageType.EXTRACT).offer(etlEventData.getProcessId()); //edit by liyc
                     result = true;
                 }
                 break;
             case EXTRACT:
                 if (progress.containsKey(etlEventData.getProcessId())) {
                     progress.put(etlEventData.getProcessId(), new StageProgress(stage, etlEventData));
-                    replys.get(StageType.TRANSFORM).offer(etlEventData.getProcessId());
+                    replys.getUnchecked(StageType.TRANSFORM).offer(etlEventData.getProcessId()); //edit by liyc
                     result = true;
                 }
                 break;
@@ -158,7 +173,7 @@ public class MemoryStageController extends ArbitrateLifeCycle {
                 computeNextLoad();
                 // 一个process完成了，自动添加下一个process
                 if (removed != null) {
-                    replys.get(StageType.SELECT).offer(atomicMaxProcessId.incrementAndGet());
+                    replys.getUnchecked(StageType.SELECT).offer(atomicMaxProcessId.incrementAndGet()); //edit by liyc
                     result = true;
                 }
                 break;
@@ -193,7 +208,7 @@ public class MemoryStageController extends ArbitrateLifeCycle {
         // 第一次/出现ROLLBACK/RESTART事件，删除了所有调度信号后，重新初始化一下select
         // stage的数据，初始大小为并行度大小
         // 后续的select的reply队列变化，由load single时直接添加
-        ReplyProcessQueue queue = replys.get(StageType.SELECT);
+        ReplyProcessQueue queue = replys.getUnchecked(StageType.SELECT); //edit by liyc
         int parallelism = ArbitrateConfigUtils.getParallelism(getPipelineId());
         while (parallelism-- > 0 && queue.size() <= parallelism) {
             queue.offer(atomicMaxProcessId.incrementAndGet());
@@ -206,7 +221,7 @@ public class MemoryStageController extends ArbitrateLifeCycle {
     private void computeNextLoad() {
         Long processId = getMinTransformedProcessId();
         if (processId != null) {
-            replys.get(StageType.LOAD).offer(processId);
+            replys.getUnchecked(StageType.LOAD).offer(processId); //edit by liyc
         }
     }
 

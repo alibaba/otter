@@ -48,7 +48,7 @@ public class SqlBuilderLoadInterceptor extends AbstractLoadInterceptor<DbLoadCon
         SqlTemplate sqlTemplate = dbDialect.getSqlTemplate();
         EventType type = currentData.getEventType();
         String sql = null;
-
+        //todo liyc 如果 有其他的数据库，则要判断生成的sql语句问题
         String schemaName = (currentData.isWithoutSchema() ? null : currentData.getSchemaName());
         // 注意insert/update语句对应的字段数序都是将主键排在后面
         if (type.isInsert()) {

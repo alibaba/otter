@@ -18,6 +18,9 @@ package com.alibaba.otter.manager.biz.utils;
 
 import java.util.Map;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.apache.commons.lang.StringUtils;
 import org.apache.oro.text.regex.MalformedPatternException;
 import org.apache.oro.text.regex.Pattern;
@@ -36,12 +39,25 @@ import com.google.common.collect.MapMaker;
  */
 public class RegexUtils {
 
-    private static Map<String, Pattern> patterns = null;
+    private static LoadingCache<String, Pattern> patterns = null;
 
     static {
+        /* delete by liyc
         patterns = new MapMaker().softValues().makeComputingMap(new Function<String, Pattern>() {
 
             public Pattern apply(String pattern) {
+                try {
+                    PatternCompiler pc = new Perl5Compiler();
+                    return pc.compile(pattern, Perl5Compiler.CASE_INSENSITIVE_MASK | Perl5Compiler.READ_ONLY_MASK);
+                } catch (MalformedPatternException e) {
+                    throw new ManagerException(e);
+                }
+            }
+        });
+        */
+        patterns = CacheBuilder.newBuilder().build(new CacheLoader<String, Pattern>() {
+
+            public Pattern load(String pattern) {
                 try {
                     PatternCompiler pc = new Perl5Compiler();
                     return pc.compile(pattern, Perl5Compiler.CASE_INSENSITIVE_MASK | Perl5Compiler.READ_ONLY_MASK);
@@ -58,7 +74,7 @@ public class RegexUtils {
         }
 
         PatternMatcher matcher = new Perl5Matcher();
-        if (matcher.contains(originalStr, patterns.get(regex))) {
+        if (matcher.contains(originalStr, patterns.getUnchecked(regex))) { //edit by liyc
             return StringUtils.trimToEmpty(matcher.getMatch().group(0));
         }
         return StringUtils.EMPTY;

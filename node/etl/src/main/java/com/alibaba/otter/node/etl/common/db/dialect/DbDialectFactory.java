@@ -25,6 +25,7 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
+import com.google.common.cache.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -34,9 +35,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.alibaba.otter.node.etl.common.datasource.DataSourceService;
 import com.alibaba.otter.shared.common.model.config.data.db.DbMediaSource;
-import com.google.common.base.Function;
-import com.google.common.collect.GenericMapMaker;
-import com.google.common.collect.MapEvictionListener;
+//import com.google.common.base.Function;
+//import com.google.common.collect.GenericMapMaker;
+//import com.google.common.collect.MapEvictionListener;
 import com.google.common.collect.MapMaker;
 
 /**
@@ -50,9 +51,10 @@ public class DbDialectFactory implements DisposableBean {
     private DbDialectGenerator                       dbDialectGenerator;
 
     // 第一层pipelineId , 第二层DbMediaSource id
-    private Map<Long, Map<DbMediaSource, DbDialect>> dialects;
-
+    private LoadingCache<Long, LoadingCache<DbMediaSource, DbDialect>> dialects;
+    private RemovalListener<Long, LoadingCache<DbMediaSource, DbDialect>> removalListener;
     public DbDialectFactory(){
+        /*
         // 构建第一层map
         GenericMapMaker mapMaker = null;
         mapMaker = new MapMaker().softValues()
@@ -110,24 +112,80 @@ public class DbDialectFactory implements DisposableBean {
                 });
             }
         });
+        */
+        removalListener = new RemovalListener<Long, LoadingCache<DbMediaSource, DbDialect>>() {
+            public void onRemoval(RemovalNotification<Long, LoadingCache<DbMediaSource, DbDialect>> removal) {
+                LoadingCache<DbMediaSource, DbDialect>  tmp = removal.getValue();
+                if (tmp != null) {
+                    for (DbDialect dbDialect : tmp.asMap().values()) {
+                        dbDialect.destory();
+                    }
+                }
+            }
+        };
 
+        dialects = CacheBuilder.newBuilder().removalListener(removalListener).build(new CacheLoader<Long, LoadingCache<DbMediaSource, DbDialect>>() {
+
+            public LoadingCache<DbMediaSource, DbDialect> load(final Long pipelineId) {
+                // 构建第二层map
+                return CacheBuilder.newBuilder().build(new CacheLoader<DbMediaSource, DbDialect>() {
+
+                    public DbDialect load(final DbMediaSource source) {
+                        DataSource dataSource = dataSourceService.getDataSource(pipelineId, source);
+                        final JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+                        return (DbDialect) jdbcTemplate.execute(new ConnectionCallback() {
+
+                            public Object doInConnection(Connection c) throws SQLException, DataAccessException {
+                                DatabaseMetaData meta = c.getMetaData();
+                                String databaseName = meta.getDatabaseProductName();
+                                String databaseVersion = meta.getDatabaseProductVersion();
+                                int databaseMajorVersion = meta.getDatabaseMajorVersion();
+                                int databaseMinorVersion = meta.getDatabaseMinorVersion();
+                                DbDialect dialect = dbDialectGenerator.generate(jdbcTemplate,
+                                        databaseName,
+                                        databaseVersion,
+                                        databaseMajorVersion,
+                                        databaseMinorVersion,
+                                        source.getType());
+                                if (dialect == null) {
+                                    throw new UnsupportedOperationException("no dialect for" + databaseName);
+                                }
+
+                                if (logger.isInfoEnabled()) {
+                                    logger.info(String.format("--- DATABASE: %s, SCHEMA: %s ---",
+                                            databaseName,
+                                            (dialect.getDefaultSchema() == null) ? dialect.getDefaultCatalog() : dialect.getDefaultSchema()));
+                                }
+
+                                return dialect;
+                            }
+                        });
+
+                    }
+                });
+            }
+        });
     }
 
     public DbDialect getDbDialect(Long pipelineId, DbMediaSource source) {
-        return dialects.get(pipelineId).get(source);
+        return dialects.getUnchecked(pipelineId).getUnchecked(source);
     }
 
     public void destory(Long pipelineId) {
+
+        dialects.invalidate(pipelineId);
+        /* delete by liyc
         Map<DbMediaSource, DbDialect> dialect = dialects.remove(pipelineId);
         if (dialect != null) {
             for (DbDialect dbDialect : dialect.values()) {
                 dbDialect.destory();
-            }
+           }
         }
+        */
     }
 
     public void destroy() throws Exception {
-        Set<Long> pipelineIds = new HashSet<Long>(dialects.keySet());
+        Set<Long> pipelineIds = new HashSet<Long>(dialects.asMap().keySet());
         for (Long pipelineId : pipelineIds) {
             destory(pipelineId);
         }

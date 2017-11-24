@@ -60,7 +60,9 @@ public class DataMediaAction extends AbstractAction {
         DataMedia dataMedia = new DataMedia();
         dataMediaInfo.setProperties(dataMedia);
         DataMediaSource dataMediaSource = dataMediaSourceService.findById(dataMediaInfo.getField("sourceId").getLongValue());
-        if (dataMediaSource.getType().isMysql() || dataMediaSource.getType().isOracle()) {
+        if (dataMediaSource.getType().isMysql()
+                || dataMediaSource.getType().isOracle()
+                || dataMediaSource.getType().isClickHouse()) {
             dataMedia.setSource((DbMediaSource) dataMediaSource);
         } else if (dataMediaSource.getType().isNapoli() || dataMediaSource.getType().isMq()) {
             dataMedia.setSource((MqMediaSource) dataMediaSource);
@@ -95,7 +97,9 @@ public class DataMediaAction extends AbstractAction {
         DataMedia dataMedia = new DataMedia();
         dataMediaInfo.setProperties(dataMedia);
         DataMediaSource dataMediaSource = dataMediaSourceService.findById(dataMediaInfo.getField("sourceId").getLongValue());
-        if (dataMediaSource.getType().isMysql() || dataMediaSource.getType().isOracle()) {
+        if (dataMediaSource.getType().isMysql()
+                || dataMediaSource.getType().isOracle()
+                || dataMediaSource.getType().isClickHouse()) {
             dataMedia.setSource((DbMediaSource) dataMediaSource);
         } else if (dataMediaSource.getType().isNapoli() || dataMediaSource.getType().isMq()) {
             dataMedia.setSource((MqMediaSource) dataMediaSource);

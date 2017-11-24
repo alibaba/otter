@@ -184,6 +184,10 @@ public class DataSourceCreator implements DisposableBean {
                 }
             }
             // dbcpDs.setValidationQuery("select 1");
+        } else if (dataMediaType.isClickHouse()) {
+
+            dbcpDs.setValidationQuery("select 1");
+
         } else {
             logger.error("ERROR ## Unknow database type");
         }
