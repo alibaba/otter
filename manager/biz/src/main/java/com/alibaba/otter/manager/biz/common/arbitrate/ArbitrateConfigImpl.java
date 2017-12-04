@@ -32,7 +32,7 @@ import com.alibaba.otter.shared.common.model.config.pipeline.Pipeline;
 import com.alibaba.otter.shared.common.utils.cache.RefreshMemoryMirror;
 import com.alibaba.otter.shared.common.utils.cache.RefreshMemoryMirror.ComputeFunction;
 import com.google.common.base.Function;
-import com.google.common.collect.MapMaker;
+import com.google.common.collect.OtterMigrateMap;
 
 /**
  * manager下的基于db查询的{@linkplain ArbitrateConfig}实现
@@ -100,7 +100,7 @@ public class ArbitrateConfigImpl implements ArbitrateConfig, InitializingBean {
 
     public void afterPropertiesSet() throws Exception {
         // 获取一下nid变量
-        channelMapping = new MapMaker().makeComputingMap(new Function<Long, Long>() {
+        channelMapping = OtterMigrateMap.makeComputingMap(new Function<Long, Long>() {
 
             public Long apply(Long pipelineId) {
                 // 处理下pipline -> channel映射关系不存在的情况

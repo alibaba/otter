@@ -28,7 +28,7 @@ import com.alibaba.otter.shared.communication.core.impl.connection.Communication
 import com.alibaba.otter.shared.communication.core.impl.connection.CommunicationConnectionFactory;
 import com.alibaba.otter.shared.communication.core.model.CommunicationParam;
 import com.google.common.base.Function;
-import com.google.common.collect.MapMaker;
+import com.google.common.collect.OtterMigrateMap;
 
 /**
  * dubbo rpc服务链接的factory
@@ -41,12 +41,13 @@ public class DubboCommunicationConnectionFactory implements CommunicationConnect
     private final String                       DUBBO_SERVICE_URL = "dubbo://{0}:{1}/endpoint?client=netty&codec=dubbo&serialization=java&lazy=true&iothreads=4&threads=50&connections=30&acceptEvent.timeout=50000";
 
     private DubboProtocol                      protocol          = DubboProtocol.getDubboProtocol();
-    private ProxyFactory                       proxyFactory      = ExtensionLoader.getExtensionLoader(ProxyFactory.class).getExtension("javassist");
+    private ProxyFactory                       proxyFactory      = ExtensionLoader.getExtensionLoader(ProxyFactory.class)
+                                                                     .getExtension("javassist");
 
     private Map<String, CommunicationEndpoint> connections       = null;
 
     public DubboCommunicationConnectionFactory(){
-        connections = new MapMaker().makeComputingMap(new Function<String, CommunicationEndpoint>() {
+        connections = OtterMigrateMap.makeComputingMap(new Function<String, CommunicationEndpoint>() {
 
             public CommunicationEndpoint apply(String serviceUrl) {
                 return proxyFactory.getProxy(protocol.refer(CommunicationEndpoint.class, URL.valueOf(serviceUrl)));

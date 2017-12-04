@@ -20,8 +20,8 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -43,10 +43,10 @@ import org.I0Itec.zkclient.exception.ZkTimeoutException;
 import org.I0Itec.zkclient.serialize.ZkSerializer;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.WatchedEvent;
-import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.KeeperException.ConnectionLossException;
 import org.apache.zookeeper.KeeperException.SessionExpiredException;
+import org.apache.zookeeper.WatchedEvent;
+import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.Watcher.Event.EventType;
 import org.apache.zookeeper.Watcher.Event.KeeperState;
 import org.apache.zookeeper.ZooKeeper.States;
@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.otter.shared.common.utils.zookeeper.ZkEventThread.ZkEvent;
 import com.google.common.base.Function;
-import com.google.common.collect.MapMaker;
+import com.google.common.collect.OtterMigrateMap;
 
 /**
  * 使用自定义的ZooKeeperx for zk connection
@@ -67,7 +67,7 @@ import com.google.common.collect.MapMaker;
 public class ZkClientx implements Watcher {
 
     // 对于zkclient进行一次缓存，避免一个jvm内部使用多个zk connection
-    private static Map<String, ZkClientx> clients = new MapMaker().makeComputingMap(new Function<String, ZkClientx>() {
+    private static Map<String, ZkClientx> clients = OtterMigrateMap.makeComputingMap(new Function<String, ZkClientx>() {
 
                                                       public ZkClientx apply(String servers) {
                                                           return new ZkClientx(servers);

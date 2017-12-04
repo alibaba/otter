@@ -31,9 +31,7 @@ import com.alibaba.otter.common.push.datasource.DataSourceHanlder;
 import com.alibaba.otter.shared.common.model.config.data.DataMediaType;
 import com.alibaba.otter.shared.common.model.config.data.db.DbMediaSource;
 import com.google.common.base.Function;
-import com.google.common.collect.GenericMapMaker;
-import com.google.common.collect.MapEvictionListener;
-import com.google.common.collect.MapMaker;
+import com.google.common.collect.OtterMigrateMap;
 
 /**
  * media group 的 url 为： jdbc:mysql://groupKey=xxx
@@ -56,32 +54,12 @@ public class MediaPushDataSourceHandler implements DataSourceHanlder {
     private Map<Long, Map<DbMediaSource, DataSource>> dataSources;
 
     public MediaPushDataSourceHandler(){
-        // 设置soft策略
-        GenericMapMaker mapMaker = new MapMaker().softValues();
-        mapMaker = ((MapMaker) mapMaker).evictionListener(new MapEvictionListener<Long, Map<DbMediaSource, DataSource>>() {
-
-            public void onEviction(Long pipelineId, Map<DbMediaSource, DataSource> dataSources) {
-                if (dataSources == null) {
-                    return;
-                }
-
-                for (DataSource dataSource : dataSources.values()) {
-                    try {
-                        MediaPushDataSource mediaPushDataSource = (MediaPushDataSource) dataSource;
-                        mediaPushDataSource.destory();
-                    } catch (SQLException e) {
-                        log.error("ERROR ## close the datasource has an error", e);
-                    }
-                }
-            }
-        });
-
         // 构建第一层map
-        dataSources = new MapMaker().makeComputingMap(new Function<Long, Map<DbMediaSource, DataSource>>() {
+        dataSources = OtterMigrateMap.makeComputingMap(new Function<Long, Map<DbMediaSource, DataSource>>() {
 
             public Map<DbMediaSource, DataSource> apply(Long pipelineId) {
                 // 构建第二层map
-                return new MapMaker().makeComputingMap(new Function<DbMediaSource, DataSource>() {
+                return OtterMigrateMap.makeComputingMap(new Function<DbMediaSource, DataSource>() {
 
                     public DataSource apply(DbMediaSource dbMediaSource) {
                         return createDataSource(dbMediaSource.getUrl(), dbMediaSource.getUsername(),

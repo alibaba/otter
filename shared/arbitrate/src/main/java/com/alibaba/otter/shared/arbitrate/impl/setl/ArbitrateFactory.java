@@ -27,7 +27,7 @@ import org.springframework.context.ApplicationContextAware;
 
 import com.alibaba.otter.shared.arbitrate.exception.ArbitrateException;
 import com.google.common.base.Function;
-import com.google.common.collect.MapMaker;
+import com.google.common.collect.OtterMigrateMap;
 
 /**
  * 针对arbitrate的对象管理的工厂方法，基于pipelineId需要做对象缓存
@@ -39,10 +39,10 @@ public class ArbitrateFactory implements ApplicationContextAware {
 
     private static ApplicationContext            context = null;
     // 两层的Map接口，第一层为pipelineId，第二层为具体的资源类型class
-    private static Map<Long, Map<Class, Object>> cache   = new MapMaker().makeComputingMap(new Function<Long, Map<Class, Object>>() {
+    private static Map<Long, Map<Class, Object>> cache   = OtterMigrateMap.makeComputingMap(new Function<Long, Map<Class, Object>>() {
 
                                                              public Map<Class, Object> apply(final Long pipelineId) {
-                                                                 return new MapMaker().makeComputingMap(new Function<Class, Object>() {
+                                                                 return OtterMigrateMap.makeComputingMap(new Function<Class, Object>() {
 
                                                                      public Object apply(Class instanceClass) {
                                                                          return newInstance(pipelineId, instanceClass);

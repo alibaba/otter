@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.alibaba.otter.node.etl.common.jmx.StageAggregation.AggregationItem;
 import com.alibaba.otter.shared.common.model.config.enums.StageType;
 import com.google.common.base.Function;
-import com.google.common.collect.MapMaker;
+import com.google.common.collect.OtterMigrateMap;
 
 /**
  * 统计每个stage的运行信息
@@ -40,10 +40,10 @@ public class StageAggregationCollector {
     }
 
     public StageAggregationCollector(final int bufferSize){
-        collector = new MapMaker().makeComputingMap(new Function<Long, Map<StageType, StageAggregation>>() {
+        collector = OtterMigrateMap.makeComputingMap(new Function<Long, Map<StageType, StageAggregation>>() {
 
             public Map<StageType, StageAggregation> apply(Long input) {
-                return new MapMaker().makeComputingMap(new Function<StageType, StageAggregation>() {
+                return OtterMigrateMap.makeComputingMap(new Function<StageType, StageAggregation>() {
 
                     public StageAggregation apply(StageType input) {
                         return new StageAggregation(bufferSize);

@@ -22,7 +22,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import com.alibaba.otter.shared.etl.model.Identity;
 import com.google.common.base.Function;
-import com.google.common.collect.MapMaker;
+import com.google.common.collect.MigrateMap;
+import com.google.common.collect.OtterMigrateMap;
 
 /**
  * 统计跟踪器
@@ -35,7 +36,7 @@ public class LoadStatsTracker {
     private Map<Identity, LoadThroughput> throughputs;
 
     public LoadStatsTracker(){
-        throughputs = new MapMaker().makeComputingMap(new Function<Identity, LoadThroughput>() {
+        throughputs = OtterMigrateMap.makeComputingMap(new Function<Identity, LoadThroughput>() {
 
             public LoadThroughput apply(Identity identity) {
                 return new LoadThroughput(identity);
@@ -58,7 +59,7 @@ public class LoadStatsTracker {
         private Map<Long, LoadCounter> counters;
 
         public LoadThroughput(Identity identity){
-            counters = new MapMaker().makeComputingMap(new Function<Long, LoadCounter>() {
+            counters = MigrateMap.makeComputingMap(new Function<Long, LoadCounter>() {
 
                 public LoadCounter apply(Long pairId) {
                     return new LoadCounter(pairId);

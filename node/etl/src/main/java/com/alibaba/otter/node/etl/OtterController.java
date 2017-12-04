@@ -55,6 +55,7 @@ import com.alibaba.otter.shared.common.utils.JsonUtils;
 import com.alibaba.otter.shared.common.utils.version.VersionInfo;
 import com.google.common.base.Function;
 import com.google.common.collect.MapMaker;
+import com.google.common.collect.OtterMigrateMap;
 
 /**
  * 管理和维护对应node机器内的S.E.T.L任务，实时接收manager推送的NodeTask调度信息，可查看 {@linkplain NodeTaskService}
@@ -67,7 +68,7 @@ public class OtterController implements NodeTaskListener, OtterControllerMBean {
     private static final Logger                   logger      = LoggerFactory.getLogger(OtterController.class);
 
     // 第一层为pipelineId，第二层为S.E.T.L模块
-    private Map<Long, Map<StageType, GlobalTask>> controllers = new MapMaker().makeComputingMap(new Function<Long, Map<StageType, GlobalTask>>() {
+    private Map<Long, Map<StageType, GlobalTask>> controllers = OtterMigrateMap.makeComputingMap(new Function<Long, Map<StageType, GlobalTask>>() {
 
                                                                   public Map<StageType, GlobalTask> apply(Long pipelineId) {
                                                                       return new MapMaker().makeMap();

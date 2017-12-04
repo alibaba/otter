@@ -27,7 +27,7 @@ import org.apache.oro.text.regex.Perl5Compiler;
 import org.apache.oro.text.regex.Perl5Matcher;
 
 import com.google.common.base.Function;
-import com.google.common.collect.MapMaker;
+import com.google.common.collect.OtterMigrateMap;
 
 /**
  * @author simon 2012-9-25 下午5:01:48
@@ -38,7 +38,7 @@ public class RegexUtils {
     private static Map<String, Pattern> patterns = null;
 
     static {
-        patterns = new MapMaker().softValues().makeComputingMap(new Function<String, Pattern>() {
+        patterns = OtterMigrateMap.makeSoftValueComputingMap(new Function<String, Pattern>() {
 
             public Pattern apply(String pattern) {
                 try {

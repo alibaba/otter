@@ -41,9 +41,7 @@ import com.alibaba.otter.node.etl.common.datasource.DataSourceService;
 import com.alibaba.otter.shared.common.utils.meta.DdlUtils;
 import com.alibaba.otter.shared.common.utils.meta.DdlUtilsFilter;
 import com.google.common.base.Function;
-import com.google.common.collect.GenericMapMaker;
-import com.google.common.collect.MapEvictionListener;
-import com.google.common.collect.MapMaker;
+import com.google.common.collect.OtterMigrateMap;
 
 /**
  * @author jianghang 2011-10-27 下午01:50:19
@@ -171,16 +169,7 @@ public abstract class AbstractDbDialect implements DbDialect {
     // ================================ helper method ==========================
 
     private void initTables(final JdbcTemplate jdbcTemplate) {
-        // soft引用设置，避免内存爆了
-        GenericMapMaker mapMaker = null;
-        mapMaker = new MapMaker().softValues().evictionListener(new MapEvictionListener<List<String>, Table>() {
-
-            public void onEviction(List<String> names, Table table) {
-                logger.warn("Eviction For Table:" + table);
-            }
-        });
-
-        this.tables = mapMaker.makeComputingMap(new Function<List<String>, Table>() {
+        this.tables = OtterMigrateMap.makeSoftValueComputingMap(new Function<List<String>, Table>() {
 
             public Table apply(List<String> names) {
                 Assert.isTrue(names.size() == 2);

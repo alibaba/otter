@@ -37,7 +37,7 @@ import com.alibaba.otter.shared.common.utils.cache.RefreshMemoryMirror.ComputeFu
 import com.alibaba.otter.shared.communication.model.config.FindChannelEvent;
 import com.alibaba.otter.shared.communication.model.config.FindNodeEvent;
 import com.google.common.base.Function;
-import com.google.common.collect.MapMaker;
+import com.google.common.collect.OtterMigrateMap;
 
 /**
  * task节点对应的config对象管理服务
@@ -120,7 +120,7 @@ public class ConfigClientServiceImpl implements InternalConfigClientService, Arb
 
         this.nid = Long.valueOf(nid);
 
-        channelMapping = new MapMaker().makeComputingMap(new Function<Long, Long>() {
+        channelMapping = OtterMigrateMap.makeComputingMap(new Function<Long, Long>() {
 
             public Long apply(Long pipelineId) {
                 // 处理下pipline -> channel映射关系不存在的情况

@@ -32,9 +32,7 @@ import com.alibaba.otter.manager.biz.config.node.NodeService;
 import com.alibaba.otter.manager.biz.remote.NodeRemoteService;
 import com.alibaba.otter.shared.common.model.config.node.Node;
 import com.google.common.base.Function;
-import com.google.common.collect.GenericMapMaker;
-import com.google.common.collect.MapEvictionListener;
-import com.google.common.collect.MapMaker;
+import com.google.common.collect.OtterMigrateMap;
 
 /**
  * 基于node Mbean获取数据的实现
@@ -56,17 +54,7 @@ public class NodeMBeanServiceImpl implements NodeRemoteService {
             throw new ManagerException(e);
         }
 
-        GenericMapMaker mapMaker = null;
-        mapMaker = new MapMaker().expireAfterAccess(5, TimeUnit.MINUTES)
-            .softValues()
-            .evictionListener(new MapEvictionListener<Long, MBeanServerConnection>() {
-
-                public void onEviction(Long nid, MBeanServerConnection mbeanServer) {
-                    // do nothing
-                }
-            });
-
-        mbeanServers = mapMaker.makeComputingMap(new Function<Long, MBeanServerConnection>() {
+        mbeanServers = OtterMigrateMap.makeSoftValueComputingMapWithTimeout(new Function<Long, MBeanServerConnection>() {
 
             public MBeanServerConnection apply(Long nid) {
                 Node node = nodeService.findById(nid);
@@ -93,7 +81,7 @@ public class NodeMBeanServiceImpl implements NodeRemoteService {
                 }
             }
 
-        });
+        },5, TimeUnit.MINUTES);
     }
 
     public String getHeapMemoryUsage(Long nid) {

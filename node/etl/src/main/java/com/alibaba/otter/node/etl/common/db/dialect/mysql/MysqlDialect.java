@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.NestableRuntimeException;
-import org.apache.ddlutils.model.Table;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.lob.LobHandler;
 import org.springframework.util.Assert;
@@ -30,9 +29,7 @@ import org.springframework.util.Assert;
 import com.alibaba.otter.node.etl.common.db.dialect.AbstractDbDialect;
 import com.alibaba.otter.shared.common.utils.meta.DdlUtils;
 import com.google.common.base.Function;
-import com.google.common.collect.GenericMapMaker;
-import com.google.common.collect.MapEvictionListener;
-import com.google.common.collect.MapMaker;
+import com.google.common.collect.OtterMigrateMap;
 
 /**
  * 基于mysql的一些特殊处理定义
@@ -62,16 +59,7 @@ public class MysqlDialect extends AbstractDbDialect {
     }
 
     private void initShardColumns() {
-        // soft引用设置，避免内存爆了
-        GenericMapMaker mapMaker = null;
-        mapMaker = new MapMaker().softValues().evictionListener(new MapEvictionListener<List<String>, Table>() {
-
-            public void onEviction(List<String> names, Table table) {
-                logger.warn("Eviction For Table:" + table);
-            }
-        });
-
-        this.shardColumns = mapMaker.makeComputingMap(new Function<List<String>, String>() {
+        this.shardColumns = OtterMigrateMap.makeSoftValueComputingMap(new Function<List<String>, String>() {
 
             public String apply(List<String> names) {
                 Assert.isTrue(names.size() == 2);

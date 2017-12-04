@@ -25,7 +25,7 @@ import com.alibaba.otter.node.etl.common.pipe.Pipe;
 import com.alibaba.otter.shared.communication.core.model.Event;
 import com.alibaba.otter.shared.communication.core.model.EventType;
 import com.alibaba.otter.shared.etl.model.DbBatch;
-import com.google.common.collect.MapMaker;
+import com.google.common.collect.OtterMigrateMap;
 
 /**
  * 基于rpc通讯的数据传递
@@ -45,7 +45,7 @@ public abstract class AbstractRpcPipe<T, KEY extends RpcPipeKey> implements Pipe
     protected Map<RpcPipeKey, DbBatch> cache;
 
     public void afterPropertiesSet() throws Exception {
-        cache = new MapMaker().expireAfterWrite(timeout, TimeUnit.MILLISECONDS).softValues().makeMap();
+        cache = OtterMigrateMap.makeSoftValueMapWithTimeout(timeout, TimeUnit.MILLISECONDS);
     }
 
     // rpc get操作事件
