@@ -3,10 +3,6 @@ package com.alibaba.otter.node.extend.processor;
 import com.alibaba.otter.shared.etl.model.EventColumn;
 import com.alibaba.otter.shared.etl.model.EventData;
 
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.List;
-
 public class TradOrder_Processor extends AbstractEventProcessor {
     public boolean process(EventData eventData) {
         Boolean ck_flag=false;
@@ -17,7 +13,7 @@ public class TradOrder_Processor extends AbstractEventProcessor {
                  }
             }
             if (column.getColumnName().toLowerCase().toLowerCase().equals("pay_user_id")){
-                if (column.isNull() || column.getColumnValue().length() <=0){
+                if ( !column.isNull() &&  column.getColumnValue().length()!= 0 ){
                     ck_flag=ck_flag&&true;
                 } else
                 {
