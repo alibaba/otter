@@ -96,12 +96,6 @@ public class SelfMonitor implements Monitor, InitializingBean, DisposableBean {
 
     public void setEnable(boolean enable) {
         this.enable.set(enable);
-
-        if (this.enable.get()) {
-            start();
-        } else {
-            stop();
-        }
     }
 
     public void setInterval(int interval) {
