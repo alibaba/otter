@@ -23,7 +23,7 @@ import org.springframework.beans.factory.InitializingBean;
 
 import com.alibaba.otter.node.etl.common.pipe.Pipe;
 import com.alibaba.otter.shared.etl.model.DbBatch;
-import com.google.common.collect.MapMaker;
+import com.google.common.collect.OtterMigrateMap;
 
 /**
  * 基于内存版本的pipe实现
@@ -39,7 +39,7 @@ public abstract class AbstractMemoryPipe<T, KEY extends MemoryPipeKey> implement
 
     public void afterPropertiesSet() throws Exception {
         // 一定要设置过期时间，因为针对rollback操作，不会有后续的节点来获取数据，需要自动过期删除掉
-        cache = new MapMaker().expireAfterWrite(timeout, TimeUnit.MILLISECONDS).softValues().makeMap();
+        cache = OtterMigrateMap.makeSoftValueMapWithTimeout(timeout, TimeUnit.MILLISECONDS);
     }
 
     // ============== setter / getter ===============

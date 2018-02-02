@@ -36,6 +36,7 @@ import com.alibaba.otter.shared.arbitrate.model.TerminEventData.TerminType;
 import com.alibaba.otter.shared.common.model.config.enums.StageType;
 import com.google.common.base.Function;
 import com.google.common.collect.MapMaker;
+import com.google.common.collect.OtterMigrateMap;
 
 /**
  * @author jianghang 2012-9-27 下午10:12:35
@@ -52,7 +53,7 @@ public class MemoryStageController extends ArbitrateLifeCycle {
     public MemoryStageController(Long pipelineId){
         super(pipelineId);
 
-        replys = new MapMaker().makeComputingMap(new Function<StageType, ReplyProcessQueue>() {
+        replys = OtterMigrateMap.makeComputingMap(new Function<StageType, ReplyProcessQueue>() {
 
             public ReplyProcessQueue apply(StageType input) {
                 int size = ArbitrateConfigUtils.getParallelism(getPipelineId()) * 10;

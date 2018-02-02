@@ -36,6 +36,7 @@ import com.alibaba.otter.shared.arbitrate.model.EtlEventData;
 import com.alibaba.otter.shared.common.model.config.enums.StageType;
 import com.google.common.base.Function;
 import com.google.common.collect.MapMaker;
+import com.google.common.collect.OtterMigrateMap;
 
 /**
  * 基于rpc的stage调度控制器，排除select调度,主要控制e/t/l的调度控制
@@ -54,7 +55,7 @@ public class RpcStageController extends ArbitrateLifeCycle implements ProcessLis
     public RpcStageController(Long pipelineId){
         super(pipelineId);
 
-        replys = new MapMaker().makeComputingMap(new Function<StageType, ReplyProcessQueue>() {
+        replys = OtterMigrateMap.makeComputingMap(new Function<StageType, ReplyProcessQueue>() {
 
             public ReplyProcessQueue apply(StageType input) {
                 int size = ArbitrateConfigUtils.getParallelism(getPipelineId()) * 10;

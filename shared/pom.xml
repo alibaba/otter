@@ -3,11 +3,11 @@
 	<parent>
 	    <groupId>com.alibaba.otter</groupId>
 	    <artifactId>otter</artifactId>
-	    <version>4.2.15-SNAPSHOT</version>
+	    <version>4.2.16-SNAPSHOT</version>
 	</parent>
 	<groupId>com.alibaba.otter</groupId>
 	<artifactId>shared</artifactId>
-	<version>4.2.15-SNAPSHOT</version>
+	<version>4.2.16-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>shared module for otter</name>
 	<url>http://github.com/alibaba/otter</url>

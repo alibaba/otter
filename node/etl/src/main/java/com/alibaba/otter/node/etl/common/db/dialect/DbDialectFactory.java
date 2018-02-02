@@ -35,9 +35,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import com.alibaba.otter.node.etl.common.datasource.DataSourceService;
 import com.alibaba.otter.shared.common.model.config.data.db.DbMediaSource;
 import com.google.common.base.Function;
-import com.google.common.collect.GenericMapMaker;
-import com.google.common.collect.MapEvictionListener;
-import com.google.common.collect.MapMaker;
+import com.google.common.collect.MigrateMap;
+import com.google.common.collect.OtterMigrateMap;
+import com.google.common.collect.OtterMigrateMap.OtterRemovalListener;
 
 /**
  * @author jianghang 2011-10-27 下午02:12:06
@@ -53,27 +53,11 @@ public class DbDialectFactory implements DisposableBean {
     private Map<Long, Map<DbMediaSource, DbDialect>> dialects;
 
     public DbDialectFactory(){
-        // 构建第一层map
-        GenericMapMaker mapMaker = null;
-        mapMaker = new MapMaker().softValues()
-            .evictionListener(new MapEvictionListener<Long, Map<DbMediaSource, DbDialect>>() {
-
-                public void onEviction(Long pipelineId, Map<DbMediaSource, DbDialect> dialect) {
-                    if (dialect == null) {
-                        return;
-                    }
-
-                    for (DbDialect dbDialect : dialect.values()) {
-                        dbDialect.destory();
-                    }
-                }
-            });
-
-        dialects = mapMaker.makeComputingMap(new Function<Long, Map<DbMediaSource, DbDialect>>() {
+        dialects = OtterMigrateMap.makeSoftValueComputingMapWithRemoveListenr(new Function<Long, Map<DbMediaSource, DbDialect>>() {
 
             public Map<DbMediaSource, DbDialect> apply(final Long pipelineId) {
                 // 构建第二层map
-                return new MapMaker().makeComputingMap(new Function<DbMediaSource, DbDialect>() {
+                return MigrateMap.makeComputingMap(new Function<DbMediaSource, DbDialect>() {
 
                     public DbDialect apply(final DbMediaSource source) {
                         DataSource dataSource = dataSourceService.getDataSource(pipelineId, source);
@@ -109,7 +93,21 @@ public class DbDialectFactory implements DisposableBean {
                     }
                 });
             }
-        });
+        },
+            new OtterRemovalListener<Long, Map<DbMediaSource, DbDialect>>() {
+
+                @Override
+                public void onRemoval(Long pipelineId, Map<DbMediaSource, DbDialect> dialect) {
+                    if (dialect == null) {
+                        return;
+                    }
+
+                    for (DbDialect dbDialect : dialect.values()) {
+                        dbDialect.destory();
+                    }
+                }
+
+            });
 
     }
 

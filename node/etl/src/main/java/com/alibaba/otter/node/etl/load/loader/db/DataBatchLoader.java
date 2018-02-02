@@ -52,7 +52,7 @@ import com.alibaba.otter.shared.etl.model.FileBatch;
 import com.alibaba.otter.shared.etl.model.Identity;
 import com.alibaba.otter.shared.etl.model.RowBatch;
 import com.google.common.base.Function;
-import com.google.common.collect.MapMaker;
+import com.google.common.collect.OtterMigrateMap;
 
 /**
  * 针对RowData的数据载入实现
@@ -209,7 +209,7 @@ public class DataBatchLoader implements OtterLoader<DbBatch, List<LoadContext>>,
      */
     private List<RowBatch> split(RowBatch rowBatch) {
         final Identity identity = rowBatch.getIdentity();
-        Map<DataMediaSource, RowBatch> result = new MapMaker().makeComputingMap(new Function<DataMediaSource, RowBatch>() {
+        Map<DataMediaSource, RowBatch> result = OtterMigrateMap.makeComputingMap(new Function<DataMediaSource, RowBatch>() {
 
             public RowBatch apply(DataMediaSource input) {
                 RowBatch rowBatch = new RowBatch();

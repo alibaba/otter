@@ -44,7 +44,7 @@ import com.alibaba.otter.shared.communication.model.statistics.StatisticsEventTy
 import com.alibaba.otter.shared.communication.model.statistics.TableStatEvent;
 import com.alibaba.otter.shared.communication.model.statistics.ThroughputStatEvent;
 import com.google.common.base.Function;
-import com.google.common.collect.MapMaker;
+import com.google.common.collect.OtterMigrateMap;
 
 /**
  * 统计模块远程接口
@@ -70,13 +70,13 @@ public class StatsRemoteServiceImpl implements StatsRemoteService {
         CommunicationRegistry.regist(StatisticsEventType.tableStat, this);
         CommunicationRegistry.regist(StatisticsEventType.throughputStat, this);
 
-        delayStats = new MapMaker().makeComputingMap(new Function<Long, AvgStat>() {
+        delayStats = OtterMigrateMap.makeComputingMap(new Function<Long, AvgStat>() {
 
             public AvgStat apply(Long pipelineId) {
                 return new AvgStat();
             }
         });
-        throughputStats = new MapMaker().makeComputingMap(new Function<Long, Map<ThroughputType, ThroughputStat>>() {
+        throughputStats = OtterMigrateMap.makeComputingMap(new Function<Long, Map<ThroughputType, ThroughputStat>>() {
 
             public Map<ThroughputType, ThroughputStat> apply(Long pipelineId) {
                 return new HashMap<ThroughputType, ThroughputStat>();

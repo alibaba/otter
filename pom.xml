@@ -9,7 +9,7 @@
 	<artifactId>otter</artifactId>
 	<packaging>pom</packaging>
 	<name>otter</name>
-	<version>4.2.15-SNAPSHOT</version>
+	<version>4.2.16-SNAPSHOT</version>
 	<inceptionYear>2011</inceptionYear>
 	<url>http://github.com/alibaba/otter</url>
 	<organization>
@@ -118,7 +118,7 @@
 		<file_encoding>UTF-8</file_encoding>
 		<spring-version>3.1.2.RELEASE</spring-version>
 		<jetty_verion>8.1.7.v20120910</jetty_verion>
-		<otter_canal_version>1.0.24</otter_canal_version>
+		<otter_canal_version>1.0.25</otter_canal_version>
 	</properties>
 
 	<modules>
@@ -173,7 +173,7 @@
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
-				<version>r08</version>
+				<version>18.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.protobuf</groupId>
@@ -183,7 +183,7 @@
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid</artifactId>
-                <version>1.0.25</version>
+                <version>1.1.6</version>
             </dependency>
 			<!-- zookeeper -->
 			<dependency>
@@ -210,9 +210,9 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>com.github.sgroschupf</groupId>
+				<groupId>com.101tec</groupId>
 				<artifactId>zkclient</artifactId>
-				<version>0.1</version>
+				<version>0.10</version>
 			</dependency>
 			<!-- mysql -->
 			<dependency>

@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.alibaba.otter</groupId>
 		<artifactId>shared</artifactId>
-		<version>4.2.15-SNAPSHOT</version>
+		<version>4.2.16-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<groupId>com.alibaba.otter</groupId>
@@ -108,7 +108,7 @@
 			<artifactId>zookeeper</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.github.sgroschupf</groupId>
+			<groupId>com.101tec</groupId>
 			<artifactId>zkclient</artifactId>
 		</dependency>
 
