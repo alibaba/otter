@@ -38,34 +38,34 @@ public enum DataMediaType {
     DIAMOND_PUSH;
 
     public boolean isMysql() {
-        return this.equals(DataMediaType.MYSQL);
+        return this == DataMediaType.MYSQL;
     }
 
     public boolean isOracle() {
-        return this.equals(DataMediaType.ORACLE);
+        return this == DataMediaType.ORACLE;
     }
 
     public boolean isTddl() {
-        return this.equals(DataMediaType.TDDL);
+        return this == DataMediaType.TDDL;
     }
 
     public boolean isCobar() {
-        return this.equals(DataMediaType.COBAR);
+        return this == DataMediaType.COBAR;
     }
 
     public boolean isMemcache() {
-        return this.equals(DataMediaType.MEMCACHE);
+        return this == DataMediaType.MEMCACHE;
     }
 
     public boolean isMq() {
-        return this.equals(DataMediaType.MQ);
+        return this == DataMediaType.MQ;
     }
 
     public boolean isNapoli() {
-        return this.equals(DataMediaType.NAPOLI);
+        return this == DataMediaType.NAPOLI;
     }
 
     public boolean isDiamondPush() {
-        return this.equals(DataMediaType.DIAMOND_PUSH);
+        return this == DataMediaType.DIAMOND_PUSH;
     }
 }
