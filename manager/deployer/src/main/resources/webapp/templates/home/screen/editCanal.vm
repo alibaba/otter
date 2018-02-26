@@ -403,7 +403,7 @@ $control.setTemplate("home:navigation.vm")
       </tr>
 	  
 	  <tr class="networkSuperConfig"> 
-        <th width="300">snedBufferSize：</th>
+        <th width="300">receiveBufferSize：</th>
         <td width="329">
             <input type="text" name="$canalParameterGroup.receiveBufferSize.key" value="$!canal.canalParameter.receiveBufferSize" class="setting_input"/><span class="red">*</span>
 			<br />
@@ -412,7 +412,7 @@ $control.setTemplate("home:navigation.vm")
       </tr>
 	  
 	  <tr class="networkSuperConfig"> 
-        <th width="300">receiveBufferSize：</th>
+        <th width="300">sendBufferSize：</th>
         <td width="329">
             <input type="text" name="$canalParameterGroup.sendBufferSize.key" value="$!canal.canalParameter.sendBufferSize" class="setting_input"/><span class="red">*</span>
 			<br />
