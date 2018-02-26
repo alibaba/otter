@@ -81,7 +81,7 @@ public class AddressUtils {
         InetAddress localAddress = null;
         try {
             localAddress = InetAddress.getLocalHost();
-            if (isValidHostAddress(localAddress)
+            if (localAddress.isLoopbackAddress() || isValidHostAddress(localAddress)
                 && (localAddress.getHostAddress().equals(ip) || localAddress.getHostName().equals(ip))) {
                 return true;
             }
@@ -101,7 +101,7 @@ public class AddressUtils {
                             while (addresses.hasMoreElements()) {
                                 try {
                                     InetAddress address = addresses.nextElement();
-                                    if (isValidHostAddress(address) && address.getHostAddress().equals(ip)) {
+                                    if (address.isLoopbackAddress() || isValidHostAddress(address) && address.getHostAddress().equals(ip)) {
                                         return true;
                                     }
                                 } catch (Throwable e) {
