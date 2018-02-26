@@ -148,8 +148,13 @@
 			<dependency>
 				<groupId>commons-codec</groupId>
 				<artifactId>commons-codec</artifactId>
-				<version>1.8</version>
+				<version>1.9</version>
 			</dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>1.9</version>
+            </dependency>
 			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
@@ -183,7 +188,7 @@
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid</artifactId>
-                <version>1.1.6</version>
+                <version>1.1.8</version>
             </dependency>
 			<!-- zookeeper -->
 			<dependency>
@@ -218,15 +223,13 @@
 			<dependency>
 				<groupId>mysql</groupId>
 				<artifactId>mysql-connector-java</artifactId>
-				<version>5.1.35</version>
+				<version>5.1.40</version>
 			</dependency>
             <!-- oracle -->
 			<dependency>
 				<groupId>com.oracle</groupId>
 				<artifactId>ojdbc14</artifactId>
 				<version>10.2.0.3.0</version>
-				<scope>system</scope>
-				<systemPath>${user.dir}/lib/ojdbc14-10.2.0.3.0.jar</systemPath>
 			</dependency>
 			<!-- spring -->
 			<dependency>
