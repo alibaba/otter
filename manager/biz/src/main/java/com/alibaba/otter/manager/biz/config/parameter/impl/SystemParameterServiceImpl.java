@@ -16,8 +16,9 @@
 
 package com.alibaba.otter.manager.biz.config.parameter.impl;
 
+import java.util.Date;
 import java.util.List;
-
+ 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,6 +72,8 @@ public class SystemParameterServiceImpl implements SystemParameterService {
     private SystemParameterDO modelToDo(SystemParameter systemParameter) {
         SystemParameterDO systemParameterDo = new SystemParameterDO();
         systemParameterDo.setValue(systemParameter);
+        systemParameterDo.setGmtCreate(new Date());
+        systemParameterDo.setGmtModified(new Date());
         return systemParameterDo;
     }
 

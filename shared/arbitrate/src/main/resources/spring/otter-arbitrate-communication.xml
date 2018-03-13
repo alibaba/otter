@@ -12,7 +12,9 @@
 	<bean id="arbitrateCommunicationClient" class="com.alibaba.otter.shared.communication.core.impl.DefaultCommunicationClientImpl" init-method="initial" destroy-method="destory">
 		<property name="poolSize" value="${otter.communication.pool.size:10}" />
 		<property name="factory">
-			<bean class="com.alibaba.otter.shared.communication.core.impl.dubbo.DubboCommunicationConnectionFactory" />
+			<bean class="com.alibaba.otter.shared.communication.core.impl.dubbo.DubboCommunicationConnectionFactory">
+				<property name="payload" value="${otter.communication.payload:8388608}" />
+			</bean>
 		</property>
 	</bean>
 	
