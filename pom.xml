@@ -233,8 +233,8 @@
             <!-- oracle -->
 			<dependency>
 				<groupId>com.oracle</groupId>
-				<artifactId>ojdbc14</artifactId>
-				<version>10.2.0.3.0</version>
+				<artifactId>ojdbc6</artifactId>
+				<version>11.1.0.7.0</version>
 			</dependency>
 			<!-- spring -->
 			<dependency>
