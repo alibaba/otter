@@ -30,7 +30,7 @@
 			<outputDirectory>conf</outputDirectory>
 		</file>
 		<file>
-			<source>../../lib/ojdbc14-10.2.0.3.0.jar</source>
+			<source>../../lib/ojdbc6.jar</source>
 			<outputDirectory>lib</outputDirectory>
 		</file>
 	</files>
