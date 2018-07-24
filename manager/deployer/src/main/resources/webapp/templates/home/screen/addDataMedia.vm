@@ -37,7 +37,7 @@ function changeKeyword(id, name) {
             <span class="red">#addDataMediaMessage ($dataMediaGroup.formDataMediaError)</span>
         </tr>
       <tr> 
-        <th width="300">schmea name：</th>
+        <th width="300">schema name：</th>
         <td width="329">
 			<input id="namespace" name="$dataMediaGroup.namespace.key" value="$!dataMediaGroup.namespace.value" type="text" class="setting_input"/><span class="red">*</span>
 			<br />
