@@ -153,8 +153,8 @@ public class LogRecordServiceImpl implements LogRecordService {
             logRecordDo.setNid(entityObj.getNid());
             logRecordDo.setTitle(entityObj.getTitle());
             String message = entityObj.getMessage();
-            if (message != null && message.length() > 65535) {
-                message = message.substring(0, 65535);
+            if (message != null && message.length() > 65535 / 3) {
+                message = message.substring(0, 65535 / 3);
             }
             logRecordDo.setMessage(message);
             logRecordDo.setGmtCreate(entityObj.getGmtCreate());
