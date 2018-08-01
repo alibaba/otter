@@ -210,7 +210,10 @@ public class RowDataTransformer extends AbstractOtterTransformer<EventData, Even
                     tnewPks.add(tnewPk);
                     // 转化old pk，这里不能再用translateColumnNames了，因为转化new
                     // pk已经remove过一次view name了
-                    toldPks.add(translateColumn(tnewPk, oldPk.getColumnValue(), dataMediaPair));
+                    EventColumn transEventColumn = translateColumn(tnewPk, oldPk.getColumnValue(), dataMediaPair);
+                    // modify by yuyiding 20180725 主键的isupdate还是oldpk的isupdate
+                    transEventColumn.setUpdate(oldPk.isUpdate());
+                    toldPks.add(transEventColumn);
                 }
             }
 

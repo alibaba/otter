@@ -517,20 +517,20 @@ public class MessageParser {
                 }
             }
             for (Column column : afterColumns) {
-                // 在update操作时，oracle和mysql存放变更的非主键值的方式不同,oracle只有变更的字段;
-                // mysql会把变更前和变更后的字段都发出来，只需要取有变更的字段.
-                // 如果是oracle库，after里一定为对应的变更字段
-
-                boolean isUpdate = true;
-                if (entry.getHeader().getSourceType() == CanalEntry.Type.MYSQL) { // mysql的after里部分数据为未变更,oracle里after里为变更字段
-                    isUpdate = column.getUpdated();
-                }
-
                 if (isKey(tableHolder, tableName, column)) {
                     // 获取变更后的主键
-                    keyColumns.put(column.getName(), copyEventColumn(column, isRowMode || isUpdate, tableHolder));
+                    keyColumns.put(column.getName(), copyEventColumn(column, true, tableHolder));
                 } else if (needAllColumns || entry.getHeader().getSourceType() == CanalEntry.Type.ORACLE
                            || column.getUpdated()) {
+                    // 在update操作时，oracle和mysql存放变更的非主键值的方式不同,oracle只有变更的字段;
+                    // mysql会把变更前和变更后的字段都发出来，只需要取有变更的字段.
+                    // 如果是oracle库，after里一定为对应的变更字段
+
+                    boolean isUpdate = true;
+                    if (entry.getHeader().getSourceType() == CanalEntry.Type.MYSQL) { // mysql的after里部分数据为未变更,oracle里after里为变更字段
+                        isUpdate = column.getUpdated();
+                    }
+
                     notKeyColumns.put(column.getName(), copyEventColumn(column, isRowMode || isUpdate, tableHolder));// 如果是rowMode，所有字段都为updated
                 }
             }
