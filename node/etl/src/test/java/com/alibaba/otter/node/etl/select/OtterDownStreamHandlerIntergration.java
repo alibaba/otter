@@ -93,8 +93,6 @@ public class OtterDownStreamHandlerIntergration extends BaseOtterTest {
     }
 
     private Event buildEvent() {
-        Event event = new Event();
-        event.setLogIdentity(new LogIdentity());
 
         Header.Builder headBuilder = Header.newBuilder();
         headBuilder.setEventLength(1000L);
@@ -114,7 +112,7 @@ public class OtterDownStreamHandlerIntergration extends BaseOtterTest {
 
         entryBuilder.setStoreValue(rowChangeBuilder.build().toByteString());
         Entry entry = entryBuilder.build();
-        event.setEntry(entry);
+        Event event = new Event(new LogIdentity(), entry);
         return event;
     }
 }
