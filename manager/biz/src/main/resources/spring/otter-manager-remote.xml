@@ -76,6 +76,9 @@
 		<property name="targetName" value="canalRemoteServiceTarget"/>
 	</bean>
 	<bean id="canalRemoteServiceTarget" class="com.alibaba.otter.manager.biz.remote.impl.CanalRemoteServiceImpl"  scope="singleton">
+		<property name="tsdbJdbcUrl" value="${otter.database.driver.url}" />
+		<property name="tsdbJdbcUserName" value="${otter.database.driver.username}" />
+		<property name="tsdbJdbcPassword" value="${otter.database.driver.password}" />
 	</bean>
 	
 	<!-- MBEAN -->

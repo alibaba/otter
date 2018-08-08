@@ -838,6 +838,11 @@
 				</fm-validators:required-validator>
 			</field>
 
+			<field name="tsdbEnable" displayName="是否开启表结构tsdb">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
 			<field name="detectingEnable" displayName="是否开启心跳">
 				<fm-validators:required-validator>
 					<message>必须填写${displayName}</message>

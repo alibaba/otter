@@ -328,8 +328,8 @@ $control.setTemplate("home:navigation.vm")
 	  <tr class="super"> 
         <th width="300">启用数据表类型转化：</th>
         <td width="329">
-              <input type="radio" name="$pipelineParameterGroup.useTableTransform.key" value="true" id="RadioGroup1_2" checked="checked" class="radio"/>是
-              <input type="radio" name="$pipelineParameterGroup.useTableTransform.key" value="false" id="RadioGroup1_3" class="radio"/>否 
+              <input type="radio" name="$pipelineParameterGroup.useTableTransform.key" value="true" id="RadioGroup1_2" class="radio"/>是
+              <input type="radio" name="$pipelineParameterGroup.useTableTransform.key" value="false" id="RadioGroup1_3" checked="checked" class="radio"/>否 
         </td>
       </tr>
 	  <tr class="super"> 

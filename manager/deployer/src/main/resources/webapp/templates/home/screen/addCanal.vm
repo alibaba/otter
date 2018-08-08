@@ -185,6 +185,19 @@ $control.setTemplate("home:navigation.vm")
       </tr>
 	  </div>
 	  
+	  
+	  <div id="tsdbConfig">
+	  <tr>
+		<th width="300">是否开启表结构TSDB：</th>
+        <td width="329">
+            <input type="radio" name="$canalParameterGroup.tsdbEnable.key" value="true" id="RadioGroup8_0_0" #if($!canal.canalParameter.tsdbEnable) checked="checked" #end class="radio"/>是 &nbsp;
+            <input type="radio" name="$canalParameterGroup.tsdbEnable.key" value="false" id="RadioGroup8_1_0" #if(!$!canal.canalParameter.tsdbEnable) checked="checked" #end class="radio"/>否 &nbsp;
+			<br />
+			<span class="red">#addCanalMessage ($canalParameterGroup.tsdbEnable)</span>
+		</td>
+      </tr>
+      </div>
+	  
 	  <tr> 
         <th width="300">-------------------------------</th>
 		<td width="329">---------------------------------------------------------------------------------------------</td>

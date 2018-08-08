@@ -58,6 +58,10 @@ $control.setTemplate("home:navigation.vm")
   </tr>
   
   <tr>
+  <th>是否开启表结构TSDB：</th><td>$!canal.canalParameter.tsdbEnable</td>
+  </tr>
+ 
+  <tr>
   <th>存储机制：</th><td>$!canal.canalParameter.storageMode</td>
   </tr>
   

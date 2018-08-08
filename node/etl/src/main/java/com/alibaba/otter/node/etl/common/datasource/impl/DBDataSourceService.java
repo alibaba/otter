@@ -192,6 +192,7 @@ public class DBDataSourceService implements DataSourceService, DisposableBean {
             dbcpDs.addConnectionProperty("zeroDateTimeBehavior", "convertToNull");// 将0000-00-00的时间类型返回null
             dbcpDs.addConnectionProperty("yearIsDateType", "false");// 直接返回字符串，不做year转换date处理
             dbcpDs.addConnectionProperty("noDatetimeStringSync", "true");// 返回时间类型的字符串,不做时区处理
+            dbcpDs.addConnectionProperty("jdbcCompliantTruncation", "false");// 允许sqlMode为非严格模式
             if (StringUtils.isNotEmpty(encoding)) {
                 if (StringUtils.equalsIgnoreCase(encoding, "utf8mb4")) {
                     dbcpDs.addConnectionProperty("characterEncoding", "utf8");

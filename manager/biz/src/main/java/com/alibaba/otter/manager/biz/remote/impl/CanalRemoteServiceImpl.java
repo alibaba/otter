@@ -17,6 +17,7 @@
 package com.alibaba.otter.manager.biz.remote.impl;
 
 import com.alibaba.otter.canal.instance.manager.model.Canal;
+import com.alibaba.otter.canal.instance.manager.model.CanalParameter;
 import com.alibaba.otter.manager.biz.config.canal.CanalService;
 import com.alibaba.otter.manager.biz.remote.CanalRemoteService;
 import com.alibaba.otter.shared.communication.core.CommunicationRegistry;
@@ -33,6 +34,9 @@ import com.alibaba.otter.shared.communication.model.canal.FindFilterEvent;
 public class CanalRemoteServiceImpl implements CanalRemoteService {
 
     private CanalService canalService;
+    private String       tsdbJdbcUrl;
+    private String       tsdbJdbcUserName;
+    private String       tsdbJdbcPassword;
 
     public CanalRemoteServiceImpl(){
         CommunicationRegistry.regist(CanalEventType.findCanal, this);
@@ -41,7 +45,15 @@ public class CanalRemoteServiceImpl implements CanalRemoteService {
 
     public Canal onFindCanal(FindCanalEvent event) {
         String destination = event.getDestination();
-        return canalService.findByName(destination);
+        Canal canal = canalService.findByName(destination);
+        // set default jdbc url
+        CanalParameter parameter = canal.getCanalParameter();
+        if (parameter.getTsdbEnable() != null && parameter.getTsdbEnable()) {
+            parameter.setTsdbJdbcUrl(tsdbJdbcUrl);
+            parameter.setTsdbJdbcUserName(tsdbJdbcUserName);
+            parameter.setTsdbJdbcPassword(tsdbJdbcPassword);
+        }
+        return canal;
     }
 
     public String onFindFilter(FindFilterEvent event) {
@@ -51,6 +63,18 @@ public class CanalRemoteServiceImpl implements CanalRemoteService {
 
     public void setCanalService(CanalService canalService) {
         this.canalService = canalService;
+    }
+
+    public void setTsdbJdbcUrl(String tsdbJdbcUrl) {
+        this.tsdbJdbcUrl = tsdbJdbcUrl;
+    }
+
+    public void setTsdbJdbcUserName(String tsdbJdbcUserName) {
+        this.tsdbJdbcUserName = tsdbJdbcUserName;
+    }
+
+    public void setTsdbJdbcPassword(String tsdbJdbcPassword) {
+        this.tsdbJdbcPassword = tsdbJdbcPassword;
     }
 
 }
