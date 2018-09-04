@@ -357,7 +357,7 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
                 Boolean result = dbDialect.getJdbcTemplate().execute(new StatementCallback<Boolean>() {
 
                     public Boolean doInStatement(Statement stmt) throws SQLException, DataAccessException {
-                        Boolean result = false;
+                        Boolean result = true;
                         if (dbDialect instanceof MysqlDialect && StringUtils.isNotEmpty(data.getDdlSchemaName())) {
                             // 如果mysql，执行ddl时，切换到在源库执行的schema上
                             // result &= stmt.execute("use " +
