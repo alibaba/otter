@@ -25,6 +25,13 @@ public class DdlUtilsTest {
     }
 
     @Test
+    public void testAlterTable2() {
+        String sql = "alter table ps_users\n\tadd column name varchar(32) DEFAULT NULL";
+        String result = DdlUtils.convert(sql, "test", "ps_users", "test", "ps_users2");
+        System.out.println(result);
+    }
+
+    @Test
     public void testDropTable() {
         String sql = "drop table old.`old_table`";
         String result = DdlUtils.convert(sql, "old", "old_table", "new", "new_table");
@@ -58,6 +65,7 @@ public class DdlUtilsTest {
 
     public static void main(String args[]) {
         DdlUtilsTest tester = new DdlUtilsTest();
+        tester.testAlterTable2();
         tester.testCreateTable();
         tester.testAlterTable();
         tester.testDropTable();
