@@ -40,9 +40,6 @@ import com.alibaba.otter.canal.instance.manager.model.CanalParameter.HAMode;
 import com.alibaba.otter.canal.parse.CanalEventParser;
 import com.alibaba.otter.canal.parse.ha.CanalHAController;
 import com.alibaba.otter.canal.parse.inbound.mysql.MysqlEventParser;
-import com.alibaba.otter.canal.parse.inbound.mysql.tsdb.DefaultTableMetaTSDBFactory;
-import com.alibaba.otter.canal.parse.inbound.mysql.tsdb.TableMetaTSDB;
-import com.alibaba.otter.canal.parse.inbound.mysql.tsdb.TableMetaTSDBBuilder;
 import com.alibaba.otter.canal.parse.support.AuthenticationInfo;
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.CanalEntry.Entry;
@@ -50,6 +47,7 @@ import com.alibaba.otter.canal.protocol.ClientIdentity;
 import com.alibaba.otter.canal.server.embedded.CanalServerWithEmbedded;
 import com.alibaba.otter.canal.sink.AbstractCanalEventSink;
 import com.alibaba.otter.canal.sink.CanalEventSink;
+import com.alibaba.otter.canal.store.memory.MemoryEventStoreWithBuffer;
 import com.alibaba.otter.node.common.config.ConfigClientService;
 import com.alibaba.otter.node.etl.OtterConstants;
 import com.alibaba.otter.node.etl.OtterContextLocator;
@@ -171,35 +169,7 @@ public class CanalEmbedSelector implements OtterSelector {
                             }
 
                             MysqlEventParser mysqlEventParser = (MysqlEventParser) eventParser;
-                            if (parameters.getTsdbEnable()) {
-                                mysqlEventParser.setEnableTsdb(true);
-                                mysqlEventParser.setTableMetaTSDBFactory(new DefaultTableMetaTSDBFactory() {
-
-                                    @Override
-                                    public void destory(String destination) {
-                                        TableMetaTSDBBuilder.destory(destination);
-                                    }
-
-                                    @Override
-                                    public TableMetaTSDB build(String destination, String springXml) {
-                                        try {
-                                            System.setProperty("canal.instance.tsdb.url", parameters.getTsdbJdbcUrl());
-                                            System.setProperty("canal.instance.tsdb.dbUsername",
-                                                parameters.getTsdbJdbcUserName());
-                                            System.setProperty("canal.instance.tsdb.dbPassword",
-                                                parameters.getTsdbJdbcPassword());
-
-                                            return TableMetaTSDBBuilder.build(destination,
-                                                "classpath:spring/tsdb/mysql-tsdb.xml");
-                                        } finally {
-                                            System.setProperty("canal.instance.tsdb.url", "");
-                                            System.setProperty("canal.instance.tsdb.dbUsername", "");
-                                            System.setProperty("canal.instance.tsdb.dbPassword", "");
-                                        }
-                                    }
-                                });
-                            }
-
+                            mysqlEventParser.setParallel(false); // otter先使用简单的模式
                             CanalHAController haController = mysqlEventParser.getHaController();
                             if (haController instanceof MediaHAController) {
                                 if (isGroup) {
@@ -218,6 +188,16 @@ public class CanalEmbedSelector implements OtterSelector {
                                 AuthenticationInfo authenticationInfo = ((MediaHAController) haController).getAvailableAuthenticationInfo();
                                 ((MysqlEventParser) eventParser).setMasterInfo(authenticationInfo);
                             }
+                        }
+                    }
+
+                    @Override
+                    protected void initEventStore() {
+                        super.initEventStore();
+
+                        if (eventStore instanceof MemoryEventStoreWithBuffer) {
+                            // 嵌入式模式不需要raw处理
+                            ((MemoryEventStoreWithBuffer) eventStore).setRaw(false);
                         }
                     }
 

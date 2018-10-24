@@ -54,11 +54,27 @@ $control.setTemplate("home:navigation.vm")
   #end
   
   <tr>
+  <th>是否启用gtid位点：</th><td>$!canal.canalParameter.gtidEnable</td>
+  </tr>
+  
+  <tr>
   <th>位点信息：</th><td>#foreach($position in $!canal.canalParameter.positions)$position;#end</td>
   </tr>
   
   <tr>
   <th>是否开启表结构TSDB：</th><td>$!canal.canalParameter.tsdbEnable</td>
+  </tr>
+  
+  <tr>
+  <th>rds accesskey：</th><td>$!canal.canalParameter.rdsAccesskey</td>
+  </tr>
+  
+  <tr>
+  <th>rds secretkey：</th><td>$!canal.canalParameter.rdsSecretkey</td>
+  </tr>
+  
+  <tr>
+  <th>rds instanceId：</th><td>$!canal.canalParameter.rdsInstance</td>
   </tr>
  
   <tr>

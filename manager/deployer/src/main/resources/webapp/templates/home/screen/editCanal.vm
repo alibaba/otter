@@ -7,8 +7,10 @@ $control.setTemplate("home:navigation.vm")
 		var obj = document.getElementById('positionSuperConfig');
 		if(obj.checked) {
 			changeDisplay('positionSuperConfig','table-row');
+			changeDisplay('positionGtidConfig','table-row');
 		}else {
 			changeDisplay('positionSuperConfig','none');
+			changeDisplay('positionGtidConfig','none');
 		}
 	}
 	
@@ -180,6 +182,15 @@ $control.setTemplate("home:navigation.vm")
         </td>
       </tr>
       
+      <tr class="positionGtidConfig">
+		<th width="300">是否启用gtid位点：</th>
+        <td width="329">
+            <input type="radio" name="$canalParameterGroup.gtidEnable.key" value="true" id="RadioGroup8_0_0" #if($!canal.canalParameter.gtidEnable) checked="checked" #end class="radio"/>是 &nbsp;
+            <input type="radio" name="$canalParameterGroup.gtidEnable.key" value="false" id="RadioGroup8_1_0" #if(!$!canal.canalParameter.gtidEnable) checked="checked" #end class="radio"/>否 &nbsp;
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.gtidEnable)</span>
+		</td>
+      </tr>
 	  <tr class="positionSuperConfig"> 
         <th width="300">位点信息：</th>
         <td width="329">
@@ -199,6 +210,33 @@ $control.setTemplate("home:navigation.vm")
             <input type="radio" name="$canalParameterGroup.tsdbEnable.key" value="false" id="RadioGroup8_1_0" #if(!$!canal.canalParameter.tsdbEnable) checked="checked" #end class="radio"/>否 &nbsp;
 			<br />
 			<span class="red">#editCanalMessage ($canalParameterGroup.tsdbEnable)</span>
+		</td>
+      </tr>
+      </div>
+      
+      <div id="rdsConfig">
+	  <tr class="rdsConfig">
+        <th width="300">rds accesskey：</th>
+        <td width="329">
+            <input type="text" name="$canalParameterGroup.rdsAccesskey.key" value="$!canal.canalParameter.rdsAccesskey" class="setting_input"/>
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.rdsAccesskey)</span>
+		</td>
+      </tr>
+       <tr class="rdsConfig">
+        <th width="300">rds secretkey：</th>
+        <td width="329">
+            <input type="text" name="$canalParameterGroup.rdsSecretkey.key" value="$!canal.canalParameter.rdsSecretkey" class="setting_input"/>
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.rdsSecretkey)</span>
+		</td>
+      </tr>
+       <tr class="rdsConfig">
+        <th width="300">rds instanceId：</th>
+        <td width="329">
+            <input type="text" name="$canalParameterGroup.rdsInstanceId.key" value="$!canal.canalParameter.rdsInstanceId" class="setting_input"/>
+			<br />
+			<span class="red">#editCanalMessage ($canalParameterGroup.rdsInstanceId)</span>
 		</td>
       </tr>
       </div>

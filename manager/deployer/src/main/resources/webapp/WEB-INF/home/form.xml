@@ -843,6 +843,11 @@
 					<message>必须填写${displayName}</message>
 				</fm-validators:required-validator>
 			</field>
+			<field name="gtidEnable" displayName="是否启用gtid位点">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+			</field>
 			<field name="detectingEnable" displayName="是否开启心跳">
 				<fm-validators:required-validator>
 					<message>必须填写${displayName}</message>
@@ -914,6 +919,9 @@
 				</fm-validators:required-validator>
 			</field>
 			<field name="blackFilter" displayName="过滤表达式"/>
+			<field name="rdsAccesskey" displayName="rds accesskey" />
+			<field name="rdsSecretkey" displayName="rds secretkey" />
+			<field name="rdsInstanceId" displayName="rds instance" />
 		</group>
 
 		<group name="dataMatrixInfo" extends="csrfCheck">

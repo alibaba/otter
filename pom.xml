@@ -193,7 +193,7 @@
             <dependency>
                 <groupId>com.alibaba.fastsql</groupId>
                 <artifactId>fastsql</artifactId>
-                <version>2.0.0_preview_520</version>
+                <version>2.0.0_preview_630</version>
             </dependency>
 			<!-- zookeeper -->
 			<dependency>
