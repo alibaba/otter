@@ -47,7 +47,6 @@ import com.alibaba.otter.canal.protocol.ClientIdentity;
 import com.alibaba.otter.canal.server.embedded.CanalServerWithEmbedded;
 import com.alibaba.otter.canal.sink.AbstractCanalEventSink;
 import com.alibaba.otter.canal.sink.CanalEventSink;
-import com.alibaba.otter.canal.store.memory.MemoryEventStoreWithBuffer;
 import com.alibaba.otter.node.common.config.ConfigClientService;
 import com.alibaba.otter.node.etl.OtterConstants;
 import com.alibaba.otter.node.etl.OtterContextLocator;
@@ -141,6 +140,7 @@ public class CanalEmbedSelector implements OtterSelector {
                 canal.getCanalParameter().setSlaveId(slaveId + pipelineId);
                 canal.getCanalParameter().setDdlIsolation(ddlSync);
                 canal.getCanalParameter().setFilterTableError(filterTableError);
+                canal.getCanalParameter().setMemoryStorageRawEntry(false);
 
                 CanalInstanceWithManager instance = new CanalInstanceWithManager(canal, filter) {
 
@@ -188,16 +188,6 @@ public class CanalEmbedSelector implements OtterSelector {
                                 AuthenticationInfo authenticationInfo = ((MediaHAController) haController).getAvailableAuthenticationInfo();
                                 ((MysqlEventParser) eventParser).setMasterInfo(authenticationInfo);
                             }
-                        }
-                    }
-
-                    @Override
-                    protected void initEventStore() {
-                        super.initEventStore();
-
-                        if (eventStore instanceof MemoryEventStoreWithBuffer) {
-                            // 嵌入式模式不需要raw处理
-                            ((MemoryEventStoreWithBuffer) eventStore).setRaw(false);
                         }
                     }
 
