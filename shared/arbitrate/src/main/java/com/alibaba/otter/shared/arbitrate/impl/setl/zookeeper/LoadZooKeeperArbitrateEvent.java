@@ -109,7 +109,9 @@ public class LoadZooKeeperArbitrateEvent implements LoadArbitrateEvent {
                 // } catch (KeeperException e) {
                 // // ignore
                 // }
-
+// 释放下processId，因为load是等待processId最小值完成Tranform才继续，如果这里不释放，会一直卡死等待
+            String path = StagePathUtils.getProcess(pipelineId, processId);
+            zookeeper.delete(path);
                 return await(pipelineId);// 出现rollback情况，递归调用重新获取一次，当前的processId可丢弃
             }
         } catch (InterruptedException e) {
