@@ -87,6 +87,10 @@ public class TransformZooKeeperArbitrateEvent implements TransformArbitrateEvent
         } else {
             logger.info("pipelineId[{}] transform ignore processId[{}] by status[{}]", new Object[] { pipelineId,
                     processId, status });
+                    
+            // 释放下processId，因为load是等待processId最小值完成Tranform才继续，如果这里不释放，会一直卡死等待
+            String path = StagePathUtils.getProcess(pipelineId, processId);
+            zookeeper.delete(path);
             return await(pipelineId);// 递归调用
         }
     }
