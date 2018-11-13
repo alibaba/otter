@@ -139,7 +139,7 @@ public class MediaDatasourceSupplier extends AbstractDatasourceSupplier {
             haInfo.setMaster(master);
         }
 
-        String slaveAddress = (String) jsonMap.get("master");
+        String slaveAddress = (String) jsonMap.get("slave");
         if (slaveAddress != null) {
             DatasourceInfo slave = new DatasourceInfo();
             slave.setAddress(parseAddress(slaveAddress));
