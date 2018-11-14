@@ -27,6 +27,7 @@ import com.alibaba.otter.shared.arbitrate.impl.setl.ArbitrateFactory;
 import com.alibaba.otter.shared.arbitrate.impl.setl.SelectArbitrateEvent;
 import com.alibaba.otter.shared.arbitrate.impl.setl.monitor.PermitMonitor;
 import com.alibaba.otter.shared.arbitrate.model.EtlEventData;
+import com.alibaba.otter.shared.arbitrate.model.TerminEventData.TerminType;
 import com.alibaba.otter.shared.common.model.config.channel.ChannelStatus;
 import com.alibaba.otter.shared.common.model.config.enums.StageType;
 
@@ -60,9 +61,13 @@ public class SelectMemoryArbitrateEvent implements SelectArbitrateEvent {
             eventData.setNextNid(nid);
             return eventData;// 只有这一条路返回
         } else {
-            logger.warn("pipelineId[{}] select ignore processId[{}] by status[{}]", new Object[] { pipelineId,
+            logger.warn("pipelineId[{}] select ignore processId[{}] by status[{}],rollback now",
+                new Object[] { pipelineId,
                     processId, status });
-            stageController.clearProgress(processId);//将progress中清理掉，避免阻塞后续调度，因为最小的Id一直处于extract未完成阶段
+            // 进行ROLLBACK，触发释放下processId，信号量及EventStore里面的读位置点。
+            // 1)因为MemoryStageController的load是等待processId最小值完成Tranform才继续，如果这里不释放，会一直卡死等待
+            // 2)信号量消耗完selectTask任务停止3)EventStore里面的读位置点不回置，如果正好队列已经满并且读取了最后，BINLOG新的数据进不来
+            stageController.termin(TerminType.ROLLBACK);
             return await(pipelineId);// 递归调用
         }
     }
