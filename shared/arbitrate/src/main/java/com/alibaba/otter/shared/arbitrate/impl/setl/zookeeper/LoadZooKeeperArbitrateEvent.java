@@ -56,7 +56,8 @@ public class LoadZooKeeperArbitrateEvent implements LoadArbitrateEvent {
     private ZkClientx                     zookeeper = ZooKeeperClient.getInstance();
     private TerminZooKeeperArbitrateEvent terminEvent;
 
-    // private Map<Long, DistributedLock> locks = new ConcurrentHashMap<Long, DistributedLock>();
+    // private Map<Long, DistributedLock> locks = new ConcurrentHashMap<Long,
+    // DistributedLock>();
 
     /**
      * <pre>
@@ -80,7 +81,8 @@ public class LoadZooKeeperArbitrateEvent implements LoadArbitrateEvent {
             // 使用锁的理由：
             // 1. 针对双向同步时，其中一个方向出现了异常，需要发起另一端的关闭，此时对方正好在执行某个process的load
             // 2. 单向同步时，如果出现node节点异常，此时正常的节点正在执行某个process的load
-            // 为避免因load无法中端引起的数据重复录入，所以针对load阶段添加分布式锁。在有process load过程中不允许进行pipeline关闭操作
+            // 为避免因load无法中端引起的数据重复录入，所以针对load阶段添加分布式锁。在有process
+            // load过程中不允许进行pipeline关闭操作
             // lock.lock();
 
             ChannelStatus status = permitMonitor.getChannelPermit();
@@ -109,9 +111,9 @@ public class LoadZooKeeperArbitrateEvent implements LoadArbitrateEvent {
                 // } catch (KeeperException e) {
                 // // ignore
                 // }
-// 释放下processId，因为load是等待processId最小值完成Tranform才继续，如果这里不释放，会一直卡死等待
-            String path = StagePathUtils.getProcess(pipelineId, processId);
-            zookeeper.delete(path);
+                // 释放下processId，因为load是等待processId最小值完成Tranform才继续，如果这里不释放，会一直卡死等待
+                String path = StagePathUtils.getProcess(pipelineId, processId);
+                zookeeper.delete(path);
                 return await(pipelineId);// 出现rollback情况，递归调用重新获取一次，当前的processId可丢弃
             }
         } catch (InterruptedException e) {
@@ -138,10 +140,12 @@ public class LoadZooKeeperArbitrateEvent implements LoadArbitrateEvent {
     public void single(EtlEventData data) {
         Assert.notNull(data);
         try {
-            // String path = StagePathUtils.getLoadStage(data.getPipelineId(), data.getProcessId());
+            // String path = StagePathUtils.getLoadStage(data.getPipelineId(),
+            // data.getProcessId());
             // // 序列化
             // data.setEndTime(new Date().getTime());// 返回当前时间
-            // byte[] bytes = JsonUtils.marshalToByte(data, SerializerFeature.WriteClassName);
+            // byte[] bytes = JsonUtils.marshalToByte(data,
+            // SerializerFeature.WriteClassName);
             // try {
             // zookeeper.create(path, bytes, CreateMode.PERSISTENT);
             // } catch (NodeExistsException e) {
