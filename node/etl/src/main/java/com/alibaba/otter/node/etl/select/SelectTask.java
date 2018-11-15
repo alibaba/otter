@@ -263,6 +263,9 @@ public class SelectTask extends GlobalTask {
                 if (rversion.get() != startVersion) {// 说明存在过变化，中间出现过rollback，需要丢弃该数据
                     logger.warn("rollback happend , should skip this data and get new message.");
                     canStartSelector.get();// 确认一下rollback是否完成
+                    // 先睡眠一段时间，保证channel有足够的时间变成pause态，即使没有变成PAUSE态，***MemoryArbitrateEvent里面有回滚操作兜底。
+                    Thread.sleep(10 * 1000);
+                    arbitrateEventService.toolEvent().waitForPermit(pipelineId);
                     gotMessage = otterSelector.selector();// 这时不管有没有数据，都需要执行一次s/e/t/l
                 }
 

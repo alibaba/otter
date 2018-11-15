@@ -56,10 +56,13 @@ public class LoadMemoryArbitrateEvent implements LoadArbitrateEvent {
         if (status.isStart()) {// 即时查询一下当前的状态，状态随时可能会变
             return stageController.getLastData(processId);
         } else {
-            logger.warn("pipelineId[{}] load ignore processId[{}] by status[{}]", new Object[] { pipelineId, processId,
+            logger.warn("pipelineId[{}] load ignore processId[{}] by status[{}],rollback now",
+                new Object[] { pipelineId, processId,
                     status });
-            // 释放下processId，因为MemoryStageController的load是等待processId最小值完成Tranform才继续，如果这里不释放，会一直卡死等待
-            stageController.clearProgress(processId);
+            // 进行ROLLBACK，触发释放下processId，信号量及EventStore里面的读位置点。
+            // 1)因为MemoryStageController的load是等待processId最小值完成Tranform才继续，如果这里不释放，会一直卡死等待
+            // 2)信号量消耗完selectTask任务停止，3)EventStore里面的读位置点不回置，如果正好队列已经满并且读取了最后，BINLOG新的数据进不来
+            stageController.termin(TerminType.ROLLBACK);
             return await(pipelineId);// 递归调用
         }
     }
