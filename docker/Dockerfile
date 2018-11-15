@@ -31,8 +31,6 @@ RUN \
     yum clean all && \
     true
 
-# 2222 sys , 8080 web , 2181 2888 3888 zk , 8000 debug , 3306 mysql , 2088 2089 2090 worker
-# EXPOSE 2222 1099 8000 8080 2181 2888 3888 3306 2088 2089 2090
 ENV DOCKER_DEPLOY_TYPE=VM PATH=$PATH:/usr/local/mysql/bin:/usr/local/mysql/scripts
 
 WORKDIR /home/admin
