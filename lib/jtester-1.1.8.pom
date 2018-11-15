@@ -16,7 +16,7 @@
 		<dependency>
 			<groupId>mockit</groupId>
 			<artifactId>jmockit</artifactId>
-			<version>0.999.4</version>
+			<version>0.999.10</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-dbcp</groupId>
