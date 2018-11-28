@@ -6,7 +6,6 @@ RUN \
     groupadd -r mysql && useradd -r -g mysql mysql && \
     yum -y install wget mysql-server --nogpgcheck && \
     yum clean all && \
-
     wget -q https://mirrors.tuna.tsinghua.edu.cn/apache/zookeeper/zookeeper-3.4.13/zookeeper-3.4.13.tar.gz -O /home/admin/zookeeper-3.4.13.tar.gz && \
     tar -xzvf /home/admin/zookeeper-*.tar.gz -C /home/admin && \
     /bin/cp -rf /home/admin/zookeeper-3.4.13/conf/zoo_sample.cfg /home/admin/zookeeper-3.4.13/conf/zoo.cfg && \

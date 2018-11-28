@@ -13,15 +13,12 @@ RUN \
     mkdir -p /home/admin && \
     cp -R /tmp/docker/admin/* /home/admin/  && \
     /bin/cp -f alidata/bin/lark-wait /usr/bin/lark-wait && \
-
     mkdir -p /home/admin/manager && \
     tar -xzvf /home/admin/manager.deployer-*.tar.gz -C /home/admin/manager && \
     /bin/rm -f /home/admin/manager.deployer-*.tar.gz && \
-
     mkdir -p /home/admin/node && \
     tar -xzvf /home/admin/node.deployer-*.tar.gz -C /home/admin/node && \
     /bin/rm -f /home/admin/node.deployer-*.tar.gz && \
-
     mkdir -p home/admin/manager/logs  && \
     mkdir -p home/admin/node/logs  && \
     mkdir -p home/admin/zkData  && \
