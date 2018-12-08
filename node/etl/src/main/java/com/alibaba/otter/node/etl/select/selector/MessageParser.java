@@ -107,7 +107,10 @@ public class MessageParser {
                         if (isMarkTable) {
                             RowChange rowChange = RowChange.parseFrom(entry.getStoreValue());
                             if (!rowChange.getIsDdl()) {
-                                int loopback = checkLoopback(pipeline, rowChange.getRowDatas(0));
+                                int loopback = 0;
+                                if (rowChange.getRowDatasCount() > 0) {
+                                    loopback = checkLoopback(pipeline, rowChange.getRowDatas(0));
+                                }
                                 if (loopback == 2) {
                                     needLoopback |= true; // 只处理正常同步产生的回环数据
                                 }
@@ -122,7 +125,10 @@ public class MessageParser {
                         if (isCompatibleLoopback) {
                             RowChange rowChange = RowChange.parseFrom(entry.getStoreValue());
                             if (!rowChange.getIsDdl()) {
-                                int loopback = checkCompatibleLoopback(pipeline, rowChange.getRowDatas(0));
+                                int loopback = 0;
+                                if (rowChange.getRowDatasCount() > 0) {
+                                    loopback = checkCompatibleLoopback(pipeline, rowChange.getRowDatas(0));
+                                }
                                 if (loopback == 2) {
                                     needLoopback |= true; // 只处理正常同步产生的回环数据
                                 }
