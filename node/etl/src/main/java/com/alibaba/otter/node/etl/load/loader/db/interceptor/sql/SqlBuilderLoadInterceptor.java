@@ -16,10 +16,6 @@
 
 package com.alibaba.otter.node.etl.load.loader.db.interceptor.sql;
 
-import java.util.List;
-
-import org.springframework.util.CollectionUtils;
-
 import com.alibaba.otter.node.etl.common.db.dialect.DbDialect;
 import com.alibaba.otter.node.etl.common.db.dialect.DbDialectFactory;
 import com.alibaba.otter.node.etl.common.db.dialect.SqlTemplate;
@@ -30,6 +26,9 @@ import com.alibaba.otter.shared.common.model.config.data.db.DbMediaSource;
 import com.alibaba.otter.shared.etl.model.EventColumn;
 import com.alibaba.otter.shared.etl.model.EventData;
 import com.alibaba.otter.shared.etl.model.EventType;
+import org.springframework.util.CollectionUtils;
+
+import java.util.List;
 
 /**
  * 计算下最新的sql语句
@@ -50,6 +49,17 @@ public class SqlBuilderLoadInterceptor extends AbstractLoadInterceptor<DbLoadCon
         String sql = null;
 
         String schemaName = (currentData.isWithoutSchema() ? null : currentData.getSchemaName());
+
+        /**
+         * 针对DRDS数据库
+         */
+        String shardColumns = null;
+        if(dbDialect.isDRDS()){
+            // 获取拆分键
+            shardColumns = dbDialect.getShardColumns(schemaName, currentData.getTableName());
+
+        }
+
         // 注意insert/update语句对应的字段数序都是将主键排在后面
         if (type.isInsert()) {
             if (CollectionUtils.isEmpty(currentData.getColumns())
@@ -65,7 +75,8 @@ public class SqlBuilderLoadInterceptor extends AbstractLoadInterceptor<DbLoadCon
                     buildColumnNames(currentData.getKeys()),
                     buildColumnNames(currentData.getColumns()),
                     new String[] {},
-                    !dbDialect.isDRDS());
+                    !dbDialect.isDRDS(),
+                    shardColumns);
             }
         } else if (type.isUpdate()) {
             // String[] keyColumns = buildColumnNames(currentData.getKeys());
@@ -105,9 +116,10 @@ public class SqlBuilderLoadInterceptor extends AbstractLoadInterceptor<DbLoadCon
                     keyColumns,
                     otherColumns,
                     new String[] {},
-                    !dbDialect.isDRDS());
+                    !dbDialect.isDRDS(),
+                    shardColumns);
             } else {// 否则进行update sql
-                sql = sqlTemplate.getUpdateSql(schemaName, currentData.getTableName(), keyColumns, otherColumns);
+                sql = sqlTemplate.getUpdateSql(schemaName, currentData.getTableName(), keyColumns, otherColumns, !dbDialect.isDRDS(), shardColumns);
             }
         } else if (type.isDelete()) {
             sql = sqlTemplate.getDeleteSql(schemaName,
