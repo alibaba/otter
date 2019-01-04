@@ -39,9 +39,9 @@ public abstract class AbstractSqlTemplate implements SqlTemplate {
         return sql.toString().intern();// 不使用intern，避免方法区内存消耗过多
     }
 
-    public String getUpdateSql(String schemaName, String tableName, String[] pkNames, String[] columnNames) {
+    public String getUpdateSql(String schemaName, String tableName, String[] pkNames, String[] columnNames, boolean updatePks, String shardColumn) {
         StringBuilder sql = new StringBuilder("update " + getFullName(schemaName, tableName) + " set ");
-        appendColumnEquals(sql, columnNames, ",");
+        appendExcludeSingleShardColumnEquals(sql, columnNames, ",", updatePks, shardColumn);
         sql.append(" where (");
         appendColumnEquals(sql, pkNames, "and");
         sql.append(")");
@@ -96,6 +96,27 @@ public abstract class AbstractSqlTemplate implements SqlTemplate {
     protected void appendColumnEquals(StringBuilder sql, String[] columns, String separator) {
         int size = columns.length;
         for (int i = 0; i < size; i++) {
+            sql.append(" ").append(appendEscape(columns[i])).append(" = ").append("? ");
+            if (i != size - 1) {
+                sql.append(separator);
+            }
+        }
+    }
+
+    /**
+     * 针对DRDS改造, 在 update set 集合中, 排除 单个拆分键 的赋值操作
+     * @param sql
+     * @param columns
+     * @param separator
+     * @param excludeShardColumn 需要排除的 拆分列
+     */
+    protected void appendExcludeSingleShardColumnEquals(StringBuilder sql, String[] columns, String separator, boolean updatePks, String excludeShardColumn) {
+        int size = columns.length;
+        for (int i = 0; i < size; i++) {
+            // 如果是DRDS数据库, 并且存在拆分键 且 等于当前循环列, 跳过
+            if(!updatePks && excludeShardColumn != null && columns[i].equals(excludeShardColumn)){
+                continue;
+            }
             sql.append(" ").append(appendEscape(columns[i])).append(" = ").append("? ");
             if (i != size - 1) {
                 sql.append(separator);

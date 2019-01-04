@@ -29,7 +29,7 @@ public class MysqlSqlTemplate extends AbstractSqlTemplate {
     private static final String ESCAPE = "`";
 
     public String getMergeSql(String schemaName, String tableName, String[] pkNames, String[] columnNames,
-                              String[] viewColumnNames, boolean includePks) {
+                              String[] viewColumnNames, boolean includePks, String shardColumn) {
         StringBuilder sql = new StringBuilder("insert into " + getFullName(schemaName, tableName) + "(");
         int size = columnNames.length;
         for (int i = 0; i < size; i++) {
@@ -54,6 +54,11 @@ public class MysqlSqlTemplate extends AbstractSqlTemplate {
 
         size = columnNames.length;
         for (int i = 0; i < size; i++) {
+            // 如果是DRDS数据库, 并且存在拆分键 且 等于当前循环列, 跳过
+            if(!includePks && shardColumn != null && columnNames[i].equals(shardColumn)){
+                continue;
+            }
+
             sql.append(appendEscape(columnNames[i]))
                 .append("=values(")
                 .append(appendEscape(columnNames[i]))

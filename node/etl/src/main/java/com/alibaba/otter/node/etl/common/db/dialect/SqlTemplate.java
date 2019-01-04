@@ -26,7 +26,7 @@ public interface SqlTemplate {
 
     public String getSelectSql(String schemaName, String tableName, String[] pkNames, String[] columnNames);
 
-    public String getUpdateSql(String schemaName, String tableName, String[] pkNames, String[] columnNames);
+    public String getUpdateSql(String schemaName, String tableName, String[] pkNames, String[] columnNames, boolean updatePks, String shardColumn);
 
     public String getDeleteSql(String schemaName, String tableName, String[] pkNames);
 
@@ -36,5 +36,5 @@ public interface SqlTemplate {
      * 获取对应的mergeSql
      */
     public String getMergeSql(String schemaName, String tableName, String[] pkNames, String[] columnNames,
-                              String[] viewColumnNames, boolean updatePks);
+                              String[] viewColumnNames, boolean updatePks, String shardColumn);
 }

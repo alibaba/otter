@@ -40,16 +40,16 @@ public class SqlTemplateTest extends BaseDbTest {
         String sql2 = sqlTemplate.getInsertSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns);
         want.bool(sql1 == sql2);
         // 执行update
-        sql1 = sqlTemplate.getUpdateSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns);
-        sql2 = sqlTemplate.getUpdateSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns);
+        sql1 = sqlTemplate.getUpdateSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns, true, null);
+        sql2 = sqlTemplate.getUpdateSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns, true, null);
         want.bool(sql1 == sql2);
         // 执行deleate
         sql1 = sqlTemplate.getDeleteSql(SCHEMA_NAME, TABLE_NAME, pkColumns);
         sql2 = sqlTemplate.getDeleteSql(SCHEMA_NAME, TABLE_NAME, pkColumns);
         want.bool(sql1 == sql2);
         // 执行merge
-        sql1 = sqlTemplate.getMergeSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns, null, true);
-        sql2 = sqlTemplate.getMergeSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns, null, true);
+        sql1 = sqlTemplate.getMergeSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns, null, true, null);
+        sql2 = sqlTemplate.getMergeSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns, null, true, null);
         want.bool(sql1 == sql2);
 
     }
@@ -62,16 +62,16 @@ public class SqlTemplateTest extends BaseDbTest {
         String sql2 = sqlTemplate.getInsertSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns);
         want.bool(sql1 == sql2);
         // 执行update
-        sql1 = sqlTemplate.getUpdateSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns);
-        sql2 = sqlTemplate.getUpdateSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns);
+        sql1 = sqlTemplate.getUpdateSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns, true, null);
+        sql2 = sqlTemplate.getUpdateSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns, true, null);
         want.bool(sql1 == sql2);
         // 执行deleate
         sql1 = sqlTemplate.getDeleteSql(SCHEMA_NAME, TABLE_NAME, pkColumns);
         sql2 = sqlTemplate.getDeleteSql(SCHEMA_NAME, TABLE_NAME, pkColumns);
         want.bool(sql1 == sql2);
         // 执行merge
-        sql1 = sqlTemplate.getMergeSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns, null, true);
-        sql2 = sqlTemplate.getMergeSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns, null, true);
+        sql1 = sqlTemplate.getMergeSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns, null, true, null);
+        sql2 = sqlTemplate.getMergeSql(SCHEMA_NAME, TABLE_NAME, pkColumns, columns, null, true, null);
         want.bool(sql1 == sql2);
     }
 

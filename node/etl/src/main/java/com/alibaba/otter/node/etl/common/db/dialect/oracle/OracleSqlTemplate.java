@@ -32,7 +32,7 @@ public class OracleSqlTemplate extends AbstractSqlTemplate {
      * http://en.wikipedia.org/wiki/Merge_(SQL)
      */
     public String getMergeSql(String schemaName, String tableName, String[] keyNames, String[] columnNames,
-                              String[] viewColumnNames, boolean includePks) {
+                              String[] viewColumnNames, boolean includePks, String shardColumn) {
         final String aliasA = "a";
         final String aliasB = "b";
         StringBuilder sql = new StringBuilder();
