@@ -48,7 +48,11 @@ public class JsonUtils {
         SerializeConfig.getGlobalInstance().put(InetAddress.class, InetAddressSerializer.instance);
         SerializeConfig.getGlobalInstance().put(Inet4Address.class, InetAddressSerializer.instance);
         SerializeConfig.getGlobalInstance().put(Inet6Address.class, InetAddressSerializer.instance);
-        ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
+
+        // ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
+
+        ParserConfig.getGlobalInstance().addAccept("com.alibaba.otter.");
+        ParserConfig.getGlobalInstance().addAccept("com.taobao.tddl.dbsync.");
     }
 
     public static <T> T unmarshalFromByte(byte[] bytes, Class<T> targetClass) {
@@ -139,9 +143,9 @@ public class JsonUtils {
             // 优先使用name
             serializer.write(address.getHostName());
         }
-        
+
         public void write(JSONSerializer serializer, Object object, Object fieldName, Type fieldType, int features)
-                                                                                                     throws IOException {
+                                                                                                                   throws IOException {
             if (object == null) {
                 serializer.writeNull();
                 return;
