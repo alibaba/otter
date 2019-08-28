@@ -58,7 +58,7 @@ public class SeniorCanal extends Canal {
                 int i = 0;
                 for (DataSourcing dbAddress : groupAddress) {
                     ++i;
-                    address.append(dbAddress.getDbAddress().getAddress().getHostName())
+                    address.append(dbAddress.getDbAddress().getHostString())
                         .append(":")
                         .append(dbAddress.getDbAddress().getPort());
 

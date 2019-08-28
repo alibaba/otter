@@ -84,7 +84,7 @@ public class JsonUtilsTest extends BaseOtterTest {
         data.put("two", two);
 
         StringWriter jsonStr = new StringWriter();
-        JSONWriter writer = new JSONWriter(jsonStr);//超大文本写入
+        JSONWriter writer = new JSONWriter(jsonStr);// 超大文本写入
         writer.startArray();
         writer.writeValue(one);
         writer.writeValue(two);
