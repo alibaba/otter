@@ -49,6 +49,7 @@ public class PipelineParameter implements Serializable {
     private String                destinationName;
     private Short                 mainstemClientId;                                         // mainstem订阅id
     private Integer               mainstemBatchsize          = 10000 * 10;                  // mainstem订阅批次大小
+    private Integer               loadBatchsize              = 50;                          // load批次大小
     private Integer               extractPoolSize            = 5;                           // extract模块载入线程数，针对单个载入通道
     private Integer               loadPoolSize               = 5;                           // load模块载入线程数，针对单个载入通道
     private Integer               fileLoadPoolSize           = 5;                           // 文件同步线程数
@@ -273,6 +274,14 @@ public class PipelineParameter implements Serializable {
 
     public Integer getMainstemBatchsize() {
         return mainstemBatchsize;
+    }
+
+    public Integer getLoadBatchsize() {
+        return loadBatchsize;
+    }
+
+    public void setLoadBatchsize(Integer loadBatchsize) {
+        this.loadBatchsize = loadBatchsize;
     }
 
     public Boolean isHome() {

@@ -494,6 +494,12 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
     private void adjustConfig(DbLoadContext context) {
         Pipeline pipeline = context.getPipeline();
         this.useBatch = pipeline.getParameters().isUseBatch();
+
+        // 旧版本manager配置序列化传输时可能无此配置项，因此只有专门配置过的，才进行调整
+        Integer loadBatchsize = pipeline.getParameters().getLoadBatchsize();
+        if (loadBatchsize != null && loadBatchsize > 0){
+            this.batchSize = loadBatchsize;
+        }
     }
 
     public void afterPropertiesSet() throws Exception {

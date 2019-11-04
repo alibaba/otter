@@ -70,6 +70,9 @@ $control.setTemplate("home:navigation.vm")
 	</tr>
   #end
   <tr>
+  <th>Load批次大小：</th><td>$!pipeline.parameters.loadBatchsize</td>
+  </tr>
+  <tr>
   <th>描述信息：</th><td>$!pipeline.description</td>
   </tr>
   
