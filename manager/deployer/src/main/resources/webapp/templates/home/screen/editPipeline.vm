@@ -167,6 +167,7 @@ $control.setTemplate("home:navigation.vm")
          <th width="300">Canal位点重置：</th>
          <td width="329">
            <textarea title="启用channel时立即生效" name="$pipelineGroup.position.key" style="height:110px;width:340px">$!pipeline.position</textarea>
+           <span>示例：{"@type":"com.alibaba.otter.canal.protocol.position.LogPosition","identity":{"slaveId":-1,"sourceAddress":{"address":"192.168.1.2","port":3306}},"postion":{"gtid":"","included":false,"journalName":"mysql-bin.0","position":0,"serverId":0,"timestamp":0}}</span>
            <br />
          </td>
       </tr>
