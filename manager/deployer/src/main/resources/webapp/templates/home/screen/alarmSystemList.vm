@@ -113,7 +113,7 @@ $control.setTemplate("home:navigation.vm")
 								<span class="ico_line">|</span><a href="$reEnableURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">恢复</span></a>
 							#else
         						#set ($disableURL = $homeModule.setAction("AlarmRuleAction").addQueryData("alarmRuleId", $alarmRule.id).addQueryData("status", "disable").addQueryData("eventSubmitDoStatusSystem", "true").render())
-								<span class="ico_line">|</span><a href="#" onclick="WdatePicker({el:'rule_${alarmRule.id}',dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'%y-%M-%d %H:%m:%s',qsEnabled:true,quickSel:['%y-%M-%d #{%H+2}:%m:%s','%y-%M-%d #{%H+6}:%m:%s','%y-%M-%d #{%H+12}:%m:%s','%y-%M-#{%d+1} %H:%m:%s','%y-%M-#{%d+2} %H:%m:%s'], onpicked:function(){url='${disableURL}&pauseTime=' + $dp.cal.getDateStr();window.location.href=url;}});return false;"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font" id="">暂停</span><span id="rule_${alarmRule.id}" style="display:none;" /></a>
+                                <span class="ico_line">|</span><a href="$disableURL"><img src="images/ico_edit.png" width="13" height="13" /><span class="ico_font">暂停</span></a>
 							#end
     					#else
     						#set ($enableURL = $homeModule.setAction("AlarmRuleAction").addQueryData("alarmRuleId", $alarmRule.id).addQueryData("status", "enable").addQueryData("pageIndex", $paginator.page).addQueryData("eventSubmitDoStatusSystem", "true").render())
