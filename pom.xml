@@ -116,7 +116,7 @@
         <java_target_version>1.6</java_target_version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<file_encoding>UTF-8</file_encoding>
-		<spring-version>3.1.2.RELEASE</spring-version>
+		<spring-version>5.2.7.RELEASE</spring-version>
 		<jetty_verion>8.1.7.v20120910</jetty_verion>
 		<otter_canal_version>1.1.4</otter_canal_version>
 	</properties>
