@@ -31,16 +31,16 @@ import com.alibaba.otter.shared.arbitrate.impl.zookeeper.ZooKeeperClient;
 import com.alibaba.otter.shared.common.utils.zookeeper.ZkClientx;
 
 /**
- * 机器node节点的相关信号
+ * 机器 node 节点的相关信号
  * 
- * @author jianghang 2011-8-31 下午07:26:02
+ * @author jianghang 2011-8-31 下午 07:26:02
  */
 public class NodeArbitrateEvent implements ArbitrateEvent {
 
     private ZkClientx zookeeper = ZooKeeperClient.getInstance();
 
     /**
-     * 创建相应的node节点，说明：node节点的生命周期为EPHEMERAL
+     * 创建相应的 node 节点，说明：node 节点的生命周期为 EPHEMERAL
      * 
      * <pre>
      * 1. 是个同步调用
@@ -50,14 +50,16 @@ public class NodeArbitrateEvent implements ArbitrateEvent {
         String path = ManagePathUtils.getNode(nid);
 
         try {
-            zookeeper.create(path, new byte[0], CreateMode.EPHEMERAL);// 创建为临时节点
+          if (!zookeeper.exists(path)){
+              zookeeper.create(path, new byte[0], CreateMode.EPHEMERAL);// 创建为临时节点
+            }
         } catch (ZkException e) {
             throw new ArbitrateException("Node_init", nid.toString(), e);
         }
     }
 
     /**
-     * 销毁的node节点
+     * 销毁的 node 节点
      * 
      * <pre>
      * 1. 是个同步调用
