@@ -52,6 +52,16 @@ $control.setTemplate("home:navigation.vm")
   <th>本地localBinlog目录：</th><td>$!canal.canalParameter.localBinlogDirectory</td>
   </tr>
   #end
+
+  #if($!canal.canalParameter.sourcingType.isOceanBase())
+  <tr>
+  <th>rsList：</th><td>$!canalExtra.get("rsList")</td>
+  </tr>
+
+  <tr>
+  <th>tenant：</th><td>$!canalExtra.get("tenant")</td>
+  </tr>
+  #end
   
   <tr>
   <th>是否启用gtid位点：</th><td>$!canal.canalParameter.gtidEnable</td>

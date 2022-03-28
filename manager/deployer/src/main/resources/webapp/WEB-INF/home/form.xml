@@ -753,6 +753,20 @@
 					</fm-validators:required-validator>
 				</fm-validators:if>
 			</field>
+			<field name="rsList" displayName="rsList">
+				<fm-validators:if test="sourcingType.value == 'OCEANBASE'">
+					<fm-validators:required-validator>
+						<message>数据源为OceanBase时必须填写${displayName}</message>
+					</fm-validators:required-validator>
+				</fm-validators:if>
+			</field>
+			<field name="tenant" displayName="tenant">
+				<fm-validators:if test="sourcingType.value == 'OCEANBASE'">
+					<fm-validators:required-validator>
+						<message>数据源为OceanBase时必须填写${displayName}</message>
+					</fm-validators:required-validator>
+				</fm-validators:if>
+			</field>
 			<field name="positions" displayName="位点信息">
 				<fm-validators:regexp-validator pattern="^(\{.*\}\;)+$">
 					<message>${displayName} 不符合格式（{"journalName":"","position":0,"timestamp":0};）</message>

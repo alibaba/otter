@@ -39,6 +39,7 @@ import com.alibaba.otter.canal.instance.manager.model.CanalParameter.SourcingTyp
 import com.alibaba.otter.manager.biz.common.exceptions.RepeatConfigureException;
 import com.alibaba.otter.manager.biz.config.canal.CanalService;
 import com.alibaba.otter.manager.biz.config.pipeline.PipelineService;
+import com.alibaba.otter.manager.web.common.CanalExtraParamUtil;
 import com.alibaba.otter.manager.web.common.WebConstant;
 
 public class CanalAction extends AbstractAction {
@@ -94,6 +95,8 @@ public class CanalAction extends AbstractAction {
 
             parameter.setGroupDbAddresses(dbSocketAddress);
         }
+
+        CanalExtraParamUtil.setExtraParamString(parameter, canalParameterInfo);
 
         String positionsString = canalParameterInfo.getField("positions").getStringValue();
         if (StringUtils.isNotEmpty(positionsString)) {
@@ -168,6 +171,8 @@ public class CanalAction extends AbstractAction {
 
             parameter.setGroupDbAddresses(dbSocketAddress);
         }
+
+        CanalExtraParamUtil.setExtraParamString(parameter, canalParameterInfo);
 
         String positionsString = canalParameterInfo.getField("positions").getStringValue();
         if (StringUtils.isNotEmpty(positionsString)) {

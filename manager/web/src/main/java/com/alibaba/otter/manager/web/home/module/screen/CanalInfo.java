@@ -30,6 +30,7 @@ import com.alibaba.otter.manager.biz.config.autokeeper.AutoKeeperClusterService;
 import com.alibaba.otter.manager.biz.config.canal.CanalService;
 import com.alibaba.otter.manager.biz.config.channel.ChannelService;
 import com.alibaba.otter.manager.biz.config.pipeline.PipelineService;
+import com.alibaba.otter.manager.web.common.CanalExtraParamUtil;
 import com.alibaba.otter.shared.common.model.autokeeper.AutoKeeperCluster;
 import com.alibaba.otter.shared.common.model.config.channel.Channel;
 import com.alibaba.otter.shared.common.model.config.pipeline.Pipeline;
@@ -69,5 +70,7 @@ public class CanalInfo {
         context.put("pipelines", pipelines);
         context.put("channelMap", channelMap);
         context.put("zkCluster", zkCluster);
+
+        context.put("canalExtra", CanalExtraParamUtil.getExtraParamMap(canal.getCanalParameter()));
     }
 }

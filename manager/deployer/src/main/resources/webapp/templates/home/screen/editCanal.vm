@@ -108,11 +108,12 @@ $control.setTemplate("home:navigation.vm")
 		<tr> 
         <th width="300">数据源类型：</th>
         <td width="329">
-            <input type="radio" name="$canalParameterGroup.sourcingType.key" value="MYSQL" onclick="changeDisplay('mysqlSourcing','table-row');changeDisplay('oracleSourcing','none');changeDisplay('localSourcing','none');" id="RadioGroup5_0" #if($!canal.canalParameter.sourcingType.isMysql()) checked="checked" #end class="radio"/>mysql &nbsp;
+            <input type="radio" name="$canalParameterGroup.sourcingType.key" value="MYSQL" onclick="changeDisplay('mysqlSourcing','table-row');changeDisplay('oracleSourcing','none');changeDisplay('localSourcing','none');changeDisplay('obSourcing','none');" id="RadioGroup5_0" #if($!canal.canalParameter.sourcingType.isMysql()) checked="checked" #end class="radio"/>mysql &nbsp;
 			#**
 			<input type="radio" name="$canalParameterGroup.sourcingType.key" value="ORACLE" onclick="changeDisplay('mysqlSourcing','none');changeDisplay('oracleSourcing','table-row');changeDisplay('localSourcing','none');" id="RadioGroup5_1" #if($!canal.canalParameter.sourcingType.isOracle()) checked="checked" #end class="radio"/>oracle &nbsp;
             <input type="radio" name="$canalParameterGroup.sourcingType.key" value="LOCALBINLOG" onclick="changeDisplay('mysqlSourcing','none');changeDisplay('oracleSourcing','none');changeDisplay('localSourcing','table-row');" id="RadioGroup5_2" #if($!canal.canalParameter.sourcingType.isLocalBinlog()) checked="checked" #end class="radio"/>localbinlog &nbsp;
 			*#
+            <input type="radio" name="$canalParameterGroup.sourcingType.key" value="OCEANBASE" onclick="changeDisplay('mysqlSourcing','none');changeDisplay('oracleSourcing','none');changeDisplay('localSourcing','none');changeDisplay('obSourcing','table-row');" id="RadioGroup5_3" #if($!canal.canalParameter.sourcingType.isOceanBase()) checked="checked" #end class="radio"/>oceanbase &nbsp;
 			<br />
 			<span class="red">#editCanalMessage ($canalParameterGroup.sourcingType)</span>
 		</td>
@@ -169,6 +170,22 @@ $control.setTemplate("home:navigation.vm")
                 <input type="text" name="$canalParameterGroup.localBinlogDirectory.key" value="$!canal.canalParameter.localBinlogDirectory" class="setting_input"/><span class="red">*</span>
     			<br />
     			<span class="red">#editCanalMessage ($canalParameterGroup.localBinlogDirectory)</span>
+    		</td>
+          </tr>
+          <tr class="obSourcing">
+    		<th width="300">rsList：</th>
+    		<td width="329">
+                <input type="text" name="$canalParameterGroup.rsList.key" value="$!canalExtra.get("rsList")" class="setting_input"/><span class="red">*</span>
+                <br />
+                <span class="red">#editCanalMessage ($canalParameterGroup.rsList)</span>
+    		</td>
+          </tr>
+          <tr class="obSourcing">
+    		<th width="300">tenant：</th>
+    		<td width="329">
+                <input type="text" name="$canalParameterGroup.tenant.key" value="$!canalExtra.get("tenant")" class="setting_input"/><span class="red">*</span>
+                <br />
+                <span class="red">#editCanalMessage ($canalParameterGroup.tenant)</span>
     		</td>
           </tr>
 	  </div>
@@ -521,6 +538,12 @@ $control.setTemplate("home:navigation.vm")
 		changeDisplay('localSourcing','table-row')
 	#else
 		changeDisplay('localSourcing','none')
+	#end
+
+	#if($!canal.canalParameter.sourcingType.isOceanBase())
+		changeDisplay('obSourcing','table-row')
+	#else
+		changeDisplay('obSourcing','none')
 	#end
 	
 	#if($!canal.canalParameter.storageMode.isMemory())
