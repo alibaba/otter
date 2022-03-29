@@ -2,9 +2,10 @@
    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
-
-   <parent><groupId>mockit</groupId><artifactId>mockit</artifactId><version>0.999.10</version></parent>
-   <artifactId>jmockit</artifactId><version>0.999.10</version>
+   
+   <groupId>mockit</groupId>
+   <artifactId>jmockit</artifactId>
+   <version>0.999.10</version>
    <name>Main</name>
 
    <build>
