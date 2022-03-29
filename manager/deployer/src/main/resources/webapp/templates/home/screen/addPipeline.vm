@@ -179,6 +179,14 @@ $control.setTemplate("home:navigation.vm")
 			  <span class="red">#addPipelineMessage ($pipelineParameterGroup.batchTimeout)</span>
         </td>
       </tr>
+	  <tr> 
+        <th width="300">Load批次大小：</th>
+        <td width="329">
+              <input name="$pipelineParameterGroup.loadBatchsize.key" value="50" type="text" class="setting_input"/><span class="red">*</span>
+			  <br />
+			  <span class="red">#addPipelineMessage ($pipelineParameterGroup.loadBatchsize)</span>
+        </td>
+      </tr>
 	  <tr>
        <th>描述：</th>
        <td>

@@ -209,6 +209,17 @@
 					<message>${displayName} 必须是大于0的整数</message>
 				</fm-validators:number-validator>
 			</field>
+			<field name="loadBatchsize" displayName="Load批次大小">
+				<fm-validators:required-validator>
+					<message>必须填写${displayName}</message>
+				</fm-validators:required-validator>
+				<fm-validators:number-validator>
+					<message>${displayName} 必须是数字且是整数</message>
+				</fm-validators:number-validator>
+				<fm-validators:number-validator greaterThan="0">
+					<message>${displayName} 必须是大于0的整数</message>
+				</fm-validators:number-validator>
+			</field>
 			<field name="channelInfo" displayName="同步标记" />
 			<field name="dryRun" displayName="DryRun模式" />
 			<field name="ddlSync" displayName="支持ddl同步" />
