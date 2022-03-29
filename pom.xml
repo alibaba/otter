@@ -54,7 +54,7 @@
 	<repositories>
 		<repository>
 			<id>central</id>
-			<url>http://repo1.maven.org/maven2</url>
+			<url>https://repo1.maven.org/maven2</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -62,7 +62,7 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
-		<repository>
+		<!--<repository>
 			<id>java.net</id>
 			<url>http://download.java.net/maven/2/</url>
 			<releases>
@@ -82,7 +82,7 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
-		</repository>
+		</repository>-->
 		<repository>
 			<id>sonatype</id>
 			<name>sonatype</name>
