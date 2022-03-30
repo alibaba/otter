@@ -73,13 +73,6 @@
 				  </exclusion>
 				</exclusions>
 			</dependency>
-			<!-- test dependency -->
-			<dependency>
-				<groupId>org.jtester</groupId>
-				<artifactId>jtester</artifactId>
-				<version>1.1.8</version>
-				<scope>provided</scope>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 </project>
