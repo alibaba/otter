@@ -119,6 +119,7 @@
 		<dependency>
 			<groupId>org.jtester</groupId>
 			<artifactId>jtester</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
             <groupId>com.google.code.findbugs</groupId>

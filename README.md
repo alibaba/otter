@@ -1,9 +1,8 @@
 <h1>环境搭建 & 打包</h1>
 <strong>环境搭建：</strong>
 <ol>
-<li>进入$otter_home目录</li>
-<li>执行：mvn clean install</li>
-<li>导入maven项目。如果eclipse下报"Missing artifact com.oracle:ojdbc14:jar:10.2.0.3.0"，修改$otter_home/pom.xml中"${user.dir}/lib/ojdbc14-10.2.0.3.0.jar"为绝对路径，比如"d:/lib/ojdbc14-10.2.0.3.0.jar" </li>
+<li>进入 $otter_home/lib 目录</li>
+<li>执行：bash install.sh</li>
 </ol>
 <strong>打包：</strong>
 <ol>
