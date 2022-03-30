@@ -27,11 +27,6 @@
 				<artifactId>truezip</artifactId>
 				<version>6.8.4</version>
 			</dependency>
-			<dependency>
-			  <groupId>org.apache.commons</groupId>
-			  <artifactId>commons-compress</artifactId>
-			  <version>1.4.1</version>
-			</dependency>
 			<!-- jetty -->
 			<dependency>
 			  <groupId>org.eclipse.jetty</groupId>
