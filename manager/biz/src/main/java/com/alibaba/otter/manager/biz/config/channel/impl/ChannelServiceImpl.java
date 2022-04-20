@@ -400,11 +400,11 @@ public class ChannelServiceImpl implements ChannelService {
                             ddlSync &= pipeline.getParameters().getDdlSync();
                         }
 
-                        if (ddlSync) {
+                        if (ddlSync) {//Pipeline 只能有一个勾选：支持ddl同步
                             throw new InvalidConfigureException(INVALID_TYPE.DDL);
                         }
 
-                        if (homeSync) {
+                        if (homeSync) {//Pipeline 只能有一个勾选：主站点
                             throw new InvalidConfigureException(INVALID_TYPE.HOME);
                         }
                     }
