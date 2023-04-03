@@ -119,6 +119,13 @@ function start_manager() {
         cmd="sed -i -e 's/^otter.domainName.*$/otter.domainName = ${host}/' /home/admin/manager/conf/otter.properties"
         eval $cmd
     fi
+    if [ -n "${OTTER_DOMAIN_WEB}" ] ; then
+        cmd="sed -i -e 's/^otter.domainWeb.*$/otter.domainWeb = ${OTTER_DOMAIN_WEB}/' /home/admin/manager/conf/otter.properties"
+        eval $cmd
+    else
+        cmd="sed -i -e 's/^otter.domainWeb.*$/otter.domainWeb = ${host}/' /home/admin/manager/conf/otter.properties"
+        eval $cmd
+    fi
     su admin -c "cd /home/admin/manager/bin ; sh startup.sh 1>>/tmp/start.log 2>&1"
     #check start
     sleep 5
@@ -201,7 +208,11 @@ start_mysql
 start_zookeeper
 start_manager
 start_node
-echo "you can visit manager link : http://$host:8080/ , just have fun !"
+if [ -n "${OTTER_DOMAIN_WEB}" ] ; then
+    echo "you can visit manager link : http://$OTTER_DOMAIN_WEB:8080/ , just have fun !"
+else
+    echo "you can visit manager link : http://$host:8080/ , just have fun !"
+fi
 
 echo "==> START SUCCESSFUL ..."
 
