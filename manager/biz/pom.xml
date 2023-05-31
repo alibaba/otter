@@ -18,11 +18,7 @@
 			<artifactId>shared.common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.alibaba.otter</groupId>
-			<artifactId>shared.common</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+
 		<dependency>
 			<groupId>com.alibaba.otter</groupId>
 			<artifactId>shared.push</artifactId>
