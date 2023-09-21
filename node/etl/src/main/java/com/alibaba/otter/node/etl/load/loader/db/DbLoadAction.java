@@ -366,7 +366,14 @@ public class DbLoadAction implements InitializingBean, DisposableBean {
                             // 解决当数据库名称为关键字如"Order"的时候,会报错,无法同步
                             result &= stmt.execute("use `" + data.getDdlSchemaName() + "`");
                         }
-                        result &= stmt.execute(data.getSql());
+                        // 跳过删除表时目标库无此表报错
+                        String sql = data.getSql();
+                        if (dbDialect instanceof MysqlDialect) {
+                            if (sql.startsWith("DROP TABLE `")) {
+                            	sql = "DROP TABLE IF EXISTS" + sql.substring(10);
+                            }
+                        }
+                        result &= stmt.execute(sql);
                         return result;
                     }
                 });

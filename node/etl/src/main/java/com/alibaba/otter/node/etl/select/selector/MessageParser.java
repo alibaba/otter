@@ -588,8 +588,12 @@ public class MessageParser {
             // eventData.setKeys(columns);
             // }
         } else {
-            throw new SelectException("this rowdata has no pks , entry: " + entry.toString() + " and rowData: "
-                                      + rowData);
+//            throw new SelectException("this rowdata has no pks , entry: " + entry.toString() + " and rowData: "
+//                                      + rowData);
+            if (logger.isWarnEnabled()) {
+                logger.warn("this rowdata has no pks ,schemaName={},tableName={}", eventData.getSchemaName(), eventData.getTableName());
+            }
+            return null;
         }
 
         return eventData;
