@@ -64,4 +64,12 @@ public interface ArbitrateViewService {
      * 删除canal meta信息
      */
     void removeCanal(String destination);
+
+    /**
+     * 更新canal位点
+     * @param destination
+     * @param clientId
+     * @param position
+     */
+    void updateCanalCursor(String destination, short clientId, String position);
 }

@@ -23,6 +23,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import com.alibaba.otter.shared.arbitrate.ArbitrateViewService;
 import org.apache.commons.lang.ArrayUtils;
 
 import com.alibaba.citrus.service.form.CustomErrors;
@@ -52,6 +53,9 @@ public class PipelineAction {
 
     @Resource(name = "channelService")
     private ChannelService       channelService;
+
+    @Resource(name = "arbitrateViewService")
+    private ArbitrateViewService arbitrateViewService;
 
     public void doAdd(@FormGroup("pipelineInfo") Group pipelineInfo,
                       @FormGroup("pipelineParameterInfo") Group pipelineParameterInfo,
@@ -188,6 +192,9 @@ public class PipelineAction {
 
         try {
             pipelineService.modify(pipeline);
+            // 重置位点
+            arbitrateViewService.updateCanalCursor(pipeline.getParameters().getDestinationName(), pipeline.getId().shortValue(),
+                    pipeline.getPosition());
         } catch (RepeatConfigureException rce) {
             err.setMessage("invalidPipelineName");
             return;

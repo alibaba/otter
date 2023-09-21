@@ -167,7 +167,7 @@ $control.setTemplate("home:navigation.vm")
 				</div>
 				<div class="btn">
 					#set ($disableAllURL = $homeModule.setAction("AlarmRuleAction").addQueryData("pipelineId", $pipelineId).addQueryData("status", "disable").addQueryData("eventSubmitDoStatusByPipeline", "true").render())
-					<a href="#" onclick="WdatePicker({el:'rule_all',dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'%y-%M-%d %H:%m:%s',qsEnabled:true,quickSel:['%y-%M-%d #{%H+2}:%m:%s','%y-%M-%d #{%H+6}:%m:%s','%y-%M-%d #{%H+12}:%m:%s','%y-%M-#{%d+1} %H:%m:%s','%y-%M-#{%d+2} %H:%m:%s'], onpicked:function(){url='${disableAllURL}&pauseTime=' + $dp.cal.getDateStr();window.location.href=url;}});return false;">全部暂停<span id="rule_all" style="display:none;" /></a>
+                    <a href="$disableAllURL">全部暂停</a>
 				</div>
 				#end
 		#end		

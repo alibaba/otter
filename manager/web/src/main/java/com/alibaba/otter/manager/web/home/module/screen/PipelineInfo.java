@@ -20,6 +20,8 @@ import javax.annotation.Resource;
 
 import com.alibaba.citrus.turbine.Context;
 import com.alibaba.citrus.turbine.dataresolver.Param;
+import com.alibaba.otter.shared.arbitrate.ArbitrateViewService;
+import com.alibaba.otter.shared.arbitrate.model.PositionEventData;
 import com.alibaba.otter.shared.common.model.config.pipeline.Pipeline;
 import com.alibaba.otter.manager.biz.config.node.NodeService;
 import com.alibaba.otter.manager.biz.config.pipeline.PipelineService;
@@ -32,9 +34,17 @@ public class PipelineInfo {
     @Resource(name = "nodeService")
     private NodeService     nodeService;
 
+    @Resource(name = "arbitrateViewService")
+    private ArbitrateViewService arbitrateViewService;
+
     public void execute(@Param("pipelineId") Long pipelineId, Context context) throws Exception {
         Pipeline pipeline = pipelineService.findById(pipelineId);
-
+        // 返回canal当前位点信息
+        PositionEventData positionEventData = arbitrateViewService.getCanalCursor(pipeline.getParameters().getDestinationName(), pipeline.getParameters().
+                getMainstemClientId());
+        if (null != positionEventData) {
+            pipeline.setPosition(positionEventData.getPosition());
+        }
         context.put("pipeline", pipeline);
         context.put("nodes", nodeService.listAll());
     }

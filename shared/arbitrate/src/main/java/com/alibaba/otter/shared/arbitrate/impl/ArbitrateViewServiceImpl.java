@@ -31,6 +31,8 @@ import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.KeeperException.NoNodeException;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import com.alibaba.otter.shared.arbitrate.ArbitrateViewService;
@@ -48,6 +50,7 @@ import com.alibaba.otter.shared.common.model.statistics.stage.StageStat;
 import com.alibaba.otter.shared.common.utils.JsonUtils;
 import com.alibaba.otter.shared.common.utils.zookeeper.ZkClientx;
 import com.alibaba.otter.shared.common.utils.zookeeper.ZooKeeperx;
+import com.alibaba.fastjson.JSONObject;
 
 /**
  * 查询当前的仲裁器的一些运行状态视图
@@ -56,7 +59,7 @@ import com.alibaba.otter.shared.common.utils.zookeeper.ZooKeeperx;
  * @version 4.0.0
  */
 public class ArbitrateViewServiceImpl implements ArbitrateViewService {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(ArbitrateViewServiceImpl.class);
     private static final String CANAL_PATH        = "/otter/canal/destinations/%s";
     private static final String CANAL_DATA_PATH   = CANAL_PATH + "/%s";
     private static final String CANAL_CURSOR_PATH = CANAL_PATH + "/%s/cursor";
@@ -256,6 +259,21 @@ public class ArbitrateViewServiceImpl implements ArbitrateViewService {
     public void removeCanal(String destination) {
         String path = String.format(CANAL_PATH, destination);
         zookeeper.deleteRecursive(path);
+    }
+
+    @Override
+    public void updateCanalCursor(String destination, short clientId, String position) {
+        String path = String.format(CANAL_CURSOR_PATH, destination, String.valueOf(clientId));
+        try {
+            IZkConnection connection = zookeeper.getConnection();
+            ZooKeeper originZk = ((ZooKeeperx) connection).getZookeeper();
+            PositionEventData positionEventData = getCanalCursor(destination, clientId);
+            LOGGER.info("updateCanalCursor origin positionInfo={}", JSONObject.toJSONString(positionEventData));
+            originZk.setData(path, position.getBytes("UTF-8"), -1);
+            LOGGER.info("updateCanalCursor current positionInfo={}", getCanalCursor(destination, clientId));
+        } catch (Exception e) {
+            LOGGER.error("updateCanalCursor exception", e);
+        }
     }
 
 }

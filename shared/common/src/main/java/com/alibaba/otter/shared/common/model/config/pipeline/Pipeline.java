@@ -16,28 +16,38 @@
 
 package com.alibaba.otter.shared.common.model.config.pipeline;
 
+import com.alibaba.otter.shared.common.model.config.data.DataMediaPair;
+import com.alibaba.otter.shared.common.model.config.node.Node;
+import com.alibaba.otter.shared.common.utils.OtterToStringStyle;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
-import com.alibaba.otter.shared.common.model.config.data.DataMediaPair;
-import com.alibaba.otter.shared.common.model.config.node.Node;
-import com.alibaba.otter.shared.common.utils.OtterToStringStyle;
-
 /**
  * 同步任务数据对象
- * 
- * @author jianghang 2011-8-31 下午07:35:38
+ *
+ * @author xuanhusuo
+ * @since 2020年03月20日
  */
 public class Pipeline implements Serializable {
 
     private static final long   serialVersionUID = 5055655233043393285L;
     private Long                id;
-    private Long                channelId;                                 // 对应关联的channel唯一标示id
+    /**
+     * 对应关联的channel唯一标示id
+     */
+    private Long                channelId;
     private String              name;
-    private String              description;                               // 描述信息
+    /**
+     * 位点
+     */
+    private String position;
+    /**
+     * 描述信息
+     */
+    private String              description;
     private List<Node>          selectNodes;
     private List<Node>          extractNodes;
     private List<Node>          loadNodes;
@@ -68,6 +78,14 @@ public class Pipeline implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
     }
 
     public String getDescription() {

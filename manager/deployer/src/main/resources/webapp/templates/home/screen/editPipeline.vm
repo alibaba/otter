@@ -46,8 +46,7 @@ $control.setTemplate("home:navigation.vm")
 			<span class="red">#editPipelineMessage ($pipelineGroup.name)#editPipelineMessage ($pipelineGroup.formPipelineError)</span>
 		</td>
       </tr>
-	  
-      <tr> 
+      <tr>
         <th width="300">Select机器：</th>
         <td width="329" class="textarea">
 			<select name="$pipelineGroup.selectNodeIds.key" multiple="multiple" style="height:100px;width:200px">
@@ -163,6 +162,14 @@ $control.setTemplate("home:navigation.vm")
 			  <br />
 			  <span class="red">#editPipelineMessage ($pipelineParameterGroup.destinationName)</span>
         </td>
+      </tr>
+      <tr>
+         <th width="300">Canal位点重置：</th>
+         <td width="329">
+           <textarea title="启用channel时立即生效" name="$pipelineGroup.position.key" style="height:110px;width:340px">$!pipeline.position</textarea>
+           <span>示例：{"@type":"com.alibaba.otter.canal.protocol.position.LogPosition","identity":{"slaveId":-1,"sourceAddress":{"address":"192.168.1.2","port":3306}},"postion":{"gtid":"","included":false,"journalName":"mysql-bin.0","position":0,"serverId":0,"timestamp":0}}</span>
+           <br />
+         </td>
       </tr>
 	  #**
 	  <tr> 

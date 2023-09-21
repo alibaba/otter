@@ -106,6 +106,11 @@
 				</fm-validators:string-length-validator>
 			</field>
 			<field name="description" displayName="pipeline的描述" />
+			<field name="position" displayName="Canal当前位点">
+				<fm-validators:regexp-validator pattern="^(\{.*\})+$">
+					<message>${displayName} 格式不正确</message>
+				</fm-validators:regexp-validator>
+			</field>
 			<field name="selectNodeIds" displayName="Select节点的ID集合">
 				<fm-validators:required-validator>
 					<message>必须选择一个以上${displayName}</message>
