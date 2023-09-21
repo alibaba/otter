@@ -185,9 +185,11 @@ public class AutoKeeperCollector implements InitializingBean {
             } else if (line.contains(STRING_LATENCY)) {
                 List<String> latency = Arrays.asList(StringUtils.trimToEmpty(line.replace(STRING_LATENCY,
                                                                                           StringUtils.EMPTY)).split("/"));
-                summary.setMinLatency(Long.parseLong(latency.get(0)));
-                summary.setAvgLatency(Long.parseLong(latency.get(1)));
-                summary.setMaxLatency(Long.parseLong(latency.get(2)));
+                //解决java.lang.NumberFormatException: For input string: "4.0"
+                summary.setMinLatency((long)Double.parseDouble(latency.get(0)));
+                summary.setAvgLatency((long)Double.parseDouble(latency.get(1)));
+                summary.setMaxLatency((long)Double.parseDouble(latency.get(2)));
+
             } else if (line.contains(STRING_OUTSTANDING)) {
                 summary.setQueued(Long.parseLong(StringUtils.trimToEmpty(line.replace(STRING_OUTSTANDING,
                                                                                       StringUtils.EMPTY))));
