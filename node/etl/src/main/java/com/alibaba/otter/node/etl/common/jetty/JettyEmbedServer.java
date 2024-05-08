@@ -19,6 +19,7 @@ package com.alibaba.otter.node.etl.common.jetty;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.xml.XmlConfiguration;
@@ -31,7 +32,7 @@ import com.alibaba.otter.node.common.config.ConfigClientService;
 
 /**
  * jetty的嵌入式启动入口
- * 
+ *
  * @author jianghang 2011-10-18 下午01:58:33
  * @version 4.0.0
  */
@@ -43,7 +44,7 @@ public class JettyEmbedServer implements InitializingBean, DisposableBean {
     private String              config         = DEFAULT_CONFIG;
     private String              htdocsDir;
     private ConfigClientService configClientService;
-
+    @Override
     public void afterPropertiesSet() throws Exception {
         Resource configXml = Resource.newSystemResource(config);
         XmlConfiguration configuration = new XmlConfiguration(configXml.getInputStream());
@@ -52,7 +53,8 @@ public class JettyEmbedServer implements InitializingBean, DisposableBean {
         if (port != null && port > 0) {
             Connector[] connectors = server.getConnectors();
             for (Connector connector : connectors) {
-                connector.setPort(port);
+                ServerConnector serverConnector = (ServerConnector) connector;
+                serverConnector.setPort(port);
             }
         }
 
@@ -71,7 +73,7 @@ public class JettyEmbedServer implements InitializingBean, DisposableBean {
     private Integer getPort() {
         return configClientService.currentNode().getParameters().getDownloadPort();
     }
-
+    @Override
     public void destroy() throws Exception {
         server.stop();
         if (logger.isInfoEnabled()) {
