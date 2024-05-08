@@ -12,6 +12,7 @@ import com.alibaba.druid.sql.ast.statement.SQLAlterTableItem;
 import com.alibaba.druid.sql.ast.statement.SQLAlterTableStatement;
 import com.alibaba.druid.sql.ast.statement.SQLCreateTableStatement;
 import com.alibaba.druid.sql.ast.statement.SQLExprTableSource;
+import com.alibaba.druid.sql.ast.statement.SQLAssignItem;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlCreateTableStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlRenameTableStatement;
 import com.alibaba.druid.sql.dialect.mysql.parser.MySqlStatementParser;
@@ -127,7 +128,7 @@ public class DdlUtils {
                 print0(ucase ? "TABLE " : "table ");
             }
 
-            if (x.isIfNotExiists()) {
+            if (x.isIfNotExists()) {
                 print0(ucase ? "IF NOT EXISTS " : "if not exists ");
             }
 
@@ -155,8 +156,8 @@ public class DdlUtils {
                 print(')');
             }
 
-            for (Map.Entry<String, SQLObject> option : x.getTableOptions().entrySet()) {
-                String key = option.getKey();
+            for (SQLAssignItem option : x.getTableOptions()) {
+                String key = ((SQLIdentifierExpr) option.getTarget()).getName();
 
                 print(' ');
                 print0(ucase ? key : key.toLowerCase());
@@ -236,8 +237,8 @@ public class DdlUtils {
             decrementIndent();
 
             int i = 0;
-            for (Map.Entry<String, SQLObject> option : x.getTableOptions().entrySet()) {
-                String key = option.getKey();
+            for (SQLAssignItem option : x.getTableOptions()) {
+                String key = ((SQLIdentifierExpr) option.getTarget()).getName();
                 if (i != 0) {
                     print(' ');
                 }
