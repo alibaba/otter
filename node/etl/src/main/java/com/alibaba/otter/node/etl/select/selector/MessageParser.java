@@ -336,7 +336,7 @@ public class MessageParser {
 
         String schemaName = entry.getHeader().getSchemaName();
         String tableName = entry.getHeader().getTableName();
-        EventType eventType = EventType.valuesOf(rowChange.getEventType().name());
+        EventType eventType = EventType.fromName(rowChange.getEventType().name());
 
         if (eventType == null) {
             logger.warn("Discard unsupported event type: {}", rowChange.getEventType());
