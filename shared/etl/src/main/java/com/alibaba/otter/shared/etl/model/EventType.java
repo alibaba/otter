@@ -146,6 +146,15 @@ public enum EventType {
         return null;
     }
 
+    public static EventType fromName(String name) {
+        for (EventType eventType : values()) {
+            if (eventType.name().equalsIgnoreCase(name)) {
+                return eventType;
+            }
+        }
+        return null;
+    }
+
     public String getValue() {
         return value;
     }
