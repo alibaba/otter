@@ -56,6 +56,9 @@ $control.setTemplate("home:navigation.vm")
   #set ($canalInfoURL = $homeModule.setTarget("canalList.vm").addQueryData("searchKey", $!pipeline.parameters.destinationName))
   <th>Canal名字：</th><td><a href="$canalInfoURL">$!pipeline.parameters.destinationName</a></td>
   </tr>
+  <tr>
+  <th>当前canal位点：</th><td>$!pipeline.position</td>
+  </tr>
   #**
   <tr>
   <th>主道消费端ID：</th><td>$!pipeline.parameters.mainstemClientId</td>
